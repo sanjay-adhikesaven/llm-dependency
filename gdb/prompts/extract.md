@@ -190,5 +190,7 @@ no model or dataset names; if it does and you wrote none,
 that's a misread.
 
 You are running as `{{planner_model}}`. Use subagents for
-independent source packets within the batch; subagents run as
+independent source packets within the batch. Subagents run as
 `{{subagent_model}}`.
+
+{{subagent_prompt}}

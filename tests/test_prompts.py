@@ -18,6 +18,7 @@ def test_prompt_render_includes_shared_context_and_variables(fresh_runtime):
 
 
 def test_all_stage_prompts_render(fresh_runtime):
+    from gdb import config
     from gdb.pipeline import render_prompt
 
     variables = {
@@ -34,5 +35,10 @@ def test_all_stage_prompts_render(fresh_runtime):
         "batch_id": "b",
         "batch_dir": "/batch",
     }
-    for stage in ["discover", "extract", "audit", "describe"]:
+    llm_stages = [
+        stage for stage in config.STAGE_NAMES
+        if (config.PROMPTS_DIR / f"{stage}.md").exists()
+    ]
+    assert llm_stages, "no stage prompts found"
+    for stage in llm_stages:
         assert render_prompt(stage, variables).strip()

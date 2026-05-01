@@ -21,7 +21,6 @@ from .artifacts import (
     apply_audit_updates,
     validate_mention_artifact,
 )
-from .grouping import group_mentions_for_review
 from .lattice import build_lattice
 from .linker import link_candidates_from_mentions, verify_candidates
 from .store import (
@@ -75,6 +74,23 @@ def close_run(run_id: str, attrs: dict) -> None:
         conn.commit()
 
 
+def subagent_prompt_for(model: str) -> str:
+    """Pick the dispatch-instructions block matching the subagent runtime.
+
+    Claude subagents go via the planner's Task tool; codex subagents
+    must be shelled out via `codex exec` because Task can only spawn
+    Claude. The block returned here is what `{{subagent_prompt}}`
+    expands to inside per-stage prompts.
+    """
+    if model.startswith("codex-"):
+        effort = model.removeprefix("codex-")
+        return config.SUBAGENT_PROMPT_CODEX.format(
+            codex_model=config.CODEX_MODEL,
+            effort=effort,
+        )
+    return config.SUBAGENT_PROMPT_CLAUDE.format(model=model)
+
+
 def render_prompt(stage: str, variables: dict[str, str]) -> str:
     prompt_path = config.PROMPTS_DIR / f"{stage}.md"
     if not prompt_path.exists():
@@ -83,6 +99,14 @@ def render_prompt(stage: str, variables: dict[str, str]) -> str:
     shared = config.PROMPTS_DIR / "shared-context.md"
     if stage != "shared-context" and shared.exists():
         text = f"{shared.read_text()}\n---\n\n{text}"
+    # Auto-derive `subagent_prompt` from `subagent_model` so per-stage
+    # prompts can drop the literal `{{subagent_prompt}}` placeholder
+    # and pick up codex-vs-claude dispatch instructions automatically.
+    if "subagent_model" in variables and "subagent_prompt" not in variables:
+        variables = {
+            **variables,
+            "subagent_prompt": subagent_prompt_for(variables["subagent_model"]),
+        }
     for name, value in variables.items():
         text = text.replace("{{" + name + "}}", value)
     return text
@@ -137,7 +161,7 @@ def parse_run_usage(stdout_path: Path, stderr_path: Path) -> dict:
     text = ""
     for path in (stdout_path, stderr_path):
         if path.exists():
-            text += "\n" + path.read_text(errors="replace")[-20000:]
+            text += "\n" + path.read_text(errors="replace")[-config.RUN_LOG_TAIL_CHARS:]
     attrs: dict[str, Any] = {}
     patterns = {
         "cost_usd": r"(?:cost|total cost)\D+\$?([0-9]+(?:\.[0-9]+)?)",
@@ -158,11 +182,11 @@ def parse_run_usage(stdout_path: Path, stderr_path: Path) -> dict:
 def spawn_claude(run_id: str, prompt: str, *, model: str = config.CLAUDE_MODEL) -> dict:
     if not shutil.which("claude"):
         raise click.ClickException("claude CLI not found; pass --artifact to ingest an existing stage artifact")
-    run_root = config.STORAGE / "runs" / run_id
+    run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
     run_root.mkdir(parents=True, exist_ok=True)
-    (run_root / "prompt.md").write_text(prompt)
-    out_path = run_root / "stdout.txt"
-    err_path = run_root / "stderr.txt"
+    (run_root / config.RUN_PROMPT_FILE).write_text(prompt)
+    out_path = run_root / config.RUN_STDOUT_FILE
+    err_path = run_root / config.RUN_STDERR_FILE
     cmd = [
         "claude",
         "-p",
@@ -194,6 +218,62 @@ def spawn_claude(run_id: str, prompt: str, *, model: str = config.CLAUDE_MODEL) 
     usage = parse_run_usage(out_path, err_path)
     close_run(run_id, {"runtime": "claude", "model": model, "exit_code": rc, "elapsed_s": elapsed, **usage})
     return {"run_id": run_id, "exit_code": rc, "elapsed_s": elapsed, "log_dir": str(run_root)}
+
+
+def spawn_codex(run_id: str, prompt: str, *, effort: str) -> dict:
+    """Run a single codex CLI invocation as a stage planner.
+
+    The planner is normally Claude, but the dispatcher allows codex
+    here too for stages where the operator wants codex end-to-end.
+    Subagent dispatch (codex-from-Claude) is a separate flow handled
+    inside the planner's prompt via `SUBAGENT_PROMPT_CODEX`.
+    """
+    if not shutil.which("codex"):
+        raise click.ClickException("codex CLI not found; pass --artifact to ingest an existing stage artifact")
+    if effort not in config.CODEX_EFFORT_CHOICES:
+        raise click.ClickException(
+            f"unknown codex effort {effort!r} (choose from {config.CODEX_EFFORT_CHOICES})"
+        )
+    run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
+    run_root.mkdir(parents=True, exist_ok=True)
+    (run_root / config.RUN_PROMPT_FILE).write_text(prompt)
+    out_path = run_root / config.RUN_STDOUT_FILE
+    err_path = run_root / config.RUN_STDERR_FILE
+    cmd = [
+        "codex", "exec",
+        "-m", config.CODEX_MODEL,
+        "-c", f"model_reasoning_effort={effort}",
+        "--skip-git-repo-check",
+        "--dangerously-bypass-approvals-and-sandbox",
+        prompt,
+    ]
+    started = time.monotonic()
+    with out_path.open("w") as stdout, err_path.open("w") as stderr:
+        proc = subprocess.Popen(
+            cmd,
+            cwd=config.ROOT,
+            env=runtime_env(run_id),
+            stdout=stdout,
+            stderr=stderr,
+            text=True,
+            start_new_session=True,
+        )
+        try:
+            rc = proc.wait()
+        except (KeyboardInterrupt, SystemExit):
+            terminate_pgrp(proc.pid)
+            raise
+    elapsed = time.monotonic() - started
+    model_label = f"codex-{effort}"
+    close_run(run_id, {"runtime": "codex", "model": model_label, "exit_code": rc, "elapsed_s": elapsed})
+    return {"run_id": run_id, "exit_code": rc, "elapsed_s": elapsed, "log_dir": str(run_root)}
+
+
+def dispatch_spawn(run_id: str, prompt: str, *, model: str) -> dict:
+    """Pick spawn_codex vs spawn_claude based on the model name."""
+    if model.startswith("codex-"):
+        return spawn_codex(run_id, prompt, effort=model.removeprefix("codex-"))
+    return spawn_claude(run_id, prompt, model=model)
 
 
 def ingest_discovery_artifact(artifact: dict, workspace_dir: Path) -> dict:
@@ -229,28 +309,28 @@ def run_discover(
     subagent_model: str = config.CLAUDE_MODEL,
 ) -> dict:
     run_id = new_run("discover", seed=target, label=f"discover:{target}")
-    run_root = config.STORAGE / "runs" / run_id
-    workspace = Path(workspace_dir).resolve() if workspace_dir else run_root / "workspace"
+    run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
+    workspace = Path(workspace_dir).resolve() if workspace_dir else run_root / config.WORKSPACE_SUBDIR
     workspace.mkdir(parents=True, exist_ok=True)
-    artifact_out = run_root / "discover_artifact.json"
+    artifact_out = run_root / config.DISCOVER_ARTIFACT_FILE
     variables = {
         "run_id": run_id,
         "target": target,
         "workspace_dir": str(workspace),
-        "worker_dir": str(run_root / "workers"),
+        "worker_dir": str(run_root / config.WORKERS_SUBDIR),
         "artifact_path": str(artifact_out),
-        "input_path": str(run_root / "input.json"),
+        "input_path": str(run_root / config.RUN_INPUT_FILE),
         "planner_model": planner_model,
         "subagent_model": subagent_model,
     }
     run_root.mkdir(parents=True, exist_ok=True)
-    (run_root / "input.json").write_text(json_text({"target": target, "workspace_dir": str(workspace)}))
+    (run_root / config.RUN_INPUT_FILE).write_text(json_text({"target": target, "workspace_dir": str(workspace)}))
     if artifact_path:
         artifact = read_json(artifact_path)
         used_artifact = Path(artifact_path)
     else:
         prompt = render_prompt("discover", variables)
-        spawn = spawn_claude(run_id, prompt, model=planner_model)
+        spawn = dispatch_spawn(run_id, prompt, model=planner_model)
         if spawn["exit_code"] != 0:
             raise click.ClickException(f"discover failed; logs at {spawn['log_dir']}")
         if not artifact_out.exists():
@@ -341,7 +421,7 @@ def commit_mentions(artifact: dict, *, batch_id: str | None = None) -> dict:
             set_batch_artifact(
                 cur,
                 batch_id=batch_id,
-                stage="extract_mentions",
+                stage="extract",
                 artifact_path=str(Path(artifact.get("_artifact_path", "")).resolve()) if artifact.get("_artifact_path") else "",
                 status="complete",
                 attrs={"mentions_committed": committed},
@@ -365,23 +445,23 @@ def run_extract(
     workers = max(1, min(config.MAX_PARALLEL_BATCHES, len(batch_ids) or 1))
 
     def extract_one(bid: str) -> dict:
-        run_id = new_run("extract-mentions", label=f"extract-mentions:{bid[:8]}")
-        run_root = config.STORAGE / "runs" / run_id
-        batch_dir = materialize_batch(bid, run_root / "batch")
-        artifact_out = run_root / "extract-mentions_artifact.json"
+        run_id = new_run("extract", label=f"extract:{bid[:8]}")
+        run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
+        batch_dir = materialize_batch(bid, run_root / config.BATCH_SUBDIR)
+        artifact_out = run_root / config.EXTRACT_ARTIFACT_FILE
         run_root.mkdir(parents=True, exist_ok=True)
-        (run_root / "input.json").write_text(json_text({"batch_id": bid, "batch_dir": str(batch_dir)}))
+        (run_root / config.RUN_INPUT_FILE).write_text(json_text({"batch_id": bid, "batch_dir": str(batch_dir)}))
         prompt = render_prompt("extract", {
             "run_id": run_id,
             "batch_id": bid,
             "batch_dir": str(batch_dir),
-            "worker_dir": str(run_root / "workers"),
+            "worker_dir": str(run_root / config.WORKERS_SUBDIR),
             "artifact_path": str(artifact_out),
-            "input_path": str(run_root / "input.json"),
+            "input_path": str(run_root / config.RUN_INPUT_FILE),
             "planner_model": planner_model,
             "subagent_model": subagent_model,
         })
-        spawn = spawn_claude(run_id, prompt, model=planner_model)
+        spawn = dispatch_spawn(run_id, prompt, model=planner_model)
         if spawn["exit_code"] != 0 or not artifact_out.exists():
             return {"batch_id": bid, "status": "failed", "log_dir": spawn["log_dir"]}
         artifact = read_json(artifact_out)
@@ -512,9 +592,9 @@ def run_audit(*, artifact_path: str | None = None, planner_model: str = config.C
     """
     if not artifact_path:
         run_id = new_run("audit", label="audit")
-        run_root = config.STORAGE / "runs" / run_id
-        packet_path = run_root / "cluster_packet.json"
-        artifact_out = run_root / "audit_artifact.json"
+        run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
+        packet_path = run_root / config.CLUSTER_PACKET_FILE
+        artifact_out = run_root / config.AUDIT_ARTIFACT_FILE
         atomic_write_json(packet_path, cluster_packet())
         prompt = render_prompt("audit", {
             "run_id": run_id,
@@ -523,7 +603,7 @@ def run_audit(*, artifact_path: str | None = None, planner_model: str = config.C
             "planner_model": planner_model,
             "subagent_model": subagent_model or planner_model,
         })
-        spawn = spawn_claude(run_id, prompt, model=planner_model)
+        spawn = dispatch_spawn(run_id, prompt, model=planner_model)
         if spawn["exit_code"] != 0 or not artifact_out.exists():
             raise click.ClickException(f"audit failed; logs at {spawn['log_dir']}")
         artifact_path = str(artifact_out)
@@ -686,15 +766,16 @@ def run_describe(*, artifact_path: str | None = None, planner_model: str = confi
     """Single-planner per-entity-leaf description with inline HF fetch.
 
     The planner reads the lattice, filters concept nodes out, buckets
-    entity leaves, dispatches subagents that fetch HF metadata via
-    enrich_hf_link and write descriptions. Concepts get no descriptions.
+    entity leaves, and dispatches subagents that fetch HF metadata
+    via their native fetch / web tools and write descriptions.
+    Concepts get no descriptions.
     """
     fresh_entity_keys: set[str] | None = None
     if not artifact_path:
         run_id = new_run("describe", label="describe")
-        run_root = config.STORAGE / "runs" / run_id
-        lattice_path = run_root / "lattice.json"
-        artifact_out = run_root / "describe_artifact.json"
+        run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
+        lattice_path = run_root / config.LATTICE_FILE
+        artifact_out = run_root / config.DESCRIBE_ARTIFACT_FILE
         mentions = mention_rows()
         checks = all_rows("SELECT * FROM link_checks")
         lattice = build_lattice(mentions, checks)
@@ -715,7 +796,7 @@ def run_describe(*, artifact_path: str | None = None, planner_model: str = confi
             "planner_model": planner_model,
             "subagent_model": subagent_model or planner_model,
         })
-        spawn = spawn_claude(run_id, prompt, model=planner_model)
+        spawn = dispatch_spawn(run_id, prompt, model=planner_model)
         if spawn["exit_code"] != 0 or not artifact_out.exists():
             raise click.ClickException(f"describe failed; logs at {spawn['log_dir']}")
         artifact_path = str(artifact_out)

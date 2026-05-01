@@ -113,7 +113,7 @@ def all_rows(sql: str, args: tuple[Any, ...] = ()) -> list[dict]:
 def sha256_file(path: Path) -> str:
     h = hashlib.sha256()
     with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1 << 20), b""):
+        for chunk in iter(lambda: handle.read(config.HASH_CHUNK_BYTES), b""):
             h.update(chunk)
     return h.hexdigest()
 
@@ -164,7 +164,7 @@ def content_hash(path: Path) -> str:
 
 
 def content_store_dir(content_hash_value: str) -> Path:
-    return config.STORAGE / "sources" / content_hash_value[:2] / content_hash_value
+    return config.STORAGE / config.SOURCES_SUBDIR / content_hash_value[:2] / content_hash_value
 
 
 def storage_ignore(src_dir: str, names: list[str]) -> set[str]:
@@ -348,7 +348,7 @@ def scan_and_register(workspace_dir: Path, artifact: dict) -> tuple[dict, list[d
                 source["content_hash"] = chash
                 candidate = batch_dir_filename(title, fallback_ext=abs_path.suffix if abs_path.is_file() else "")
                 used_lower = {name.lower(): sid for name, sid in file_map.items()}
-                used_lower.setdefault("manifest.txt", "__reserved__")
+                used_lower.setdefault(config.BATCH_MANIFEST_FILE.lower(), "__reserved__")
                 name = candidate
                 stem, dot, suffix = candidate.rpartition(".")
                 if not stem:
@@ -443,7 +443,7 @@ def materialize_batch(batch_id: str, dest: Path) -> Path:
                 WHERE bs.batch_id=? ORDER BY bs.ordinal, s.title, s.id""",
             (batch_id,),
         ).fetchall()
-    used = {"manifest.txt"}
+    used = {config.BATCH_MANIFEST_FILE.lower()}
     for row in rows:
         stored = Path(row["storage_ref"] or "")
         filename = inverse.get(row["id"]) or batch_dir_filename(row["title"], row["storage_ref"])
@@ -464,7 +464,7 @@ def materialize_batch(batch_id: str, dest: Path) -> Path:
         if stored.exists():
             os.symlink(stored, target)
         manifest.append(f"{filename}\t{row['id']}\t{row['title'] or ''}")
-    (dest / "MANIFEST.txt").write_text("\n".join(manifest) + "\n")
+    (dest / config.BATCH_MANIFEST_FILE).write_text("\n".join(manifest) + "\n")
     return dest
 
 

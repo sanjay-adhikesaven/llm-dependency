@@ -10,12 +10,12 @@
 
 You are running as `{{planner_model}}`. **Single planner, fans out
 subagents.** This is NOT a per-batch parallel stage — Python
-spawns ONE Claude planner per audit run. The planner reads the
-global cluster packet, decides how to bucket the work, and
-dispatches subagents (e.g., `{{subagent_model}}`, possibly
-Codex / Sonnet / Haiku for cost) via the Task tool. Subagents
-return their decisions and the planner aggregates and writes
-one artifact.
+spawns ONE planner per audit run. The planner reads the global
+cluster packet, decides how to bucket the work, and dispatches
+subagents that return their decisions; the planner aggregates
+and writes one artifact.
+
+{{subagent_prompt}}
 
 Read `{{cluster_packet_path}}` and write decisions to
 `{{artifact_path}}`.
@@ -190,5 +190,4 @@ Write the artifact to `{{artifact_path}}` and exit 0:
 
 If no clusters need updates, emit `{"updates": []}` and exit 0.
 
-You are running as `{{planner_model}}`. Subagents you dispatch
-run as `{{subagent_model}}`.
+Subagents you dispatch run as `{{subagent_model}}`.

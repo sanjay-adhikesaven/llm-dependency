@@ -6,12 +6,14 @@
 > one verified or candidate link).
 
 You are running as `{{planner_model}}`. **Single planner, fans out
-subagents.** Python spawns ONE Claude planner per describe run.
-The planner reads the lattice, filters out concept nodes, buckets
-the entity leaves (e.g., by family or by link type), and
-dispatches subagents (e.g., `{{subagent_model}}`) via the Task
-tool. Each subagent fetches HF metadata for its bucket's entities
-and writes descriptions. The planner aggregates into one artifact.
+subagents.** Python spawns ONE planner per describe run. The
+planner reads the lattice, filters out concept nodes, buckets the
+entity leaves (e.g., by family or by link type), and dispatches
+subagents. Each subagent fetches HF metadata for its bucket's
+entities and writes descriptions. The planner aggregates into one
+artifact.
+
+{{subagent_prompt}}
 
 Read `{{lattice_path}}` and write descriptions to
 `{{artifact_path}}`.
@@ -130,5 +132,4 @@ Write the artifact to `{{artifact_path}}` and exit 0:
 If no entity leaves need descriptions, emit
 `{"descriptions": []}` and exit 0.
 
-You are running as `{{planner_model}}`. Subagents you dispatch
-run as `{{subagent_model}}`.
+Subagents you dispatch run as `{{subagent_model}}`.

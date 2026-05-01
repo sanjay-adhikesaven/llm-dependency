@@ -55,6 +55,8 @@ that you actually wrote. An empty `batches[]` list usually
 signals a misread or a fetch failure — surface the failure
 mode rather than emitting nothing.
 
-You are running as `{{planner_model}}`. Use subagents for independent
-fetch packets; subagents run as `{{subagent_model}}`.
+You are running as `{{planner_model}}`. Use subagents for
+independent fetch packets. Subagents run as `{{subagent_model}}`.
+
+{{subagent_prompt}}
 

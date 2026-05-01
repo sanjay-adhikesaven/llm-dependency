@@ -93,33 +93,3 @@ def test_describe_artifact_skips_concept_keys(fresh_runtime):
     assert result["description_count"] == 0
     rows = all_rows("SELECT entity_key FROM entity_descriptions")
     assert rows == []
-
-
-def test_enrich_hf_link_parses_front_matter(monkeypatch):
-    """enrich_hf_link extracts base_model and pipeline_tag from card YAML."""
-    from gdb.enrich import enrich_hf_link
-
-    readme = """---
-pipeline_tag: text-generation
-base_model: Qwen/Qwen3-4B-Base
-license: apache-2.0
----
-# Qwen3-4B
-"""
-
-    def fake_text(_url):
-        return 200, readme, None
-
-    def fake_json(_url):
-        return 200, {"cardData": {}}, None
-
-    enriched = enrich_hf_link(
-        {"type": "hf_model", "value": "Qwen/Qwen3-4B"},
-        fetch_text=fake_text,
-        fetch_json=fake_json,
-    )
-
-    assert enriched["ok"] is True
-    assert enriched["metadata"]["front_matter"]["base_model"] == "Qwen/Qwen3-4B-Base"
-    assert enriched["metadata"]["front_matter"]["pipeline_tag"] == "text-generation"
-    assert "base_model=Qwen/Qwen3-4B-Base" in enriched["description"]

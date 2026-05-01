@@ -72,8 +72,8 @@ def run():
 @click.option("--target", required=True)
 @click.option("--artifact", "artifact_path", help="Ingest an existing discover artifact instead of launching an agent.")
 @click.option("--workspace", "workspace_dir", help="Workspace holding paths referenced by --artifact.")
-@click.option("--planner-model", default=config.CLAUDE_MODEL, show_default=True)
-@click.option("--subagent-model", default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
 def discover_cmd(target: str, artifact_path: str | None, workspace_dir: str | None, planner_model: str, subagent_model: str):
     emit_json(run_discover(
         target=target,
@@ -87,8 +87,8 @@ def discover_cmd(target: str, artifact_path: str | None, workspace_dir: str | No
 @run.command("extract")
 @click.option("--batch-id", help="Limit to one batch. Required when --artifact is used.")
 @click.option("--artifact", "artifact_path", help="Ingest an existing extract artifact instead of launching an agent.")
-@click.option("--planner-model", default=config.CLAUDE_MODEL, show_default=True)
-@click.option("--subagent-model", default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
 @click.option("--max-workers", type=int, help="Override GDB_MAX_PARALLEL_BATCHES for this process.")
 def extract_cmd(batch_id: str | None, artifact_path: str | None, planner_model: str, subagent_model: str, max_workers: int | None):
     if artifact_path and not batch_id:
@@ -111,8 +111,8 @@ def check_cmd(artifact_path: str | None):
 
 @run.command("audit")
 @click.option("--artifact", "artifact_path", help="Apply an audit artifact directly instead of launching an agent.")
-@click.option("--planner-model", default=config.CLAUDE_MODEL, show_default=True)
-@click.option("--subagent-model", default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
 def audit_cmd(artifact_path: str | None, planner_model: str, subagent_model: str):
     emit_json(run_audit(artifact_path=artifact_path, planner_model=planner_model, subagent_model=subagent_model))
 
@@ -129,8 +129,8 @@ def build_lattice_cmd():
 
 @run.command("describe")
 @click.option("--artifact", "artifact_path", help="Apply a describe artifact directly instead of launching an agent.")
-@click.option("--planner-model", default=config.CLAUDE_MODEL, show_default=True)
-@click.option("--subagent-model", default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
 def describe_cmd(artifact_path: str | None, planner_model: str, subagent_model: str):
     emit_json(run_describe(artifact_path=artifact_path, planner_model=planner_model, subagent_model=subagent_model))
 

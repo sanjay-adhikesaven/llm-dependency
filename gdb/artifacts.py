@@ -13,18 +13,10 @@ from . import config
 from .store import dumps, hash_text, key, normalize_space
 
 
-VALID_KINDS = ("model", "dataset")
+VALID_KINDS = config.VALID_KINDS
 LINK_TYPES = config.LINK_TYPES
 REFERENT_SCOPES = config.REFERENT_SCOPES
-PRIMARY_LINK_ORDER: tuple = (
-    "hf_dataset_config",
-    ("hf_model", "hf_dataset"),
-    "github_ref",
-    "github_repo",
-    "api_model_id",
-    "official_release_url",
-    "paper_release",
-)
+PRIMARY_LINK_ORDER = config.PRIMARY_LINK_ORDER
 
 
 def link_priority(link: dict) -> tuple[int, str, str]:
@@ -176,9 +168,9 @@ def is_invalid_alias_surface(surface: Any) -> bool:
     lower = text.casefold()
     if lower.startswith(("http://", "https://", "huggingface.co/", "github.com/")):
         return True
-    if len(text) > 180:
+    if len(text) > config.MAX_ALIAS_SURFACE_LEN:
         return True
-    if "/" in text and " " in text and len(text.split()) > 4:
+    if "/" in text and " " in text and len(text.split()) > config.MAX_ALIAS_SURFACE_WORDS:
         return True
     return False
 
@@ -1077,7 +1069,7 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
                         {
                             "identity_key": signature_value,
                             "referent_scope": scope,
-                            "examples": [m["surface"] for m in mentions_for_referent[:3]],
+                            "examples": [m["surface"] for m in mentions_for_referent[:config.VIOLATION_EXAMPLE_CAP]],
                             "identity": mentions_for_referent[0]["identity"],
                             "concept_path": mentions_for_referent[0]["concept_path"],
                             "links": mentions_for_referent[0]["links"],
@@ -1107,7 +1099,7 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
                         {
                             "identity_key": identity_key_value,
                             "identity": mentions_for_identity[0]["identity"],
-                            "surfaces": [m["surface"] for m in mentions_for_identity[:3]],
+                            "surfaces": [m["surface"] for m in mentions_for_identity[:config.VIOLATION_EXAMPLE_CAP]],
                         }
                         for identity_key_value, mentions_for_identity in identities.items()
                     ],
@@ -1133,7 +1125,7 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
                     "concepts": [
                         {
                             "concept_signature": concept_sig,
-                            "surfaces": [m["surface"] for m in mentions_for_concept[:3]],
+                            "surfaces": [m["surface"] for m in mentions_for_concept[:config.VIOLATION_EXAMPLE_CAP]],
                             "concept_path": mentions_for_concept[0]["concept_path"],
                             "identity": mentions_for_concept[0]["identity"],
                         }
