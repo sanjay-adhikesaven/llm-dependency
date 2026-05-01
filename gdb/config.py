@@ -42,7 +42,8 @@ BATCH_SUBDIR = "batch"
 
 # Per-run files (under STORAGE/runs/<run_id>/)
 RUN_PROMPT_FILE = "prompt.md"
-RUN_STDOUT_FILE = "stdout.txt"
+RUN_STDOUT_FILE = "stdout.txt"      # codex (plain text)
+RUN_STREAM_FILE = "stream.jsonl"    # claude (--output-format stream-json)
 RUN_STDERR_FILE = "stderr.txt"
 RUN_INPUT_FILE = "input.json"
 BATCH_MANIFEST_FILE = "MANIFEST.txt"
@@ -73,7 +74,7 @@ SKIP_DIRS = {"__pycache__", "node_modules", "venv", ".venv", ".git"}
 SQLITE_BUSY_TIMEOUT_S = 30.0
 LINK_TIMEOUT_S = 10.0
 PROCESS_KILL_GRACE_S = 5.0
-MAX_PARALLEL_BATCHES = int(os.environ.get("GDB_MAX_PARALLEL_BATCHES", "4"))
+MAX_PARALLEL_BATCHES = int(os.environ.get("GDB_MAX_PARALLEL_BATCHES", "32"))
 RUN_LOG_TAIL_CHARS = 20000   # tail of stdout/stderr scanned for usage stats
 HASH_CHUNK_BYTES = 1 << 20   # streaming chunk size for sha256_file
 
@@ -138,29 +139,74 @@ SUBAGENT_CHOICES = (
     "codex-low", "codex-medium", "codex-high", "codex-xhigh",
 )
 
-# Subagent dispatch instructions injected into stage prompts as
-# `{{subagent_prompt}}`. Pipeline.subagent_prompt_for(model) renders
-# whichever block matches the chosen subagent runtime.
+# `{{subagent_prompt}}` templates rendered by
+# `pipeline.subagent_prompt_for(model)`. The planner reads one of
+# these to learn how to dispatch sub-work this run. Claude Code knows
+# how to launch subagents natively, so the Claude template only needs
+# the model. Codex has no native multi-agent primitive, so its
+# template gives the dispatch command directly.
+#
+# These match prov/config.py verbatim — same wording, same anti-pattern
+# block. The polling-across-bash-calls anti-pattern has bitten us
+# before (see trace/'s SESSION_LOG.md hang post-mortem), and the
+# explicit enumeration here is the actual fix.
+
 SUBAGENT_PROMPT_CLAUDE = (
-    "Launch subagents in parallel for independent units of work via "
-    "the Task tool. Subagents run as `{model}`."
+    "## Subagent dispatch (Task tool)\n"
+    "\n"
+    "The Task tool is available — subagents run as `{model}`. "
+    "Use them aggressively when the work has parallel structure: a "
+    "directory of sources, a list of clusters, an enumerable set of "
+    "entity leaves, anything where one unit can be analyzed without "
+    "reading the others. Each Task call's reading + reasoning happens "
+    "in the subagent's own context, not yours, so dispatching keeps "
+    "your main context free for synthesis.\n"
+    "\n"
+    "Why this matters: if you instead read every source / cluster / "
+    "entity yourself in your main loop, the accumulating tool results "
+    "fill your context window. On long stages (dozens of sources, "
+    "hundreds of clusters, many entity leaves) that pressure degrades "
+    "your reasoning before you reach final synthesis. Dispatching is "
+    "how you stay sharp at the aggregation step.\n"
+    "\n"
+    "**You decide whether to dispatch — it's not mandatory.** Run "
+    "inline when the work is small (a single file, one cluster, one "
+    "trivial fetch) where dispatch overhead exceeds the context "
+    "savings. Dispatch when there's real fan-out.\n"
+    "\n"
+    "Right-size each subagent: a topically coherent unit a careful "
+    "reader would treat as one pass. Too narrow (one-per-file, "
+    "one-per-record) duplicates context-loading. Too wide (the whole "
+    "batch in one call) just shifts the same context pressure into "
+    "the subagent.\n"
+    "\n"
+    "When you dispatch, brief the subagent like a stranger — it has "
+    "none of your context. Transcribe the relevant rules from this "
+    "prompt verbatim; rule erosion at dispatch is the main cause of "
+    "subagent output drifting from the rules you were given."
 )
 
 SUBAGENT_PROMPT_CODEX = (
-    "## Subagent dispatch (codex)\n"
-    "\n"
-    "You are running as the **orchestrator**. Plan and synthesize the "
-    "final artifact yourself, but delegate every unit of "
+    "You are running as the **orchestrator**. Plan and synthesize "
+    "the final artifact yourself, but delegate every unit of "
     "reading-and-analysis to a codex subagent. **Do NOT call the "
     "`Agent` or `Task` tool** — they are off-policy for this run. "
     "Subagents are dispatched ONLY via the codex CLI.\n"
     "\n"
+    "Codex was selected by the operator because gpt-5.5's "
+    "reasoning depth is needed for per-unit work. Skipping codex "
+    "produces thinner output and defeats the operator's choice. "
+    "When in doubt, dispatch.\n"
+    "\n"
     "Each codex subagent runs in a **fresh process with no shared "
     "context** — it cannot see your prompt or your running state. "
     "Brief it like a stranger: include filesystem scope, schema, "
-    "rules, and the completion contract in its prompt.\n"
+    "rules, and the completion contract in its prompt. How you "
+    "structure I/O (argv prompt, stdin pipe, scratch files) and "
+    "where you put any temp artifacts is your choice; pick what "
+    "fits the work-unit.\n"
     "\n"
-    "### CLI invocation\n"
+    "## CLI invocation\n"
     "\n"
     "```bash\n"
     "codex exec -m {codex_model} \\\n"
@@ -169,10 +215,10 @@ SUBAGENT_PROMPT_CODEX = (
     "  \"<self-contained prompt: scope + schema + rules + completion>\"\n"
     "```\n"
     "\n"
-    "### Waiting on concurrent codex calls\n"
+    "## Waiting on concurrent codex calls\n"
     "\n"
-    "Dispatch and wait for codex subagents in **one** Bash invocation, "
-    "not across multiple. The shape:\n"
+    "Dispatch and wait for codex subagents in **one** Bash "
+    "invocation, not across multiple. The shape:\n"
     "\n"
     "```bash\n"
     "codex exec ... \"$P1\" > out-1.log 2>&1 &\n"
@@ -181,7 +227,44 @@ SUBAGENT_PROMPT_CODEX = (
     "ls out-*.log          # then check outputs\n"
     "```\n"
     "\n"
-    "Codex at `{effort}` effort can take 30–60+ minutes on dense "
-    "long-context tasks. Pass `timeout: 7200000` (120 minutes) on "
-    "this Bash call so the wait doesn't get cut short."
+    "Pass `timeout: 600000` (10 minutes) on this Bash call. The "
+    "Bash tool's default 2-minute timeout will kill a long `wait` "
+    "and leave codex grandchildren orphaned in the process tree. "
+    "Codex runs at high reasoning effort routinely exceed the "
+    "default Bash timeout.\n"
+    "\n"
+    "Anti-patterns (will silently drop work):\n"
+    "- `&` without `wait` — the Bash call returns immediately and "
+    "  your next turn sees codex outputs as not-yet-written.\n"
+    "- Polling across separate Bash calls (`until [ -z $(ps ...) ]; "
+    "  do sleep 30; done` in its own invocation) — hits the 2-min "
+    "  Bash timeout, leaves codex running, and there is no graceful "
+    "  recovery path.\n"
+    "- `ScheduleWakeup` — does not fire in non-interactive `claude "
+    "  -p` runs. The harness blocks the tool entirely; if you call "
+    "  it your turn ends and the artifact is never written.\n"
+    "\n"
+    "## Sizing each subagent's work\n"
+    "\n"
+    "Each codex call sees a unit of work you choose. Two failure "
+    "modes:\n"
+    "- **Too narrow** (one-per-file, one-per-page, one-per-record): "
+    "  duplicates context-loading, fragments cross-reference signal, "
+    "  and turns the planner into the worker.\n"
+    "- **Too wide** (the entire batch in one call): dilutes attention, "
+    "  produces shallower reasoning, costs more per call than the "
+    "  reasoning depth justifies.\n"
+    "\n"
+    "Aim for the unit that a single careful reader would naturally "
+    "treat as one pass: a topically coherent section group, a "
+    "directory of related recipes, a set of clusters that share a "
+    "decision pattern. Split by topical coherence, not by uniform "
+    "size or one-per-input-record.\n"
+    "\n"
+    "## When to run inline (no codex)\n"
+    "\n"
+    "Trivial one-shots: `curl`, `git rev-parse`, file existence "
+    "checks. Final assembly of subagent outputs (your job). "
+    "Anything else that involves reading-and-analysis goes through "
+    "codex."
 )

@@ -31,9 +31,37 @@ Read `{{lattice_path}}` and write descriptions to
 
 Read `{{lattice_path}}`. Write `{{artifact_path}}`. HF README,
 HF API, GitHub README, and arxiv abstract fetches for the
-entity's link are allowed — use your native fetch / web tools
-to read them directly. Do not read or write any other local
-path.
+entity's link are allowed. Do not read or write any other
+local path.
+
+### Fetching conventions
+
+> The output schema asks for structured `metadata.front_matter`
+> (the YAML frontmatter at the top of the README) and
+> `metadata.card_data` (the HF API response). Both must be
+> captured **as raw structured data**, not as a paraphrase of
+> what the page says. Prefer Bash + `curl` and direct API
+> endpoints over the WebFetch tool — WebFetch returns a
+> model-summarized digest that loses the YAML structure.
+
+- HF model card raw README (contains the YAML frontmatter):
+  `curl -sL https://huggingface.co/<repo>/raw/main/README.md`
+- HF dataset card raw README:
+  `curl -sL https://huggingface.co/datasets/<repo>/raw/main/README.md`
+- HF API metadata (the `card_data` source of truth):
+  `curl -sL https://huggingface.co/api/models/<repo>`
+  `curl -sL https://huggingface.co/api/datasets/<repo>`
+- HF dataset config inspection:
+  `curl -sL https://huggingface.co/api/datasets/<repo>/parquet`
+- GitHub README raw bytes:
+  `curl -sL https://raw.githubusercontent.com/<owner>/<repo>/HEAD/README.md`
+- arxiv abstract: `curl -sL https://arxiv.org/abs/<id>`
+
+Parse the YAML frontmatter from the raw README (the block
+between the leading `---` markers) — do not retype what the
+WebFetch summary said it contained. Copy the parsed dict into
+`metadata.front_matter` verbatim. Copy the API JSON response
+(or its `cardData` subfield) into `metadata.card_data` verbatim.
 
 ## Bucketing
 

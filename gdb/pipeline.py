@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import json
 import os
-import re
 import shutil
 import signal
 import subprocess
@@ -157,26 +157,65 @@ def kill_descendants(pid: int, sig: signal.Signals) -> None:
             pass
 
 
-def parse_run_usage(stdout_path: Path, stderr_path: Path) -> dict:
-    text = ""
-    for path in (stdout_path, stderr_path):
-        if path.exists():
-            text += "\n" + path.read_text(errors="replace")[-config.RUN_LOG_TAIL_CHARS:]
-    attrs: dict[str, Any] = {}
-    patterns = {
-        "cost_usd": r"(?:cost|total cost)\D+\$?([0-9]+(?:\.[0-9]+)?)",
-        "input_tokens": r"input tokens\D+([0-9,]+)",
-        "output_tokens": r"output tokens\D+([0-9,]+)",
-        "turns": r"turns\D+([0-9,]+)",
-        "tool_calls": r"tool calls\D+([0-9,]+)",
+def parse_stream_json(stream_path: Path) -> dict:
+    """Parse claude's `--output-format stream-json` jsonl into per-run stats.
+
+    Each line is one event. Of interest:
+    - `assistant` events carry one turn; their `message.content[]` lists
+      `tool_use` entries (for accurate Task / WebFetch / Bash counts) and
+      `text` entries (the planner's user-visible prose, last one wins as
+      `final_text`).
+    - The terminal `result` event carries `total_cost_usd` and a `usage`
+      block (`input_tokens`, `output_tokens`, `cache_creation_input_tokens`,
+      `cache_read_input_tokens`).
+    """
+    out: dict[str, Any] = {
+        "turns": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "tool_calls": [],
+        "final_text": None,
     }
-    for key_name, pattern in patterns.items():
-        match = re.search(pattern, text, flags=re.IGNORECASE)
-        if not match:
+    if not stream_path.exists():
+        return out
+    for line in stream_path.read_text(errors="replace").splitlines():
+        line = line.strip()
+        if not line:
             continue
-        raw = match.group(1).replace(",", "")
-        attrs[key_name] = float(raw) if key_name == "cost_usd" else int(raw)
-    return attrs
+        try:
+            rec = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        kind = rec.get("type")
+        if kind == "assistant":
+            out["turns"] += 1
+            for content in (rec.get("message") or {}).get("content") or []:
+                if not isinstance(content, dict):
+                    continue
+                if content.get("type") == "tool_use":
+                    out["tool_calls"].append(content.get("name") or "tool_use")
+                elif content.get("type") == "text":
+                    text = content.get("text")
+                    if text:
+                        out["final_text"] = text
+        elif kind == "result":
+            cost = rec.get("total_cost_usd")
+            if cost is not None:
+                out["cost_usd"] = float(cost)
+            usage = rec.get("usage") or {}
+            for key in (
+                "input_tokens",
+                "output_tokens",
+                "cache_creation_input_tokens",
+                "cache_read_input_tokens",
+            ):
+                value = usage.get(key)
+                if isinstance(value, (int, float)):
+                    out[key] = int(value)
+    return out
 
 
 def spawn_claude(run_id: str, prompt: str, *, model: str = config.CLAUDE_MODEL) -> dict:
@@ -185,21 +224,19 @@ def spawn_claude(run_id: str, prompt: str, *, model: str = config.CLAUDE_MODEL) 
     run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
     run_root.mkdir(parents=True, exist_ok=True)
     (run_root / config.RUN_PROMPT_FILE).write_text(prompt)
-    out_path = run_root / config.RUN_STDOUT_FILE
+    stream_path = run_root / config.RUN_STREAM_FILE
     err_path = run_root / config.RUN_STDERR_FILE
     cmd = [
         "claude",
-        "-p",
-        prompt,
-        "--permission-mode",
-        "bypassPermissions",
-        "--output-format",
-        "text",
-        "--model",
-        model,
+        "-p", prompt,
+        "--permission-mode", "bypassPermissions",
+        "--output-format", "stream-json",
+        "--verbose",
+        "--model", model,
+        "--disallowedTools", "ScheduleWakeup",
     ]
     started = time.monotonic()
-    with out_path.open("w") as stdout, err_path.open("w") as stderr:
+    with stream_path.open("w") as stdout, err_path.open("w") as stderr:
         proc = subprocess.Popen(
             cmd,
             cwd=config.ROOT,
@@ -215,8 +252,21 @@ def spawn_claude(run_id: str, prompt: str, *, model: str = config.CLAUDE_MODEL) 
             terminate_pgrp(proc.pid)
             raise
     elapsed = time.monotonic() - started
-    usage = parse_run_usage(out_path, err_path)
-    close_run(run_id, {"runtime": "claude", "model": model, "exit_code": rc, "elapsed_s": elapsed, **usage})
+    stats = parse_stream_json(stream_path)
+    tool_calls = stats.pop("tool_calls", [])
+    final_text = stats.pop("final_text", None)
+    attrs = {
+        "runtime": "claude",
+        "model": model,
+        "exit_code": rc,
+        "elapsed_s": elapsed,
+        "tool_call_count": len(tool_calls),
+        "tool_calls_by_name": {name: tool_calls.count(name) for name in set(tool_calls)},
+        **stats,
+    }
+    close_run(run_id, attrs)
+    if final_text:
+        (run_root / "final.txt").write_text(final_text)
     return {"run_id": run_id, "exit_code": rc, "elapsed_s": elapsed, "log_dir": str(run_root)}
 
 
@@ -599,6 +649,7 @@ def run_audit(*, artifact_path: str | None = None, planner_model: str = config.C
         prompt = render_prompt("audit", {
             "run_id": run_id,
             "cluster_packet_path": str(packet_path),
+            "input_path": str(packet_path),
             "artifact_path": str(artifact_out),
             "planner_model": planner_model,
             "subagent_model": subagent_model or planner_model,
@@ -792,6 +843,7 @@ def run_describe(*, artifact_path: str | None = None, planner_model: str = confi
         prompt = render_prompt("describe", {
             "run_id": run_id,
             "lattice_path": str(lattice_path),
+            "input_path": str(lattice_path),
             "artifact_path": str(artifact_out),
             "planner_model": planner_model,
             "subagent_model": subagent_model or planner_model,
