@@ -6,7 +6,7 @@ from typing import Callable, Iterable
 import httpx
 
 from . import config
-from .artifacts import LINK_FIELDS, aggregate_mentions
+from .artifacts import LINK_FIELDS, aggregate_mentions, normalize_mention
 
 
 @dataclass(frozen=True)
@@ -19,6 +19,26 @@ class LinkCandidate:
 
 
 def candidate_url(kind: str, link_kind: str, value: str) -> str:
+    if link_kind in {"hf_model", "hf_ids"} and kind != "dataset":
+        return f"https://huggingface.co/{value}"
+    if link_kind in {"hf_dataset", "hf_ids"}:
+        if link_kind == "hf_ids" and kind != "dataset":
+            return f"https://huggingface.co/{value}"
+        return f"https://huggingface.co/datasets/{value}"
+    if link_kind == "hf_dataset_config":
+        repo = value.split("::", 1)[0]
+        return f"https://huggingface.co/datasets/{repo}"
+    if link_kind == "github_ref":
+        repo = value.split("@", 1)[0].split(":", 1)[0]
+        return f"https://github.com/{repo}"
+    if link_kind == "github_repo":
+        return f"https://github.com/{value}"
+    if link_kind == "paper_release":
+        return value
+    if link_kind == "official_release_url":
+        return value
+    if link_kind == "api_model_id":
+        return ""
     if link_kind == "hf_ids":
         if kind == "dataset":
             return f"https://huggingface.co/datasets/{value}"
@@ -49,7 +69,25 @@ def link_candidates_from_clusters(clusters: Iterable[dict]) -> list[LinkCandidat
 
 
 def link_candidates_from_mentions(mentions: Iterable[dict]) -> list[LinkCandidate]:
-    return link_candidates_from_clusters(aggregate_mentions(mentions))
+    candidates = link_candidates_from_clusters(aggregate_mentions(mentions))
+    seen = {(c.cluster_key, c.link_kind, c.link_value) for c in candidates}
+    for raw in mentions:
+        mention = normalize_mention(raw)
+        cluster_key = mention["identity_key"] or mention["surface_key"]
+        for anchor in mention.get("anchor_candidates") or []:
+            if not anchor.get("exact") or anchor.get("type") == "api_model_id":
+                continue
+            link_kind = anchor["type"]
+            value = anchor["value"]
+            key = (cluster_key, link_kind, value)
+            if key in seen:
+                continue
+            url = anchor.get("url") or candidate_url(mention["kind"], link_kind, value)
+            if not url:
+                continue
+            candidates.append(LinkCandidate(cluster_key, mention["kind"], link_kind, value, url))
+            seen.add(key)
+    return candidates
 
 
 def default_fetch(url: str) -> tuple[bool, int | None, str | None]:
@@ -82,4 +120,3 @@ def verify_candidates(
             "error": error,
         })
     return checks
-

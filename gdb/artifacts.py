@@ -15,6 +15,18 @@ from .store import dumps, hash_text, key, normalize_space
 
 VALID_KINDS = ("model", "dataset")
 LINK_FIELDS = ("hf_ids", "github_repos", "official_urls", "papers")
+ANCHOR_TYPES = config.ANCHOR_TYPES
+REFERENT_SCOPES = config.REFERENT_SCOPES
+ANCHOR_PRIORITY = {
+    "hf_dataset_config": 0,
+    "hf_model": 1,
+    "hf_dataset": 1,
+    "github_ref": 2,
+    "github_repo": 3,
+    "api_model_id": 4,
+    "official_release_url": 5,
+    "paper_release": 6,
+}
 GENERIC_ALIASES = {
     "default",
     "main",
@@ -51,12 +63,96 @@ _GITHUB_URL_RE = re.compile(
 _ARXIV_ID_RE = re.compile(r"^\d{4}\.\d{4,6}(?:v\d+)?$")
 _ARXIV_URL_RE = re.compile(r"^https?://arxiv\.org/abs/(?P<id>\d{4}\.\d{4,6}(?:v\d+)?)/?$")
 _HTTP_URL_RE = re.compile(r"^https?://[^\s]+$")
+_HF_DATASET_CONFIG_RE = re.compile(
+    r"^(?P<repo>[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?/"
+    r"[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?)::(?P<config>[^:\s]+)$"
+)
+_GITHUB_REF_RE = re.compile(
+    r"^(?P<repo>[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?/"
+    r"[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?)(?:@(?P<ref>[^:\s]+))?(?::(?P<path>.+))?$"
+)
 
 
 def normalize_surface(value: Any) -> str:
     text = unicodedata.normalize("NFKC", str(value or "")).strip()
     text = text.replace("–", "-").replace("—", "-").replace("−", "-")
     return re.sub(r"\s+", " ", text).casefold()
+
+
+def normalize_atoms(value: Any, *, surface: str | None = None) -> list[str]:
+    raw = value if isinstance(value, list) else []
+    if not raw and surface:
+        raw = re.split(r"[-_/:\s]+", surface)
+    out: list[str] = []
+    seen: set[str] = set()
+    for item in raw:
+        atom = normalize_space(item)
+        if not atom:
+            continue
+        atom = atom.strip("-_/")
+        if not atom or atom.casefold() in seen:
+            continue
+        out.append(atom)
+        seen.add(atom.casefold())
+    return out
+
+
+def normalize_concept_path(value: Any) -> list[str]:
+    if isinstance(value, str):
+        raw = [part for part in re.split(r"\s*[>/|]\s*", value) if part]
+    elif isinstance(value, list):
+        raw = value
+    else:
+        raw = []
+    out: list[str] = []
+    for item in raw:
+        part = normalize_space(item)
+        if part:
+            out.append(part)
+    return out
+
+
+def concept_path_from_identity(identity: dict) -> list[str]:
+    if not identity.get("family"):
+        return []
+    path = [str(identity["family"])]
+    for field, value in identity.items():
+        if field in {"family", "extra"}:
+            continue
+        if value not in (None, "", [], {}):
+            path.append(str(value))
+    extra = identity.get("extra")
+    if isinstance(extra, dict):
+        concept_path = extra.get("concept_path")
+        if isinstance(concept_path, str):
+            path.extend(normalize_concept_path(concept_path))
+        elif isinstance(concept_path, list):
+            path.extend(normalize_concept_path(concept_path))
+    return path
+
+
+def identity_from_concept_path(path: list[str]) -> dict:
+    if not path:
+        return {}
+    identity: dict[str, Any] = {"family": path[0]}
+    if len(path) > 1:
+        identity["extra"] = {"concept_path": " / ".join(path[1:])}
+    return canonical_identity(identity)
+
+
+def concept_display_name(path: list[str]) -> str:
+    return "-".join(path) if path else "concept"
+
+
+def normalize_scope(value: Any, *, anchors: list[dict] | None = None, concept_path: list[str] | None = None) -> str:
+    raw = normalize_space(value).casefold()
+    if raw in REFERENT_SCOPES:
+        return raw
+    if anchors:
+        return "entity"
+    if concept_path:
+        return "concept"
+    return "ambiguous"
 
 
 def is_generic_alias(surface: Any) -> bool:
@@ -105,8 +201,11 @@ def canonical_identity(identity: Any) -> dict:
     if not isinstance(identity, dict):
         identity = {}
     out: dict[str, Any] = {}
-    for field in config.IDENTITY_FIELDS:
-        value = _clean_scalar(identity.get(field))
+    for raw_field, raw_value in identity.items():
+        field = normalize_space(raw_field)
+        if not field or field == "extra":
+            continue
+        value = _clean_scalar(raw_value)
         if value in (None, "", [], {}):
             continue
         out[field] = value
@@ -164,12 +263,51 @@ def normalize_roles(value: Any) -> list[str]:
         role = normalize_space(item).casefold()
         if not role:
             continue
-        if role not in config.CONTEXT_ROLES:
-            role = "unknown"
         if role not in seen:
             out.append(role)
             seen.add(role)
     return out or ["unknown"]
+
+
+def normalize_aux(value: Any) -> dict:
+    if not isinstance(value, dict):
+        return {}
+    out: dict[str, Any] = {}
+    for raw_key, raw_value in value.items():
+        k = normalize_space(raw_key)
+        if not k:
+            continue
+        if isinstance(raw_value, list):
+            cleaned = [_clean_scalar(v) for v in raw_value]
+            cleaned = [v for v in cleaned if v not in (None, "", [], {})]
+            if cleaned:
+                out[k] = cleaned
+        elif isinstance(raw_value, dict):
+            nested = normalize_aux(raw_value)
+            if nested:
+                out[k] = nested
+        else:
+            cleaned = _clean_scalar(raw_value)
+            if cleaned not in (None, "", [], {}):
+                out[k] = cleaned
+    return {k: out[k] for k in sorted(out)}
+
+
+def normalize_relationship_hints(value: Any) -> list[dict]:
+    raw = value if isinstance(value, list) else ([value] if value else [])
+    out: list[dict] = []
+    for item in raw:
+        if isinstance(item, str):
+            relation = normalize_space(item)
+            if relation:
+                out.append({"relation": relation})
+        elif isinstance(item, dict):
+            relation = normalize_space(item.get("relation") or item.get("type") or "")
+            target = normalize_space(item.get("target") or item.get("object") or "")
+            rec = {k: v for k, v in {"relation": relation, "target": target}.items() if v}
+            if rec:
+                out.append(rec)
+    return out
 
 
 def normalize_aliases(aliases: Any, surface: str | None = None, descriptors: dict | None = None) -> list[dict]:
@@ -268,6 +406,215 @@ def normalize_paper(value: Any) -> str | None:
     return normalize_http_url(text)
 
 
+def normalize_hf_dataset_config(value: Any, *, repo: Any = None, config_name: Any = None) -> str | None:
+    repo_text = normalize_hf_id(repo) if repo else None
+    config_text = normalize_space(config_name) if config_name else None
+    text = normalize_space(value)
+    if text:
+        match = _HF_DATASET_CONFIG_RE.match(text)
+        if match:
+            repo_text = normalize_hf_id(match.group("repo"))
+            config_text = normalize_space(match.group("config"))
+        elif "::" in text:
+            raw_repo, raw_config = text.split("::", 1)
+            repo_text = normalize_hf_id(raw_repo)
+            config_text = normalize_space(raw_config)
+    if repo_text and config_text:
+        return f"{repo_text}::{config_text}"
+    return None
+
+
+def normalize_github_ref(value: Any, *, repo: Any = None, ref: Any = None, path: Any = None) -> str | None:
+    repo_text = normalize_github_repo(repo) if repo else None
+    ref_text = normalize_space(ref) if ref else ""
+    path_text = normalize_space(path) if path else ""
+    text = normalize_space(value)
+    if text:
+        match = _GITHUB_REF_RE.match(text)
+        if match:
+            repo_text = normalize_github_repo(match.group("repo"))
+            ref_text = normalize_space(match.group("ref") or ref_text)
+            path_text = normalize_space(match.group("path") or path_text)
+    if not repo_text:
+        return None
+    suffix = f"@{ref_text}" if ref_text else ""
+    if path_text:
+        suffix += f":{path_text}"
+    return f"{repo_text}{suffix}"
+
+
+def normalize_anchor_candidate(item: Any, *, kind: str | None = None) -> dict | None:
+    if isinstance(item, str):
+        raw_type = ""
+        raw_value = item
+        exact = True
+        source = ""
+        metadata = {}
+    elif isinstance(item, dict):
+        raw_type = normalize_space(item.get("type") or item.get("anchor_type") or item.get("link_type") or "").casefold()
+        raw_value = item.get("value") or item.get("id") or item.get("repo") or item.get("url") or item.get("name") or ""
+        exact = bool(item.get("exact", True))
+        source = normalize_space(item.get("source") or "")
+        metadata = item.get("metadata") if isinstance(item.get("metadata"), dict) else {}
+    else:
+        return None
+
+    anchor_type = raw_type
+    if anchor_type in {"hf", "hf_id", "huggingface", "huggingface_id"}:
+        anchor_type = "hf_dataset" if kind == "dataset" else "hf_model"
+    elif anchor_type in {"github", "github_repository"}:
+        anchor_type = "github_repo"
+    elif anchor_type in {"api", "model_id"}:
+        anchor_type = "api_model_id"
+    elif anchor_type in {"official", "url"}:
+        anchor_type = "official_release_url"
+    elif anchor_type in {"paper", "arxiv"}:
+        anchor_type = "paper_release"
+
+    if not anchor_type:
+        if normalize_hf_id(raw_value):
+            anchor_type = "hf_dataset" if kind == "dataset" else "hf_model"
+        elif normalize_github_repo(raw_value):
+            anchor_type = "github_repo"
+        elif normalize_paper(raw_value) and "arxiv" in normalize_space(raw_value).casefold():
+            anchor_type = "paper_release"
+        elif normalize_http_url(raw_value):
+            anchor_type = "official_release_url"
+        else:
+            anchor_type = "api_model_id"
+
+    value: str | None
+    url: str | None = None
+    if anchor_type == "hf_model":
+        value = normalize_hf_id(raw_value)
+        url = f"https://huggingface.co/{value}" if value else None
+    elif anchor_type == "hf_dataset":
+        value = normalize_hf_id(raw_value)
+        url = f"https://huggingface.co/datasets/{value}" if value else None
+    elif anchor_type == "hf_dataset_config":
+        if isinstance(item, dict):
+            value = normalize_hf_dataset_config(raw_value, repo=item.get("repo"), config_name=item.get("config") or item.get("config_name"))
+        else:
+            value = normalize_hf_dataset_config(raw_value)
+        repo_value = value.split("::", 1)[0] if value else None
+        url = f"https://huggingface.co/datasets/{repo_value}" if repo_value else None
+    elif anchor_type == "github_repo":
+        value = normalize_github_repo(raw_value)
+        url = f"https://github.com/{value}" if value else None
+    elif anchor_type == "github_ref":
+        if isinstance(item, dict):
+            value = normalize_github_ref(raw_value, repo=item.get("repo"), ref=item.get("ref"), path=item.get("path"))
+        else:
+            value = normalize_github_ref(raw_value)
+        repo_value = value.split("@", 1)[0].split(":", 1)[0] if value else None
+        url = f"https://github.com/{repo_value}" if repo_value else None
+    elif anchor_type == "api_model_id":
+        value = normalize_space(raw_value)
+    elif anchor_type == "official_release_url":
+        value = normalize_http_url(raw_value)
+        url = value
+    elif anchor_type == "paper_release":
+        value = normalize_paper(raw_value)
+        url = value
+    else:
+        return None
+
+    if not value:
+        return None
+    rec = {"type": anchor_type, "value": value, "exact": exact}
+    if url:
+        rec["url"] = url
+    if source:
+        rec["source"] = source
+    if metadata:
+        rec["metadata"] = normalize_aux(metadata)
+    return rec
+
+
+def normalize_anchor_candidates(value: Any, *, kind: str | None = None) -> list[dict]:
+    raw = value if isinstance(value, list) else ([value] if value else [])
+    out: list[dict] = []
+    seen: set[tuple[str, str]] = set()
+    for item in raw:
+        anchor = normalize_anchor_candidate(item, kind=kind)
+        if not anchor:
+            continue
+        key_tuple = (anchor["type"], anchor["value"])
+        if key_tuple in seen:
+            continue
+        out.append(anchor)
+        seen.add(key_tuple)
+    return out
+
+
+def anchor_priority(anchor: dict) -> tuple[int, str, str]:
+    return (
+        ANCHOR_PRIORITY.get(anchor.get("type"), 99),
+        normalize_space(anchor.get("type") or ""),
+        normalize_space(anchor.get("value") or "").casefold(),
+    )
+
+
+def sort_anchors(anchors: list[dict]) -> list[dict]:
+    return sorted(anchors, key=anchor_priority)
+
+
+def primary_anchor(anchors: list[dict]) -> dict | None:
+    exact = [anchor for anchor in anchors if anchor.get("exact")]
+    if not exact:
+        return None
+    return sort_anchors(exact)[0]
+
+
+def paper_anchor_is_exact_release(mention: dict, anchor: dict) -> bool:
+    metadata = anchor.get("metadata") if isinstance(anchor.get("metadata"), dict) else {}
+    if metadata.get("exact_release") is True or metadata.get("paper_role") == "release":
+        return True
+    aux = mention.get("aux") if isinstance(mention.get("aux"), dict) else {}
+    if aux.get("paper_exact_release") is True:
+        return True
+    surface = normalize_space(mention.get("surface"))
+    if surface and surface.casefold().startswith(("arxiv:", "https://arxiv.org/")):
+        return False
+    text = " ".join(e.get("excerpt", "") for e in mention.get("evidence") or [] if isinstance(e, dict)).casefold()
+    exact_terms = ("released", "release", "introduced", "propose", "present", "dataset", "benchmark", "model")
+    generic_terms = ("technical report", "family", "suite", "series", "blog")
+    return any(term in text for term in exact_terms) and not any(term in text for term in generic_terms)
+
+
+def anchors_from_links(links: dict, *, kind: str | None = None, include_papers: bool = False) -> list[dict]:
+    anchors: list[dict] = []
+    hf_type = "hf_dataset" if kind == "dataset" else "hf_model"
+    for value in links.get("hf_ids") or []:
+        anchors.extend(normalize_anchor_candidates([{"type": hf_type, "value": value}], kind=kind))
+    for value in links.get("github_repos") or []:
+        anchors.extend(normalize_anchor_candidates([{"type": "github_repo", "value": value}], kind=kind))
+    for value in links.get("official_urls") or []:
+        anchors.extend(normalize_anchor_candidates([{"type": "official_release_url", "value": value}], kind=kind))
+    if include_papers:
+        for value in links.get("papers") or []:
+            anchors.extend(normalize_anchor_candidates([{"type": "paper_release", "value": value}], kind=kind))
+    return normalize_anchor_candidates(anchors, kind=kind)
+
+
+def links_from_anchors(anchors: list[dict]) -> dict:
+    out = {field: [] for field in LINK_FIELDS}
+    for anchor in anchors:
+        anchor_type = anchor.get("type")
+        value = anchor.get("value")
+        if not value:
+            continue
+        if anchor_type in {"hf_model", "hf_dataset"}:
+            out["hf_ids"].append(value)
+        elif anchor_type == "github_repo":
+            out["github_repos"].append(value.split("@", 1)[0].split(":", 1)[0])
+        elif anchor_type == "official_release_url":
+            out["official_urls"].append(value)
+        elif anchor_type == "paper_release":
+            out["papers"].append(value)
+    return {field: _dedup(values) for field, values in out.items()}
+
+
 def normalize_links(links: Any) -> dict:
     if not isinstance(links, dict):
         links = {}
@@ -325,18 +672,41 @@ def normalize_subsets(subsets: Any) -> list[dict]:
         name = normalize_space(item.get("name") or item.get("subset") or "")
         identity = canonical_identity(item.get("identity") or {"subset": name})
         evidence = normalize_evidence(item.get("evidence") or [])
+        anchors = normalize_anchor_candidates(item.get("anchors") or item.get("anchor_candidates") or [], kind="dataset")
         if name or identity:
-            out.append({"name": name, "identity": identity, "evidence": evidence})
+            rec = {"name": name, "identity": identity, "evidence": evidence}
+            if anchors:
+                rec["anchor_candidates"] = anchors
+            out.append(rec)
     return out
 
 
 def normalize_mention(item: dict, *, batch_id: str | None = None, source_id: str | None = None) -> dict:
     surface = normalize_space(item.get("surface") or item.get("raw_text") or "")
     kind = normalize_space(item.get("kind") or item.get("parsed_kind") or "").casefold()
-    identity = canonical_identity(item.get("identity") or item.get("parsed_identity") or item.get("parsed_facets") or {})
+    raw_identity = item.get("identity") or item.get("parsed_identity") or item.get("parsed_facets") or {}
+    identity = canonical_identity(raw_identity)
+    atoms = normalize_atoms(item.get("atoms") or item.get("name_atoms") or [], surface=surface)
+    concept_path = normalize_concept_path(
+        item.get("concept_path")
+        or item.get("lattice_path")
+        or item.get("family_path")
+        or []
+    )
+    if not concept_path and identity:
+        concept_path = concept_path_from_identity(identity)
+    if not identity and concept_path:
+        identity = identity_from_concept_path(concept_path)
     descriptors = normalize_descriptors(item.get("descriptors") or {})
     aliases = normalize_aliases(item.get("aliases") or [], surface=surface, descriptors=descriptors)
     links = normalize_links(item.get("links") or {})
+    explicit_anchors = normalize_anchor_candidates(
+        item.get("anchors") or item.get("anchor_candidates") or item.get("connections") or [],
+        kind=kind,
+    )
+    link_anchors = anchors_from_links(links, kind=kind, include_papers=bool(item.get("papers_are_exact_release")))
+    anchors = normalize_anchor_candidates([*explicit_anchors, *link_anchors], kind=kind)
+    links = merge_links(links, links_from_anchors(anchors))
     roles = normalize_roles(item.get("context_roles") or descriptors.get("context_roles") or ["unknown"])
     evidence = normalize_evidence(item.get("evidence") or {
         "source_id": item.get("source_id") or source_id or "",
@@ -345,6 +715,16 @@ def normalize_mention(item: dict, *, batch_id: str | None = None, source_id: str
         "excerpt": item.get("excerpt") or "",
     })
     subsets = normalize_subsets(item.get("subsets") or [])
+    attrs = item.get("attrs") if isinstance(item.get("attrs"), dict) else {}
+    aux = normalize_aux(item.get("aux") or item.get("aux_info") or attrs.get("aux") or {})
+    relationships = normalize_relationship_hints(
+        item.get("relationships")
+        or item.get("relationship_hints")
+        or attrs.get("relationships")
+        or attrs.get("relationship_hints")
+        or []
+    )
+    description = normalize_space(item.get("description") or attrs.get("description") or "")
     return {
         "id": item.get("id"),
         "batch_id": item.get("batch_id") or batch_id,
@@ -359,9 +739,16 @@ def normalize_mention(item: dict, *, batch_id: str | None = None, source_id: str
         "links": links,
         "subsets": subsets,
         "context_roles": roles,
+        "atoms": atoms,
+        "referent_scope": normalize_scope(item.get("referent_scope") or item.get("scope"), anchors=anchors, concept_path=concept_path),
+        "anchor_candidates": anchors,
+        "concept_path": concept_path,
+        "aux": aux,
+        "relationships": relationships,
         "evidence": evidence,
+        "description": description or None,
         "notes": normalize_space(item.get("notes") or item.get("rationale") or "") or None,
-        "attrs": item.get("attrs") if isinstance(item.get("attrs"), dict) else {},
+        "attrs": attrs,
     }
 
 
@@ -388,7 +775,7 @@ def validate_mention_artifact(artifact: Any) -> list[dict]:
             errors.append({"code": "invalid_kind", "path": f"mentions[{idx}].kind", "value": raw.get("kind") or raw.get("parsed_kind")})
         if not mention["surface"]:
             errors.append({"code": "missing_surface", "path": f"mentions[{idx}].surface"})
-        if not mention["identity"].get("family"):
+        if not mention["identity"].get("family") and not mention["concept_path"]:
             errors.append({"code": "missing_identity_family", "path": f"mentions[{idx}].identity.family", "surface": mention["surface"]})
         if not mention["evidence"] or not any(e.get("excerpt") for e in mention["evidence"]):
             errors.append({"code": "empty_evidence", "path": f"mentions[{idx}].evidence", "surface": mention["surface"]})
@@ -418,6 +805,24 @@ def validate_mention_artifact(artifact: Any) -> list[dict]:
                         errors.append({"code": "invalid_link_shape", "path": f"mentions[{idx}].links.official_urls", "value": value})
                     elif field == "papers" and not normalize_paper(value):
                         errors.append({"code": "invalid_link_shape", "path": f"mentions[{idx}].links.papers", "value": value})
+        raw_anchors = raw.get("anchors") or raw.get("anchor_candidates") or []
+        if raw_anchors:
+            anchor_items = raw_anchors if isinstance(raw_anchors, list) else [raw_anchors]
+            for anchor_idx, anchor_item in enumerate(anchor_items):
+                if not normalize_anchor_candidate(anchor_item, kind=mention["kind"]):
+                    errors.append({
+                        "code": "invalid_anchor_shape",
+                        "path": f"mentions[{idx}].anchor_candidates[{anchor_idx}]",
+                        "value": anchor_item,
+                    })
+        for anchor in mention["anchor_candidates"]:
+            if anchor.get("type") == "paper_release" and not paper_anchor_is_exact_release(mention, anchor):
+                errors.append({
+                    "code": "paper_anchor_not_exact_release",
+                    "path": f"mentions[{idx}].anchor_candidates",
+                    "value": anchor,
+                    "surface": mention["surface"],
+                })
     return errors
 
 
@@ -449,18 +854,9 @@ def choose_display_name(aliases: list[dict], identity: dict) -> str:
     ]
     if candidates:
         return sorted(candidates, key=lambda s: (len(s), s.casefold()))[0]
-    if identity.get("family"):
-        parts = [
-            identity.get("family"),
-            identity.get("size"),
-            identity.get("stage"),
-            identity.get("version"),
-            identity.get("date"),
-            identity.get("subset"),
-            identity.get("quality_cut"),
-            identity.get("mix_variant"),
-        ]
-        return "-".join(str(p) for p in parts if p)
+    path = concept_path_from_identity(identity)
+    if path:
+        return concept_display_name(path)
     return "unnamed"
 
 
@@ -476,12 +872,24 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
         links: dict,
         subsets: list[dict],
         context_roles: list[str],
+        atoms: list[str],
+        referent_scope: str,
+        anchor_candidates: list[dict],
+        concept_path: list[str],
+        aux: dict,
+        relationships: list[dict],
         evidence: list[dict],
+        description: str | None,
         mention_id: str | None,
     ) -> None:
         if kind not in VALID_KINDS or not identity.get("family"):
             return
-        cluster_key = identity_key(kind, identity)
+        exact_anchors = [anchor for anchor in anchor_candidates if anchor.get("exact")]
+        if exact_anchors:
+            primary = primary_anchor(exact_anchors)
+            cluster_key = f"{kind}:anchor:{primary['type']}:{hash_text(primary['value'])}"
+        else:
+            cluster_key = identity_key(kind, identity)
         if cluster_key not in clusters:
             clusters[cluster_key] = {
                 "cluster_key": cluster_key,
@@ -492,7 +900,14 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
                 "links": {field: [] for field in LINK_FIELDS},
                 "subsets": [],
                 "context_roles": [],
+                "atoms": [],
+                "referent_scopes": [],
+                "anchor_candidates": [],
+                "concept_path": concept_path,
+                "aux": {},
+                "relationships": [],
                 "evidence": [],
+                "descriptions": [],
                 "mention_ids": [],
                 "occurrence_count": 0,
             }
@@ -502,7 +917,14 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
         cluster["links"] = merge_links(cluster["links"], links)
         cluster["subsets"].extend(subsets)
         cluster["context_roles"] = _dedup([*cluster["context_roles"], *context_roles])
+        cluster["atoms"] = _dedup([*cluster["atoms"], *atoms])
+        cluster["referent_scopes"] = _dedup([*cluster["referent_scopes"], referent_scope])
+        cluster["anchor_candidates"] = normalize_anchor_candidates([*cluster["anchor_candidates"], *anchor_candidates], kind=kind)
+        cluster["aux"] = merge_descriptor_values(cluster["aux"], aux)
+        cluster["relationships"].extend(relationships)
         cluster["evidence"].extend(evidence)
+        if description:
+            cluster["descriptions"].append(description)
         if mention_id:
             cluster["mention_ids"].append(mention_id)
         cluster["occurrence_count"] += 1
@@ -517,7 +939,14 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
             links=mention["links"],
             subsets=mention["subsets"],
             context_roles=mention["context_roles"],
+            atoms=mention["atoms"],
+            referent_scope=mention["referent_scope"],
+            anchor_candidates=mention["anchor_candidates"],
+            concept_path=mention["concept_path"],
+            aux=mention["aux"],
+            relationships=mention["relationships"],
             evidence=mention["evidence"],
+            description=mention.get("description"),
             mention_id=mention.get("id"),
         )
         if mention["kind"] == "dataset":
@@ -535,11 +964,19 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
                     links={field: [] for field in LINK_FIELDS},
                     subsets=[],
                     context_roles=mention["context_roles"],
+                    atoms=mention["atoms"],
+                    referent_scope=mention["referent_scope"],
+                    anchor_candidates=normalize_anchor_candidates(subset.get("anchors") or subset.get("anchor_candidates") or [], kind="dataset"),
+                    concept_path=concept_path_from_identity(subset_identity),
+                    aux=mention["aux"],
+                    relationships=mention["relationships"],
                     evidence=subset.get("evidence") or mention["evidence"],
+                    description=mention.get("description"),
                     mention_id=mention.get("id"),
                 )
     for cluster in clusters.values():
         cluster["display_name"] = choose_display_name(cluster["aliases"], cluster["identity"])
+        cluster["description"] = cluster["descriptions"][0] if cluster["descriptions"] else None
     return sorted(clusters.values(), key=lambda c: (c["kind"], dumps(c["identity"])))
 
 
@@ -564,6 +1001,25 @@ def merge_alias_lists(current: list[dict], incoming: list[dict]) -> list[dict]:
     return out
 
 
+def primary_referent_signature(mention: dict) -> tuple[str, str]:
+    anchors = [a for a in mention.get("anchor_candidates") or [] if a.get("exact")]
+    if anchors:
+        anchor = sorted(anchors, key=lambda a: (a.get("type", ""), a.get("value", "")))[0]
+        return ("entity", f"{anchor.get('type')}:{anchor.get('value')}")
+    if mention.get("concept_path"):
+        return ("concept", " / ".join(mention["concept_path"]).casefold())
+    if mention.get("identity_key"):
+        return ("concept", mention["identity_key"])
+    return ("ambiguous", mention.get("surface_key") or "")
+
+
+def allow_concept_entity_surface_duplicate(referents: dict[tuple[str, str], list[dict]]) -> bool:
+    if len(referents) != 2:
+        return False
+    scopes = {scope for scope, _sig in referents}
+    return scopes == {"concept", "entity"}
+
+
 def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
     normalized = [normalize_mention(m) for m in mentions]
     violations: list[dict] = []
@@ -575,7 +1031,7 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
                 "subject_key": f"mention:{idx}",
                 "details": {"surface": mention["surface"], "kind": mention["kind"]},
             })
-        if not mention["identity"].get("family"):
+        if not mention["identity"].get("family") and not mention["concept_path"]:
             violations.append({
                 "code": "missing_identity_family",
                 "severity": "error",
@@ -597,17 +1053,17 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
                     "subject_key": normalize_surface(alias.get("surface")),
                     "details": {"surface": mention["surface"], "alias": alias.get("surface")},
                 })
-    by_surface: dict[str, dict[str, list[dict]]] = defaultdict(lambda: defaultdict(list))
+    by_surface: dict[str, dict[tuple[str, str], list[dict]]] = defaultdict(lambda: defaultdict(list))
     for mention in normalized:
         if mention["kind"] in VALID_KINDS and mention["surface_key"]:
-            by_surface[mention["surface_key"]][mention["identity_key"]].append(mention)
+            by_surface[mention["surface_key"]][primary_referent_signature(mention)].append(mention)
         if mention["kind"] in VALID_KINDS:
             for alias in mention["aliases"]:
                 alias_surface_key = normalize_surface(alias.get("surface"))
                 if alias_surface_key:
-                    by_surface[alias_surface_key][mention["identity_key"]].append(mention)
-    for surface_key, identities in by_surface.items():
-        if len(identities) > 1:
+                    by_surface[alias_surface_key][primary_referent_signature(mention)].append(mention)
+    for surface_key, referents in by_surface.items():
+        if len(referents) > 1 and not allow_concept_entity_surface_duplicate(referents):
             violations.append({
                 "code": "surface_identity_conflict",
                 "severity": "error",
@@ -616,11 +1072,14 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
                     "surface_key": surface_key,
                     "identities": [
                         {
-                            "identity_key": identity_key_value,
-                            "examples": [m["surface"] for m in mentions_for_identity[:3]],
-                            "identity": mentions_for_identity[0]["identity"],
+                            "identity_key": signature_value,
+                            "referent_scope": scope,
+                            "examples": [m["surface"] for m in mentions_for_referent[:3]],
+                            "identity": mentions_for_referent[0]["identity"],
+                            "concept_path": mentions_for_referent[0]["concept_path"],
+                            "anchors": mentions_for_referent[0]["anchor_candidates"],
                         }
-                        for identity_key_value, mentions_for_identity in identities.items()
+                        for (scope, signature_value), mentions_for_referent in referents.items()
                     ],
                 },
             })
@@ -646,6 +1105,42 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
                             "surfaces": [m["surface"] for m in mentions_for_identity[:3]],
                         }
                         for identity_key_value, mentions_for_identity in identities.items()
+                    ],
+                },
+            })
+    by_anchor: dict[str, dict[str, list[dict]]] = defaultdict(lambda: defaultdict(list))
+    for mention in normalized:
+        if mention["kind"] not in VALID_KINDS:
+            continue
+        concept_sig = " / ".join(mention.get("concept_path") or []).casefold() or mention["identity_key"]
+        for anchor in mention.get("anchor_candidates") or []:
+            if not anchor.get("exact"):
+                continue
+            if anchor.get("type") == "paper_release" and not paper_anchor_is_exact_release(mention, anchor):
+                violations.append({
+                    "code": "paper_anchor_not_exact_release",
+                    "severity": "warning",
+                    "subject_key": f"paper_release:{anchor.get('value')}",
+                    "details": {"surface": mention["surface"], "anchor": anchor},
+                })
+                continue
+            by_anchor[f"{anchor['type']}:{anchor['value']}"][concept_sig].append(mention)
+    for anchor_key, concept_sigs in by_anchor.items():
+        if len(concept_sigs) > 1:
+            violations.append({
+                "code": "anchor_concept_conflict",
+                "severity": "error",
+                "subject_key": anchor_key,
+                "details": {
+                    "anchor_key": anchor_key,
+                    "concepts": [
+                        {
+                            "concept_signature": concept_sig,
+                            "surfaces": [m["surface"] for m in mentions_for_concept[:3]],
+                            "concept_path": mentions_for_concept[0]["concept_path"],
+                            "identity": mentions_for_concept[0]["identity"],
+                        }
+                        for concept_sig, mentions_for_concept in concept_sigs.items()
                     ],
                 },
             })
@@ -686,6 +1181,23 @@ def repair_mentions(mentions: list[dict], repair_artifact: dict) -> list[dict]:
                 mention["aliases"] = normalize_aliases(update["aliases"], surface=mention["surface"], descriptors=mention["descriptors"])
             if "links" in update:
                 mention["links"] = normalize_links(update["links"])
+            if "atoms" in update:
+                mention["atoms"] = normalize_atoms(update["atoms"], surface=mention["surface"])
+            if "concept_path" in update or "lattice_path" in update:
+                mention["concept_path"] = normalize_concept_path(update.get("concept_path") or update.get("lattice_path") or [])
+                if not mention["identity"].get("family") and mention["concept_path"]:
+                    mention["identity"] = identity_from_concept_path(mention["concept_path"])
+            if "anchors" in update or "anchor_candidates" in update:
+                mention["anchor_candidates"] = normalize_anchor_candidates(update.get("anchors") or update.get("anchor_candidates") or [], kind=mention["kind"])
+                mention["links"] = merge_links(mention["links"], links_from_anchors(mention["anchor_candidates"]))
+            if "referent_scope" in update or "scope" in update:
+                mention["referent_scope"] = normalize_scope(update.get("referent_scope") or update.get("scope"), anchors=mention["anchor_candidates"], concept_path=mention["concept_path"])
+            if "aux" in update or "aux_info" in update:
+                mention["aux"] = normalize_aux(update.get("aux") or update.get("aux_info") or {})
+            if "relationships" in update or "relationship_hints" in update:
+                mention["relationships"] = normalize_relationship_hints(update.get("relationships") or update.get("relationship_hints") or [])
+            if "description" in update:
+                mention["description"] = normalize_space(update.get("description") or "") or None
             mention["identity_key"] = identity_key(mention["kind"], mention["identity"]) if mention["kind"] in VALID_KINDS else ""
             mention["status"] = "repaired"
     return out

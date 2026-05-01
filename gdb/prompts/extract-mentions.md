@@ -1,6 +1,6 @@
 # Extract Mentions
 
-Read `{{batch_dir}}` and write model/dataset-only mentions to
+Read `{{batch_dir}}` and write model/dataset-only name mentions to
 `{{artifact_path}}`.
 
 Inputs:
@@ -14,20 +14,21 @@ Output:
 {
   "mentions": [
     {
-      "surface": "Qwen3-7B-Instruct-FP8",
+      "surface": "Qwen/Qwen3-4B",
       "kind": "model",
-      "identity": {"family": "Qwen3", "size": "7B", "stage": "Instruct"},
-      "descriptors": {"precision": "FP8", "context_roles": ["released_artifact"]},
-      "aliases": [
-        {"surface": "Qwen3-7B-Instruct-FP8", "descriptors": {"precision": "FP8"}}
+      "atoms": ["Qwen3", "4B"],
+      "referent_scope": "entity",
+      "concept_path": ["Qwen3", "4B"],
+      "anchor_candidates": [
+        {"type": "hf_model", "value": "Qwen/Qwen3-4B", "exact": true}
       ],
-      "links": {"hf_ids": ["Qwen/Qwen3-7B-Instruct-FP8"], "github_repos": [], "official_urls": [], "papers": []},
-      "subsets": [],
+      "aux": {},
+      "aliases": [{"surface": "Qwen3-4B", "descriptors": {}}],
       "context_roles": ["released_artifact"],
       "evidence": [
-        {"file": "card.md", "source_id": "...", "location": "README", "excerpt": "verbatim sentence containing the surface"}
+        {"file": "config.py", "source_id": "...", "location": "L10", "excerpt": "model_name = \"Qwen/Qwen3-4B\""}
       ],
-      "notes": "optional"
+      "description": "optional source-grounded description"
     }
   ]
 }
@@ -36,18 +37,26 @@ Output:
 Rules:
 
 - Emit model and dataset mentions only.
-- Benchmarks are datasets. Baseline, teacher, judge, generator, filter,
-  and base artifacts are model/dataset mentions with role tags.
-- Put identity-bearing uncertainty in `identity.extra`, not in
-  descriptors.
-- Quantization, precision, and file format are alias-local descriptors
-  unless the source says they are separately trained weights.
-- For datasets, use `subsets` for HF configs, named release subsets,
-  quality cuts, and evidence.
-- Every mention needs non-empty evidence with a verbatim excerpt.
+- Extract names from prose, tables, model cards, dataset cards, YAML,
+  JSON, and code-shaped calls such as `from_pretrained`,
+  `load_dataset`, `model_name_or_path`, `model_name`,
+  `tokenizer_name`, and `dataset_name`.
 - Do not deep-search the web in this stage. Use only obvious links in
-  the source text or surface-derived IDs.
+  the source text or surface-derived exact IDs.
+- Do not use the target as an identity field. Role tags capture how an
+  artifact is used by the target.
+- Use `hf_dataset_config` for exact HF configs/subsets, for example
+  `{"type": "hf_dataset_config", "value": "HuggingFaceTB/finemath::finemath-3plus"}`.
+- Put uncertain or over-specific pieces in `aux`, not into
+  `concept_path`. For example `dolma3_longmino_mix-100B-1125` should
+  usually have atoms `["dolma3", "longmino", "mix", "100B", "1125"]`,
+  concept path `["Dolma3", "longmino"]`, and aux carrying mix/date
+  details unless the source/review evidence says those are reusable
+  concept tiers.
+- Quantization, precision, file format, and mirror/conversion details
+  are entity aux or alias-local descriptors unless the source states
+  separately trained weights.
+- Every mention needs non-empty evidence with a verbatim excerpt.
 
 You are running as `{{planner_model}}`. Use subagents for independent
 source packets; subagents run as `{{subagent_model}}`.
-

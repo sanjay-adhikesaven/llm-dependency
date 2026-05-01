@@ -32,38 +32,40 @@ def test_olmo3_stage_date_size_and_version_variants_remain_distinct():
     from gdb.lattice import build_lattice
 
     mentions = [
-        {"surface": "Olmo-3-1025-7B", "kind": "model", "identity": {"family": "Olmo-3", "date": "1025", "size": "7B", "stage": "Base"}, "evidence": [{"file": "m.md", "excerpt": "Olmo-3-1025-7B"}]},
-        {"surface": "Olmo-3-1125-32B", "kind": "model", "identity": {"family": "Olmo-3", "date": "1125", "size": "32B", "stage": "Base"}, "evidence": [{"file": "m.md", "excerpt": "Olmo-3-1125-32B"}]},
-        {"surface": "Olmo-3-7B-Think-SFT", "kind": "model", "identity": {"family": "Olmo-3", "size": "7B", "stage": "Think-SFT"}, "evidence": [{"file": "m.md", "excerpt": "Olmo-3-7B-Think-SFT"}]},
-        {"surface": "Olmo-3-7B-Think-DPO", "kind": "model", "identity": {"family": "Olmo-3", "size": "7B", "stage": "Think-DPO"}, "evidence": [{"file": "m.md", "excerpt": "Olmo-3-7B-Think-DPO"}]},
-        {"surface": "Olmo-3.1-32B-Think", "kind": "model", "identity": {"family": "Olmo-3.1", "size": "32B", "stage": "Think"}, "evidence": [{"file": "m.md", "excerpt": "Olmo-3.1-32B-Think"}]},
+        {"surface": "allenai/Olmo-3-1025-7B", "kind": "model", "concept_path": ["Olmo-3", "7B", "Base"], "anchor_candidates": [{"type": "hf_model", "value": "allenai/Olmo-3-1025-7B"}], "aux": {"date": "1025"}, "evidence": [{"file": "m.md", "excerpt": "Olmo-3-1025-7B"}]},
+        {"surface": "allenai/Olmo-3-1125-32B", "kind": "model", "concept_path": ["Olmo-3", "32B", "Base"], "anchor_candidates": [{"type": "hf_model", "value": "allenai/Olmo-3-1125-32B"}], "aux": {"date": "1125"}, "evidence": [{"file": "m.md", "excerpt": "Olmo-3-1125-32B"}]},
+        {"surface": "allenai/Olmo-3-7B-Think-SFT", "kind": "model", "concept_path": ["Olmo-3", "7B", "Think-SFT"], "anchor_candidates": [{"type": "hf_model", "value": "allenai/Olmo-3-7B-Think-SFT"}], "evidence": [{"file": "m.md", "excerpt": "Olmo-3-7B-Think-SFT"}]},
+        {"surface": "allenai/Olmo-3-7B-Think-DPO", "kind": "model", "concept_path": ["Olmo-3", "7B", "Think-DPO"], "anchor_candidates": [{"type": "hf_model", "value": "allenai/Olmo-3-7B-Think-DPO"}], "evidence": [{"file": "m.md", "excerpt": "Olmo-3-7B-Think-DPO"}]},
+        {"surface": "allenai/Olmo-3.1-32B-Think", "kind": "model", "concept_path": ["Olmo-3.1", "32B", "Think"], "anchor_candidates": [{"type": "hf_model", "value": "allenai/Olmo-3.1-32B-Think"}], "evidence": [{"file": "m.md", "excerpt": "Olmo-3.1-32B-Think"}]},
     ]
 
     lattice = build_lattice(mentions)
-    leaves = [node for node in lattice["nodes"] if not node["projection"]]
-    identities = {tuple(sorted(node["identity"].items())) for node in leaves}
+    leaves = [node for node in lattice["nodes"] if node["node_type"] == "entity"]
+    anchors = {node["identity"]["anchor"] for node in leaves}
 
     assert len(leaves) == 5
-    assert (("date", "1025"), ("family", "Olmo-3"), ("size", "7B"), ("stage", "Base")) in identities
-    assert (("date", "1125"), ("family", "Olmo-3"), ("size", "32B"), ("stage", "Base")) in identities
-    assert (("family", "Olmo-3.1"), ("size", "32B"), ("stage", "Think")) in identities
+    assert "allenai/Olmo-3-1025-7B" in anchors
+    assert "allenai/Olmo-3-1125-32B" in anchors
+    assert "allenai/Olmo-3.1-32B-Think" in anchors
 
 
-def test_smollm2_quantized_and_format_aliases_merge_but_preserve_descriptors():
-    from gdb.artifacts import aggregate_mentions
+def test_smollm2_quantized_and_format_artifacts_share_concept_but_stay_entities():
+    from gdb.lattice import build_lattice
 
-    clusters = aggregate_mentions([
+    lattice = build_lattice([
         {
             "surface": "SmolLM2-360M-Instruct",
             "kind": "model",
-            "identity": {"family": "SmolLM2", "size": "360M", "stage": "Instruct"},
+            "concept_path": ["SmolLM2", "360M", "Instruct"],
+            "anchor_candidates": [{"type": "hf_model", "value": "HuggingFaceTB/SmolLM2-360M-Instruct"}],
             "aliases": [{"surface": "SmolLM2-360M-Instruct", "descriptors": {}}],
             "evidence": [{"file": "card.md", "excerpt": "SmolLM2-360M-Instruct"}],
         },
         {
             "surface": "ngxson/SmolLM2-360M-Instruct-Q8_0-GGUF",
             "kind": "model",
-            "identity": {"family": "SmolLM2", "size": "360M", "stage": "Instruct"},
+            "concept_path": ["SmolLM2", "360M", "Instruct"],
+            "anchor_candidates": [{"type": "hf_model", "value": "ngxson/SmolLM2-360M-Instruct-Q8_0-GGUF"}],
             "aliases": [
                 {
                     "surface": "SmolLM2-360M-Instruct-Q8_0-GGUF",
@@ -76,7 +78,8 @@ def test_smollm2_quantized_and_format_aliases_merge_but_preserve_descriptors():
         {
             "surface": "reach-vb/SmolLM2-360M-Instruct-Q8-mlx",
             "kind": "model",
-            "identity": {"family": "SmolLM2", "size": "360M", "stage": "Instruct"},
+            "concept_path": ["SmolLM2", "360M", "Instruct"],
+            "anchor_candidates": [{"type": "hf_model", "value": "reach-vb/SmolLM2-360M-Instruct-Q8-mlx"}],
             "aliases": [
                 {
                     "surface": "SmolLM2-360M-Instruct-Q8-mlx",
@@ -88,8 +91,14 @@ def test_smollm2_quantized_and_format_aliases_merge_but_preserve_descriptors():
         },
     ])
 
-    assert len(clusters) == 1
-    aliases = {alias["surface"]: alias["descriptors"] for alias in clusters[0]["aliases"]}
+    leaves = [node for node in lattice["nodes"] if node["node_type"] == "entity"]
+    assert len(leaves) == 3
+    assert {tuple(node["concept_path"]) for node in leaves} == {("SmolLM2", "360M", "Instruct")}
+    aliases = {
+        alias["surface"]: alias["descriptors"]
+        for node in leaves
+        for alias in node["aliases"]
+    }
     assert aliases["SmolLM2-360M-Instruct-Q8_0-GGUF"]["format"] == "GGUF"
     assert aliases["SmolLM2-360M-Instruct-Q8-mlx"]["format"] == "MLX"
 
@@ -98,13 +107,13 @@ def test_smollm2_context_length_variant_is_identity_not_descriptor():
     from gdb.lattice import build_lattice
 
     lattice = build_lattice([
-        {"surface": "SmolLM2-1.7B-Instruct", "kind": "model", "identity": {"family": "SmolLM2", "size": "1.7B", "stage": "Instruct", "context_length": "8k"}, "evidence": [{"file": "base.md", "excerpt": "SmolLM2-1.7B-Instruct"}]},
-        {"surface": "SmolLM2-1.7B-Instruct-16k", "kind": "model", "identity": {"family": "SmolLM2", "size": "1.7B", "stage": "Instruct", "context_length": "16k"}, "evidence": [{"file": "16k.md", "excerpt": "SmolLM2-1.7B-Instruct-16k"}]},
+        {"surface": "HuggingFaceTB/SmolLM2-1.7B-Instruct", "kind": "model", "concept_path": ["SmolLM2", "1.7B", "Instruct"], "anchor_candidates": [{"type": "hf_model", "value": "HuggingFaceTB/SmolLM2-1.7B-Instruct"}], "aux": {"context_length": "8k"}, "evidence": [{"file": "base.md", "excerpt": "SmolLM2-1.7B-Instruct"}]},
+        {"surface": "HuggingFaceTB/SmolLM2-1.7B-Instruct-16k", "kind": "model", "concept_path": ["SmolLM2", "1.7B", "Instruct"], "anchor_candidates": [{"type": "hf_model", "value": "HuggingFaceTB/SmolLM2-1.7B-Instruct-16k"}], "aux": {"context_length": "16k"}, "evidence": [{"file": "16k.md", "excerpt": "SmolLM2-1.7B-Instruct-16k"}]},
     ])
 
-    leaves = [node for node in lattice["nodes"] if not node["projection"]]
+    leaves = [node for node in lattice["nodes"] if node["node_type"] == "entity"]
     assert len(leaves) == 2
-    assert {node["identity"]["context_length"] for node in leaves} == {"8k", "16k"}
+    assert {node["aux"]["context_length"] for node in leaves} == {"8k", "16k"}
 
 
 def test_finemath_parent_with_dataset_subsets_materializes_subset_nodes():
@@ -114,17 +123,19 @@ def test_finemath_parent_with_dataset_subsets_materializes_subset_nodes():
         {
             "surface": "HuggingFaceTB/finemath",
             "kind": "dataset",
-            "identity": {"family": "FineMath"},
-            "links": {"hf_ids": ["HuggingFaceTB/finemath"]},
+            "concept_path": ["FineMath"],
+            "anchor_candidates": [{"type": "hf_dataset", "value": "HuggingFaceTB/finemath"}],
             "subsets": [
                 {
                     "name": "finemath-3plus",
-                    "identity": {"subset": "finemath-3plus", "quality_cut": "3+"},
+                    "identity": {"family": "FineMath", "subset": "finemath-3plus", "quality_cut": "3+"},
+                    "anchor_candidates": [{"type": "hf_dataset_config", "value": "HuggingFaceTB/finemath::finemath-3plus"}],
                     "evidence": [{"file": "card.md", "excerpt": "configs include finemath-3plus"}],
                 },
                 {
                     "name": "finemath-4plus",
-                    "identity": {"subset": "finemath-4plus", "quality_cut": "4+"},
+                    "identity": {"family": "FineMath", "subset": "finemath-4plus", "quality_cut": "4+"},
+                    "anchor_candidates": [{"type": "hf_dataset_config", "value": "HuggingFaceTB/finemath::finemath-4plus"}],
                     "evidence": [{"file": "card.md", "excerpt": "configs include finemath-4plus"}],
                 },
             ],
@@ -132,10 +143,10 @@ def test_finemath_parent_with_dataset_subsets_materializes_subset_nodes():
         }
     ])
 
-    identities = [node["identity"] for node in lattice["nodes"] if not node["projection"]]
-    assert {"family": "FineMath"} in identities
-    assert {"family": "FineMath", "subset": "finemath-3plus", "quality_cut": "3+"} in identities
-    assert {"family": "FineMath", "subset": "finemath-4plus", "quality_cut": "4+"} in identities
+    anchors = [node["identity"]["anchor"] for node in lattice["nodes"] if node["node_type"] == "entity"]
+    assert "HuggingFaceTB/finemath" in anchors
+    assert "HuggingFaceTB/finemath::finemath-3plus" in anchors
+    assert "HuggingFaceTB/finemath::finemath-4plus" in anchors
 
 
 def test_finemath_same_hf_repo_parent_vs_subset_identity_is_review_conflict():
@@ -185,4 +196,3 @@ def test_qwen25_base_and_instruct_are_distinct_but_license_blob_link_is_invalid(
         ]
     })
     assert any(error["code"] == "invalid_link_shape" for error in errors)
-

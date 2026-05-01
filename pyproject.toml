@@ -7,6 +7,7 @@ dependencies = [
   "click>=8.1",
   "httpx>=0.27",
   "python-dotenv>=1.0",
+  "PyYAML>=6.0",
 ]
 
 [project.scripts]
@@ -24,7 +25,9 @@ packages = ["gdb"]
 "share/gdb-lattice/prompts" = [
   "gdb/prompts/discover.md",
   "gdb/prompts/extract-mentions.md",
+  "gdb/prompts/review-entities.md",
   "gdb/prompts/repair-mentions.md",
+  "gdb/prompts/describe-entities.md",
   "gdb/prompts/link-unresolved.md",
   "gdb/prompts/audit.md",
   "gdb/prompts/shared-context.md",

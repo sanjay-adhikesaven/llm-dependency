@@ -80,8 +80,27 @@ def truncate(value: str | None, limit: int) -> str | None:
 _MIGRATED: set[str] = set()
 
 
+def _ensure_column(conn: sqlite3.Connection, table: str, name: str, ddl: str) -> None:
+    existing = {row["name"] for row in conn.execute(f"PRAGMA table_info({table})").fetchall()}
+    if name not in existing:
+        conn.execute(f"ALTER TABLE {table} ADD COLUMN {ddl}")
+
+
 def migrate(conn: sqlite3.Connection) -> None:
     conn.executescript(config.SCHEMA_PATH.read_text())
+    _ensure_column(conn, "mentions", "atoms_json", "atoms_json TEXT NOT NULL DEFAULT '[]'")
+    _ensure_column(conn, "mentions", "referent_scope", "referent_scope TEXT NOT NULL DEFAULT 'ambiguous'")
+    _ensure_column(conn, "mentions", "anchor_candidates_json", "anchor_candidates_json TEXT NOT NULL DEFAULT '[]'")
+    _ensure_column(conn, "mentions", "concept_path_json", "concept_path_json TEXT NOT NULL DEFAULT '[]'")
+    _ensure_column(conn, "mentions", "aux_json", "aux_json TEXT NOT NULL DEFAULT '{}'")
+    _ensure_column(conn, "mentions", "relationships_json", "relationships_json TEXT NOT NULL DEFAULT '[]'")
+    _ensure_column(conn, "mentions", "description", "description TEXT")
+    _ensure_column(conn, "lattice_nodes", "node_type", "node_type TEXT NOT NULL DEFAULT 'concept'")
+    _ensure_column(conn, "lattice_nodes", "concept_path_json", "concept_path_json TEXT NOT NULL DEFAULT '[]'")
+    _ensure_column(conn, "lattice_nodes", "anchors_json", "anchors_json TEXT NOT NULL DEFAULT '[]'")
+    _ensure_column(conn, "lattice_nodes", "verified_anchors_json", "verified_anchors_json TEXT NOT NULL DEFAULT '[]'")
+    _ensure_column(conn, "lattice_nodes", "aux_json", "aux_json TEXT NOT NULL DEFAULT '{}'")
+    _ensure_column(conn, "lattice_nodes", "description", "description TEXT")
     conn.commit()
 
 
@@ -498,4 +517,3 @@ def set_batch_artifact(
                VALUES (?,?,?,?,?,?,?,?)""",
             (batch_id, stage, artifact_path, status, run_id, payload, timestamp, timestamp),
         )
-

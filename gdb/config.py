@@ -42,49 +42,30 @@ SUBAGENT_CHOICES = ("opus", "sonnet")
 
 PROCESS_KILL_GRACE_S = 5.0
 LOG_ERROR_DETAIL_MAX_CHARS = 240
+MAX_PARALLEL_BATCHES = int(os.environ.get("GDB_MAX_PARALLEL_BATCHES", "4"))
+MAX_REVIEW_GROUPS_PER_WORKER = int(os.environ.get("GDB_MAX_REVIEW_GROUPS_PER_WORKER", "12"))
+HF_API_BASE = os.environ.get("GDB_HF_API_BASE", "https://huggingface.co/api")
+HF_BASE = os.environ.get("GDB_HF_BASE", "https://huggingface.co")
 
-IDENTITY_FIELDS = (
-    "family",
-    "size",
-    "stage",
-    "version",
-    "date",
-    "subset",
-    "quality_cut",
-    "mix_variant",
-    "modality",
-    "domain",
-    "context_length",
-    "checkpoint",
+REFERENT_SCOPES = ("entity", "concept", "ambiguous")
+
+ANCHOR_TYPES = (
+    "hf_model",
+    "hf_dataset",
+    "hf_dataset_config",
+    "github_repo",
+    "github_ref",
+    "api_model_id",
+    "official_release_url",
+    "paper_release",
 )
 
-DESCRIPTOR_FIELDS = (
-    "organization",
-    "namespace",
-    "context_roles",
-    "quantization",
-    "precision",
-    "format",
-    "adapter",
-    "language",
-    "token_count",
-    "sample_count",
-    "notes",
+URL_ANCHOR_TYPES = (
+    "hf_model",
+    "hf_dataset",
+    "hf_dataset_config",
+    "github_repo",
+    "github_ref",
+    "official_release_url",
+    "paper_release",
 )
-
-CONTEXT_ROLES = (
-    "training_data",
-    "pretraining_data",
-    "sft_data",
-    "preference_data",
-    "base_model",
-    "teacher_model",
-    "judge_model",
-    "generator_model",
-    "filter_or_classifier",
-    "evaluation_benchmark",
-    "comparison_baseline",
-    "released_artifact",
-    "unknown",
-)
-

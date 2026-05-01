@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-def test_identity_canonicalization_drops_empty_and_sorts_extra():
+def test_identity_canonicalization_is_open_form_and_sorts_extra():
     from gdb.artifacts import canonical_identity, identity_signature
 
     ident = canonical_identity({
@@ -12,8 +12,8 @@ def test_identity_canonicalization_drops_empty_and_sorts_extra():
         "extra": {"z": " last ", "a": "", "m": "mid"},
     })
 
-    assert ident == {"family": "Qwen3", "size": "7B", "extra": {"m": "mid", "z": "last"}}
-    assert identity_signature("model", ident) == identity_signature("model", {"size": "7B", "family": "qwen3", "extra": {"z": "last", "m": "mid"}})
+    assert ident == {"family": "Qwen3", "size": "7B", "organization": "Qwen", "extra": {"m": "mid", "z": "last"}}
+    assert identity_signature("model", ident) == identity_signature("model", {"size": "7B", "family": "qwen3", "organization": "qwen", "extra": {"z": "last", "m": "mid"}})
 
 
 def test_artifact_validation_blocks_non_model_dataset_and_empty_evidence():
@@ -78,6 +78,21 @@ def test_conflict_detection_same_surface_and_same_link():
     ])
 
     codes = {violation["code"] for violation in violations}
-    assert "surface_identity_conflict" in codes
     assert "link_identity_conflict" in codes
 
+
+def test_open_context_roles_and_exact_dataset_config_anchor():
+    from gdb.artifacts import normalize_mention
+
+    mention = normalize_mention({
+        "surface": "finemath-3plus",
+        "kind": "dataset",
+        "concept_path": ["FineMath", "3plus"],
+        "context_roles": ["preference_data_seed"],
+        "anchor_candidates": [{"type": "hf_dataset_config", "value": "HuggingFaceTB/finemath::finemath-3plus"}],
+        "evidence": [{"file": "cfg.yaml", "excerpt": "finemath-3plus"}],
+    })
+
+    assert mention["context_roles"] == ["preference_data_seed"]
+    assert mention["referent_scope"] == "entity"
+    assert mention["anchor_candidates"][0]["type"] == "hf_dataset_config"

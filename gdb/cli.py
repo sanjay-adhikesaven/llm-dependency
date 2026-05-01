@@ -6,12 +6,16 @@ import click
 
 from . import config
 from .pipeline import (
+    run_build_relationships,
     run_build_lattice,
     run_check_mentions,
+    run_describe_entities,
     run_discover_target,
     run_extract_mentions,
+    run_investigate_hf,
     run_link_unresolved,
     run_repair_mentions,
+    run_review_entities,
     run_verify_links,
 )
 from .store import all_rows, db, emit_json, loads
@@ -51,6 +55,10 @@ def summary():
         "mentions",
         "mention_violations",
         "link_checks",
+        "entity_descriptions",
+        "hf_metadata",
+        "family_policies",
+        "entity_relationships",
         "lattice_nodes",
         "lattice_edges",
     )
@@ -85,9 +93,12 @@ def discover_cmd(target: str, artifact_path: str | None, workspace_dir: str | No
 @click.option("--artifact", "artifact_path", help="Ingest an existing extract artifact instead of launching an agent.")
 @click.option("--planner-model", default=config.CLAUDE_MODEL, type=click.Choice(config.PLANNER_CHOICES), show_default=True)
 @click.option("--subagent-model", default=config.CLAUDE_MODEL, type=click.Choice(config.SUBAGENT_CHOICES), show_default=True)
-def extract_mentions_cmd(batch_id: str | None, artifact_path: str | None, planner_model: str, subagent_model: str):
+@click.option("--max-workers", type=int, help="Override GDB_MAX_PARALLEL_BATCHES for this process.")
+def extract_mentions_cmd(batch_id: str | None, artifact_path: str | None, planner_model: str, subagent_model: str, max_workers: int | None):
     if artifact_path and not batch_id:
         raise click.ClickException("--batch-id is required with --artifact")
+    if max_workers:
+        config.MAX_PARALLEL_BATCHES = max(1, max_workers)
     emit_json(run_extract_mentions(
         batch_id=batch_id,
         artifact_path=artifact_path,
@@ -109,9 +120,24 @@ def repair_mentions_cmd(artifact_path: str | None, planner_model: str):
     emit_json(run_repair_mentions(artifact_path=artifact_path, planner_model=planner_model))
 
 
+@run.command("review-entities")
+@click.option("--artifact", "artifact_path", help="Apply a review artifact directly instead of launching an agent.")
+@click.option("--planner-model", default=config.CLAUDE_MODEL, type=click.Choice(config.PLANNER_CHOICES), show_default=True)
+@click.option("--max-workers", type=int, help="Override GDB_MAX_PARALLEL_BATCHES for this process.")
+def review_entities_cmd(artifact_path: str | None, planner_model: str, max_workers: int | None):
+    if max_workers:
+        config.MAX_PARALLEL_BATCHES = max(1, max_workers)
+    emit_json(run_review_entities(artifact_path=artifact_path, planner_model=planner_model))
+
+
 @run.command("verify-links")
 def verify_links_cmd():
     emit_json(run_verify_links())
+
+
+@run.command("investigate-hf")
+def investigate_hf_cmd():
+    emit_json(run_investigate_hf())
 
 
 @run.command("link-unresolved")
@@ -124,6 +150,17 @@ def link_unresolved_cmd(artifact_path: str | None, planner_model: str):
 @run.command("build-lattice")
 def build_lattice_cmd():
     emit_json(run_build_lattice())
+
+
+@run.command("build-relationships")
+def build_relationships_cmd():
+    emit_json(run_build_relationships())
+
+
+@run.command("describe-entities")
+@click.option("--no-fetch-hf", is_flag=True, help="Do not fetch HF README front matter.")
+def describe_entities_cmd(no_fetch_hf: bool):
+    emit_json(run_describe_entities(fetch_hf=not no_fetch_hf))
 
 
 @main.group()
@@ -139,8 +176,32 @@ def debug_mentions(limit: int | None):
         sql += f" LIMIT {int(limit)}"
     rows = all_rows(sql)
     for row in rows:
-        for field in ("identity_json", "descriptors_json", "aliases_json", "links_json", "subsets_json", "context_roles_json", "evidence_json", "attrs"):
-            row[field.removesuffix("_json")] = loads(row.pop(field), default=[] if field.endswith("aliases_json") else {})
+        list_fields = {
+            "aliases_json",
+            "subsets_json",
+            "context_roles_json",
+            "atoms_json",
+            "anchor_candidates_json",
+            "concept_path_json",
+            "relationships_json",
+            "evidence_json",
+        }
+        for field in (
+            "identity_json",
+            "descriptors_json",
+            "aliases_json",
+            "links_json",
+            "subsets_json",
+            "context_roles_json",
+            "atoms_json",
+            "anchor_candidates_json",
+            "concept_path_json",
+            "aux_json",
+            "relationships_json",
+            "evidence_json",
+            "attrs",
+        ):
+            row[field.removesuffix("_json")] = loads(row.pop(field), default=[] if field in list_fields else {})
     emit_json({"mentions": rows})
 
 
@@ -152,6 +213,13 @@ def debug_lattice():
     })
 
 
+@debug.command("code-refs")
+@click.argument("path", type=click.Path(exists=True, dir_okay=False, path_type=Path))
+def debug_code_refs(path: Path):
+    from .code_refs import extract_code_references
+
+    emit_json({"mentions": extract_code_references(path.read_text(errors="replace"), file=str(path))})
+
+
 if __name__ == "__main__":
     main()
-

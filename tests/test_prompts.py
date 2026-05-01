@@ -34,6 +34,5 @@ def test_all_stage_prompts_render(fresh_runtime):
         "batch_id": "b",
         "batch_dir": "/batch",
     }
-    for stage in ["discover", "extract-mentions", "repair-mentions", "link-unresolved", "audit"]:
+    for stage in ["discover", "extract-mentions", "review-entities", "repair-mentions", "describe-entities", "link-unresolved", "audit"]:
         assert render_prompt(stage, variables).strip()
-
