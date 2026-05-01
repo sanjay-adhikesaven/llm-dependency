@@ -1013,6 +1013,8 @@ def run_build_lattice() -> dict:
         "node_count": len(lattice["nodes"]),
         "edge_count": len(lattice["edges"]),
         "flagged_nodes": [node for node in lattice["nodes"] if node["flags"]],
+        "forests": lattice.get("forests") or [],
+        "audit": lattice.get("audit") or {},
     }
 
 

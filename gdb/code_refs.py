@@ -23,7 +23,6 @@ KEY_RE = re.compile(
     re.MULTILINE,
 )
 HF_RE = re.compile(r"(?<![A-Za-z0-9._-])(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*/[A-Za-z0-9][A-Za-z0-9._-]*)(?![A-Za-z0-9._-])")
-PATH_RE = re.compile(r"(?P<name>[A-Za-z0-9._-]+(?:-[0-9]+plus|-[34]plus|_[0-9]+plus))")
 MODEL_KEYS = {"model_name_or_path", "model_name", "model_id", "tokenizer_name", "repo_id", "base_model"}
 DATASET_KEYS = {"dataset_name", "dataset", "datasets", "data_name"}
 DOMAIN_PREFIXES = ("huggingface.co/", "github.com/", "arxiv.org/")
@@ -56,15 +55,15 @@ def _record(kind: str, name: str, *, file: str | None, line: int, source: str, c
     }
 
 
-def _looks_like_reference(name: str) -> bool:
+def _is_extractable_value(name: str) -> bool:
+    """Filter for KEY_RE / HF_RE captures: reject domain prefixes and bare
+    tokens (`next`, `main`, `default`). Real model/dataset references either
+    carry an org/path slash or a version digit. The closed keyword fallback
+    (model/dataset/sft/dpo) is dropped — those are the LLM's job to recognize."""
     cleaned = normalize_space(name)
     if not cleaned or cleaned.casefold().startswith(DOMAIN_PREFIXES):
         return False
-    if "/" in cleaned:
-        return True
-    if re.search(r"\d", cleaned) and re.search(r"[-_.]", cleaned):
-        return True
-    return bool(re.search(r"(model|dataset|checkpoint|corpus|benchmark|pretrain|sft|dpo)", cleaned, re.IGNORECASE))
+    return "/" in cleaned or bool(re.search(r"\d", cleaned))
 
 
 def _line_context(text: str, start: int, end: int) -> str:
@@ -110,7 +109,7 @@ def extract_code_references(text: str, *, file: str | None = None) -> list[dict[
     for match in KEY_RE.finditer(text):
         key_name = match.group("key")
         name = normalize_space(match.group("name"))
-        if not _looks_like_reference(name):
+        if not _is_extractable_value(name):
             continue
         kind = "dataset" if "dataset" in key_name else "model"
         line = _line_for_offset(text, match.start())
@@ -121,23 +120,13 @@ def extract_code_references(text: str, *, file: str | None = None) -> list[dict[
 
     for match in HF_RE.finditer(text):
         name = normalize_space(match.group("name"))
-        if not _looks_like_reference(name):
+        if not _is_extractable_value(name):
             continue
         line = _line_for_offset(text, match.start())
         kind = _kind_from_context(_line_context(text, match.start(), match.end()))
         key = (kind, name, None, line)
         if key not in seen:
             add(_record(kind, name, file=file, line=line, source=name))
-            seen.add(key)
-
-    for match in PATH_RE.finditer(text):
-        name = normalize_space(match.group("name"))
-        if len(name) < 4:
-            continue
-        line = _line_for_offset(text, match.start())
-        key = ("dataset", name, None, line)
-        if key not in seen:
-            add(_record("dataset", name, file=file, line=line, source=name))
             seen.add(key)
     return out
 

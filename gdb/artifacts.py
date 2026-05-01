@@ -27,20 +27,6 @@ ANCHOR_PRIORITY = {
     "official_release_url": 5,
     "paper_release": 6,
 }
-GENERIC_ALIASES = {
-    "default",
-    "main",
-    "latest",
-    "this model",
-    "this dataset",
-    "the model",
-    "the dataset",
-    "our model",
-    "our dataset",
-    "base model",
-    "dataset",
-    "model",
-}
 
 _HF_ID_RE = re.compile(
     r"^[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?/"
@@ -70,6 +56,10 @@ _HF_DATASET_CONFIG_RE = re.compile(
 _GITHUB_REF_RE = re.compile(
     r"^(?P<repo>[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?/"
     r"[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?)(?:@(?P<ref>[^:\s]+))?(?::(?P<path>.+))?$"
+)
+_QUANT_FORMAT_SUFFIX_RE = re.compile(
+    r"-(?P<suffix>FP8|FP16|BF16|Q\d+(?:_[A-Za-z0-9]+)*|AWQ|GPTQ|EXL2|BNB-4bit|INT4|INT8|GGUF|MLX|SafeTensors)$",
+    re.IGNORECASE,
 )
 
 
@@ -155,13 +145,16 @@ def normalize_scope(value: Any, *, anchors: list[dict] | None = None, concept_pa
     return "ambiguous"
 
 
-def is_generic_alias(surface: Any) -> bool:
+def is_noise_surface(surface: Any) -> bool:
+    """Structural noise filter for alias surfaces — empty, URL-prefixed,
+    over-long, or multi-word with a slash. Used by choose_display_name to
+    skip surfaces that are clearly not display-name material. Semantic
+    judgment ("this model" / "default" / etc.) is the LLM's job per
+    shared-context's alias rules."""
     text = normalize_space(surface)
-    lower = text.casefold()
     if not text:
         return True
-    if lower in GENERIC_ALIASES:
-        return True
+    lower = text.casefold()
     if lower.startswith(("http://", "https://", "huggingface.co/", "github.com/")):
         return True
     if len(text) > 180:
@@ -310,7 +303,13 @@ def normalize_relationship_hints(value: Any) -> list[dict]:
     return out
 
 
-def normalize_aliases(aliases: Any, surface: str | None = None, descriptors: dict | None = None) -> list[dict]:
+def normalize_aliases(
+    aliases: Any,
+    surface: str | None = None,
+    descriptors: dict | None = None,
+    *,
+    kind: str | None = None,
+) -> list[dict]:
     raw_items: list[Any] = []
     if surface:
         raw_items.append({"surface": surface, "descriptors": descriptors or {}})
@@ -323,10 +322,15 @@ def normalize_aliases(aliases: Any, surface: str | None = None, descriptors: dic
     for item in raw_items:
         if isinstance(item, str):
             alias_surface = normalize_space(item)
-            alias_descriptors = {}
+            alias_descriptors: dict = {}
+            alias_anchors: list[dict] = []
         elif isinstance(item, dict):
             alias_surface = normalize_space(item.get("surface") or item.get("name") or "")
             alias_descriptors = normalize_descriptors(item.get("descriptors") or {})
+            alias_anchors = normalize_anchor_candidates(
+                item.get("anchors") or item.get("anchor_candidates") or [],
+                kind=kind,
+            )
         else:
             continue
         if not alias_surface:
@@ -337,8 +341,15 @@ def normalize_aliases(aliases: Any, surface: str | None = None, descriptors: dic
                 by_key[alias_key].get("descriptors") or {},
                 alias_descriptors,
             )
+            if alias_anchors:
+                by_key[alias_key]["anchors"] = normalize_anchor_candidates(
+                    [*(by_key[alias_key].get("anchors") or []), *alias_anchors],
+                    kind=kind,
+                )
             continue
-        rec = {"surface": alias_surface, "descriptors": alias_descriptors}
+        rec: dict = {"surface": alias_surface, "descriptors": alias_descriptors}
+        if alias_anchors:
+            rec["anchors"] = alias_anchors
         out.append(rec)
         by_key[alias_key] = rec
     return out
@@ -566,22 +577,6 @@ def primary_anchor(anchors: list[dict]) -> dict | None:
     return sort_anchors(exact)[0]
 
 
-def paper_anchor_is_exact_release(mention: dict, anchor: dict) -> bool:
-    metadata = anchor.get("metadata") if isinstance(anchor.get("metadata"), dict) else {}
-    if metadata.get("exact_release") is True or metadata.get("paper_role") == "release":
-        return True
-    aux = mention.get("aux") if isinstance(mention.get("aux"), dict) else {}
-    if aux.get("paper_exact_release") is True:
-        return True
-    surface = normalize_space(mention.get("surface"))
-    if surface and surface.casefold().startswith(("arxiv:", "https://arxiv.org/")):
-        return False
-    text = " ".join(e.get("excerpt", "") for e in mention.get("evidence") or [] if isinstance(e, dict)).casefold()
-    exact_terms = ("released", "release", "introduced", "propose", "present", "dataset", "benchmark", "model")
-    generic_terms = ("technical report", "family", "suite", "series", "blog")
-    return any(term in text for term in exact_terms) and not any(term in text for term in generic_terms)
-
-
 def anchors_from_links(links: dict, *, kind: str | None = None, include_papers: bool = False) -> list[dict]:
     anchors: list[dict] = []
     hf_type = "hf_dataset" if kind == "dataset" else "hf_model"
@@ -698,7 +693,7 @@ def normalize_mention(item: dict, *, batch_id: str | None = None, source_id: str
     if not identity and concept_path:
         identity = identity_from_concept_path(concept_path)
     descriptors = normalize_descriptors(item.get("descriptors") or {})
-    aliases = normalize_aliases(item.get("aliases") or [], surface=surface, descriptors=descriptors)
+    aliases = normalize_aliases(item.get("aliases") or [], surface=surface, descriptors=descriptors, kind=kind)
     links = normalize_links(item.get("links") or {})
     explicit_anchors = normalize_anchor_candidates(
         item.get("anchors") or item.get("anchor_candidates") or item.get("connections") or [],
@@ -781,13 +776,6 @@ def validate_mention_artifact(artifact: Any) -> list[dict]:
             errors.append({"code": "empty_evidence", "path": f"mentions[{idx}].evidence", "surface": mention["surface"]})
         if mention["kind"] != "dataset" and mention["subsets"]:
             errors.append({"code": "dataset_only_subsets", "path": f"mentions[{idx}].subsets", "surface": mention["surface"]})
-        for alias_idx, alias in enumerate(mention["aliases"]):
-            if is_generic_alias(alias.get("surface")):
-                errors.append({
-                    "code": "generic_alias",
-                    "path": f"mentions[{idx}].aliases[{alias_idx}]",
-                    "surface": alias.get("surface"),
-                })
         raw_links = raw.get("links") or {}
         if isinstance(raw_links, dict):
             for field in LINK_FIELDS:
@@ -815,14 +803,6 @@ def validate_mention_artifact(artifact: Any) -> list[dict]:
                         "path": f"mentions[{idx}].anchor_candidates[{anchor_idx}]",
                         "value": anchor_item,
                     })
-        for anchor in mention["anchor_candidates"]:
-            if anchor.get("type") == "paper_release" and not paper_anchor_is_exact_release(mention, anchor):
-                errors.append({
-                    "code": "paper_anchor_not_exact_release",
-                    "path": f"mentions[{idx}].anchor_candidates",
-                    "value": anchor,
-                    "surface": mention["surface"],
-                })
     return errors
 
 
@@ -850,7 +830,7 @@ def merge_links(current: dict, incoming: dict) -> dict:
 def choose_display_name(aliases: list[dict], identity: dict) -> str:
     candidates = [
         alias["surface"] for alias in aliases
-        if isinstance(alias, dict) and not is_generic_alias(alias.get("surface"))
+        if isinstance(alias, dict) and not is_noise_surface(alias.get("surface"))
     ]
     if candidates:
         return sorted(candidates, key=lambda s: (len(s), s.casefold()))[0]
@@ -912,7 +892,7 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
                 "occurrence_count": 0,
             }
         cluster = clusters[cluster_key]
-        cluster["aliases"] = merge_alias_lists(cluster["aliases"], aliases)
+        cluster["aliases"] = merge_alias_lists(cluster["aliases"], aliases, kind=kind)
         cluster["descriptors"] = merge_descriptor_values(cluster["descriptors"], descriptors)
         cluster["links"] = merge_links(cluster["links"], links)
         cluster["subsets"].extend(subsets)
@@ -959,7 +939,7 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
                 add_to_cluster(
                     kind="dataset",
                     identity=subset_identity,
-                    aliases=normalize_aliases([], surface=subset_name),
+                    aliases=normalize_aliases([], surface=subset_name, kind="dataset"),
                     descriptors=mention["descriptors"],
                     links={field: [] for field in LINK_FIELDS},
                     subsets=[],
@@ -980,7 +960,7 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
     return sorted(clusters.values(), key=lambda c: (c["kind"], dumps(c["identity"])))
 
 
-def merge_alias_lists(current: list[dict], incoming: list[dict]) -> list[dict]:
+def merge_alias_lists(current: list[dict], incoming: list[dict], *, kind: str | None = None) -> list[dict]:
     out = list(current)
     by_key = {normalize_surface(a.get("surface")): a for a in out if isinstance(a, dict)}
     for alias in incoming:
@@ -994,8 +974,15 @@ def merge_alias_lists(current: list[dict], incoming: list[dict]) -> list[dict]:
                 by_key[alias_key].get("descriptors") or {},
                 alias.get("descriptors") or {},
             )
+            if alias.get("anchors"):
+                by_key[alias_key]["anchors"] = normalize_anchor_candidates(
+                    [*(by_key[alias_key].get("anchors") or []), *(alias.get("anchors") or [])],
+                    kind=kind,
+                )
         else:
-            rec = {"surface": alias.get("surface"), "descriptors": alias.get("descriptors") or {}}
+            rec: dict = {"surface": alias.get("surface"), "descriptors": alias.get("descriptors") or {}}
+            if alias.get("anchors"):
+                rec["anchors"] = normalize_anchor_candidates(alias.get("anchors") or [], kind=kind)
             out.append(rec)
             by_key[alias_key] = rec
     return out
@@ -1011,6 +998,47 @@ def primary_referent_signature(mention: dict) -> tuple[str, str]:
     if mention.get("identity_key"):
         return ("concept", mention["identity_key"])
     return ("ambiguous", mention.get("surface_key") or "")
+
+
+def strip_quantization_suffix(surface: str) -> tuple[str, list[str]]:
+    """Strip trailing quantization/format/precision suffixes iteratively.
+
+    Returns (canonical, suffixes) where suffixes is the list of stripped
+    suffixes from outermost to innermost (matching the order they
+    appeared in the surface, e.g., `-Q8_0-GGUF` → suffixes
+    ["Q8_0", "GGUF"]).
+    """
+    text = normalize_space(surface)
+    suffixes: list[str] = []
+    while text:
+        match = _QUANT_FORMAT_SUFFIX_RE.search(text)
+        if not match:
+            break
+        suffixes.insert(0, match.group("suffix"))
+        text = text[:match.start()]
+    return text, suffixes
+
+
+def cluster_key_for_mention(mention: dict) -> str:
+    """Return the cluster key aggregate_mentions would assign to this mention.
+
+    Matches the clustering rule in aggregate_mentions.add_to_cluster: an
+    exact primary anchor (if present) takes priority over identity-based
+    keying. Returns "" for mentions outside VALID_KINDS or missing
+    family.
+    """
+    kind = mention.get("kind")
+    if kind not in VALID_KINDS:
+        return ""
+    identity = mention.get("identity") or {}
+    if not identity.get("family"):
+        return ""
+    exact_anchors = [a for a in mention.get("anchor_candidates") or [] if a.get("exact")]
+    if exact_anchors:
+        primary = primary_anchor(exact_anchors)
+        if primary:
+            return f"{kind}:anchor:{primary['type']}:{hash_text(primary['value'])}"
+    return identity_key(kind, identity)
 
 
 def allow_concept_entity_surface_duplicate(referents: dict[tuple[str, str], list[dict]]) -> bool:
@@ -1045,14 +1073,6 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
                 "subject_key": mention["surface_key"],
                 "details": {"surface": mention["surface"]},
             })
-        for alias in mention["aliases"]:
-            if is_generic_alias(alias.get("surface")):
-                violations.append({
-                    "code": "generic_alias",
-                    "severity": "warning",
-                    "subject_key": normalize_surface(alias.get("surface")),
-                    "details": {"surface": mention["surface"], "alias": alias.get("surface")},
-                })
     by_surface: dict[str, dict[tuple[str, str], list[dict]]] = defaultdict(lambda: defaultdict(list))
     for mention in normalized:
         if mention["kind"] in VALID_KINDS and mention["surface_key"]:
@@ -1116,14 +1136,6 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
         for anchor in mention.get("anchor_candidates") or []:
             if not anchor.get("exact"):
                 continue
-            if anchor.get("type") == "paper_release" and not paper_anchor_is_exact_release(mention, anchor):
-                violations.append({
-                    "code": "paper_anchor_not_exact_release",
-                    "severity": "warning",
-                    "subject_key": f"paper_release:{anchor.get('value')}",
-                    "details": {"surface": mention["surface"], "anchor": anchor},
-                })
-                continue
             by_anchor[f"{anchor['type']}:{anchor['value']}"][concept_sig].append(mention)
     for anchor_key, concept_sigs in by_anchor.items():
         if len(concept_sigs) > 1:
@@ -1144,6 +1156,87 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
                     ],
                 },
             })
+    by_cluster: dict[str, list[dict]] = defaultdict(list)
+    for mention in normalized:
+        ckey = cluster_key_for_mention(mention)
+        if ckey:
+            by_cluster[ckey].append(mention)
+    for cluster_key, group in by_cluster.items():
+        if len(group) < 2:
+            continue
+        aux_values_by_key: dict[str, list[tuple[str, dict]]] = defaultdict(list)
+        for mention in group:
+            for aux_key, aux_value in (mention.get("aux") or {}).items():
+                if aux_value in (None, "", [], {}):
+                    continue
+                serialized = json.dumps(aux_value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+                aux_values_by_key[aux_key].append((serialized, mention))
+        for aux_key, value_mentions in aux_values_by_key.items():
+            distinct_serialized = {serialized for serialized, _ in value_mentions}
+            if len(distinct_serialized) <= 1:
+                continue
+            seen_values: list[Any] = []
+            seen_keys: set[str] = set()
+            for serialized, mention in value_mentions:
+                if serialized in seen_keys:
+                    continue
+                seen_keys.add(serialized)
+                seen_values.append((mention.get("aux") or {}).get(aux_key))
+            violations.append({
+                "code": "aux_conflict",
+                "severity": "error",
+                "subject_key": cluster_key,
+                "details": {
+                    "key": aux_key,
+                    "values": seen_values,
+                    "mention_ids": [m.get("id") for _, m in value_mentions if m.get("id")],
+                    "surfaces": _dedup([m.get("surface") for _, m in value_mentions if m.get("surface")]),
+                },
+            })
+    surface_index: dict[str, list[dict]] = defaultdict(list)
+    for mention in normalized:
+        if mention.get("kind") not in VALID_KINDS:
+            continue
+        if mention.get("surface"):
+            surface_index[mention["surface"].casefold()].append(mention)
+        for alias in mention.get("aliases") or []:
+            alias_surface = alias.get("surface")
+            if alias_surface:
+                surface_index[alias_surface.casefold()].append(mention)
+    for mention in normalized:
+        if mention.get("kind") not in VALID_KINDS:
+            continue
+        surface = mention.get("surface") or ""
+        canonical, suffixes = strip_quantization_suffix(surface)
+        if not suffixes or canonical.casefold() == surface.casefold():
+            continue
+        sibling_candidates = [
+            sibling for sibling in surface_index.get(canonical.casefold(), [])
+            if sibling is not mention and sibling.get("kind") == mention.get("kind")
+        ]
+        if not sibling_candidates:
+            continue
+        family_key = normalize_space((mention.get("identity") or {}).get("family") or "").casefold()
+        matched = None
+        for sibling in sibling_candidates:
+            sibling_family = normalize_space((sibling.get("identity") or {}).get("family") or "").casefold()
+            if not family_key or not sibling_family or sibling_family == family_key:
+                matched = sibling
+                break
+        if not matched:
+            continue
+        violations.append({
+            "code": "should_be_alias",
+            "severity": "warning",
+            "subject_key": mention.get("surface_key") or normalize_surface(surface),
+            "details": {
+                "variant_surface": surface,
+                "canonical_surface": matched.get("surface"),
+                "suffixes": suffixes,
+                "variant_mention_id": mention.get("id"),
+                "canonical_mention_id": matched.get("id"),
+            },
+        })
     return violations
 
 
@@ -1178,7 +1271,7 @@ def repair_mentions(mentions: list[dict], repair_artifact: dict) -> list[dict]:
             if "descriptors" in update:
                 mention["descriptors"] = normalize_descriptors(update["descriptors"])
             if "aliases" in update:
-                mention["aliases"] = normalize_aliases(update["aliases"], surface=mention["surface"], descriptors=mention["descriptors"])
+                mention["aliases"] = normalize_aliases(update["aliases"], surface=mention["surface"], descriptors=mention["descriptors"], kind=mention.get("kind"))
             if "links" in update:
                 mention["links"] = normalize_links(update["links"])
             if "atoms" in update:

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from collections import defaultdict
 from copy import deepcopy
 from typing import Any, Iterable
 
@@ -182,7 +183,7 @@ def build_lattice(mentions: Iterable[dict], link_checks: Iterable[dict] = ()) ->
         if parent_key:
             concept = nodes[parent_key]
             concept["occurrence_count"] += cluster.get("occurrence_count") or 0
-            concept["aliases"] = merge_alias_lists(concept["aliases"], cluster.get("aliases") or [])
+            concept["aliases"] = merge_alias_lists(concept["aliases"], cluster.get("aliases") or [], kind=kind)
             concept["descriptors"] = merge_descriptor_values(concept["descriptors"], cluster.get("descriptors") or {})
             concept["aux"] = merge_descriptor_values(concept["aux"], cluster.get("aux") or {})
             concept["description"] = _first_description(concept.get("description"), cluster.get("description"))
@@ -217,7 +218,7 @@ def build_lattice(mentions: Iterable[dict], link_checks: Iterable[dict] = ()) ->
                     "flags": [],
                 }
             entity = nodes[node_key]
-            entity["aliases"] = merge_alias_lists(entity["aliases"], cluster.get("aliases") or [])
+            entity["aliases"] = merge_alias_lists(entity["aliases"], cluster.get("aliases") or [], kind=kind)
             entity["descriptors"] = merge_descriptor_values(entity["descriptors"], cluster.get("descriptors") or {})
             entity["links"] = merge_links(entity["links"], cluster.get("links") or {})
             entity["links"] = merge_links(entity["links"], links_from_anchors([anchor]))
@@ -247,9 +248,126 @@ def build_lattice(mentions: Iterable[dict], link_checks: Iterable[dict] = ()) ->
                 node["flags"].append("concept_without_entity_leaf")
         node["flags"] = sorted(set(node["flags"]))
 
-    return {
-        "nodes": sorted(nodes.values(), key=lambda n: (n["kind"], n["node_type"], dumps(n["identity"]))),
-        "edges": sorted(edges.values(), key=lambda e: (e["parent_node_key"], e["child_node_key"])),
+    sorted_nodes = sorted(nodes.values(), key=lambda n: (n["kind"], n["node_type"], dumps(n["identity"])))
+    sorted_edges = sorted(edges.values(), key=lambda e: (e["parent_node_key"], e["child_node_key"]))
+    lattice_dict = {
+        "nodes": sorted_nodes,
+        "edges": sorted_edges,
         "clusters": clusters,
         "leaf_node_keys": sorted(leaf_keys),
+    }
+    lattice_dict["forests"] = derive_forests(lattice_dict)
+    lattice_dict["audit"] = derive_lattice_audit(lattice_dict)
+    return lattice_dict
+
+
+def derive_forests(lattice: dict) -> list[dict]:
+    """Partition the lattice into per-root subgraphs.
+
+    Each entry: {root_node_key, root_display_name, kind, nodes, edges}.
+    A root is any node with no incoming edge. BFS down from each root
+    collects its component.
+    """
+    nodes_by_key = {n["node_key"]: n for n in lattice.get("nodes") or []}
+    edges = lattice.get("edges") or []
+    children_by_parent: dict[str, list[str]] = defaultdict(list)
+    incoming: set[str] = set()
+    for edge in edges:
+        children_by_parent[edge["parent_node_key"]].append(edge["child_node_key"])
+        incoming.add(edge["child_node_key"])
+    roots = [key for key in nodes_by_key if key not in incoming]
+    forests: list[dict] = []
+    for root_key in sorted(roots):
+        visited: set[str] = set()
+        stack = [root_key]
+        component_nodes: list[dict] = []
+        while stack:
+            current = stack.pop()
+            if current in visited or current not in nodes_by_key:
+                continue
+            visited.add(current)
+            component_nodes.append(nodes_by_key[current])
+            for child in children_by_parent.get(current, []):
+                if child not in visited:
+                    stack.append(child)
+        component_edges = [
+            edge for edge in edges
+            if edge["parent_node_key"] in visited and edge["child_node_key"] in visited
+        ]
+        root_node = nodes_by_key[root_key]
+        forests.append({
+            "root_node_key": root_key,
+            "root_display_name": root_node.get("display_name"),
+            "kind": root_node.get("kind"),
+            "nodes": sorted(component_nodes, key=lambda n: (n["node_type"], n["node_key"])),
+            "edges": sorted(component_edges, key=lambda e: (e["parent_node_key"], e["child_node_key"])),
+        })
+    return sorted(forests, key=lambda f: (f["kind"] or "", f["root_display_name"] or "", f["root_node_key"]))
+
+
+def derive_lattice_audit(lattice: dict) -> dict:
+    """Compute audit categories surfacing leaf-anchor anomalies.
+
+    Categories:
+    - bare_leaf_concepts: concept nodes with no child edges, no entity
+      attached, and no anchor evidence (likely extraction artifacts).
+    - entities_without_verified_anchors: entities whose verified_anchors
+      list is empty.
+    - entities_with_only_paper_anchors: entities whose only verified
+      anchor type is paper_release (legitimate-but-flagged for review).
+    - concept_without_entity_leaf: concepts flagged with
+      concept_without_entity_leaf in build_lattice.
+    """
+    nodes = lattice.get("nodes") or []
+    edges = lattice.get("edges") or []
+    parent_keys = {edge["parent_node_key"] for edge in edges}
+    bare_leaf_concepts: list[dict] = []
+    entities_without_verified: list[dict] = []
+    entities_only_paper: list[dict] = []
+    concept_without_entity_leaf: list[dict] = []
+    for node in nodes:
+        node_type = node.get("node_type")
+        flags = node.get("flags") or []
+        if node_type == "concept":
+            is_leaf = node["node_key"] not in parent_keys
+            has_anchor = bool(node.get("anchors"))
+            if is_leaf and not has_anchor:
+                bare_leaf_concepts.append({
+                    "node_key": node["node_key"],
+                    "display_name": node.get("display_name"),
+                    "kind": node.get("kind"),
+                    "concept_path": node.get("concept_path"),
+                    "flags": flags,
+                })
+            if "concept_without_entity_leaf" in flags:
+                concept_without_entity_leaf.append({
+                    "node_key": node["node_key"],
+                    "display_name": node.get("display_name"),
+                    "kind": node.get("kind"),
+                    "concept_path": node.get("concept_path"),
+                })
+        elif node_type == "entity":
+            verified = node.get("verified_anchors") or []
+            if not verified:
+                entities_without_verified.append({
+                    "node_key": node["node_key"],
+                    "display_name": node.get("display_name"),
+                    "kind": node.get("kind"),
+                    "anchors": node.get("anchors") or [],
+                    "flags": flags,
+                })
+            else:
+                anchor_types = {a.get("type") for a in verified}
+                if anchor_types == {"paper_release"}:
+                    entities_only_paper.append({
+                        "node_key": node["node_key"],
+                        "display_name": node.get("display_name"),
+                        "kind": node.get("kind"),
+                        "anchors": verified,
+                    })
+    return {
+        "bare_leaf_concepts": bare_leaf_concepts,
+        "entities_without_verified_anchors": entities_without_verified,
+        "entities_with_only_paper_anchors": entities_only_paper,
+        "concept_without_entity_leaf": concept_without_entity_leaf,
     }

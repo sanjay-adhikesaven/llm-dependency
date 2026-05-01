@@ -145,16 +145,4 @@ def test_link_unresolved_applies_anchor_updates(fresh_runtime):
     assert "infiwebmath-3plus" in row["anchor_candidates_json"]
 
 
-def test_paper_anchor_requires_exact_release_evidence():
-    from gdb.artifacts import validate_mention_artifact
-
-    errors = validate_mention_artifact({"mentions": [{
-        "surface": "Qwen3 technical report",
-        "kind": "model",
-        "concept_path": ["Qwen3"],
-        "anchor_candidates": [{"type": "paper_release", "value": "https://arxiv.org/abs/2505.09388"}],
-        "evidence": [{"excerpt": "Qwen3 technical report describes the model family."}],
-    }]})
-
-    assert any(error["code"] == "paper_anchor_not_exact_release" for error in errors)
 

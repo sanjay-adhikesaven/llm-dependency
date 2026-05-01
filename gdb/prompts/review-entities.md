@@ -7,6 +7,20 @@ The packet groups extracted model/dataset names by likely family,
 namespace, or anchor. Review each group and patch only fields that
 need correction.
 
+## Inputs
+
+- `{{review_packet_path}}`: JSON with grouped mentions. Each
+  group carries surface forms, identity, concept_path, anchors,
+  aux, and HF metadata excerpts (when an anchor was already
+  enriched). The packet is self-contained.
+
+## Filesystem scope
+
+Read `{{review_packet_path}}`. Write `{{artifact_path}}`. HF API
+fetches are allowed for verifying anchor metadata in the
+groups under review; do not fetch unrelated repos. Do not
+write to any other local path.
+
 Output:
 
 ```json
@@ -41,6 +55,11 @@ Review policy:
 - For FineMath/InfiWebMath and Dolma3, preserve distinct HF dataset
   repos/configs/mixes/pools; do not merge components, subsets, or
   upstream parents as aliases.
+
+## Completion
+
+Write the artifact to `{{artifact_path}}` and exit 0. Empty
+`updates[]` is legal — patch only what needs correcting.
 
 You are running as `{{planner_model}}`. Use subagents for independent
 groups when the packet is large; subagents run as `{{subagent_model}}`.
