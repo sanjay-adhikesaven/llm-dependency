@@ -37,8 +37,6 @@ SQLITE_BUSY_TIMEOUT_S = 30.0
 LINK_TIMEOUT_S = 10.0
 
 CLAUDE_MODEL = os.environ.get("GDB_CLAUDE_MODEL", "opus")
-PLANNER_CHOICES = ("opus", "sonnet")
-SUBAGENT_CHOICES = ("opus", "sonnet")
 
 PROCESS_KILL_GRACE_S = 5.0
 LOG_ERROR_DETAIL_MAX_CHARS = 240
@@ -49,7 +47,7 @@ HF_BASE = os.environ.get("GDB_HF_BASE", "https://huggingface.co")
 
 REFERENT_SCOPES = ("entity", "concept", "ambiguous")
 
-ANCHOR_TYPES = (
+LINK_TYPES = (
     "hf_model",
     "hf_dataset",
     "hf_dataset_config",
@@ -60,7 +58,7 @@ ANCHOR_TYPES = (
     "paper_release",
 )
 
-URL_ANCHOR_TYPES = (
+URL_LINK_TYPES = (
     "hf_model",
     "hf_dataset",
     "hf_dataset_config",

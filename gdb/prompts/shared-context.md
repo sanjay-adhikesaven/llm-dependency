@@ -39,7 +39,7 @@ A mention has three conceptual layers:
 - `concept_path`: reviewed lattice path from general to specific.
   Mirrors identity. Examples: `["Qwen3"]`, `["Qwen3", "VL"]`,
   `["Dolma3", "longmino"]`, `["FineMath", "3plus"]`.
-- `anchor_candidates`: exact public release identifiers for the
+- `links`: exact public release identifiers for the
   primary mention. Use `hf_model`, `hf_dataset`,
   `hf_dataset_config`, `github_repo`, `github_ref`,
   `api_model_id`, `official_release_url`, or `paper_release`.
@@ -123,7 +123,7 @@ Sources reference artifacts at any tier of the family hierarchy:
 - If the abstraction has no public anchor at that tier (common
   for stage names like `Qwen3-Base`), emit the mention as a
   concept-only referent (`referent_scope: "concept"`,
-  `concept_path: ["Qwen3", "Base"]`, no `anchor_candidates`).
+  `concept_path: ["Qwen3", "Base"]`, no `links`).
   Lattice mints the concept node; reviewer can attach entities
   later.
 

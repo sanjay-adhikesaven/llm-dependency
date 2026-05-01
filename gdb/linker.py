@@ -6,7 +6,7 @@ from typing import Callable, Iterable
 import httpx
 
 from . import config
-from .artifacts import LINK_FIELDS, aggregate_mentions, normalize_mention
+from .artifacts import aggregate_mentions, normalize_mention
 
 
 @dataclass(frozen=True)
@@ -58,13 +58,19 @@ def link_candidates_from_clusters(clusters: Iterable[dict]) -> list[LinkCandidat
     for cluster in clusters:
         kind = cluster["kind"]
         cluster_key = cluster["cluster_key"]
-        for link_kind in LINK_FIELDS:
-            for value in cluster.get("links", {}).get(link_kind) or []:
-                key = (cluster_key, link_kind, value)
-                if key in seen:
-                    continue
-                seen.add(key)
-                out.append(LinkCandidate(cluster_key, kind, link_kind, value, candidate_url(kind, link_kind, value)))
+        for link in cluster.get("links") or []:
+            link_kind = link.get("type")
+            value = link.get("value")
+            if not link_kind or not value or link_kind == "api_model_id":
+                continue
+            key = (cluster_key, link_kind, value)
+            if key in seen:
+                continue
+            seen.add(key)
+            url = link.get("url") or candidate_url(kind, link_kind, value)
+            if not url:
+                continue
+            out.append(LinkCandidate(cluster_key, kind, link_kind, value, url))
     return out
 
 
@@ -74,15 +80,15 @@ def link_candidates_from_mentions(mentions: Iterable[dict]) -> list[LinkCandidat
     for raw in mentions:
         mention = normalize_mention(raw)
         cluster_key = mention["identity_key"] or mention["surface_key"]
-        for anchor in mention.get("anchor_candidates") or []:
-            if not anchor.get("exact") or anchor.get("type") == "api_model_id":
+        for link in mention.get("links") or []:
+            if not link.get("exact") or link.get("type") == "api_model_id":
                 continue
-            link_kind = anchor["type"]
-            value = anchor["value"]
+            link_kind = link["type"]
+            value = link["value"]
             key = (cluster_key, link_kind, value)
             if key in seen:
                 continue
-            url = anchor.get("url") or candidate_url(mention["kind"], link_kind, value)
+            url = link.get("url") or candidate_url(mention["kind"], link_kind, value)
             if not url:
                 continue
             candidates.append(LinkCandidate(cluster_key, mention["kind"], link_kind, value, url))

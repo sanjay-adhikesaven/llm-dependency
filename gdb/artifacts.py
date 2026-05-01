@@ -14,19 +14,31 @@ from .store import dumps, hash_text, key, normalize_space
 
 
 VALID_KINDS = ("model", "dataset")
-LINK_FIELDS = ("hf_ids", "github_repos", "official_urls", "papers")
-ANCHOR_TYPES = config.ANCHOR_TYPES
+LINK_TYPES = config.LINK_TYPES
 REFERENT_SCOPES = config.REFERENT_SCOPES
-ANCHOR_PRIORITY = {
-    "hf_dataset_config": 0,
-    "hf_model": 1,
-    "hf_dataset": 1,
-    "github_ref": 2,
-    "github_repo": 3,
-    "api_model_id": 4,
-    "official_release_url": 5,
-    "paper_release": 6,
-}
+PRIMARY_LINK_ORDER: tuple = (
+    "hf_dataset_config",
+    ("hf_model", "hf_dataset"),
+    "github_ref",
+    "github_repo",
+    "api_model_id",
+    "official_release_url",
+    "paper_release",
+)
+
+
+def link_priority(link: dict) -> tuple[int, str, str]:
+    link_type = link.get("type")
+    priority = 99
+    for idx, slot in enumerate(PRIMARY_LINK_ORDER):
+        if isinstance(slot, tuple):
+            if link_type in slot:
+                priority = idx
+                break
+        elif link_type == slot:
+            priority = idx
+            break
+    return (priority, link_type or "", str(link.get("value") or ""))
 
 _HF_ID_RE = re.compile(
     r"^[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?/"
@@ -56,10 +68,6 @@ _HF_DATASET_CONFIG_RE = re.compile(
 _GITHUB_REF_RE = re.compile(
     r"^(?P<repo>[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?/"
     r"[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?)(?:@(?P<ref>[^:\s]+))?(?::(?P<path>.+))?$"
-)
-_QUANT_FORMAT_SUFFIX_RE = re.compile(
-    r"-(?P<suffix>FP8|FP16|BF16|Q\d+(?:_[A-Za-z0-9]+)*|AWQ|GPTQ|EXL2|BNB-4bit|INT4|INT8|GGUF|MLX|SafeTensors)$",
-    re.IGNORECASE,
 )
 
 
@@ -145,7 +153,7 @@ def normalize_scope(value: Any, *, anchors: list[dict] | None = None, concept_pa
     return "ambiguous"
 
 
-def is_noise_surface(surface: Any) -> bool:
+def is_invalid_alias_surface(surface: Any) -> bool:
     """Structural noise filter for alias surfaces — empty, URL-prefixed,
     over-long, or multi-word with a slash. Used by choose_display_name to
     skip surfaces that are clearly not display-name material. Semantic
@@ -327,8 +335,8 @@ def normalize_aliases(
         elif isinstance(item, dict):
             alias_surface = normalize_space(item.get("surface") or item.get("name") or "")
             alias_descriptors = normalize_descriptors(item.get("descriptors") or {})
-            alias_anchors = normalize_anchor_candidates(
-                item.get("anchors") or item.get("anchor_candidates") or [],
+            alias_anchors = normalize_link_candidates(
+                item.get("anchors") or item.get("links") or [],
                 kind=kind,
             )
         else:
@@ -342,7 +350,7 @@ def normalize_aliases(
                 alias_descriptors,
             )
             if alias_anchors:
-                by_key[alias_key]["anchors"] = normalize_anchor_candidates(
+                by_key[alias_key]["anchors"] = normalize_link_candidates(
                     [*(by_key[alias_key].get("anchors") or []), *alias_anchors],
                     kind=kind,
                 )
@@ -454,7 +462,7 @@ def normalize_github_ref(value: Any, *, repo: Any = None, ref: Any = None, path:
     return f"{repo_text}{suffix}"
 
 
-def normalize_anchor_candidate(item: Any, *, kind: str | None = None) -> dict | None:
+def normalize_link_candidate(item: Any, *, kind: str | None = None) -> dict | None:
     if isinstance(item, str):
         raw_type = ""
         raw_value = item
@@ -542,12 +550,12 @@ def normalize_anchor_candidate(item: Any, *, kind: str | None = None) -> dict | 
     return rec
 
 
-def normalize_anchor_candidates(value: Any, *, kind: str | None = None) -> list[dict]:
+def normalize_link_candidates(value: Any, *, kind: str | None = None) -> list[dict]:
     raw = value if isinstance(value, list) else ([value] if value else [])
     out: list[dict] = []
     seen: set[tuple[str, str]] = set()
     for item in raw:
-        anchor = normalize_anchor_candidate(item, kind=kind)
+        anchor = normalize_link_candidate(item, kind=kind)
         if not anchor:
             continue
         key_tuple = (anchor["type"], anchor["value"])
@@ -558,85 +566,19 @@ def normalize_anchor_candidates(value: Any, *, kind: str | None = None) -> list[
     return out
 
 
-def anchor_priority(anchor: dict) -> tuple[int, str, str]:
-    return (
-        ANCHOR_PRIORITY.get(anchor.get("type"), 99),
-        normalize_space(anchor.get("type") or ""),
-        normalize_space(anchor.get("value") or "").casefold(),
-    )
+def sort_links(links: list[dict]) -> list[dict]:
+    return sorted(links, key=link_priority)
 
 
-def sort_anchors(anchors: list[dict]) -> list[dict]:
-    return sorted(anchors, key=anchor_priority)
-
-
-def primary_anchor(anchors: list[dict]) -> dict | None:
-    exact = [anchor for anchor in anchors if anchor.get("exact")]
+def primary_link(links: list[dict]) -> dict | None:
+    exact = [link for link in links if link.get("exact")]
     if not exact:
         return None
-    return sort_anchors(exact)[0]
+    return sort_links(exact)[0]
 
 
-def anchors_from_links(links: dict, *, kind: str | None = None, include_papers: bool = False) -> list[dict]:
-    anchors: list[dict] = []
-    hf_type = "hf_dataset" if kind == "dataset" else "hf_model"
-    for value in links.get("hf_ids") or []:
-        anchors.extend(normalize_anchor_candidates([{"type": hf_type, "value": value}], kind=kind))
-    for value in links.get("github_repos") or []:
-        anchors.extend(normalize_anchor_candidates([{"type": "github_repo", "value": value}], kind=kind))
-    for value in links.get("official_urls") or []:
-        anchors.extend(normalize_anchor_candidates([{"type": "official_release_url", "value": value}], kind=kind))
-    if include_papers:
-        for value in links.get("papers") or []:
-            anchors.extend(normalize_anchor_candidates([{"type": "paper_release", "value": value}], kind=kind))
-    return normalize_anchor_candidates(anchors, kind=kind)
-
-
-def links_from_anchors(anchors: list[dict]) -> dict:
-    out = {field: [] for field in LINK_FIELDS}
-    for anchor in anchors:
-        anchor_type = anchor.get("type")
-        value = anchor.get("value")
-        if not value:
-            continue
-        if anchor_type in {"hf_model", "hf_dataset"}:
-            out["hf_ids"].append(value)
-        elif anchor_type == "github_repo":
-            out["github_repos"].append(value.split("@", 1)[0].split(":", 1)[0])
-        elif anchor_type == "official_release_url":
-            out["official_urls"].append(value)
-        elif anchor_type == "paper_release":
-            out["papers"].append(value)
-    return {field: _dedup(values) for field, values in out.items()}
-
-
-def normalize_links(links: Any) -> dict:
-    if not isinstance(links, dict):
-        links = {}
-    hf_values = links.get("hf_ids") or links.get("huggingface_ids") or []
-    github_values = links.get("github_repos") or links.get("github") or []
-    official_values = links.get("official_urls") or links.get("urls") or []
-    paper_values = links.get("papers") or links.get("paper_urls") or []
-
-    if isinstance(hf_values, str):
-        hf_values = [hf_values]
-    if isinstance(github_values, str):
-        github_values = [github_values]
-    if isinstance(official_values, str):
-        official_values = [official_values]
-    if isinstance(paper_values, str):
-        paper_values = [paper_values]
-
-    return {
-        "hf_ids": _dedup(x for x in (normalize_hf_id(v) for v in hf_values) if x),
-        "github_repos": _dedup(x for x in (normalize_github_repo(v) for v in github_values) if x),
-        "official_urls": _dedup(x for x in (normalize_http_url(v) for v in official_values) if x),
-        "papers": _dedup(x for x in (normalize_paper(v) for v in paper_values) if x),
-    }
-
-
-def normalize_evidence(evidence: Any) -> list[dict]:
-    raw = evidence if isinstance(evidence, list) else ([evidence] if evidence else [])
+def normalize_anchors(anchors: Any) -> list[dict]:
+    raw = anchors if isinstance(anchors, list) else ([anchors] if anchors else [])
     out: list[dict] = []
     for item in raw:
         if not isinstance(item, dict):
@@ -666,12 +608,14 @@ def normalize_subsets(subsets: Any) -> list[dict]:
             continue
         name = normalize_space(item.get("name") or item.get("subset") or "")
         identity = canonical_identity(item.get("identity") or {"subset": name})
-        evidence = normalize_evidence(item.get("evidence") or [])
-        anchors = normalize_anchor_candidates(item.get("anchors") or item.get("anchor_candidates") or [], kind="dataset")
+        links = normalize_link_candidates(item.get("links") or [], kind="dataset")
+        source_anchors = normalize_anchors(item.get("source_anchors") or [])
         if name or identity:
-            rec = {"name": name, "identity": identity, "evidence": evidence}
-            if anchors:
-                rec["anchor_candidates"] = anchors
+            rec = {"name": name, "identity": identity}
+            if links:
+                rec["links"] = links
+            if source_anchors:
+                rec["source_anchors"] = source_anchors
             out.append(rec)
     return out
 
@@ -694,29 +638,28 @@ def normalize_mention(item: dict, *, batch_id: str | None = None, source_id: str
         identity = identity_from_concept_path(concept_path)
     descriptors = normalize_descriptors(item.get("descriptors") or {})
     aliases = normalize_aliases(item.get("aliases") or [], surface=surface, descriptors=descriptors, kind=kind)
-    links = normalize_links(item.get("links") or {})
-    explicit_anchors = normalize_anchor_candidates(
-        item.get("anchors") or item.get("anchor_candidates") or item.get("connections") or [],
+    links = normalize_link_candidates(
+        item.get("links") or item.get("anchor_candidates") or item.get("connections") or [],
         kind=kind,
     )
-    link_anchors = anchors_from_links(links, kind=kind, include_papers=bool(item.get("papers_are_exact_release")))
-    anchors = normalize_anchor_candidates([*explicit_anchors, *link_anchors], kind=kind)
-    links = merge_links(links, links_from_anchors(anchors))
     roles = normalize_roles(item.get("context_roles") or descriptors.get("context_roles") or ["unknown"])
-    evidence = normalize_evidence(item.get("evidence") or {
-        "source_id": item.get("source_id") or source_id or "",
-        "file": item.get("file") or "",
-        "location": item.get("location") or "",
-        "excerpt": item.get("excerpt") or "",
-    })
+    raw_anchors = item.get("anchors")
+    if raw_anchors is None:
+        raw_anchors = item.get("evidence")
+    if not raw_anchors and (item.get("file") or item.get("excerpt") or item.get("location")):
+        raw_anchors = [{
+            "source_id": item.get("source_id") or source_id or "",
+            "file": item.get("file") or "",
+            "location": item.get("location") or "",
+            "excerpt": item.get("excerpt") or "",
+        }]
+    anchors = normalize_anchors(raw_anchors or [])
     subsets = normalize_subsets(item.get("subsets") or [])
     attrs = item.get("attrs") if isinstance(item.get("attrs"), dict) else {}
     aux = normalize_aux(item.get("aux") or item.get("aux_info") or attrs.get("aux") or {})
     relationships = normalize_relationship_hints(
         item.get("relationships")
-        or item.get("relationship_hints")
         or attrs.get("relationships")
-        or attrs.get("relationship_hints")
         or []
     )
     description = normalize_space(item.get("description") or attrs.get("description") or "")
@@ -731,16 +674,15 @@ def normalize_mention(item: dict, *, batch_id: str | None = None, source_id: str
         "identity_key": identity_key(kind, identity) if kind in VALID_KINDS else "",
         "descriptors": descriptors,
         "aliases": aliases,
-        "links": links,
         "subsets": subsets,
         "context_roles": roles,
         "atoms": atoms,
-        "referent_scope": normalize_scope(item.get("referent_scope") or item.get("scope"), anchors=anchors, concept_path=concept_path),
-        "anchor_candidates": anchors,
+        "referent_scope": normalize_scope(item.get("referent_scope") or item.get("scope"), anchors=links, concept_path=concept_path),
+        "links": links,
         "concept_path": concept_path,
         "aux": aux,
         "relationships": relationships,
-        "evidence": evidence,
+        "anchors": anchors,
         "description": description or None,
         "notes": normalize_space(item.get("notes") or item.get("rationale") or "") or None,
         "attrs": attrs,
@@ -772,35 +714,18 @@ def validate_mention_artifact(artifact: Any) -> list[dict]:
             errors.append({"code": "missing_surface", "path": f"mentions[{idx}].surface"})
         if not mention["identity"].get("family") and not mention["concept_path"]:
             errors.append({"code": "missing_identity_family", "path": f"mentions[{idx}].identity.family", "surface": mention["surface"]})
-        if not mention["evidence"] or not any(e.get("excerpt") for e in mention["evidence"]):
-            errors.append({"code": "empty_evidence", "path": f"mentions[{idx}].evidence", "surface": mention["surface"]})
+        if not mention["anchors"] or not any(e.get("excerpt") for e in mention["anchors"]):
+            errors.append({"code": "empty_anchors", "path": f"mentions[{idx}].anchors", "surface": mention["surface"]})
         if mention["kind"] != "dataset" and mention["subsets"]:
             errors.append({"code": "dataset_only_subsets", "path": f"mentions[{idx}].subsets", "surface": mention["surface"]})
-        raw_links = raw.get("links") or {}
-        if isinstance(raw_links, dict):
-            for field in LINK_FIELDS:
-                values = raw_links.get(field) or []
-                values = [values] if isinstance(values, str) else values
-                if not isinstance(values, list):
-                    errors.append({"code": "invalid_link_shape", "path": f"mentions[{idx}].links.{field}", "value": values})
-                    continue
-                for value in values:
-                    if field == "hf_ids" and not normalize_hf_id(value):
-                        errors.append({"code": "invalid_link_shape", "path": f"mentions[{idx}].links.hf_ids", "value": value})
-                    elif field == "github_repos" and not normalize_github_repo(value):
-                        errors.append({"code": "invalid_link_shape", "path": f"mentions[{idx}].links.github_repos", "value": value})
-                    elif field == "official_urls" and not normalize_http_url(value):
-                        errors.append({"code": "invalid_link_shape", "path": f"mentions[{idx}].links.official_urls", "value": value})
-                    elif field == "papers" and not normalize_paper(value):
-                        errors.append({"code": "invalid_link_shape", "path": f"mentions[{idx}].links.papers", "value": value})
-        raw_anchors = raw.get("anchors") or raw.get("anchor_candidates") or []
-        if raw_anchors:
-            anchor_items = raw_anchors if isinstance(raw_anchors, list) else [raw_anchors]
-            for anchor_idx, anchor_item in enumerate(anchor_items):
-                if not normalize_anchor_candidate(anchor_item, kind=mention["kind"]):
+        raw_links = raw.get("links") or raw.get("anchor_candidates") or []
+        if raw_links:
+            link_items = raw_links if isinstance(raw_links, list) else [raw_links]
+            for anchor_idx, anchor_item in enumerate(link_items):
+                if not normalize_link_candidate(anchor_item, kind=mention["kind"]):
                     errors.append({
-                        "code": "invalid_anchor_shape",
-                        "path": f"mentions[{idx}].anchor_candidates[{anchor_idx}]",
+                        "code": "invalid_link_shape",
+                        "path": f"mentions[{idx}].links[{anchor_idx}]",
                         "value": anchor_item,
                     })
     return errors
@@ -820,17 +745,10 @@ def merge_descriptor_values(current: dict, incoming: dict) -> dict:
     return out
 
 
-def merge_links(current: dict, incoming: dict) -> dict:
-    out = {field: list(current.get(field) or []) for field in LINK_FIELDS}
-    for field in LINK_FIELDS:
-        out[field] = _dedup([*out[field], *list(incoming.get(field) or [])])
-    return out
-
-
 def choose_display_name(aliases: list[dict], identity: dict) -> str:
     candidates = [
         alias["surface"] for alias in aliases
-        if isinstance(alias, dict) and not is_noise_surface(alias.get("surface"))
+        if isinstance(alias, dict) and not is_invalid_alias_surface(alias.get("surface"))
     ]
     if candidates:
         return sorted(candidates, key=lambda s: (len(s), s.casefold()))[0]
@@ -849,25 +767,24 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
         identity: dict,
         aliases: list[dict],
         descriptors: dict,
-        links: dict,
         subsets: list[dict],
         context_roles: list[str],
         atoms: list[str],
         referent_scope: str,
-        anchor_candidates: list[dict],
+        links: list[dict],
         concept_path: list[str],
         aux: dict,
         relationships: list[dict],
-        evidence: list[dict],
+        anchors: list[dict],
         description: str | None,
         mention_id: str | None,
     ) -> None:
         if kind not in VALID_KINDS or not identity.get("family"):
             return
-        exact_anchors = [anchor for anchor in anchor_candidates if anchor.get("exact")]
-        if exact_anchors:
-            primary = primary_anchor(exact_anchors)
-            cluster_key = f"{kind}:anchor:{primary['type']}:{hash_text(primary['value'])}"
+        exact_links = [link for link in links if link.get("exact")]
+        if exact_links:
+            primary = primary_link(exact_links)
+            cluster_key = f"{kind}:link:{primary['type']}:{hash_text(primary['value'])}"
         else:
             cluster_key = identity_key(kind, identity)
         if cluster_key not in clusters:
@@ -877,16 +794,15 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
                 "identity": identity,
                 "aliases": [],
                 "descriptors": {},
-                "links": {field: [] for field in LINK_FIELDS},
                 "subsets": [],
                 "context_roles": [],
                 "atoms": [],
                 "referent_scopes": [],
-                "anchor_candidates": [],
+                "links": [],
                 "concept_path": concept_path,
                 "aux": {},
                 "relationships": [],
-                "evidence": [],
+                "anchors": [],
                 "descriptions": [],
                 "mention_ids": [],
                 "occurrence_count": 0,
@@ -894,15 +810,14 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
         cluster = clusters[cluster_key]
         cluster["aliases"] = merge_alias_lists(cluster["aliases"], aliases, kind=kind)
         cluster["descriptors"] = merge_descriptor_values(cluster["descriptors"], descriptors)
-        cluster["links"] = merge_links(cluster["links"], links)
         cluster["subsets"].extend(subsets)
         cluster["context_roles"] = _dedup([*cluster["context_roles"], *context_roles])
         cluster["atoms"] = _dedup([*cluster["atoms"], *atoms])
         cluster["referent_scopes"] = _dedup([*cluster["referent_scopes"], referent_scope])
-        cluster["anchor_candidates"] = normalize_anchor_candidates([*cluster["anchor_candidates"], *anchor_candidates], kind=kind)
+        cluster["links"] = normalize_link_candidates([*cluster["links"], *links], kind=kind)
         cluster["aux"] = merge_descriptor_values(cluster["aux"], aux)
         cluster["relationships"].extend(relationships)
-        cluster["evidence"].extend(evidence)
+        cluster["anchors"].extend(anchors)
         if description:
             cluster["descriptions"].append(description)
         if mention_id:
@@ -916,16 +831,15 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
             identity=mention["identity"],
             aliases=mention["aliases"],
             descriptors=mention["descriptors"],
-            links=mention["links"],
             subsets=mention["subsets"],
             context_roles=mention["context_roles"],
             atoms=mention["atoms"],
             referent_scope=mention["referent_scope"],
-            anchor_candidates=mention["anchor_candidates"],
+            links=mention["links"],
             concept_path=mention["concept_path"],
             aux=mention["aux"],
             relationships=mention["relationships"],
-            evidence=mention["evidence"],
+            anchors=mention["anchors"],
             description=mention.get("description"),
             mention_id=mention.get("id"),
         )
@@ -941,16 +855,15 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
                     identity=subset_identity,
                     aliases=normalize_aliases([], surface=subset_name, kind="dataset"),
                     descriptors=mention["descriptors"],
-                    links={field: [] for field in LINK_FIELDS},
                     subsets=[],
                     context_roles=mention["context_roles"],
                     atoms=mention["atoms"],
                     referent_scope=mention["referent_scope"],
-                    anchor_candidates=normalize_anchor_candidates(subset.get("anchors") or subset.get("anchor_candidates") or [], kind="dataset"),
+                    links=normalize_link_candidates(subset.get("links") or subset.get("anchors") or [], kind="dataset"),
                     concept_path=concept_path_from_identity(subset_identity),
                     aux=mention["aux"],
                     relationships=mention["relationships"],
-                    evidence=subset.get("evidence") or mention["evidence"],
+                    anchors=subset.get("source_anchors") or mention["anchors"],
                     description=mention.get("description"),
                     mention_id=mention.get("id"),
                 )
@@ -975,21 +888,21 @@ def merge_alias_lists(current: list[dict], incoming: list[dict], *, kind: str | 
                 alias.get("descriptors") or {},
             )
             if alias.get("anchors"):
-                by_key[alias_key]["anchors"] = normalize_anchor_candidates(
+                by_key[alias_key]["anchors"] = normalize_link_candidates(
                     [*(by_key[alias_key].get("anchors") or []), *(alias.get("anchors") or [])],
                     kind=kind,
                 )
         else:
             rec: dict = {"surface": alias.get("surface"), "descriptors": alias.get("descriptors") or {}}
             if alias.get("anchors"):
-                rec["anchors"] = normalize_anchor_candidates(alias.get("anchors") or [], kind=kind)
+                rec["anchors"] = normalize_link_candidates(alias.get("anchors") or [], kind=kind)
             out.append(rec)
             by_key[alias_key] = rec
     return out
 
 
 def primary_referent_signature(mention: dict) -> tuple[str, str]:
-    anchors = [a for a in mention.get("anchor_candidates") or [] if a.get("exact")]
+    anchors = [a for a in mention.get("links") or [] if a.get("exact")]
     if anchors:
         anchor = sorted(anchors, key=lambda a: (a.get("type", ""), a.get("value", "")))[0]
         return ("entity", f"{anchor.get('type')}:{anchor.get('value')}")
@@ -998,25 +911,6 @@ def primary_referent_signature(mention: dict) -> tuple[str, str]:
     if mention.get("identity_key"):
         return ("concept", mention["identity_key"])
     return ("ambiguous", mention.get("surface_key") or "")
-
-
-def strip_quantization_suffix(surface: str) -> tuple[str, list[str]]:
-    """Strip trailing quantization/format/precision suffixes iteratively.
-
-    Returns (canonical, suffixes) where suffixes is the list of stripped
-    suffixes from outermost to innermost (matching the order they
-    appeared in the surface, e.g., `-Q8_0-GGUF` → suffixes
-    ["Q8_0", "GGUF"]).
-    """
-    text = normalize_space(surface)
-    suffixes: list[str] = []
-    while text:
-        match = _QUANT_FORMAT_SUFFIX_RE.search(text)
-        if not match:
-            break
-        suffixes.insert(0, match.group("suffix"))
-        text = text[:match.start()]
-    return text, suffixes
 
 
 def cluster_key_for_mention(mention: dict) -> str:
@@ -1033,9 +927,9 @@ def cluster_key_for_mention(mention: dict) -> str:
     identity = mention.get("identity") or {}
     if not identity.get("family"):
         return ""
-    exact_anchors = [a for a in mention.get("anchor_candidates") or [] if a.get("exact")]
+    exact_anchors = [a for a in mention.get("links") or [] if a.get("exact")]
     if exact_anchors:
-        primary = primary_anchor(exact_anchors)
+        primary = primary_link(exact_anchors)
         if primary:
             return f"{kind}:anchor:{primary['type']}:{hash_text(primary['value'])}"
     return identity_key(kind, identity)
@@ -1066,9 +960,9 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
                 "subject_key": mention["surface_key"],
                 "details": {"surface": mention["surface"], "kind": mention["kind"]},
             })
-        if not mention["evidence"] or not any(e.get("excerpt") for e in mention["evidence"]):
+        if not mention["anchors"] or not any(e.get("excerpt") for e in mention["anchors"]):
             violations.append({
-                "code": "empty_evidence",
+                "code": "empty_anchors",
                 "severity": "error",
                 "subject_key": mention["surface_key"],
                 "details": {"surface": mention["surface"]},
@@ -1097,7 +991,7 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
                             "examples": [m["surface"] for m in mentions_for_referent[:3]],
                             "identity": mentions_for_referent[0]["identity"],
                             "concept_path": mentions_for_referent[0]["concept_path"],
-                            "anchors": mentions_for_referent[0]["anchor_candidates"],
+                            "anchors": mentions_for_referent[0]["links"],
                         }
                         for (scope, signature_value), mentions_for_referent in referents.items()
                     ],
@@ -1107,9 +1001,9 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
     for mention in normalized:
         if mention["kind"] not in VALID_KINDS:
             continue
-        for field in LINK_FIELDS:
-            for value in mention["links"].get(field) or []:
-                by_link[f"{field}:{value}"][mention["identity_key"]].append(mention)
+        for link in mention.get("links") or []:
+            key = f"{link.get('type')}:{link.get('value')}"
+            by_link[key][mention["identity_key"]].append(mention)
     for link_key, identities in by_link.items():
         if len(identities) > 1:
             violations.append({
@@ -1133,14 +1027,14 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
         if mention["kind"] not in VALID_KINDS:
             continue
         concept_sig = " / ".join(mention.get("concept_path") or []).casefold() or mention["identity_key"]
-        for anchor in mention.get("anchor_candidates") or []:
+        for anchor in mention.get("links") or []:
             if not anchor.get("exact"):
                 continue
             by_anchor[f"{anchor['type']}:{anchor['value']}"][concept_sig].append(mention)
     for anchor_key, concept_sigs in by_anchor.items():
         if len(concept_sigs) > 1:
             violations.append({
-                "code": "anchor_concept_conflict",
+                "code": "link_concept_conflict",
                 "severity": "error",
                 "subject_key": anchor_key,
                 "details": {
@@ -1193,54 +1087,10 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
                     "surfaces": _dedup([m.get("surface") for _, m in value_mentions if m.get("surface")]),
                 },
             })
-    surface_index: dict[str, list[dict]] = defaultdict(list)
-    for mention in normalized:
-        if mention.get("kind") not in VALID_KINDS:
-            continue
-        if mention.get("surface"):
-            surface_index[mention["surface"].casefold()].append(mention)
-        for alias in mention.get("aliases") or []:
-            alias_surface = alias.get("surface")
-            if alias_surface:
-                surface_index[alias_surface.casefold()].append(mention)
-    for mention in normalized:
-        if mention.get("kind") not in VALID_KINDS:
-            continue
-        surface = mention.get("surface") or ""
-        canonical, suffixes = strip_quantization_suffix(surface)
-        if not suffixes or canonical.casefold() == surface.casefold():
-            continue
-        sibling_candidates = [
-            sibling for sibling in surface_index.get(canonical.casefold(), [])
-            if sibling is not mention and sibling.get("kind") == mention.get("kind")
-        ]
-        if not sibling_candidates:
-            continue
-        family_key = normalize_space((mention.get("identity") or {}).get("family") or "").casefold()
-        matched = None
-        for sibling in sibling_candidates:
-            sibling_family = normalize_space((sibling.get("identity") or {}).get("family") or "").casefold()
-            if not family_key or not sibling_family or sibling_family == family_key:
-                matched = sibling
-                break
-        if not matched:
-            continue
-        violations.append({
-            "code": "should_be_alias",
-            "severity": "warning",
-            "subject_key": mention.get("surface_key") or normalize_surface(surface),
-            "details": {
-                "variant_surface": surface,
-                "canonical_surface": matched.get("surface"),
-                "suffixes": suffixes,
-                "variant_mention_id": mention.get("id"),
-                "canonical_mention_id": matched.get("id"),
-            },
-        })
     return violations
 
 
-def repair_mentions(mentions: list[dict], repair_artifact: dict) -> list[dict]:
+def apply_audit_updates(mentions: list[dict], repair_artifact: dict) -> list[dict]:
     """Apply a compact repair artifact to normalized mention objects.
 
     Shape:
@@ -1272,19 +1122,18 @@ def repair_mentions(mentions: list[dict], repair_artifact: dict) -> list[dict]:
                 mention["descriptors"] = normalize_descriptors(update["descriptors"])
             if "aliases" in update:
                 mention["aliases"] = normalize_aliases(update["aliases"], surface=mention["surface"], descriptors=mention["descriptors"], kind=mention.get("kind"))
-            if "links" in update:
-                mention["links"] = normalize_links(update["links"])
             if "atoms" in update:
                 mention["atoms"] = normalize_atoms(update["atoms"], surface=mention["surface"])
             if "concept_path" in update or "lattice_path" in update:
                 mention["concept_path"] = normalize_concept_path(update.get("concept_path") or update.get("lattice_path") or [])
                 if not mention["identity"].get("family") and mention["concept_path"]:
                     mention["identity"] = identity_from_concept_path(mention["concept_path"])
-            if "anchors" in update or "anchor_candidates" in update:
-                mention["anchor_candidates"] = normalize_anchor_candidates(update.get("anchors") or update.get("anchor_candidates") or [], kind=mention["kind"])
-                mention["links"] = merge_links(mention["links"], links_from_anchors(mention["anchor_candidates"]))
+            if "links" in update or "anchor_candidates" in update:
+                mention["links"] = normalize_link_candidates(update.get("links") or update.get("anchor_candidates") or [], kind=mention["kind"])
+            if "anchors" in update:
+                mention["anchors"] = normalize_anchors(update.get("anchors") or [])
             if "referent_scope" in update or "scope" in update:
-                mention["referent_scope"] = normalize_scope(update.get("referent_scope") or update.get("scope"), anchors=mention["anchor_candidates"], concept_path=mention["concept_path"])
+                mention["referent_scope"] = normalize_scope(update.get("referent_scope") or update.get("scope"), anchors=mention["links"], concept_path=mention["concept_path"])
             if "aux" in update or "aux_info" in update:
                 mention["aux"] = normalize_aux(update.get("aux") or update.get("aux_info") or {})
             if "relationships" in update or "relationship_hints" in update:

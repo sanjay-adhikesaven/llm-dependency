@@ -2,7 +2,7 @@ from __future__ import annotations
 
 
 def test_commit_check_and_build_lattice_roundtrip(fresh_runtime):
-    from gdb.pipeline import commit_mentions, run_build_lattice, run_check_mentions
+    from gdb.pipeline import commit_mentions, run_build_lattice, run_check
     from gdb.store import all_rows, db
 
     with db():
@@ -14,14 +14,14 @@ def test_commit_check_and_build_lattice_roundtrip(fresh_runtime):
                 "surface": "Qwen3-7B-Base",
                 "kind": "model",
                 "identity": {"family": "Qwen3", "size": "7B", "stage": "Base"},
-                "links": {"hf_ids": ["Qwen/Qwen3-7B-Base"]},
+                "links": [{"type": "hf_model", "value": "Qwen/Qwen3-7B-Base", "exact": True}],
                 "evidence": [{"file": "card.md", "excerpt": "Qwen3-7B-Base"}],
             }
         ]
     })
 
     assert result["status"] == "complete"
-    assert run_check_mentions()["violation_count"] == 0
+    assert run_check()["violation_count"] == 0
     lattice = run_build_lattice()
     assert lattice["node_count"] == 4
     assert lattice["edge_count"] == 3

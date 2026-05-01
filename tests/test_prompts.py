@@ -4,7 +4,7 @@ from __future__ import annotations
 def test_prompt_render_includes_shared_context_and_variables(fresh_runtime):
     from gdb.pipeline import render_prompt
 
-    prompt = render_prompt("extract-mentions", {
+    prompt = render_prompt("extract", {
         "batch_dir": "/tmp/batch",
         "artifact_path": "/tmp/artifact.json",
         "input_path": "/tmp/input.json",
@@ -27,12 +27,12 @@ def test_all_stage_prompts_render(fresh_runtime):
         "input_path": "/i.json",
         "planner_model": "opus",
         "subagent_model": "sonnet",
-        "repair_packet_path": "/repair.json",
-        "unresolved_clusters_path": "/unresolved.json",
+        "cluster_packet_path": "/cluster.json",
+        "lattice_path": "/lattice.json",
         "run_id": "r",
         "worker_dir": "/workers",
         "batch_id": "b",
         "batch_dir": "/batch",
     }
-    for stage in ["discover", "extract-mentions", "review-entities", "repair-mentions", "describe-entities", "link-unresolved", "audit"]:
+    for stage in ["discover", "extract", "audit", "describe"]:
         assert render_prompt(stage, variables).strip()

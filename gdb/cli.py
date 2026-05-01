@@ -6,16 +6,12 @@ import click
 
 from . import config
 from .pipeline import (
-    run_build_relationships,
+    run_audit,
     run_build_lattice,
-    run_check_mentions,
-    run_describe_entities,
-    run_discover_target,
-    run_extract_mentions,
-    run_investigate_hf,
-    run_link_unresolved,
-    run_repair_mentions,
-    run_review_entities,
+    run_check,
+    run_describe,
+    run_discover,
+    run_extract,
     run_verify_links,
 )
 from .store import all_rows, db, emit_json, loads
@@ -76,10 +72,10 @@ def run():
 @click.option("--target", required=True)
 @click.option("--artifact", "artifact_path", help="Ingest an existing discover artifact instead of launching an agent.")
 @click.option("--workspace", "workspace_dir", help="Workspace holding paths referenced by --artifact.")
-@click.option("--planner-model", default=config.CLAUDE_MODEL, type=click.Choice(config.PLANNER_CHOICES), show_default=True)
-@click.option("--subagent-model", default=config.CLAUDE_MODEL, type=click.Choice(config.SUBAGENT_CHOICES), show_default=True)
+@click.option("--planner-model", default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--subagent-model", default=config.CLAUDE_MODEL, show_default=True)
 def discover_cmd(target: str, artifact_path: str | None, workspace_dir: str | None, planner_model: str, subagent_model: str):
-    emit_json(run_discover_target(
+    emit_json(run_discover(
         target=target,
         artifact_path=artifact_path,
         workspace_dir=workspace_dir,
@@ -88,18 +84,18 @@ def discover_cmd(target: str, artifact_path: str | None, workspace_dir: str | No
     ))
 
 
-@run.command("extract-mentions")
+@run.command("extract")
 @click.option("--batch-id", help="Limit to one batch. Required when --artifact is used.")
 @click.option("--artifact", "artifact_path", help="Ingest an existing extract artifact instead of launching an agent.")
-@click.option("--planner-model", default=config.CLAUDE_MODEL, type=click.Choice(config.PLANNER_CHOICES), show_default=True)
-@click.option("--subagent-model", default=config.CLAUDE_MODEL, type=click.Choice(config.SUBAGENT_CHOICES), show_default=True)
+@click.option("--planner-model", default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--subagent-model", default=config.CLAUDE_MODEL, show_default=True)
 @click.option("--max-workers", type=int, help="Override GDB_MAX_PARALLEL_BATCHES for this process.")
-def extract_mentions_cmd(batch_id: str | None, artifact_path: str | None, planner_model: str, subagent_model: str, max_workers: int | None):
+def extract_cmd(batch_id: str | None, artifact_path: str | None, planner_model: str, subagent_model: str, max_workers: int | None):
     if artifact_path and not batch_id:
         raise click.ClickException("--batch-id is required with --artifact")
     if max_workers:
         config.MAX_PARALLEL_BATCHES = max(1, max_workers)
-    emit_json(run_extract_mentions(
+    emit_json(run_extract(
         batch_id=batch_id,
         artifact_path=artifact_path,
         planner_model=planner_model,
@@ -107,27 +103,18 @@ def extract_mentions_cmd(batch_id: str | None, artifact_path: str | None, planne
     ))
 
 
-@run.command("check-mentions")
+@run.command("check")
 @click.option("--artifact", "artifact_path", help="Check a JSON artifact directly instead of DB mentions.")
-def check_mentions_cmd(artifact_path: str | None):
-    emit_json(run_check_mentions(artifact_path=artifact_path))
+def check_cmd(artifact_path: str | None):
+    emit_json(run_check(artifact_path=artifact_path))
 
 
-@run.command("repair-mentions")
-@click.option("--artifact", "artifact_path", help="Apply a repair artifact directly instead of launching an agent.")
-@click.option("--planner-model", default=config.CLAUDE_MODEL, type=click.Choice(config.PLANNER_CHOICES), show_default=True)
-def repair_mentions_cmd(artifact_path: str | None, planner_model: str):
-    emit_json(run_repair_mentions(artifact_path=artifact_path, planner_model=planner_model))
-
-
-@run.command("review-entities")
-@click.option("--artifact", "artifact_path", help="Apply a review artifact directly instead of launching an agent.")
-@click.option("--planner-model", default=config.CLAUDE_MODEL, type=click.Choice(config.PLANNER_CHOICES), show_default=True)
-@click.option("--max-workers", type=int, help="Override GDB_MAX_PARALLEL_BATCHES for this process.")
-def review_entities_cmd(artifact_path: str | None, planner_model: str, max_workers: int | None):
-    if max_workers:
-        config.MAX_PARALLEL_BATCHES = max(1, max_workers)
-    emit_json(run_review_entities(artifact_path=artifact_path, planner_model=planner_model))
+@run.command("audit")
+@click.option("--artifact", "artifact_path", help="Apply an audit artifact directly instead of launching an agent.")
+@click.option("--planner-model", default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--subagent-model", default=config.CLAUDE_MODEL, show_default=True)
+def audit_cmd(artifact_path: str | None, planner_model: str, subagent_model: str):
+    emit_json(run_audit(artifact_path=artifact_path, planner_model=planner_model, subagent_model=subagent_model))
 
 
 @run.command("verify-links")
@@ -135,32 +122,17 @@ def verify_links_cmd():
     emit_json(run_verify_links())
 
 
-@run.command("investigate-hf")
-def investigate_hf_cmd():
-    emit_json(run_investigate_hf())
-
-
-@run.command("link-unresolved")
-@click.option("--artifact", "artifact_path", help="Apply a link artifact directly instead of launching an agent.")
-@click.option("--planner-model", default=config.CLAUDE_MODEL, type=click.Choice(config.PLANNER_CHOICES), show_default=True)
-def link_unresolved_cmd(artifact_path: str | None, planner_model: str):
-    emit_json(run_link_unresolved(artifact_path=artifact_path, planner_model=planner_model))
-
-
 @run.command("build-lattice")
 def build_lattice_cmd():
     emit_json(run_build_lattice())
 
 
-@run.command("build-relationships")
-def build_relationships_cmd():
-    emit_json(run_build_relationships())
-
-
-@run.command("describe-entities")
-@click.option("--no-fetch-hf", is_flag=True, help="Do not fetch HF README front matter.")
-def describe_entities_cmd(no_fetch_hf: bool):
-    emit_json(run_describe_entities(fetch_hf=not no_fetch_hf))
+@run.command("describe")
+@click.option("--artifact", "artifact_path", help="Apply a describe artifact directly instead of launching an agent.")
+@click.option("--planner-model", default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--subagent-model", default=config.CLAUDE_MODEL, show_default=True)
+def describe_cmd(artifact_path: str | None, planner_model: str, subagent_model: str):
+    emit_json(run_describe(artifact_path=artifact_path, planner_model=planner_model, subagent_model=subagent_model))
 
 
 @main.group()
@@ -181,24 +153,23 @@ def debug_mentions(limit: int | None):
             "subsets_json",
             "context_roles_json",
             "atoms_json",
-            "anchor_candidates_json",
+            "links_json",
             "concept_path_json",
             "relationships_json",
-            "evidence_json",
+            "anchors_json",
         }
         for field in (
             "identity_json",
             "descriptors_json",
             "aliases_json",
-            "links_json",
             "subsets_json",
             "context_roles_json",
             "atoms_json",
-            "anchor_candidates_json",
+            "links_json",
             "concept_path_json",
             "aux_json",
             "relationships_json",
-            "evidence_json",
+            "anchors_json",
             "attrs",
         ):
             row[field.removesuffix("_json")] = loads(row.pop(field), default=[] if field in list_fields else {})
@@ -211,14 +182,6 @@ def debug_lattice():
         "nodes": all_rows("SELECT * FROM lattice_nodes ORDER BY kind, display_name"),
         "edges": all_rows("SELECT * FROM lattice_edges ORDER BY parent_node_key, child_node_key"),
     })
-
-
-@debug.command("code-refs")
-@click.argument("path", type=click.Path(exists=True, dir_okay=False, path_type=Path))
-def debug_code_refs(path: Path):
-    from .code_refs import extract_code_references
-
-    emit_json({"mentions": extract_code_references(path.read_text(errors="replace"), file=str(path))})
 
 
 if __name__ == "__main__":

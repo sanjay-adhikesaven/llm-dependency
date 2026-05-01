@@ -16,19 +16,19 @@ def test_identity_canonicalization_is_open_form_and_sorts_extra():
     assert identity_signature("model", ident) == identity_signature("model", {"size": "7B", "family": "qwen3", "organization": "qwen", "extra": {"z": "last", "m": "mid"}})
 
 
-def test_artifact_validation_blocks_non_model_dataset_and_empty_evidence():
+def test_artifact_validation_blocks_non_model_dataset_and_empty_anchors():
     from gdb.artifacts import validate_mention_artifact
 
     errors = validate_mention_artifact({
         "mentions": [
-            {"surface": "Apache-2.0", "kind": "license", "identity": {"family": "Apache-2.0"}, "evidence": [{"excerpt": "License Apache-2.0"}]},
-            {"surface": "Qwen3", "kind": "model", "identity": {"family": "Qwen3"}, "evidence": []},
+            {"surface": "Apache-2.0", "kind": "license", "identity": {"family": "Apache-2.0"}, "anchors": [{"excerpt": "License Apache-2.0"}]},
+            {"surface": "Qwen3", "kind": "model", "identity": {"family": "Qwen3"}, "anchors": []},
         ]
     })
 
     codes = {error["code"] for error in errors}
     assert "invalid_kind" in codes
-    assert "empty_evidence" in codes
+    assert "empty_anchors" in codes
 
 
 def test_alias_aggregation_preserves_alias_local_descriptors():
@@ -40,14 +40,14 @@ def test_alias_aggregation_preserves_alias_local_descriptors():
             "kind": "model",
             "identity": {"family": "Qwen3", "size": "7B", "stage": "Instruct"},
             "aliases": [{"surface": "Qwen3-7B-Instruct-FP8", "descriptors": {"precision": "FP8"}}],
-            "evidence": [{"file": "card.md", "excerpt": "Qwen3-7B-Instruct-FP8 is available."}],
+            "anchors": [{"file": "card.md", "excerpt": "Qwen3-7B-Instruct-FP8 is available."}],
         },
         {
             "surface": "Qwen3-7B-Instruct",
             "kind": "model",
             "identity": {"family": "Qwen3", "size": "7B", "stage": "Instruct"},
             "aliases": [{"surface": "Qwen3-7B-Instruct", "descriptors": {}}],
-            "evidence": [{"file": "card.md", "excerpt": "Qwen3-7B-Instruct is the base name."}],
+            "anchors": [{"file": "card.md", "excerpt": "Qwen3-7B-Instruct is the base name."}],
         },
     ])
 
@@ -65,15 +65,15 @@ def test_conflict_detection_same_surface_and_same_link():
             "surface": "FineMath-3+",
             "kind": "dataset",
             "identity": {"family": "FineMath", "subset": "3plus"},
-            "links": {"hf_ids": ["HuggingFaceTB/finemath"]},
-            "evidence": [{"file": "a.md", "excerpt": "FineMath-3+ was used."}],
+            "links": [{"type": "hf_dataset", "value": "HuggingFaceTB/finemath", "exact": True}],
+            "anchors": [{"file": "a.md", "excerpt": "FineMath-3+ was used."}],
         },
         {
             "surface": "FineMath-3+",
             "kind": "dataset",
             "identity": {"family": "FineMath", "quality_cut": "3plus"},
-            "links": {"hf_ids": ["HuggingFaceTB/finemath"]},
-            "evidence": [{"file": "b.md", "excerpt": "FineMath-3+ was used."}],
+            "links": [{"type": "hf_dataset", "value": "HuggingFaceTB/finemath", "exact": True}],
+            "anchors": [{"file": "b.md", "excerpt": "FineMath-3+ was used."}],
         },
     ])
 
@@ -89,10 +89,10 @@ def test_open_context_roles_and_exact_dataset_config_anchor():
         "kind": "dataset",
         "concept_path": ["FineMath", "3plus"],
         "context_roles": ["preference_data_seed"],
-        "anchor_candidates": [{"type": "hf_dataset_config", "value": "HuggingFaceTB/finemath::finemath-3plus"}],
-        "evidence": [{"file": "cfg.yaml", "excerpt": "finemath-3plus"}],
+        "links": [{"type": "hf_dataset_config", "value": "HuggingFaceTB/finemath::finemath-3plus"}],
+        "anchors": [{"file": "cfg.yaml", "excerpt": "finemath-3plus"}],
     })
 
     assert mention["context_roles"] == ["preference_data_seed"]
     assert mention["referent_scope"] == "entity"
-    assert mention["anchor_candidates"][0]["type"] == "hf_dataset_config"
+    assert mention["links"][0]["type"] == "hf_dataset_config"

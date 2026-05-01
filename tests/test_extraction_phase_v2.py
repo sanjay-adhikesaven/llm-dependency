@@ -10,7 +10,7 @@ def test_quantization_suffix_collapses_to_alias_of_canonical():
             "surface": "Qwen3-7B-Instruct",
             "kind": "model",
             "identity": {"family": "Qwen3", "size": "7B", "stage": "Instruct"},
-            "anchor_candidates": [
+            "links": [
                 {"type": "hf_model", "value": "Qwen/Qwen3-7B-Instruct", "exact": True},
             ],
             "aliases": [
@@ -23,7 +23,7 @@ def test_quantization_suffix_collapses_to_alias_of_canonical():
                     ],
                 },
             ],
-            "evidence": [{"file": "card.md", "excerpt": "Qwen3-7B-Instruct (and FP8 variant)"}],
+            "anchors": [{"file": "card.md", "excerpt": "Qwen3-7B-Instruct (and FP8 variant)"}],
         },
     ])
 
@@ -67,21 +67,21 @@ def test_aux_conflict_flagged_not_silently_merged():
             "surface": "Qwen3-7B-Instruct",
             "kind": "model",
             "identity": {"family": "Qwen3", "size": "7B", "stage": "Instruct"},
-            "anchor_candidates": [
+            "links": [
                 {"type": "hf_model", "value": "Qwen/Qwen3-7B-Instruct", "exact": True},
             ],
             "aux": {"context_length": "8192"},
-            "evidence": [{"file": "a.md", "excerpt": "Qwen3-7B-Instruct supports 8192 tokens"}],
+            "anchors": [{"file": "a.md", "excerpt": "Qwen3-7B-Instruct supports 8192 tokens"}],
         },
         {
             "surface": "Qwen3-7B-Instruct",
             "kind": "model",
             "identity": {"family": "Qwen3", "size": "7B", "stage": "Instruct"},
-            "anchor_candidates": [
+            "links": [
                 {"type": "hf_model", "value": "Qwen/Qwen3-7B-Instruct", "exact": True},
             ],
             "aux": {"context_length": "16384"},
-            "evidence": [{"file": "b.md", "excerpt": "Qwen3-7B-Instruct supports 16384 tokens"}],
+            "anchors": [{"file": "b.md", "excerpt": "Qwen3-7B-Instruct supports 16384 tokens"}],
         },
     ])
 
@@ -101,19 +101,19 @@ def test_olmo3_dates_distinguish_separate_entities():
             "surface": "Olmo-3-1025-7B-Base",
             "kind": "model",
             "identity": {"family": "Olmo-3", "size": "7B", "stage": "Base", "extra": {"date": "1025"}},
-            "anchor_candidates": [
+            "links": [
                 {"type": "hf_model", "value": "allenai/Olmo-3-1025-7B", "exact": True},
             ],
-            "evidence": [{"file": "a.md", "excerpt": "Olmo-3 1025 release"}],
+            "anchors": [{"file": "a.md", "excerpt": "Olmo-3 1025 release"}],
         },
         {
             "surface": "Olmo-3-1125-7B-Base",
             "kind": "model",
             "identity": {"family": "Olmo-3", "size": "7B", "stage": "Base", "extra": {"date": "1125"}},
-            "anchor_candidates": [
+            "links": [
                 {"type": "hf_model", "value": "allenai/Olmo-3-1125-7B", "exact": True},
             ],
-            "evidence": [{"file": "b.md", "excerpt": "Olmo-3 1125 release"}],
+            "anchors": [{"file": "b.md", "excerpt": "Olmo-3 1125 release"}],
         },
     ])
 
@@ -132,20 +132,20 @@ def test_forest_manifest_partitions_multi_family_input_by_root():
             "kind": "model",
             "identity": {"family": "Qwen3", "size": "7B", "stage": "Instruct"},
             "concept_path": ["Qwen3", "7B", "Instruct"],
-            "anchor_candidates": [
+            "links": [
                 {"type": "hf_model", "value": "Qwen/Qwen3-7B-Instruct", "exact": True},
             ],
-            "evidence": [{"file": "q.md", "excerpt": "Qwen3-7B-Instruct"}],
+            "anchors": [{"file": "q.md", "excerpt": "Qwen3-7B-Instruct"}],
         },
         {
             "surface": "Llama-3-8B-Instruct",
             "kind": "model",
             "identity": {"family": "Llama-3", "size": "8B", "stage": "Instruct"},
             "concept_path": ["Llama-3", "8B", "Instruct"],
-            "anchor_candidates": [
+            "links": [
                 {"type": "hf_model", "value": "meta-llama/Llama-3-8B-Instruct", "exact": True},
             ],
-            "evidence": [{"file": "l.md", "excerpt": "Llama-3-8B-Instruct"}],
+            "anchors": [{"file": "l.md", "excerpt": "Llama-3-8B-Instruct"}],
         },
     ])
 
@@ -171,7 +171,7 @@ def test_lattice_audit_lists_bare_leaf_concepts():
             "kind": "model",
             "identity": {"family": "MysteryModel"},
             "concept_path": ["MysteryModel"],
-            "evidence": [{"file": "x.md", "excerpt": "We used MysteryModel."}],
+            "anchors": [{"file": "x.md", "excerpt": "We used MysteryModel."}],
         },
     ])
 
@@ -181,7 +181,7 @@ def test_lattice_audit_lists_bare_leaf_concepts():
 
 
 def test_lattice_audit_paper_only_concept_classified_advisory_not_error():
-    """Entity with only verified paper_release anchor lands in entities_with_only_paper_anchors."""
+    """Entity with only verified paper_release anchor lands in entities_with_only_paper_links."""
     from gdb.lattice import build_lattice
 
     lattice = build_lattice(
@@ -191,14 +191,14 @@ def test_lattice_audit_paper_only_concept_classified_advisory_not_error():
                 "kind": "dataset",
                 "identity": {"family": "AIME-2024"},
                 "concept_path": ["AIME-2024"],
-                "anchor_candidates": [
+                "links": [
                     {
                         "type": "paper_release",
                         "value": "https://arxiv.org/abs/2404.12345",
                         "exact": True,
                     },
                 ],
-                "evidence": [
+                "anchors": [
                     {"file": "a.md", "excerpt": "AIME 2024 benchmark released in arxiv 2404.12345"},
                 ],
             },
@@ -209,69 +209,15 @@ def test_lattice_audit_paper_only_concept_classified_advisory_not_error():
     )
 
     audit = lattice.get("audit") or {}
-    only_paper = audit.get("entities_with_only_paper_anchors") or []
+    only_paper = audit.get("entities_with_only_paper_links") or []
     assert any(item["display_name"] == "AIME-2024" for item in only_paper)
-
-
-def test_should_be_alias_advisory_when_canonical_sibling_present():
-    """Variant-suffix surface alongside canonical sibling emits should_be_alias warning."""
-    from gdb.artifacts import detect_conflicts
-
-    violations = detect_conflicts([
-        {
-            "surface": "Qwen3-7B-Instruct",
-            "kind": "model",
-            "identity": {"family": "Qwen3", "size": "7B", "stage": "Instruct"},
-            "anchor_candidates": [
-                {"type": "hf_model", "value": "Qwen/Qwen3-7B-Instruct", "exact": True},
-            ],
-            "evidence": [{"file": "a.md", "excerpt": "Qwen3-7B-Instruct"}],
-        },
-        {
-            "surface": "Qwen3-7B-Instruct-FP8",
-            "kind": "model",
-            "identity": {"family": "Qwen3", "size": "7B", "stage": "Instruct"},
-            "anchor_candidates": [
-                {"type": "hf_model", "value": "Org/Qwen3-7B-Instruct-FP8", "exact": True},
-            ],
-            "evidence": [{"file": "b.md", "excerpt": "Qwen3-7B-Instruct-FP8 quantized variant"}],
-        },
-    ])
-
-    advisories = [v for v in violations if v["code"] == "should_be_alias"]
-    assert advisories, "should_be_alias advisory not emitted"
-    detail = advisories[0]["details"]
-    assert detail["variant_surface"] == "Qwen3-7B-Instruct-FP8"
-    assert detail["canonical_surface"] == "Qwen3-7B-Instruct"
-    assert "FP8" in detail["suffixes"]
-    assert advisories[0]["severity"] == "warning"
-
-
-def test_should_be_alias_skipped_when_only_variant_present():
-    """Variant surface alone (no canonical sibling) does NOT emit should_be_alias."""
-    from gdb.artifacts import detect_conflicts
-
-    violations = detect_conflicts([
-        {
-            "surface": "Qwen3-7B-Instruct-FP8",
-            "kind": "model",
-            "identity": {"family": "Qwen3", "size": "7B", "stage": "Instruct"},
-            "anchor_candidates": [
-                {"type": "hf_model", "value": "Org/Qwen3-7B-Instruct-FP8", "exact": True},
-            ],
-            "evidence": [{"file": "b.md", "excerpt": "Qwen3-7B-Instruct-FP8"}],
-        },
-    ])
-
-    advisories = [v for v in violations if v["code"] == "should_be_alias"]
-    assert not advisories
 
 
 def test_dataset_github_canonical_hint_round_trips():
     """github_repo + hf_dataset (with mirror metadata) survive normalization."""
-    from gdb.artifacts import normalize_anchor_candidates
+    from gdb.artifacts import normalize_link_candidates
 
-    anchors = normalize_anchor_candidates(
+    anchors = normalize_link_candidates(
         [
             {"type": "github_repo", "value": "microsoft/MASS", "exact": True},
             {

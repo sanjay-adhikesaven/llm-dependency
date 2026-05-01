@@ -89,17 +89,16 @@ CREATE TABLE IF NOT EXISTS mentions (
   identity_key        TEXT NOT NULL,
   descriptors_json    TEXT NOT NULL DEFAULT '{}',
   aliases_json        TEXT NOT NULL DEFAULT '[]',
-  links_json          TEXT NOT NULL DEFAULT '{}',
   subsets_json        TEXT NOT NULL DEFAULT '[]',
   context_roles_json  TEXT NOT NULL DEFAULT '[]',
   atoms_json          TEXT NOT NULL DEFAULT '[]',
   referent_scope      TEXT NOT NULL DEFAULT 'ambiguous'
                         CHECK (referent_scope IN ('entity','concept','ambiguous')),
-  anchor_candidates_json TEXT NOT NULL DEFAULT '[]',
+  links_json          TEXT NOT NULL DEFAULT '[]',
   concept_path_json   TEXT NOT NULL DEFAULT '[]',
   aux_json            TEXT NOT NULL DEFAULT '{}',
   relationships_json  TEXT NOT NULL DEFAULT '[]',
-  evidence_json       TEXT NOT NULL DEFAULT '[]',
+  anchors_json        TEXT NOT NULL DEFAULT '[]',
   description         TEXT,
   notes               TEXT,
   attrs               TEXT NOT NULL DEFAULT '{}',
@@ -144,7 +143,7 @@ CREATE TABLE IF NOT EXISTS entity_descriptions (
   entity_key      TEXT PRIMARY KEY,
   kind            TEXT NOT NULL CHECK (kind IN ('model','dataset')),
   display_name    TEXT NOT NULL,
-  anchors_json    TEXT NOT NULL DEFAULT '[]',
+  links_json      TEXT NOT NULL DEFAULT '[]',
   description     TEXT NOT NULL DEFAULT '',
   metadata_json   TEXT NOT NULL DEFAULT '{}',
   source_json     TEXT NOT NULL DEFAULT '{}',
@@ -154,9 +153,9 @@ CREATE TABLE IF NOT EXISTS entity_descriptions (
 CREATE INDEX IF NOT EXISTS entity_descriptions_kind_idx ON entity_descriptions(kind);
 
 CREATE TABLE IF NOT EXISTS hf_metadata (
-  anchor_key       TEXT PRIMARY KEY,
-  anchor_type      TEXT NOT NULL,
-  anchor_value     TEXT NOT NULL,
+  link_key         TEXT PRIMARY KEY,
+  link_type        TEXT NOT NULL,
+  link_value       TEXT NOT NULL,
   kind             TEXT NOT NULL CHECK (kind IN ('model','dataset')),
   ok               INTEGER NOT NULL DEFAULT 0,
   repo_url         TEXT,
@@ -171,14 +170,14 @@ CREATE TABLE IF NOT EXISTS hf_metadata (
   error            TEXT,
   fetched_at       TEXT NOT NULL
 );
-CREATE INDEX IF NOT EXISTS hf_metadata_anchor_idx ON hf_metadata(anchor_type, anchor_value);
+CREATE INDEX IF NOT EXISTS hf_metadata_link_idx ON hf_metadata(link_type, link_value);
 
 CREATE TABLE IF NOT EXISTS family_policies (
   id              TEXT PRIMARY KEY,
   kind            TEXT NOT NULL CHECK (kind IN ('model','dataset')),
   root            TEXT NOT NULL,
   policy_json     TEXT NOT NULL DEFAULT '{}',
-  evidence_json   TEXT NOT NULL DEFAULT '[]',
+  anchors_json    TEXT NOT NULL DEFAULT '[]',
   source          TEXT NOT NULL DEFAULT 'review',
   created_at      TEXT NOT NULL,
   updated_at      TEXT NOT NULL
@@ -188,11 +187,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS family_policies_root_idx ON family_policies(ki
 CREATE TABLE IF NOT EXISTS entity_relationships (
   id                TEXT PRIMARY KEY,
   source_entity_key TEXT,
-  source_anchor_json TEXT NOT NULL DEFAULT '{}',
+  source_link_json  TEXT NOT NULL DEFAULT '{}',
   relation          TEXT NOT NULL,
-  target_anchor_json TEXT NOT NULL DEFAULT '{}',
+  target_link_json  TEXT NOT NULL DEFAULT '{}',
   target_name       TEXT,
-  evidence_json     TEXT NOT NULL DEFAULT '[]',
+  anchors_json      TEXT NOT NULL DEFAULT '[]',
   metadata_json     TEXT NOT NULL DEFAULT '{}',
   created_at        TEXT NOT NULL
 );
@@ -209,10 +208,8 @@ CREATE TABLE IF NOT EXISTS lattice_nodes (
   display_name         TEXT NOT NULL,
   aliases_json         TEXT NOT NULL DEFAULT '[]',
   descriptors_json     TEXT NOT NULL DEFAULT '{}',
-  links_json           TEXT NOT NULL DEFAULT '{}',
-  anchors_json         TEXT NOT NULL DEFAULT '[]',
-  verified_links_json  TEXT NOT NULL DEFAULT '{}',
-  verified_anchors_json TEXT NOT NULL DEFAULT '[]',
+  links_json           TEXT NOT NULL DEFAULT '[]',
+  verified_links_json  TEXT NOT NULL DEFAULT '[]',
   aux_json             TEXT NOT NULL DEFAULT '{}',
   description          TEXT,
   occurrence_count     INTEGER NOT NULL DEFAULT 0,

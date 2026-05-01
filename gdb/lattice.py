@@ -7,19 +7,15 @@ from typing import Any, Iterable
 
 from . import config
 from .artifacts import (
-    LINK_FIELDS,
     aggregate_mentions,
-    anchors_from_links,
     choose_display_name,
     concept_display_name,
     concept_path_from_identity,
-    links_from_anchors,
     merge_alias_lists,
     merge_descriptor_values,
-    merge_links,
-    normalize_anchor_candidates,
+    normalize_link_candidates,
     normalize_mention,
-    primary_anchor,
+    primary_link,
 )
 from .store import dumps, hash_text, normalize_space
 
@@ -33,44 +29,30 @@ def concept_node_key(kind: str, concept_path: list[str]) -> str:
     return f"concept:{kind}:{_signature(normalized)}"
 
 
-def entity_node_key(kind: str, anchor: dict) -> str:
-    return f"entity:{kind}:{anchor['type']}:{_signature(anchor['value'])}"
+def entity_node_key(kind: str, link: dict) -> str:
+    return f"entity:{kind}:{link['type']}:{_signature(link['value'])}"
 
 
-def anchor_identity(anchor: dict) -> dict:
-    return {"anchor_type": anchor["type"], "anchor": anchor["value"]}
+def link_identity(link: dict) -> dict:
+    return {"link_type": link["type"], "link_value": link["value"]}
 
 
 def concept_identity(concept_path: list[str]) -> dict:
     return {"concept_path": list(concept_path)}
 
 
-def verified_links_for_values(links: dict, link_checks: Iterable[dict]) -> dict:
-    checks = {
-        (check.get("link_kind"), check.get("link_value"))
-        for check in link_checks
-        if check.get("ok")
-    }
-    out = {field: [] for field in LINK_FIELDS}
-    for field in LINK_FIELDS:
-        for value in links.get(field) or []:
-            if (field, value) in checks and value not in out[field]:
-                out[field].append(value)
-    return out
-
-
-def verified_anchors_for_values(anchors: list[dict], link_checks: Iterable[dict]) -> list[dict]:
+def verified_links_for_values(links: list[dict], link_checks: Iterable[dict]) -> list[dict]:
     checks = {
         (check.get("link_kind"), check.get("link_value"))
         for check in link_checks
         if check.get("ok")
     }
     out: list[dict] = []
-    for anchor in anchors:
-        anchor_type = anchor.get("type")
-        value = anchor.get("value")
-        if anchor_type == "api_model_id" or (anchor_type, value) in checks:
-            out.append(anchor)
+    for link in links:
+        link_type = link.get("type")
+        value = link.get("value")
+        if link_type == "api_model_id" or (link_type, value) in checks:
+            out.append(link)
     return out
 
 
@@ -99,10 +81,9 @@ def _ensure_concept(
             "display_name": concept_display_name(concept_path),
             "aliases": [],
             "descriptors": {},
-            "links": {field: [] for field in LINK_FIELDS},
+            "links": [],
+            "verified_links": [],
             "anchors": [],
-            "verified_links": {field: [] for field in LINK_FIELDS},
-            "verified_anchors": [],
             "aux": {},
             "description": None,
             "occurrence_count": 0,
@@ -140,30 +121,27 @@ def _fallback_concept_path(cluster: dict) -> list[str]:
     return []
 
 
-def _exact_anchors(cluster: dict) -> list[dict]:
-    anchors = [anchor for anchor in cluster.get("anchor_candidates") or [] if anchor.get("exact")]
-    if anchors:
-        return normalize_anchor_candidates(anchors, kind=cluster.get("kind"))
-    link_anchors = anchors_from_links(cluster.get("links") or {}, kind=cluster.get("kind"))
-    return normalize_anchor_candidates([anchor for anchor in link_anchors if anchor.get("exact")], kind=cluster.get("kind"))
+def _exact_links(cluster: dict) -> list[dict]:
+    links = [link for link in cluster.get("links") or [] if link.get("exact")]
+    return normalize_link_candidates(links, kind=cluster.get("kind"))
 
 
-def _primary_and_secondary_anchors(cluster: dict) -> tuple[dict | None, list[dict]]:
-    anchors = _exact_anchors(cluster)
-    primary = primary_anchor(anchors)
+def _primary_and_secondary_links(cluster: dict) -> tuple[dict | None, list[dict]]:
+    links = _exact_links(cluster)
+    primary = primary_link(links)
     if not primary:
         return None, []
-    return primary, normalize_anchor_candidates(anchors, kind=cluster.get("kind"))
+    return primary, normalize_link_candidates(links, kind=cluster.get("kind"))
 
 
-def _entity_display_name(cluster: dict, anchor: dict) -> str:
+def _entity_display_name(cluster: dict, link: dict) -> str:
     aliases = cluster.get("aliases") or []
     if aliases:
         return choose_display_name(aliases, cluster.get("identity") or {})
-    value = anchor.get("value") or ""
-    if anchor.get("type") in {"hf_model", "hf_dataset", "github_repo", "github_ref"} and "/" in value:
+    value = link.get("value") or ""
+    if link.get("type") in {"hf_model", "hf_dataset", "github_repo", "github_ref"} and "/" in value:
         return value.rsplit("/", 1)[-1].split("@", 1)[0].split(":", 1)[0]
-    if anchor.get("type") == "hf_dataset_config":
+    if link.get("type") == "hf_dataset_config":
         return value.split("::", 1)[1]
     return value or "entity"
 
@@ -188,29 +166,27 @@ def build_lattice(mentions: Iterable[dict], link_checks: Iterable[dict] = ()) ->
             concept["aux"] = merge_descriptor_values(concept["aux"], cluster.get("aux") or {})
             concept["description"] = _first_description(concept.get("description"), cluster.get("description"))
 
-        primary, exact_anchors = _primary_and_secondary_anchors(cluster)
+        primary, exact_links = _primary_and_secondary_links(cluster)
         if not primary:
             if parent_key:
-                nodes[parent_key]["flags"].append("observed_without_exact_anchor")
+                nodes[parent_key]["flags"].append("observed_without_exact_link")
             continue
 
-        for anchor in [primary]:
-            node_key = entity_node_key(kind, anchor)
+        for link in [primary]:
+            node_key = entity_node_key(kind, link)
             if node_key not in nodes:
-                links = merge_links({field: [] for field in LINK_FIELDS}, links_from_anchors([anchor]))
                 nodes[node_key] = {
                     "node_key": node_key,
                     "kind": kind,
                     "node_type": "entity",
-                    "identity": anchor_identity(anchor),
+                    "identity": link_identity(link),
                     "concept_path": list(concept_path),
-                    "display_name": _entity_display_name(cluster, anchor),
+                    "display_name": _entity_display_name(cluster, link),
                     "aliases": [],
                     "descriptors": {},
-                    "links": links,
-                    "anchors": deepcopy(exact_anchors),
-                    "verified_links": {field: [] for field in LINK_FIELDS},
-                    "verified_anchors": [],
+                    "links": deepcopy(exact_links),
+                    "verified_links": [],
+                    "anchors": [],
                     "aux": {},
                     "description": None,
                     "occurrence_count": 0,
@@ -220,31 +196,29 @@ def build_lattice(mentions: Iterable[dict], link_checks: Iterable[dict] = ()) ->
             entity = nodes[node_key]
             entity["aliases"] = merge_alias_lists(entity["aliases"], cluster.get("aliases") or [], kind=kind)
             entity["descriptors"] = merge_descriptor_values(entity["descriptors"], cluster.get("descriptors") or {})
-            entity["links"] = merge_links(entity["links"], cluster.get("links") or {})
-            entity["links"] = merge_links(entity["links"], links_from_anchors([anchor]))
-            entity["anchors"] = normalize_anchor_candidates([*entity["anchors"], *exact_anchors], kind=kind)
+            entity["links"] = normalize_link_candidates([*entity["links"], *exact_links], kind=kind)
             entity["verified_links"] = verified_links_for_values(entity["links"], checks)
-            entity["verified_anchors"] = verified_anchors_for_values(entity["anchors"], checks)
+            entity["anchors"] = list({(a.get("file"), a.get("location"), a.get("excerpt")): a for a in [*entity["anchors"], *(cluster.get("anchors") or [])]}.values())
             entity["aux"] = merge_descriptor_values(entity["aux"], cluster.get("aux") or {})
             entity["description"] = _first_description(entity.get("description"), cluster.get("description"))
             entity["occurrence_count"] += cluster.get("occurrence_count") or 0
-            if anchor.get("type") in config.URL_ANCHOR_TYPES and not entity["verified_anchors"]:
-                entity["flags"].append("unverified_exact_anchor")
-            if not entity["anchors"]:
-                entity["flags"].append("entity_without_exact_anchor")
+            if link.get("type") in config.URL_LINK_TYPES and not entity["verified_links"]:
+                entity["flags"].append("unverified_exact_link")
+            if not entity["links"]:
+                entity["flags"].append("entity_without_exact_link")
             leaf_keys.add(node_key)
             if parent_key:
                 edges[(parent_key, node_key)] = {
                     "parent_node_key": parent_key,
                     "child_node_key": node_key,
-                    "rationale": "exact entity anchor under reviewed concept path",
+                    "rationale": "exact entity link under reviewed concept path",
                 }
                 concept_has_entity.add(parent_key)
 
     for node in nodes.values():
         if node["node_type"] == "concept" and node["node_key"] not in concept_has_entity:
             has_child_concept = any(edge["parent_node_key"] == node["node_key"] for edge in edges.values())
-            if not has_child_concept and "observed_without_exact_anchor" in node["flags"]:
+            if not has_child_concept and "observed_without_exact_link" in node["flags"]:
                 node["flags"].append("concept_without_entity_leaf")
         node["flags"] = sorted(set(node["flags"]))
 
@@ -306,15 +280,15 @@ def derive_forests(lattice: dict) -> list[dict]:
 
 
 def derive_lattice_audit(lattice: dict) -> dict:
-    """Compute audit categories surfacing leaf-anchor anomalies.
+    """Compute audit categories surfacing leaf-link anomalies.
 
     Categories:
     - bare_leaf_concepts: concept nodes with no child edges, no entity
-      attached, and no anchor evidence (likely extraction artifacts).
-    - entities_without_verified_anchors: entities whose verified_anchors
+      attached, and no link evidence (likely extraction artifacts).
+    - entities_without_verified_links: entities whose verified_links
       list is empty.
-    - entities_with_only_paper_anchors: entities whose only verified
-      anchor type is paper_release (legitimate-but-flagged for review).
+    - entities_with_only_paper_links: entities whose only verified
+      link type is paper_release (legitimate-but-flagged for review).
     - concept_without_entity_leaf: concepts flagged with
       concept_without_entity_leaf in build_lattice.
     """
@@ -330,8 +304,8 @@ def derive_lattice_audit(lattice: dict) -> dict:
         flags = node.get("flags") or []
         if node_type == "concept":
             is_leaf = node["node_key"] not in parent_keys
-            has_anchor = bool(node.get("anchors"))
-            if is_leaf and not has_anchor:
+            has_link = bool(node.get("links"))
+            if is_leaf and not has_link:
                 bare_leaf_concepts.append({
                     "node_key": node["node_key"],
                     "display_name": node.get("display_name"),
@@ -347,27 +321,27 @@ def derive_lattice_audit(lattice: dict) -> dict:
                     "concept_path": node.get("concept_path"),
                 })
         elif node_type == "entity":
-            verified = node.get("verified_anchors") or []
+            verified = node.get("verified_links") or []
             if not verified:
                 entities_without_verified.append({
                     "node_key": node["node_key"],
                     "display_name": node.get("display_name"),
                     "kind": node.get("kind"),
-                    "anchors": node.get("anchors") or [],
+                    "links": node.get("links") or [],
                     "flags": flags,
                 })
             else:
-                anchor_types = {a.get("type") for a in verified}
-                if anchor_types == {"paper_release"}:
+                link_types = {a.get("type") for a in verified}
+                if link_types == {"paper_release"}:
                     entities_only_paper.append({
                         "node_key": node["node_key"],
                         "display_name": node.get("display_name"),
                         "kind": node.get("kind"),
-                        "anchors": verified,
+                        "links": verified,
                     })
     return {
         "bare_leaf_concepts": bare_leaf_concepts,
-        "entities_without_verified_anchors": entities_without_verified,
-        "entities_with_only_paper_anchors": entities_only_paper,
+        "entities_without_verified_links": entities_without_verified,
+        "entities_with_only_paper_links": entities_only_paper,
         "concept_without_entity_leaf": concept_without_entity_leaf,
     }
