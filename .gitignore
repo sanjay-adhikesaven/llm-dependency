@@ -1,0 +1,14 @@
+__pycache__/
+old/
+*.pyc
+.venv/
+venv/
+.env
+storage/
+test-*/
+*.db
+*.db-shm
+*.db-wal
+*.zip
+new-*/
+.DS_Store
