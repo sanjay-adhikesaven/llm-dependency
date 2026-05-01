@@ -1,0 +1,159 @@
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS runs (
+  id             TEXT PRIMARY KEY,
+  stage          TEXT NOT NULL,
+  seed           TEXT,
+  parent_run_id  TEXT REFERENCES runs(id) ON DELETE SET NULL,
+  label          TEXT,
+  attrs          TEXT NOT NULL DEFAULT '{}',
+  started_at     TEXT NOT NULL,
+  ended_at       TEXT
+);
+CREATE INDEX IF NOT EXISTS runs_stage_idx ON runs(stage);
+CREATE INDEX IF NOT EXISTS runs_seed_idx ON runs(seed);
+
+CREATE TABLE IF NOT EXISTS sources (
+  id             TEXT PRIMARY KEY,
+  content_hash   TEXT NOT NULL UNIQUE,
+  content_type   TEXT,
+  storage_ref    TEXT,
+  title          TEXT,
+  canonical_url  TEXT,
+  remote_url     TEXT,
+  commit_sha     TEXT,
+  attrs          TEXT NOT NULL DEFAULT '{}',
+  fetched_at     TEXT,
+  created_at     TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS sources_remote_sha_idx ON sources(remote_url, commit_sha);
+
+CREATE TABLE IF NOT EXISTS source_urls (
+  source_id      TEXT NOT NULL REFERENCES sources(id) ON DELETE CASCADE,
+  url            TEXT NOT NULL,
+  first_seen_at  TEXT NOT NULL,
+  last_seen_at   TEXT NOT NULL,
+  PRIMARY KEY(source_id, url)
+);
+CREATE INDEX IF NOT EXISTS source_urls_url_idx ON source_urls(url);
+
+CREATE TABLE IF NOT EXISTS source_commits (
+  source_id      TEXT NOT NULL REFERENCES sources(id) ON DELETE CASCADE,
+  commit_sha     TEXT NOT NULL,
+  first_seen_at  TEXT NOT NULL,
+  last_seen_at   TEXT NOT NULL,
+  PRIMARY KEY(source_id, commit_sha)
+);
+CREATE INDEX IF NOT EXISTS source_commits_sha_idx ON source_commits(commit_sha);
+
+CREATE TABLE IF NOT EXISTS batches (
+  id                   TEXT PRIMARY KEY,
+  label                TEXT,
+  summary              TEXT,
+  content_fingerprint  TEXT NOT NULL UNIQUE,
+  attrs                TEXT NOT NULL DEFAULT '{}',
+  created_at           TEXT NOT NULL,
+  updated_at           TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS batch_sources (
+  batch_id  TEXT NOT NULL REFERENCES batches(id) ON DELETE CASCADE,
+  source_id TEXT NOT NULL REFERENCES sources(id) ON DELETE CASCADE,
+  ordinal   INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (batch_id, source_id)
+);
+CREATE INDEX IF NOT EXISTS batch_sources_source_idx ON batch_sources(source_id);
+
+CREATE TABLE IF NOT EXISTS batch_artifacts (
+  batch_id       TEXT NOT NULL REFERENCES batches(id) ON DELETE CASCADE,
+  stage          TEXT NOT NULL,
+  artifact_path  TEXT NOT NULL,
+  status         TEXT NOT NULL DEFAULT 'pending'
+                   CHECK (status IN ('pending','complete','failed','superseded')),
+  run_id         TEXT REFERENCES runs(id) ON DELETE SET NULL,
+  attrs          TEXT NOT NULL DEFAULT '{}',
+  created_at     TEXT NOT NULL,
+  updated_at     TEXT NOT NULL,
+  PRIMARY KEY (batch_id, stage)
+);
+CREATE INDEX IF NOT EXISTS batch_artifacts_stage_idx ON batch_artifacts(stage, status);
+
+CREATE TABLE IF NOT EXISTS mentions (
+  id                  TEXT PRIMARY KEY,
+  batch_id            TEXT REFERENCES batches(id) ON DELETE SET NULL,
+  source_id           TEXT REFERENCES sources(id) ON DELETE SET NULL,
+  kind                TEXT NOT NULL CHECK (kind IN ('model','dataset')),
+  surface             TEXT NOT NULL,
+  surface_key         TEXT NOT NULL,
+  identity_json       TEXT NOT NULL,
+  identity_key        TEXT NOT NULL,
+  descriptors_json    TEXT NOT NULL DEFAULT '{}',
+  aliases_json        TEXT NOT NULL DEFAULT '[]',
+  links_json          TEXT NOT NULL DEFAULT '{}',
+  subsets_json        TEXT NOT NULL DEFAULT '[]',
+  context_roles_json  TEXT NOT NULL DEFAULT '[]',
+  evidence_json       TEXT NOT NULL DEFAULT '[]',
+  notes               TEXT,
+  attrs               TEXT NOT NULL DEFAULT '{}',
+  status              TEXT NOT NULL DEFAULT 'active'
+                        CHECK (status IN ('active','dropped','repaired')),
+  created_at          TEXT NOT NULL,
+  updated_at          TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS mentions_identity_idx ON mentions(kind, identity_key);
+CREATE INDEX IF NOT EXISTS mentions_surface_idx ON mentions(surface_key);
+CREATE INDEX IF NOT EXISTS mentions_batch_idx ON mentions(batch_id);
+
+CREATE TABLE IF NOT EXISTS mention_violations (
+  id            TEXT PRIMARY KEY,
+  code          TEXT NOT NULL,
+  severity      TEXT NOT NULL DEFAULT 'error'
+                  CHECK (severity IN ('error','warning')),
+  subject_key   TEXT,
+  details_json  TEXT NOT NULL DEFAULT '{}',
+  status        TEXT NOT NULL DEFAULT 'open'
+                  CHECK (status IN ('open','resolved','ignored')),
+  created_at    TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS mention_violations_code_idx ON mention_violations(code, status);
+
+CREATE TABLE IF NOT EXISTS link_checks (
+  id            TEXT PRIMARY KEY,
+  cluster_key   TEXT NOT NULL,
+  kind          TEXT NOT NULL CHECK (kind IN ('model','dataset')),
+  link_kind     TEXT NOT NULL,
+  link_value    TEXT NOT NULL,
+  url           TEXT NOT NULL,
+  ok            INTEGER NOT NULL DEFAULT 0,
+  status_code   INTEGER,
+  error         TEXT,
+  checked_at    TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS link_checks_cluster_idx ON link_checks(cluster_key);
+CREATE INDEX IF NOT EXISTS link_checks_url_idx ON link_checks(url);
+
+CREATE TABLE IF NOT EXISTS lattice_nodes (
+  id                   TEXT PRIMARY KEY,
+  node_key             TEXT NOT NULL UNIQUE,
+  kind                 TEXT NOT NULL CHECK (kind IN ('model','dataset')),
+  identity_json        TEXT NOT NULL,
+  display_name         TEXT NOT NULL,
+  aliases_json         TEXT NOT NULL DEFAULT '[]',
+  descriptors_json     TEXT NOT NULL DEFAULT '{}',
+  links_json           TEXT NOT NULL DEFAULT '{}',
+  verified_links_json  TEXT NOT NULL DEFAULT '{}',
+  occurrence_count     INTEGER NOT NULL DEFAULT 0,
+  projection           INTEGER NOT NULL DEFAULT 0,
+  flags_json           TEXT NOT NULL DEFAULT '[]',
+  created_at           TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS lattice_nodes_kind_idx ON lattice_nodes(kind);
+
+CREATE TABLE IF NOT EXISTS lattice_edges (
+  parent_node_key TEXT NOT NULL REFERENCES lattice_nodes(node_key) ON DELETE CASCADE,
+  child_node_key  TEXT NOT NULL REFERENCES lattice_nodes(node_key) ON DELETE CASCADE,
+  rationale       TEXT,
+  PRIMARY KEY(parent_node_key, child_node_key),
+  CHECK(parent_node_key <> child_node_key)
+);
+CREATE INDEX IF NOT EXISTS lattice_edges_child_idx ON lattice_edges(child_node_key);

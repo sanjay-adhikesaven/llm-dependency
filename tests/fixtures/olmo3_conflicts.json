@@ -1,0 +1,24 @@
+{
+  "mentions": [
+    {
+      "id": "m-7b",
+      "surface": "OLMo-3-Base",
+      "kind": "model",
+      "identity": {"family": "OLMo-3", "size": "7B", "stage": "Base", "date": "2025-07"},
+      "aliases": [{"surface": "OLMo-3-Base", "descriptors": {}}],
+      "links": {"hf_ids": ["allenai/OLMo-3-7B-Base"], "github_repos": [], "official_urls": [], "papers": []},
+      "context_roles": ["released_artifact"],
+      "evidence": [{"file": "report.md", "excerpt": "OLMo-3-Base 7B was released in July."}]
+    },
+    {
+      "id": "m-32b",
+      "surface": "OLMo-3-Base",
+      "kind": "model",
+      "identity": {"family": "OLMo-3", "size": "32B", "stage": "Base", "date": "2025-07"},
+      "aliases": [{"surface": "OLMo-3-Base", "descriptors": {}}],
+      "links": {"hf_ids": ["allenai/OLMo-3-32B-Base"], "github_repos": [], "official_urls": [], "papers": []},
+      "context_roles": ["released_artifact"],
+      "evidence": [{"file": "report.md", "excerpt": "OLMo-3-Base 32B was released in July."}]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "mentions": [
+    {
+      "surface": "SmolLM2",
+      "kind": "model",
+      "identity": {"family": "SmolLM2"},
+      "descriptors": {"organization": "HuggingFaceTB"},
+      "aliases": [{"surface": "SmolLM2", "descriptors": {}}],
+      "links": {"hf_ids": ["HuggingFaceTB/SmolLM2-1.7B"], "github_repos": [], "official_urls": [], "papers": []},
+      "context_roles": ["released_artifact"],
+      "evidence": [{"file": "card.md", "excerpt": "We release SmolLM2 in several sizes."}]
+    },
+    {
+      "surface": "datatrove",
+      "kind": "software",
+      "identity": {"family": "datatrove"},
+      "evidence": [{"file": "recipe.md", "excerpt": "We use datatrove for filtering."}]
+    },
+    {
+      "surface": "Apache-2.0",
+      "kind": "license",
+      "identity": {"family": "Apache-2.0"},
+      "evidence": [{"file": "card.md", "excerpt": "License: Apache-2.0"}]
+    }
+  ]
+}

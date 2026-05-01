@@ -1,0 +1,40 @@
+[project]
+name = "gdb-lattice"
+version = "0.1.0"
+description = "Prototype source discovery, model/dataset mention extraction, link checking, and lattice construction"
+requires-python = ">=3.11"
+dependencies = [
+  "click>=8.1",
+  "httpx>=0.27",
+  "python-dotenv>=1.0",
+]
+
+[project.scripts]
+gdb = "gdb.cli:main"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["gdb"]
+
+[tool.setuptools.data-files]
+"share/gdb-lattice" = ["schema.sql"]
+"share/gdb-lattice/prompts" = [
+  "gdb/prompts/discover.md",
+  "gdb/prompts/extract-mentions.md",
+  "gdb/prompts/repair-mentions.md",
+  "gdb/prompts/link-unresolved.md",
+  "gdb/prompts/audit.md",
+  "gdb/prompts/shared-context.md",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = [
+  "storage",
+  ".venv",
+  "__pycache__",
+  ".pytest_cache",
+]
