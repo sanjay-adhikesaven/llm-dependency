@@ -27,10 +27,11 @@ Read `{{lattice_path}}` and write descriptions to
 
 ## Filesystem scope
 
-Read `{{lattice_path}}`. Write `{{artifact_path}}`. HF README and
-HF API fetches for the entity's link are allowed (the gdb runtime
-exposes `enrich_hf_link` for this). Do not read or write any
-other local path.
+Read `{{lattice_path}}`. Write `{{artifact_path}}`. HF README,
+HF API, GitHub README, and arxiv abstract fetches for the
+entity's link are allowed — use your native fetch / web tools
+to read them directly. Do not read or write any other local
+path.
 
 ## Bucketing
 
@@ -78,8 +79,8 @@ source citation if the card was thin.
 The description should read identically across investigations
 and across sources. Do NOT write "used by `<target>`" or
 "referenced in `<filename>`". Source citations live in the
-evidence anchors, not in prose. The same entity-leaf node
-should produce the same description regardless of which
+node's source-side anchors, not in prose. The same entity-leaf
+node should produce the same description regardless of which
 investigation this run was about.
 
 ### License does NOT enter the description

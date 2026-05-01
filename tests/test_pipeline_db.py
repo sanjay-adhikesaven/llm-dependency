@@ -15,7 +15,7 @@ def test_commit_check_and_build_lattice_roundtrip(fresh_runtime):
                 "kind": "model",
                 "identity": {"family": "Qwen3", "size": "7B", "stage": "Base"},
                 "links": [{"type": "hf_model", "value": "Qwen/Qwen3-7B-Base", "exact": True}],
-                "evidence": [{"file": "card.md", "excerpt": "Qwen3-7B-Base"}],
+                "anchors": [{"file": "card.md", "excerpt": "Qwen3-7B-Base"}],
             }
         ]
     })
@@ -43,12 +43,12 @@ def test_commit_mentions_wipes_batch_before_recommit(fresh_runtime):
         conn.commit()
     first = commit_mentions({
         "mentions": [
-            {"id": "old", "surface": "Qwen3", "kind": "model", "concept_path": ["Qwen3"], "evidence": [{"excerpt": "Qwen3"}]},
+            {"id": "old", "surface": "Qwen3", "kind": "model", "concept_path": ["Qwen3"], "anchors": [{"excerpt": "Qwen3"}]},
         ]
     }, batch_id="batch-1")
     second = commit_mentions({
         "mentions": [
-            {"id": "new", "surface": "Qwen3-4B", "kind": "model", "concept_path": ["Qwen3", "4B"], "evidence": [{"excerpt": "Qwen3-4B"}]},
+            {"id": "new", "surface": "Qwen3-4B", "kind": "model", "concept_path": ["Qwen3", "4B"], "anchors": [{"excerpt": "Qwen3-4B"}]},
         ]
     }, batch_id="batch-1")
 

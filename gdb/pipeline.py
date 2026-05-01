@@ -304,11 +304,11 @@ def commit_mentions(artifact: dict, *, batch_id: str | None = None) -> dict:
                 """INSERT OR REPLACE INTO mentions
                    (id, batch_id, source_id, kind, surface, surface_key,
                     identity_json, identity_key, descriptors_json, aliases_json,
-                    links_json, subsets_json, context_roles_json, atoms_json,
+                    subsets_json, context_roles_json, atoms_json,
                     referent_scope, links_json, concept_path_json,
-                    aux_json, relationships_json, anchors_json, description,
+                    aux_json, anchors_json, description,
                     notes, attrs, status, created_at, updated_at)
-                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                 (
                     mention_id,
                     mention.get("batch_id"),
@@ -320,7 +320,6 @@ def commit_mentions(artifact: dict, *, batch_id: str | None = None) -> dict:
                     mention["identity_key"],
                     dumps(mention["descriptors"]),
                     dumps(mention["aliases"]),
-                    dumps(mention["links"]),
                     dumps(mention["subsets"]),
                     dumps(mention["context_roles"]),
                     dumps(mention["atoms"]),
@@ -328,7 +327,6 @@ def commit_mentions(artifact: dict, *, batch_id: str | None = None) -> dict:
                     dumps(mention["links"]),
                     dumps(mention["concept_path"]),
                     dumps(mention["aux"]),
-                    dumps(mention["relationships"]),
                     dumps(mention["anchors"]),
                     mention.get("description"),
                     mention.get("notes"),
@@ -420,15 +418,13 @@ def mention_rows() -> list[dict]:
             "identity": loads(row["identity_json"], default={}),
             "descriptors": loads(row["descriptors_json"], default={}),
             "aliases": loads(row["aliases_json"], default=[]),
-            "links": loads(row["links_json"], default={}),
             "subsets": loads(row["subsets_json"], default=[]),
             "context_roles": loads(row["context_roles_json"], default=[]),
             "atoms": loads(row.get("atoms_json"), default=[]),
             "referent_scope": row.get("referent_scope") or "ambiguous",
-            "links": loads(row.get("links_json"), default=[]),
+            "links": loads(row["links_json"], default=[]),
             "concept_path": loads(row.get("concept_path_json"), default=[]),
             "aux": loads(row.get("aux_json"), default={}),
-            "relationships": loads(row.get("relationships_json"), default=[]),
             "anchors": loads(row["anchors_json"], default=[]),
             "description": row.get("description"),
             "notes": row["notes"],
@@ -545,7 +541,7 @@ def run_audit(*, artifact_path: str | None = None, planner_model: str = config.C
                           descriptors_json=?, aliases_json=?, subsets_json=?,
                           context_roles_json=?, atoms_json=?, referent_scope=?,
                           links_json=?, concept_path_json=?, aux_json=?,
-                          relationships_json=?, anchors_json=?, description=?,
+                          anchors_json=?, description=?,
                           notes=?, status=?, updated_at=?
                     WHERE id=?""",
                 (
@@ -563,7 +559,6 @@ def run_audit(*, artifact_path: str | None = None, planner_model: str = config.C
                     dumps(mention["links"]),
                     dumps(mention["concept_path"]),
                     dumps(mention["aux"]),
-                    dumps(mention["relationships"]),
                     dumps(mention["anchors"]),
                     mention.get("description"),
                     mention.get("notes"),
@@ -608,6 +603,7 @@ def run_verify_links() -> dict:
     checks = verify_candidates(candidates)
     with db() as conn:
         cur = conn.cursor()
+        cur.execute("DELETE FROM link_checks")
         for check in checks:
             cur.execute(
                 """INSERT INTO link_checks
@@ -693,6 +689,7 @@ def run_describe(*, artifact_path: str | None = None, planner_model: str = confi
     entity leaves, dispatches subagents that fetch HF metadata via
     enrich_hf_link and write descriptions. Concepts get no descriptions.
     """
+    fresh_entity_keys: set[str] | None = None
     if not artifact_path:
         run_id = new_run("describe", label="describe")
         run_root = config.STORAGE / "runs" / run_id
@@ -702,6 +699,15 @@ def run_describe(*, artifact_path: str | None = None, planner_model: str = confi
         checks = all_rows("SELECT * FROM link_checks")
         lattice = build_lattice(mentions, checks)
         atomic_write_json(lattice_path, lattice)
+        # Pin the entity-key set to THIS lattice. Otherwise a stale
+        # lattice_nodes table (or a fresh run before build-lattice has
+        # been called) would silently filter out every description the
+        # planner wrote.
+        fresh_entity_keys = {
+            node["node_key"]
+            for node in lattice.get("nodes") or []
+            if node.get("node_type") == "entity"
+        }
         prompt = render_prompt("describe", {
             "run_id": run_id,
             "lattice_path": str(lattice_path),
@@ -717,6 +723,23 @@ def run_describe(*, artifact_path: str | None = None, planner_model: str = confi
     descriptions = describe_artifact.get("descriptions") or []
     with db() as conn:
         cur = conn.cursor()
+        # Concepts NEVER carry descriptions. Drop any entry whose
+        # entity_key isn't a current entity-leaf. In the spawn path we
+        # use the just-built lattice; in the artifact-ingest path we
+        # use the persisted lattice_nodes table.
+        if fresh_entity_keys is not None:
+            entity_keys = fresh_entity_keys
+        else:
+            entity_keys = {
+                row["node_key"]
+                for row in cur.execute(
+                    "SELECT node_key FROM lattice_nodes WHERE node_type='entity'"
+                ).fetchall()
+            }
+        descriptions = [
+            item for item in descriptions
+            if item.get("entity_key") in entity_keys
+        ]
         for item in descriptions:
             entity_key = item.get("entity_key")
             if not entity_key:

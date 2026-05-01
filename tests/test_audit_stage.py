@@ -70,3 +70,38 @@ def test_audit_cluster_keyed_update_expands_to_all_members(fresh_runtime):
     rows = all_rows("SELECT id, aux_json FROM mentions ORDER BY id")
     for row in rows:
         assert "32768" in row["aux_json"]
+
+
+def test_cluster_packet_key_matches_cluster_key_for_mention(fresh_runtime):
+    """cluster_packet builds member_mention_ids using cluster_key_for_mention.
+    The keys it indexes by must match aggregate_mentions' cluster_key, or the
+    member list is silently empty for exact-link clusters."""
+    from gdb.pipeline import cluster_packet, commit_mentions
+    from gdb.store import db
+
+    with db():
+        pass
+    commit_mentions({"mentions": [
+        {
+            "id": "m1",
+            "surface": "Qwen3-7B-Instruct",
+            "kind": "model",
+            "identity": {"family": "Qwen3", "size": "7B", "stage": "Instruct"},
+            "links": [{"type": "hf_model", "value": "Qwen/Qwen3-7B-Instruct", "exact": True}],
+            "anchors": [{"file": "a.md", "excerpt": "Qwen3-7B-Instruct"}],
+        },
+        {
+            "id": "m2",
+            "surface": "Qwen/Qwen3-7B-Instruct",
+            "kind": "model",
+            "identity": {"family": "Qwen3", "size": "7B", "stage": "Instruct"},
+            "links": [{"type": "hf_model", "value": "Qwen/Qwen3-7B-Instruct", "exact": True}],
+            "anchors": [{"file": "b.py", "excerpt": "from_pretrained(\"Qwen/Qwen3-7B-Instruct\")"}],
+        },
+    ]})
+
+    packet = cluster_packet()
+    assert len(packet["clusters"]) == 1
+    cluster = packet["clusters"][0]
+    assert cluster["cluster_key"].startswith("model:link:")
+    assert set(cluster["member_mention_ids"]) == {"m1", "m2"}

@@ -1,18 +1,21 @@
 # Extract Mentions
 
-> **Goal: COVERAGE of the names + their atomization + inline
-> link confirmation.** Find every named model and dataset this
-> batch's sources mention. Atomize each name into an ordered
-> list of pieces. Capture the typed link inline when the source
-> states it explicitly (a `from_pretrained` call, a HuggingFace
-> URL, a GitHub repo path). Anchor each mention to the spot in
-> the source where it appears.
+> **Goal: COVERAGE of the names + their atomization + minimal
+> identity + inline link confirmation.** Find every named model
+> and dataset this batch's sources mention. Atomize each name
+> into an ordered list of pieces. Tag each mention with its
+> minimal identity (`family` is required; `size` and `stage`
+> when the surface plainly carries them). Capture the typed
+> link inline when the source states it explicitly (a
+> `from_pretrained` call, a HuggingFace URL, a GitHub repo
+> path). Anchor each mention to the spot in the source where it
+> appears.
 
-This is a **lightweight first pass**. Identity classification,
-concept-path assignment, alias collapse, and description writing
-all happen later in the audit and describe stages — they need
-the cluster context that this single-batch pass doesn't have.
-Don't pre-classify here.
+This is a **lightweight first pass**. Alias collapse, aux
+facets, conflict resolution, and description writing all
+happen later in the audit and describe stages — they need the
+cluster context that this single-batch pass doesn't have.
+Don't pre-classify beyond the minimal identity above.
 
 Read `{{batch_dir}}` and write the artifact to
 `{{artifact_path}}`.
@@ -21,7 +24,7 @@ Read `{{batch_dir}}` and write the artifact to
 
 - `{{input_path}}`: JSON with `batch_id` and `batch_dir`.
 - `{{batch_dir}}/MANIFEST.txt`: tab-separated filename, source id,
-  title. Cite anchor evidence by the filename column.
+  title. Use the filename column when citing source-side anchors.
 
 ## Filesystem scope
 
@@ -40,6 +43,7 @@ text doesn't already give the exact form (e.g., the source says
     {
       "surface": "Qwen/Qwen3-4B",
       "kind": "model",
+      "identity": {"family": "Qwen3", "size": "4B"},
       "atoms": ["Qwen3", "4B"],
       "links": [
         {"type": "hf_model", "value": "Qwen/Qwen3-4B", "exact": true}
@@ -52,6 +56,14 @@ text doesn't already give the exact form (e.g., the source says
   ]
 }
 ```
+
+`identity.family` is REQUIRED on every mention. `size` and
+`stage` populate when the surface carries them
+(`Qwen3-7B-Instruct` → `{family: Qwen3, size: 7B, stage:
+Instruct}`). Date snapshots that distinguish releases go in
+`identity.extra.date` (`OLMo-3-1025` → `extra.date: "1025"`).
+Multi-token families like `Qwen3-VL`, `Qwen3-Coder`,
+`Llama-3.1`, `HuggingFaceTB/finemath` stay intact in `family`.
 
 ## Rules
 

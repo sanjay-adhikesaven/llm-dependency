@@ -121,17 +121,52 @@ def _fallback_concept_path(cluster: dict) -> list[str]:
     return []
 
 
+def _cluster_top_level_exact_links(cluster: dict) -> list[dict]:
+    exact = [link for link in cluster.get("links") or [] if link.get("exact")]
+    return normalize_link_candidates(exact, kind=cluster.get("kind"))
+
+
+def _alias_exact_links(cluster: dict) -> list[dict]:
+    raw: list[dict] = []
+    for alias in cluster.get("aliases") or []:
+        if not isinstance(alias, dict):
+            continue
+        raw.extend(link for link in alias.get("links") or [] if link.get("exact"))
+    return normalize_link_candidates(raw, kind=cluster.get("kind"))
+
+
 def _exact_links(cluster: dict) -> list[dict]:
-    links = [link for link in cluster.get("links") or [] if link.get("exact")]
-    return normalize_link_candidates(links, kind=cluster.get("kind"))
+    """All exact typed links for the cluster — top-level + alias-local.
+
+    Used for the entity node's `links` / `verified_links`. The primary
+    (entity identity) is chosen from the top-level set ONLY — see
+    `_primary_and_secondary_links`.
+    """
+    return normalize_link_candidates(
+        [*_cluster_top_level_exact_links(cluster), *_alias_exact_links(cluster)],
+        kind=cluster.get("kind"),
+    )
 
 
 def _primary_and_secondary_links(cluster: dict) -> tuple[dict | None, list[dict]]:
-    links = _exact_links(cluster)
-    primary = primary_link(links)
-    if not primary:
-        return None, []
-    return primary, normalize_link_candidates(links, kind=cluster.get("kind"))
+    """Pick the entity primary from the cluster's top-level links.
+
+    Alias-local links must NOT be allowed to outsort the canonical:
+    `Org/Qwen3-7B-Instruct-FP8` (alias) and `Qwen/Qwen3-7B-Instruct`
+    (canonical) are both `hf_model` so `primary_link` would tiebreak
+    alphabetically. Falling back to alias links when the cluster has
+    no top-level link covers the rare case where the canonical only
+    has an alias-local public release.
+    """
+    top_level = _cluster_top_level_exact_links(cluster)
+    primary = primary_link(top_level)
+    if primary is None:
+        all_links = _exact_links(cluster)
+        primary = primary_link(all_links)
+        if primary is None:
+            return None, []
+        return primary, all_links
+    return primary, _exact_links(cluster)
 
 
 def _entity_display_name(cluster: dict, link: dict) -> str:
@@ -164,7 +199,8 @@ def build_lattice(mentions: Iterable[dict], link_checks: Iterable[dict] = ()) ->
             concept["aliases"] = merge_alias_lists(concept["aliases"], cluster.get("aliases") or [], kind=kind)
             concept["descriptors"] = merge_descriptor_values(concept["descriptors"], cluster.get("descriptors") or {})
             concept["aux"] = merge_descriptor_values(concept["aux"], cluster.get("aux") or {})
-            concept["description"] = _first_description(concept.get("description"), cluster.get("description"))
+            # Concepts NEVER carry descriptions — those belong on entity
+            # leaves and are produced by the describe stage.
 
         primary, exact_links = _primary_and_secondary_links(cluster)
         if not primary:
@@ -202,7 +238,11 @@ def build_lattice(mentions: Iterable[dict], link_checks: Iterable[dict] = ()) ->
             entity["aux"] = merge_descriptor_values(entity["aux"], cluster.get("aux") or {})
             entity["description"] = _first_description(entity.get("description"), cluster.get("description"))
             entity["occurrence_count"] += cluster.get("occurrence_count") or 0
-            if link.get("type") in config.URL_LINK_TYPES and not entity["verified_links"]:
+            primary_verified = any(
+                v.get("type") == link["type"] and v.get("value") == link["value"]
+                for v in entity["verified_links"]
+            )
+            if link.get("type") in config.URL_LINK_TYPES and not primary_verified:
                 entity["flags"].append("unverified_exact_link")
             if not entity["links"]:
                 entity["flags"].append("entity_without_exact_link")

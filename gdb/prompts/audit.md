@@ -62,16 +62,22 @@ the shape:
                 "value": "Org/Qwen3-7B-Instruct-FP8",
                 "exact": true}]}
   ],
+  // alias[i].links carries an alias-specific public release
+  // when the variant has one (e.g., a quantized mirror).
   "referent_scope": "entity" | "concept" | "ambiguous",
   "links": [
     {"type": "hf_model", "value": "Qwen/Qwen3-7B-Instruct",
      "exact": true}
   ],
   "drop": false,
-  "split": [],
   "rationale": "one short line"
 }
 ```
+
+To split a cluster, emit ONE update per resulting entity,
+keyed by `mention_id` (one update per mention belonging to
+that split). Cluster-keyed updates apply to ALL members of
+the cluster — never use `cluster_key` when you mean to split.
 
 ### Identity vs aux
 
@@ -140,23 +146,24 @@ an alias whose `descriptors` record the suffix and whose
 For each violation flagged on the cluster:
 
 - `aux_conflict`: decide whether the cluster should split into
-  N entities (one per distinct aux value, populate `split`) or
-  whether one of the values is wrong and the others are right
-  (cite the source-side anchor evidence).
+  N entities (emit one `mention_id`-keyed update per group of
+  mentions that share an aux value) or whether one of the
+  values is wrong and the others are right (cite the
+  source-side anchors).
 - `surface_identity_conflict`: split — same surface mapping to
   two different identities means at least one entity is hidden
-  inside that ambiguous name. Populate `split` with the per-
-  identity update payloads.
+  inside that ambiguous name. Emit one `mention_id`-keyed
+  update per identity.
 - `link_identity_conflict`: same exact link points to two
-  different identities. Either fix one identity or split.
+  different identities. Either fix one identity or split via
+  per-`mention_id` updates.
 - `link_concept_conflict`: same exact link sits under two
   different concept paths. Pick one path; flag the rest for
   re-routing.
 
-Use `drop: true` to retire a mention that's clearly noise.
-Populate `split: [<update>, ...]` to fan out one cluster into
-several. Populate `rationale` with one short line citing the
-source-side anchors.
+Use `drop: true` (with `mention_id`) to retire a noise mention.
+Populate `rationale` with one short line citing the source-side
+anchors.
 
 ### Vague references
 

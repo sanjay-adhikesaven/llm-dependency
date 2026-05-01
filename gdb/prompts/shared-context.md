@@ -24,7 +24,7 @@ A mention has three conceptual layers:
    alias carries its own `descriptors` (lossless distribution
    facets that DO NOT affect identity: `quantization`,
    `precision`, `file_format`, `format`, mirror namespace). An
-   alias may also carry its own `anchors` list when the variant
+   alias may also carry its own `links` list when the variant
    has a distinct public release (e.g.,
    `Org/Qwen3-7B-Instruct-FP8`).
 
@@ -53,8 +53,9 @@ A mention has three conceptual layers:
   `quantization`, `precision`, `format`, `file_format`,
   `namespace` — info that distinguishes one alias from another
   without changing identity.
-- `aliases[i].anchors` (optional): exact anchors for the alias
-  if the variant has its own public release.
+- `aliases[i].links` (optional): exact public links for the alias
+  if the variant has its own public release (e.g., a quantized
+  mirror under a different org).
 - `context_roles`: open strings. Suggested roles include
   `training_data`, `pretraining_data`, `sft_data`,
   `preference_data`, `base_model`, `teacher_model`,
@@ -62,10 +63,11 @@ A mention has three conceptual layers:
   `evaluation_benchmark`, `comparison_baseline`,
   `released_artifact`, and `unknown`.
 
-Every concrete entity leaf must have an exact anchor. A broad technical
-report, family blog, or general project page is evidence, not an
-entity anchor, unless it is the only exact release record for a
-paper-only model or dataset.
+Every concrete entity leaf must have an exact link (HF repo path,
+GitHub repo, API model id, official release URL, or paper release).
+A broad technical report, family blog, or general project page is
+a source anchor — not an entity-defining link — unless it is the
+only exact release record for a paper-only model or dataset.
 
 Same display names can appear twice when they refer to different node
 types. For example, `Qwen3-4B` may be a concept node covering all
@@ -83,31 +85,33 @@ variants of the canonical). Aliases are NEVER:
   alias of `Dolma3`; it's a separate dataset entity that
   `Dolma3`'s description claims as upstream.
 - **Upstream parents.** If `Y` is derived from `X`, `X` is not
-  an alias of `Y` — it's a separate entity captured later as a
-  relationship hint.
+  an alias of `Y` — it's a separate entity. Emit it as its own
+  top-level mention with its own anchors.
 - **Sibling cuts / subsets.** `finemath-3plus` and
   `finemath-4plus` are not aliases of each other; both are
   configs/subsets of `HuggingFaceTB/finemath` and emit as
-  distinct mentions with `hf_dataset_config` anchors.
+  distinct mentions with `hf_dataset_config` links.
 - **Downstream consumers.** `Olmo-3-Instruct` is not an alias
   of the SFT dataset it consumed.
 
 The diagnostic: ask "would a reader see this name and know it's
 the same artifact?" If the answer is "no, that's a different
-thing — they're related though", it's not an alias. Capture it
-as a separate mention or as a `relationships` hint.
+thing — they're related though", it's not an alias. Emit the
+related artifact as its own top-level mention. Cross-entity
+relationship modeling is a future stage; this prototype does
+not capture relationship edges.
 
 ## Subsets / configs vs separate entities
 
 A subset is an HF multi-config sibling under one repo
 (`finemath-3plus` under `HuggingFaceTB/finemath`) or a named
 quality cut of one release. Encode as a separate mention with
-anchor type `hf_dataset_config` and value `repo::config`.
+link type `hf_dataset_config` and value `repo::config`.
 
 Separate-publication test: if a candidate-subset has its OWN HF
 repo path, its OWN card and authors, its OWN paper — it is its
 own entity, not a subset. Emit it as a top-level mention with
-its own `hf_dataset` or `hf_model` anchor.
+its own `hf_dataset` or `hf_model` link.
 
 ## Don't fabricate slash paths for vague references
 
@@ -117,10 +121,10 @@ Sources reference artifacts at any tier of the family hierarchy:
 
 - If the abstraction has its own public artifact (a family
   paper, a GitHub org, a project homepage), emit the mention
-  with that anchor (`paper_release` for the technical report,
+  with that link (`paper_release` for the technical report,
   `github_repo` for the org). The bare name is the mention
   surface; do not fabricate a slash path.
-- If the abstraction has no public anchor at that tier (common
+- If the abstraction has no public link at that tier (common
   for stage names like `Qwen3-Base`), emit the mention as a
   concept-only referent (`referent_scope: "concept"`,
   `concept_path: ["Qwen3", "Base"]`, no `links`).
@@ -134,11 +138,10 @@ and drop information.
 ## Open vocabularies
 
 Semantic fields (`context_roles`, `aux` keys, alias
-`descriptors` keys, `relationships[i].relation`) are open
-strings. Common values are listed as suggestions; coin a new
-phrase if none fit. Do not gate on closed enums. The schema
-only constrains structural fields (`kind`, `node_type`,
-`anchor type`).
+`descriptors` keys) are open strings. Common values are listed
+as suggestions; coin a new phrase if none fit. Do not gate on
+closed enums. The schema only constrains structural fields
+(`kind`, `node_type`, `link type`).
 
 ## Description conventions: neutral framing
 
@@ -151,7 +154,7 @@ phrasings:
   consumer.
 - *source-framing*: "referenced by `<source>`", "as named in
   `<filename>`", "mentioned by `<repo>`". The source is recorded
-  in evidence anchors, not in prose.
+  in the mention's source-side anchors, not in prose.
 
 The same mention should read identically across investigations
 and across sources. If you're tempted to write "as referenced

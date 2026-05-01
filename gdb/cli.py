@@ -155,7 +155,6 @@ def debug_mentions(limit: int | None):
             "atoms_json",
             "links_json",
             "concept_path_json",
-            "relationships_json",
             "anchors_json",
         }
         for field in (
@@ -168,11 +167,11 @@ def debug_mentions(limit: int | None):
             "links_json",
             "concept_path_json",
             "aux_json",
-            "relationships_json",
             "anchors_json",
             "attrs",
         ):
             row[field.removesuffix("_json")] = loads(row.pop(field), default=[] if field in list_fields else {})
+        row.pop("relationships_json", None)
     emit_json({"mentions": rows})
 
 

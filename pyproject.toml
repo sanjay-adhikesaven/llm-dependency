@@ -23,14 +23,11 @@ packages = ["gdb"]
 [tool.setuptools.data-files]
 "share/gdb-lattice" = ["schema.sql"]
 "share/gdb-lattice/prompts" = [
-  "gdb/prompts/discover.md",
-  "gdb/prompts/extract-mentions.md",
-  "gdb/prompts/review-entities.md",
-  "gdb/prompts/repair-mentions.md",
-  "gdb/prompts/describe-entities.md",
-  "gdb/prompts/link-unresolved.md",
-  "gdb/prompts/audit.md",
   "gdb/prompts/shared-context.md",
+  "gdb/prompts/discover.md",
+  "gdb/prompts/extract.md",
+  "gdb/prompts/audit.md",
+  "gdb/prompts/describe.md",
 ]
 
 [tool.pytest.ini_options]

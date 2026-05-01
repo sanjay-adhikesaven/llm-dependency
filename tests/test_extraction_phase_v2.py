@@ -18,7 +18,7 @@ def test_quantization_suffix_collapses_to_alias_of_canonical():
                 {
                     "surface": "Qwen3-7B-Instruct-FP8",
                     "descriptors": {"quantization": "FP8"},
-                    "anchors": [
+                    "links": [
                         {"type": "hf_model", "value": "Org/Qwen3-7B-Instruct-FP8", "exact": True},
                     ],
                 },
@@ -32,11 +32,11 @@ def test_quantization_suffix_collapses_to_alias_of_canonical():
     assert "Qwen3-7B-Instruct-FP8" in aliases_by_surface
     fp8 = aliases_by_surface["Qwen3-7B-Instruct-FP8"]
     assert fp8["descriptors"] == {"quantization": "FP8"}
-    assert any(anchor.get("value") == "Org/Qwen3-7B-Instruct-FP8" for anchor in fp8.get("anchors") or [])
+    assert any(link.get("value") == "Org/Qwen3-7B-Instruct-FP8" for link in fp8.get("links") or [])
 
 
-def test_alias_can_carry_its_own_hf_anchor():
-    """normalize_aliases preserves per-alias anchor_candidates."""
+def test_alias_can_carry_its_own_hf_link():
+    """normalize_aliases preserves per-alias typed links."""
     from gdb.artifacts import normalize_aliases
 
     aliases = normalize_aliases(
@@ -44,7 +44,7 @@ def test_alias_can_carry_its_own_hf_anchor():
             {
                 "surface": "Qwen3-7B-Instruct-FP8",
                 "descriptors": {"precision": "FP8"},
-                "anchors": [{"type": "hf_model", "value": "Org/Qwen3-7B-Instruct-FP8"}],
+                "links": [{"type": "hf_model", "value": "Org/Qwen3-7B-Instruct-FP8"}],
             },
         ],
         kind="model",
@@ -53,9 +53,9 @@ def test_alias_can_carry_its_own_hf_anchor():
     assert len(aliases) == 1
     assert aliases[0]["surface"] == "Qwen3-7B-Instruct-FP8"
     assert aliases[0]["descriptors"] == {"precision": "FP8"}
-    assert aliases[0]["anchors"][0]["type"] == "hf_model"
-    assert aliases[0]["anchors"][0]["value"] == "Org/Qwen3-7B-Instruct-FP8"
-    assert aliases[0]["anchors"][0]["url"] == "https://huggingface.co/Org/Qwen3-7B-Instruct-FP8"
+    assert aliases[0]["links"][0]["type"] == "hf_model"
+    assert aliases[0]["links"][0]["value"] == "Org/Qwen3-7B-Instruct-FP8"
+    assert aliases[0]["links"][0]["url"] == "https://huggingface.co/Org/Qwen3-7B-Instruct-FP8"
 
 
 def test_aux_conflict_flagged_not_silently_merged():

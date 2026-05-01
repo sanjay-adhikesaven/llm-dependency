@@ -111,12 +111,23 @@ def normalize_concept_path(value: Any) -> list[str]:
 
 
 def concept_path_from_identity(identity: dict) -> list[str]:
+    """Project identity onto a deterministic concept path.
+
+    Axis order: family → size → stage → remaining identity fields
+    (alphabetical) → extra.concept_path. Stable regardless of input
+    key order, so the lattice doesn't depend on JSON insertion order.
+    """
     if not identity.get("family"):
         return []
     path = [str(identity["family"])]
-    for field, value in identity.items():
-        if field in {"family", "extra"}:
+    for field in ("size", "stage"):
+        value = identity.get(field)
+        if value not in (None, "", [], {}):
+            path.append(str(value))
+    for field in sorted(identity.keys()):
+        if field in {"family", "size", "stage", "extra"}:
             continue
+        value = identity.get(field)
         if value not in (None, "", [], {}):
             path.append(str(value))
     extra = identity.get("extra")
@@ -294,23 +305,6 @@ def normalize_aux(value: Any) -> dict:
     return {k: out[k] for k in sorted(out)}
 
 
-def normalize_relationship_hints(value: Any) -> list[dict]:
-    raw = value if isinstance(value, list) else ([value] if value else [])
-    out: list[dict] = []
-    for item in raw:
-        if isinstance(item, str):
-            relation = normalize_space(item)
-            if relation:
-                out.append({"relation": relation})
-        elif isinstance(item, dict):
-            relation = normalize_space(item.get("relation") or item.get("type") or "")
-            target = normalize_space(item.get("target") or item.get("object") or "")
-            rec = {k: v for k, v in {"relation": relation, "target": target}.items() if v}
-            if rec:
-                out.append(rec)
-    return out
-
-
 def normalize_aliases(
     aliases: Any,
     surface: str | None = None,
@@ -331,14 +325,11 @@ def normalize_aliases(
         if isinstance(item, str):
             alias_surface = normalize_space(item)
             alias_descriptors: dict = {}
-            alias_anchors: list[dict] = []
+            alias_links: list[dict] = []
         elif isinstance(item, dict):
             alias_surface = normalize_space(item.get("surface") or item.get("name") or "")
             alias_descriptors = normalize_descriptors(item.get("descriptors") or {})
-            alias_anchors = normalize_link_candidates(
-                item.get("anchors") or item.get("links") or [],
-                kind=kind,
-            )
+            alias_links = normalize_link_candidates(item.get("links") or [], kind=kind)
         else:
             continue
         if not alias_surface:
@@ -349,15 +340,15 @@ def normalize_aliases(
                 by_key[alias_key].get("descriptors") or {},
                 alias_descriptors,
             )
-            if alias_anchors:
-                by_key[alias_key]["anchors"] = normalize_link_candidates(
-                    [*(by_key[alias_key].get("anchors") or []), *alias_anchors],
+            if alias_links:
+                by_key[alias_key]["links"] = normalize_link_candidates(
+                    [*(by_key[alias_key].get("links") or []), *alias_links],
                     kind=kind,
                 )
             continue
         rec: dict = {"surface": alias_surface, "descriptors": alias_descriptors}
-        if alias_anchors:
-            rec["anchors"] = alias_anchors
+        if alias_links:
+            rec["links"] = alias_links
         out.append(rec)
         by_key[alias_key] = rec
     return out
@@ -462,6 +453,24 @@ def normalize_github_ref(value: Any, *, repo: Any = None, ref: Any = None, path:
     return f"{repo_text}{suffix}"
 
 
+def _parse_bool(value: Any, *, default: bool) -> bool:
+    """Parse JSON-shaped bool values strictly. `bool("false")` is True
+    in Python because non-empty strings are truthy; we explicitly
+    reject the literal strings."""
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        lowered = value.strip().lower()
+        if lowered in {"false", "no", "0", ""}:
+            return False
+        if lowered in {"true", "yes", "1"}:
+            return True
+        return default
+    if value is None:
+        return default
+    return bool(value)
+
+
 def normalize_link_candidate(item: Any, *, kind: str | None = None) -> dict | None:
     if isinstance(item, str):
         raw_type = ""
@@ -470,69 +479,101 @@ def normalize_link_candidate(item: Any, *, kind: str | None = None) -> dict | No
         source = ""
         metadata = {}
     elif isinstance(item, dict):
-        raw_type = normalize_space(item.get("type") or item.get("anchor_type") or item.get("link_type") or "").casefold()
+        raw_type = normalize_space(item.get("type") or "").casefold()
+        # Reject legacy / DB-shaped field names so they don't drop into
+        # the no-type inference path and silently misclassify (e.g.,
+        # `{"link_type":"github_repo","value":"owner/repo"}` would
+        # become `hf_model` because the value matches the HF id shape).
+        # The canonical input field is `type`. Empty/missing `type`
+        # combined with a legacy field is still a misuse — reject.
+        if not raw_type and ("anchor_type" in item or "link_type" in item):
+            return None
         raw_value = item.get("value") or item.get("id") or item.get("repo") or item.get("url") or item.get("name") or ""
-        exact = bool(item.get("exact", True))
+        exact = _parse_bool(item.get("exact", True), default=True)
         source = normalize_space(item.get("source") or "")
         metadata = item.get("metadata") if isinstance(item.get("metadata"), dict) else {}
     else:
         return None
 
-    anchor_type = raw_type
-    if anchor_type in {"hf", "hf_id", "huggingface", "huggingface_id"}:
-        anchor_type = "hf_dataset" if kind == "dataset" else "hf_model"
-    elif anchor_type in {"github", "github_repository"}:
-        anchor_type = "github_repo"
-    elif anchor_type in {"api", "model_id"}:
-        anchor_type = "api_model_id"
-    elif anchor_type in {"official", "url"}:
-        anchor_type = "official_release_url"
-    elif anchor_type in {"paper", "arxiv"}:
-        anchor_type = "paper_release"
+    link_type = raw_type
+    if link_type in {"hf", "hf_id", "huggingface", "huggingface_id"}:
+        link_type = "hf_dataset" if kind == "dataset" else "hf_model"
+    elif link_type in {"github", "github_repository"}:
+        link_type = "github_repo"
+    elif link_type in {"api", "model_id"}:
+        link_type = "api_model_id"
+    elif link_type in {"official", "url"}:
+        link_type = "official_release_url"
+    elif link_type in {"paper", "arxiv"}:
+        link_type = "paper_release"
 
-    if not anchor_type:
+    if not link_type:
         if normalize_hf_id(raw_value):
-            anchor_type = "hf_dataset" if kind == "dataset" else "hf_model"
+            link_type = "hf_dataset" if kind == "dataset" else "hf_model"
         elif normalize_github_repo(raw_value):
-            anchor_type = "github_repo"
+            link_type = "github_repo"
         elif normalize_paper(raw_value) and "arxiv" in normalize_space(raw_value).casefold():
-            anchor_type = "paper_release"
+            link_type = "paper_release"
         elif normalize_http_url(raw_value):
-            anchor_type = "official_release_url"
+            link_type = "official_release_url"
         else:
-            anchor_type = "api_model_id"
+            link_type = "api_model_id"
 
     value: str | None
     url: str | None = None
-    if anchor_type == "hf_model":
+    if link_type == "hf_model":
         value = normalize_hf_id(raw_value)
         url = f"https://huggingface.co/{value}" if value else None
-    elif anchor_type == "hf_dataset":
+    elif link_type == "hf_dataset":
         value = normalize_hf_id(raw_value)
         url = f"https://huggingface.co/datasets/{value}" if value else None
-    elif anchor_type == "hf_dataset_config":
+    elif link_type == "hf_dataset_config":
         if isinstance(item, dict):
             value = normalize_hf_dataset_config(raw_value, repo=item.get("repo"), config_name=item.get("config") or item.get("config_name"))
         else:
             value = normalize_hf_dataset_config(raw_value)
         repo_value = value.split("::", 1)[0] if value else None
         url = f"https://huggingface.co/datasets/{repo_value}" if repo_value else None
-    elif anchor_type == "github_repo":
+    elif link_type == "github_repo":
         value = normalize_github_repo(raw_value)
         url = f"https://github.com/{value}" if value else None
-    elif anchor_type == "github_ref":
+    elif link_type == "github_ref":
         if isinstance(item, dict):
             value = normalize_github_ref(raw_value, repo=item.get("repo"), ref=item.get("ref"), path=item.get("path"))
         else:
             value = normalize_github_ref(raw_value)
-        repo_value = value.split("@", 1)[0].split(":", 1)[0] if value else None
-        url = f"https://github.com/{repo_value}" if repo_value else None
-    elif anchor_type == "api_model_id":
+        # Build a URL that points at the specific ref / path so HEAD
+        # actually verifies what the link claims, not just the parent
+        # repo. Falls back to the bare repo when the value carries no
+        # ref or path.
+        if value:
+            repo_value = value.split("@", 1)[0].split(":", 1)[0]
+            ref_value = ""
+            path_value = ""
+            if "@" in value:
+                ref_and_path = value.split("@", 1)[1]
+                if ":" in ref_and_path:
+                    ref_value, path_value = ref_and_path.split(":", 1)
+                else:
+                    ref_value = ref_and_path
+            elif ":" in value.split("/", 1)[-1]:
+                path_value = value.split(":", 1)[1]
+            if ref_value and path_value:
+                url = f"https://github.com/{repo_value}/blob/{ref_value}/{path_value}"
+            elif ref_value:
+                url = f"https://github.com/{repo_value}/tree/{ref_value}"
+            elif path_value:
+                url = f"https://github.com/{repo_value}/blob/HEAD/{path_value}"
+            else:
+                url = f"https://github.com/{repo_value}"
+        else:
+            url = None
+    elif link_type == "api_model_id":
         value = normalize_space(raw_value)
-    elif anchor_type == "official_release_url":
+    elif link_type == "official_release_url":
         value = normalize_http_url(raw_value)
         url = value
-    elif anchor_type == "paper_release":
+    elif link_type == "paper_release":
         value = normalize_paper(raw_value)
         url = value
     else:
@@ -540,7 +581,7 @@ def normalize_link_candidate(item: Any, *, kind: str | None = None) -> dict | No
 
     if not value:
         return None
-    rec = {"type": anchor_type, "value": value, "exact": exact}
+    rec = {"type": link_type, "value": value, "exact": exact}
     if url:
         rec["url"] = url
     if source:
@@ -551,18 +592,39 @@ def normalize_link_candidate(item: Any, *, kind: str | None = None) -> dict | No
 
 
 def normalize_link_candidates(value: Any, *, kind: str | None = None) -> list[dict]:
+    """Normalize a list of typed links, deduping by `(type, value)`.
+
+    On duplicate, MERGE rather than first-wins: `exact` upgrades from
+    False → True, and `metadata` / `source` / `url` are filled in from
+    whichever record carries them. Without merging, a later record
+    confirming `exact: True` could be silently dropped because an
+    earlier record with the same `(type, value)` had `exact: False`.
+    """
     raw = value if isinstance(value, list) else ([value] if value else [])
     out: list[dict] = []
-    seen: set[tuple[str, str]] = set()
+    by_key: dict[tuple[str, str], dict] = {}
     for item in raw:
-        anchor = normalize_link_candidate(item, kind=kind)
-        if not anchor:
+        link = normalize_link_candidate(item, kind=kind)
+        if not link:
             continue
-        key_tuple = (anchor["type"], anchor["value"])
-        if key_tuple in seen:
+        key_tuple = (link["type"], link["value"])
+        existing = by_key.get(key_tuple)
+        if existing is None:
+            out.append(link)
+            by_key[key_tuple] = link
             continue
-        out.append(anchor)
-        seen.add(key_tuple)
+        if link.get("exact") and not existing.get("exact"):
+            existing["exact"] = True
+        if "url" not in existing and link.get("url"):
+            existing["url"] = link["url"]
+        if "source" not in existing and link.get("source"):
+            existing["source"] = link["source"]
+        existing_meta = existing.get("metadata") or {}
+        new_meta = link.get("metadata") or {}
+        if new_meta:
+            merged = {**new_meta, **existing_meta}
+            if merged:
+                existing["metadata"] = merged
     return out
 
 
@@ -609,43 +671,32 @@ def normalize_subsets(subsets: Any) -> list[dict]:
         name = normalize_space(item.get("name") or item.get("subset") or "")
         identity = canonical_identity(item.get("identity") or {"subset": name})
         links = normalize_link_candidates(item.get("links") or [], kind="dataset")
-        source_anchors = normalize_anchors(item.get("source_anchors") or [])
+        anchors = normalize_anchors(item.get("anchors") or [])
         if name or identity:
             rec = {"name": name, "identity": identity}
             if links:
                 rec["links"] = links
-            if source_anchors:
-                rec["source_anchors"] = source_anchors
+            if anchors:
+                rec["anchors"] = anchors
             out.append(rec)
     return out
 
 
 def normalize_mention(item: dict, *, batch_id: str | None = None, source_id: str | None = None) -> dict:
-    surface = normalize_space(item.get("surface") or item.get("raw_text") or "")
-    kind = normalize_space(item.get("kind") or item.get("parsed_kind") or "").casefold()
-    raw_identity = item.get("identity") or item.get("parsed_identity") or item.get("parsed_facets") or {}
-    identity = canonical_identity(raw_identity)
-    atoms = normalize_atoms(item.get("atoms") or item.get("name_atoms") or [], surface=surface)
-    concept_path = normalize_concept_path(
-        item.get("concept_path")
-        or item.get("lattice_path")
-        or item.get("family_path")
-        or []
-    )
+    surface = normalize_space(item.get("surface") or "")
+    kind = normalize_space(item.get("kind") or "").casefold()
+    identity = canonical_identity(item.get("identity") or {})
+    atoms = normalize_atoms(item.get("atoms") or [], surface=surface)
+    concept_path = normalize_concept_path(item.get("concept_path") or [])
     if not concept_path and identity:
         concept_path = concept_path_from_identity(identity)
     if not identity and concept_path:
         identity = identity_from_concept_path(concept_path)
     descriptors = normalize_descriptors(item.get("descriptors") or {})
     aliases = normalize_aliases(item.get("aliases") or [], surface=surface, descriptors=descriptors, kind=kind)
-    links = normalize_link_candidates(
-        item.get("links") or item.get("anchor_candidates") or item.get("connections") or [],
-        kind=kind,
-    )
+    links = normalize_link_candidates(item.get("links") or [], kind=kind)
     roles = normalize_roles(item.get("context_roles") or descriptors.get("context_roles") or ["unknown"])
     raw_anchors = item.get("anchors")
-    if raw_anchors is None:
-        raw_anchors = item.get("evidence")
     if not raw_anchors and (item.get("file") or item.get("excerpt") or item.get("location")):
         raw_anchors = [{
             "source_id": item.get("source_id") or source_id or "",
@@ -656,12 +707,7 @@ def normalize_mention(item: dict, *, batch_id: str | None = None, source_id: str
     anchors = normalize_anchors(raw_anchors or [])
     subsets = normalize_subsets(item.get("subsets") or [])
     attrs = item.get("attrs") if isinstance(item.get("attrs"), dict) else {}
-    aux = normalize_aux(item.get("aux") or item.get("aux_info") or attrs.get("aux") or {})
-    relationships = normalize_relationship_hints(
-        item.get("relationships")
-        or attrs.get("relationships")
-        or []
-    )
+    aux = normalize_aux(item.get("aux") or attrs.get("aux") or {})
     description = normalize_space(item.get("description") or attrs.get("description") or "")
     return {
         "id": item.get("id"),
@@ -681,7 +727,6 @@ def normalize_mention(item: dict, *, batch_id: str | None = None, source_id: str
         "links": links,
         "concept_path": concept_path,
         "aux": aux,
-        "relationships": relationships,
         "anchors": anchors,
         "description": description or None,
         "notes": normalize_space(item.get("notes") or item.get("rationale") or "") or None,
@@ -709,7 +754,7 @@ def validate_mention_artifact(artifact: Any) -> list[dict]:
             continue
         mention = normalize_mention(raw)
         if mention["kind"] not in VALID_KINDS:
-            errors.append({"code": "invalid_kind", "path": f"mentions[{idx}].kind", "value": raw.get("kind") or raw.get("parsed_kind")})
+            errors.append({"code": "invalid_kind", "path": f"mentions[{idx}].kind", "value": raw.get("kind")})
         if not mention["surface"]:
             errors.append({"code": "missing_surface", "path": f"mentions[{idx}].surface"})
         if not mention["identity"].get("family") and not mention["concept_path"]:
@@ -718,15 +763,45 @@ def validate_mention_artifact(artifact: Any) -> list[dict]:
             errors.append({"code": "empty_anchors", "path": f"mentions[{idx}].anchors", "surface": mention["surface"]})
         if mention["kind"] != "dataset" and mention["subsets"]:
             errors.append({"code": "dataset_only_subsets", "path": f"mentions[{idx}].subsets", "surface": mention["surface"]})
-        raw_links = raw.get("links") or raw.get("anchor_candidates") or []
+        raw_links = raw.get("links") or []
         if raw_links:
             link_items = raw_links if isinstance(raw_links, list) else [raw_links]
-            for anchor_idx, anchor_item in enumerate(link_items):
-                if not normalize_link_candidate(anchor_item, kind=mention["kind"]):
+            for link_idx, link_item in enumerate(link_items):
+                if not normalize_link_candidate(link_item, kind=mention["kind"]):
                     errors.append({
                         "code": "invalid_link_shape",
-                        "path": f"mentions[{idx}].links[{anchor_idx}]",
-                        "value": anchor_item,
+                        "path": f"mentions[{idx}].links[{link_idx}]",
+                        "value": link_item,
+                    })
+        raw_aliases = raw.get("aliases") or []
+        alias_items = raw_aliases if isinstance(raw_aliases, list) else [raw_aliases]
+        for alias_idx, alias_item in enumerate(alias_items):
+            if not isinstance(alias_item, dict):
+                continue
+            alias_links = alias_item.get("links") or []
+            if not isinstance(alias_links, list):
+                alias_links = [alias_links]
+            for link_idx, link_item in enumerate(alias_links):
+                if not normalize_link_candidate(link_item, kind=mention["kind"]):
+                    errors.append({
+                        "code": "invalid_link_shape",
+                        "path": f"mentions[{idx}].aliases[{alias_idx}].links[{link_idx}]",
+                        "value": link_item,
+                    })
+        raw_subsets = raw.get("subsets") or []
+        subset_items = raw_subsets if isinstance(raw_subsets, list) else [raw_subsets]
+        for subset_idx, subset_item in enumerate(subset_items):
+            if not isinstance(subset_item, dict):
+                continue
+            subset_links = subset_item.get("links") or []
+            if not isinstance(subset_links, list):
+                subset_links = [subset_links]
+            for link_idx, link_item in enumerate(subset_links):
+                if not normalize_link_candidate(link_item, kind="dataset"):
+                    errors.append({
+                        "code": "invalid_link_shape",
+                        "path": f"mentions[{idx}].subsets[{subset_idx}].links[{link_idx}]",
+                        "value": link_item,
                     })
     return errors
 
@@ -774,7 +849,6 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
         links: list[dict],
         concept_path: list[str],
         aux: dict,
-        relationships: list[dict],
         anchors: list[dict],
         description: str | None,
         mention_id: str | None,
@@ -801,7 +875,6 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
                 "links": [],
                 "concept_path": concept_path,
                 "aux": {},
-                "relationships": [],
                 "anchors": [],
                 "descriptions": [],
                 "mention_ids": [],
@@ -816,7 +889,6 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
         cluster["referent_scopes"] = _dedup([*cluster["referent_scopes"], referent_scope])
         cluster["links"] = normalize_link_candidates([*cluster["links"], *links], kind=kind)
         cluster["aux"] = merge_descriptor_values(cluster["aux"], aux)
-        cluster["relationships"].extend(relationships)
         cluster["anchors"].extend(anchors)
         if description:
             cluster["descriptions"].append(description)
@@ -838,7 +910,6 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
             links=mention["links"],
             concept_path=mention["concept_path"],
             aux=mention["aux"],
-            relationships=mention["relationships"],
             anchors=mention["anchors"],
             description=mention.get("description"),
             mention_id=mention.get("id"),
@@ -859,11 +930,10 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
                     context_roles=mention["context_roles"],
                     atoms=mention["atoms"],
                     referent_scope=mention["referent_scope"],
-                    links=normalize_link_candidates(subset.get("links") or subset.get("anchors") or [], kind="dataset"),
+                    links=normalize_link_candidates(subset.get("links") or [], kind="dataset"),
                     concept_path=concept_path_from_identity(subset_identity),
                     aux=mention["aux"],
-                    relationships=mention["relationships"],
-                    anchors=subset.get("source_anchors") or mention["anchors"],
+                    anchors=subset.get("anchors") or mention["anchors"],
                     description=mention.get("description"),
                     mention_id=mention.get("id"),
                 )
@@ -882,30 +952,35 @@ def merge_alias_lists(current: list[dict], incoming: list[dict], *, kind: str | 
         alias_key = normalize_surface(alias.get("surface"))
         if not alias_key:
             continue
+        incoming_links = alias.get("links") or []
         if alias_key in by_key:
             by_key[alias_key]["descriptors"] = merge_descriptor_values(
                 by_key[alias_key].get("descriptors") or {},
                 alias.get("descriptors") or {},
             )
-            if alias.get("anchors"):
-                by_key[alias_key]["anchors"] = normalize_link_candidates(
-                    [*(by_key[alias_key].get("anchors") or []), *(alias.get("anchors") or [])],
+            if incoming_links:
+                by_key[alias_key]["links"] = normalize_link_candidates(
+                    [*(by_key[alias_key].get("links") or []), *incoming_links],
                     kind=kind,
                 )
         else:
             rec: dict = {"surface": alias.get("surface"), "descriptors": alias.get("descriptors") or {}}
-            if alias.get("anchors"):
-                rec["anchors"] = normalize_link_candidates(alias.get("anchors") or [], kind=kind)
+            if incoming_links:
+                rec["links"] = normalize_link_candidates(incoming_links, kind=kind)
             out.append(rec)
             by_key[alias_key] = rec
     return out
 
 
 def primary_referent_signature(mention: dict) -> tuple[str, str]:
-    anchors = [a for a in mention.get("links") or [] if a.get("exact")]
-    if anchors:
-        anchor = sorted(anchors, key=lambda a: (a.get("type", ""), a.get("value", "")))[0]
-        return ("entity", f"{anchor.get('type')}:{anchor.get('value')}")
+    """Signature used by detect_conflicts. Picks the same primary link
+    as cluster_key_for_mention so a mention with multiple typed links
+    signs by the same one its cluster keys by."""
+    exact_links = [link for link in mention.get("links") or [] if link.get("exact")]
+    if exact_links:
+        primary = primary_link(exact_links)
+        if primary:
+            return ("entity", f"{primary.get('type')}:{primary.get('value')}")
     if mention.get("concept_path"):
         return ("concept", " / ".join(mention["concept_path"]).casefold())
     if mention.get("identity_key"):
@@ -917,7 +992,7 @@ def cluster_key_for_mention(mention: dict) -> str:
     """Return the cluster key aggregate_mentions would assign to this mention.
 
     Matches the clustering rule in aggregate_mentions.add_to_cluster: an
-    exact primary anchor (if present) takes priority over identity-based
+    exact primary link (if present) takes priority over identity-based
     keying. Returns "" for mentions outside VALID_KINDS or missing
     family.
     """
@@ -927,11 +1002,11 @@ def cluster_key_for_mention(mention: dict) -> str:
     identity = mention.get("identity") or {}
     if not identity.get("family"):
         return ""
-    exact_anchors = [a for a in mention.get("links") or [] if a.get("exact")]
-    if exact_anchors:
-        primary = primary_link(exact_anchors)
+    exact_links = [link for link in mention.get("links") or [] if link.get("exact")]
+    if exact_links:
+        primary = primary_link(exact_links)
         if primary:
-            return f"{kind}:anchor:{primary['type']}:{hash_text(primary['value'])}"
+            return f"{kind}:link:{primary['type']}:{hash_text(primary['value'])}"
     return identity_key(kind, identity)
 
 
@@ -940,6 +1015,20 @@ def allow_concept_entity_surface_duplicate(referents: dict[tuple[str, str], list
         return False
     scopes = {scope for scope, _sig in referents}
     return scopes == {"concept", "entity"}
+
+
+def _iter_mention_links(mention: dict) -> Iterable[dict]:
+    """Yield typed links from the mention's top level AND from each
+    alias. Conflict detection treats them uniformly: the same exact
+    public release sitting on two different identities is a conflict
+    whether it's the canonical link or an alias-local link."""
+    for link in mention.get("links") or []:
+        yield link
+    for alias in mention.get("aliases") or []:
+        if not isinstance(alias, dict):
+            continue
+        for link in alias.get("links") or []:
+            yield link
 
 
 def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
@@ -991,7 +1080,7 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
                             "examples": [m["surface"] for m in mentions_for_referent[:3]],
                             "identity": mentions_for_referent[0]["identity"],
                             "concept_path": mentions_for_referent[0]["concept_path"],
-                            "anchors": mentions_for_referent[0]["links"],
+                            "links": mentions_for_referent[0]["links"],
                         }
                         for (scope, signature_value), mentions_for_referent in referents.items()
                     ],
@@ -1001,7 +1090,9 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
     for mention in normalized:
         if mention["kind"] not in VALID_KINDS:
             continue
-        for link in mention.get("links") or []:
+        for link in _iter_mention_links(mention):
+            if not link.get("exact"):
+                continue
             key = f"{link.get('type')}:{link.get('value')}"
             by_link[key][mention["identity_key"]].append(mention)
     for link_key, identities in by_link.items():
@@ -1022,23 +1113,23 @@ def detect_conflicts(mentions: Iterable[dict]) -> list[dict]:
                     ],
                 },
             })
-    by_anchor: dict[str, dict[str, list[dict]]] = defaultdict(lambda: defaultdict(list))
+    by_link_for_concept: dict[str, dict[str, list[dict]]] = defaultdict(lambda: defaultdict(list))
     for mention in normalized:
         if mention["kind"] not in VALID_KINDS:
             continue
         concept_sig = " / ".join(mention.get("concept_path") or []).casefold() or mention["identity_key"]
-        for anchor in mention.get("links") or []:
-            if not anchor.get("exact"):
+        for link in _iter_mention_links(mention):
+            if not link.get("exact"):
                 continue
-            by_anchor[f"{anchor['type']}:{anchor['value']}"][concept_sig].append(mention)
-    for anchor_key, concept_sigs in by_anchor.items():
+            by_link_for_concept[f"{link['type']}:{link['value']}"][concept_sig].append(mention)
+    for link_key, concept_sigs in by_link_for_concept.items():
         if len(concept_sigs) > 1:
             violations.append({
                 "code": "link_concept_conflict",
                 "severity": "error",
-                "subject_key": anchor_key,
+                "subject_key": link_key,
                 "details": {
-                    "anchor_key": anchor_key,
+                    "link_key": link_key,
                     "concepts": [
                         {
                             "concept_signature": concept_sig,
@@ -1116,28 +1207,42 @@ def apply_audit_updates(mentions: list[dict], repair_artifact: dict) -> list[dic
                 continue
             if "kind" in update:
                 mention["kind"] = normalize_space(update["kind"]).casefold()
-            if "identity" in update:
+            identity_updated = "identity" in update
+            path_updated = "concept_path" in update
+            old_identity = canonical_identity(mention.get("identity") or {})
+            old_path = list(mention.get("concept_path") or [])
+            if identity_updated:
                 mention["identity"] = canonical_identity(update["identity"])
+            if path_updated:
+                mention["concept_path"] = normalize_concept_path(update.get("concept_path") or [])
+            # Keep identity and concept_path coupled. Identity is the source
+            # of truth; concept_path is a projection. If only identity
+            # changed, recompute path from the new identity. If only path
+            # changed, re-derive identity when it was missing OR was
+            # itself projected from the old path (so a path-only audit
+            # update can't leave the identity stuck in the old family).
+            if identity_updated and not path_updated:
+                mention["concept_path"] = concept_path_from_identity(mention["identity"])
+            elif path_updated and not identity_updated:
+                projected_from_old = (
+                    old_path and old_identity == identity_from_concept_path(old_path)
+                )
+                if (not mention["identity"].get("family") or projected_from_old) and mention["concept_path"]:
+                    mention["identity"] = identity_from_concept_path(mention["concept_path"])
             if "descriptors" in update:
                 mention["descriptors"] = normalize_descriptors(update["descriptors"])
             if "aliases" in update:
                 mention["aliases"] = normalize_aliases(update["aliases"], surface=mention["surface"], descriptors=mention["descriptors"], kind=mention.get("kind"))
             if "atoms" in update:
                 mention["atoms"] = normalize_atoms(update["atoms"], surface=mention["surface"])
-            if "concept_path" in update or "lattice_path" in update:
-                mention["concept_path"] = normalize_concept_path(update.get("concept_path") or update.get("lattice_path") or [])
-                if not mention["identity"].get("family") and mention["concept_path"]:
-                    mention["identity"] = identity_from_concept_path(mention["concept_path"])
-            if "links" in update or "anchor_candidates" in update:
-                mention["links"] = normalize_link_candidates(update.get("links") or update.get("anchor_candidates") or [], kind=mention["kind"])
+            if "links" in update:
+                mention["links"] = normalize_link_candidates(update.get("links") or [], kind=mention["kind"])
             if "anchors" in update:
                 mention["anchors"] = normalize_anchors(update.get("anchors") or [])
             if "referent_scope" in update or "scope" in update:
                 mention["referent_scope"] = normalize_scope(update.get("referent_scope") or update.get("scope"), anchors=mention["links"], concept_path=mention["concept_path"])
-            if "aux" in update or "aux_info" in update:
-                mention["aux"] = normalize_aux(update.get("aux") or update.get("aux_info") or {})
-            if "relationships" in update or "relationship_hints" in update:
-                mention["relationships"] = normalize_relationship_hints(update.get("relationships") or update.get("relationship_hints") or [])
+            if "aux" in update:
+                mention["aux"] = normalize_aux(update.get("aux") or {})
             if "description" in update:
                 mention["description"] = normalize_space(update.get("description") or "") or None
             mention["identity_key"] = identity_key(mention["kind"], mention["identity"]) if mention["kind"] in VALID_KINDS else ""
