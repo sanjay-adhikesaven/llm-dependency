@@ -5,7 +5,7 @@ from pathlib import Path
 import click
 
 from . import config
-from .pipeline import names_packet, run_discover, run_extract, run_organize
+from .pipeline import names_packet, run_audit, run_discover, run_extract, run_organize
 from .store import all_rows, db, emit_json, loads, read_json
 
 
@@ -107,6 +107,26 @@ def organize_cmd(artifact_path: str | None, planner_model: str, subagent_model: 
     ))
 
 
+@run.command("audit")
+@click.option("--artifact", "artifact_path",
+              help="Ingest an existing audit artifact instead of launching an agent.")
+@click.option("--source", "source_path",
+              help="Audit a specific lattice artifact (default: most recent organize or audit).")
+@click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES),
+              default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES),
+              default=config.CLAUDE_MODEL, show_default=True)
+def audit_cmd(artifact_path: str | None, source_path: str | None,
+              planner_model: str, subagent_model: str):
+    """Read the latest lattice artifact, revise it, write the result."""
+    emit_json(run_audit(
+        artifact_path=artifact_path,
+        source_path=source_path,
+        planner_model=planner_model,
+        subagent_model=subagent_model,
+    ))
+
+
 @main.group()
 def debug():
     """Read-only inspection helpers."""
@@ -174,6 +194,43 @@ def debug_organize(latest: bool):
             "artifact": artifact,
         })
     emit_json({"organize_runs": out})
+
+
+@debug.command("audit")
+@click.option("--latest/--all", default=True,
+              help="Show only the most recent audit run (default) or all of them.")
+def debug_audit(latest: bool):
+    """Show the revised lattice produced by audit (same shape as organize)."""
+    rows = all_rows(
+        "SELECT id, attrs, started_at, ended_at FROM runs "
+        "WHERE stage='audit' AND ended_at IS NOT NULL "
+        "ORDER BY started_at DESC"
+    )
+    if latest:
+        rows = rows[:1]
+    out = []
+    for row in rows:
+        attrs = loads(row["attrs"], default={})
+        path = attrs.get("artifact_path")
+        artifact = None
+        missing = False
+        if path and Path(path).exists():
+            artifact = read_json(path)
+        elif path:
+            missing = True
+        out.append({
+            "run_id": row["id"],
+            "started_at": row["started_at"],
+            "ended_at": row["ended_at"],
+            "source_artifact_path": attrs.get("source_artifact_path"),
+            "group_count": attrs.get("group_count"),
+            "item_count": attrs.get("item_count"),
+            "notes": attrs.get("notes"),
+            "artifact_path": path,
+            "artifact_missing_on_disk": missing,
+            "artifact": artifact,
+        })
+    emit_json({"audit_runs": out})
 
 
 if __name__ == "__main__":

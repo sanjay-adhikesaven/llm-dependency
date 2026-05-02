@@ -552,3 +552,101 @@ def run_organize(
     })
     return {"run_id": run_id, "artifact_path": str(artifact_out),
             "group_count": group_count, "item_count": item_count}
+
+
+# ---------------------------------------------------------------------------
+# Stage 4 — audit (revise the lattice in place; same shape in, same out)
+# ---------------------------------------------------------------------------
+
+
+def _latest_lattice_artifact_path() -> Path:
+    """Return the path of the most recent groups+items artifact.
+
+    Searches both `organize` and `audit` runs since audit emits the
+    same shape and is the authoritative successor when present.
+    """
+    rows = all_rows(
+        "SELECT id, stage, attrs FROM runs "
+        "WHERE stage IN ('organize','audit') AND ended_at IS NOT NULL "
+        "ORDER BY started_at DESC LIMIT 1"
+    )
+    if not rows:
+        raise click.ClickException(
+            "no organize or audit run found; run `gdb run organize` first"
+        )
+    attrs = loads(rows[0]["attrs"], default={}) or {}
+    path = attrs.get("artifact_path")
+    if not path or not Path(path).exists():
+        raise click.ClickException(
+            f"{rows[0]['stage']} artifact missing on disk for run {rows[0]['id']}"
+        )
+    return Path(path)
+
+
+def run_audit(
+    *,
+    artifact_path: str | None = None,
+    source_path: str | None = None,
+    planner_model: str = config.CLAUDE_MODEL,
+    subagent_model: str | None = None,
+) -> dict:
+    """Read the latest lattice artifact, revise it, write the result.
+
+    Audit's output schema matches organize's (`groups[].items[]`). The
+    agent makes edits directly — splits, merges, formal_name fixes,
+    identity_key adjustments — and emits the whole revised lattice.
+
+    With `--artifact`, ingest an externally produced audit artifact
+    instead of spawning a planner. With `--source`, audit a specific
+    artifact (organize or prior audit) instead of the most recent one.
+    """
+    def _short_notes(art: dict) -> str | None:
+        n = art.get("notes")
+        return n[:500] if isinstance(n, str) else None
+
+    if artifact_path:
+        run_id = new_run("audit", label="audit:ingest")
+        used = Path(artifact_path).resolve()
+        artifact = read_json(str(used))
+        group_count, item_count = _validate_organize_artifact(artifact)
+        close_run(run_id, {
+            "artifact_path": str(used),
+            "group_count": group_count,
+            "item_count": item_count,
+            "notes": _short_notes(artifact),
+        })
+        return {"run_id": run_id, "artifact_path": str(used),
+                "group_count": group_count, "item_count": item_count}
+
+    source_artifact_path = (
+        Path(source_path).resolve() if source_path
+        else _latest_lattice_artifact_path()
+    )
+
+    run_id = new_run("audit", label="audit", seed=str(source_artifact_path))
+    run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
+    run_root.mkdir(parents=True, exist_ok=True)
+    artifact_out = run_root / config.AUDIT_ARTIFACT_FILE
+    prompt = render_prompt("audit", {
+        "run_id": run_id,
+        "organize_path": str(source_artifact_path),
+        "input_path": str(source_artifact_path),
+        "artifact_path": str(artifact_out),
+        "worker_dir": str(run_root / config.WORKERS_SUBDIR),
+        "planner_model": planner_model,
+        "subagent_model": subagent_model or planner_model,
+    })
+    spawn = dispatch_spawn(run_id, prompt, model=planner_model)
+    if spawn["exit_code"] != 0 or not artifact_out.exists():
+        raise click.ClickException(f"audit failed; logs at {spawn['log_dir']}")
+    artifact = read_json(str(artifact_out))
+    group_count, item_count = _validate_organize_artifact(artifact)
+    close_run(run_id, {
+        "artifact_path": str(artifact_out),
+        "source_artifact_path": str(source_artifact_path),
+        "group_count": group_count,
+        "item_count": item_count,
+        "notes": _short_notes(artifact),
+    })
+    return {"run_id": run_id, "artifact_path": str(artifact_out),
+            "group_count": group_count, "item_count": item_count}

@@ -17,10 +17,10 @@ def test_render_prompts_have_no_unfilled_placeholders(fresh_runtime):
         "workspace_dir": "/w", "worker_dir": "/w/workers",
         "artifact_path": "/a.json", "input_path": "/i.json",
         "names_path": "/n.json", "batch_id": "b",
-        "batch_dir": "/b",
+        "batch_dir": "/b", "organize_path": "/o.json",
         "planner_model": "opus", "subagent_model": "sonnet",
     }
-    for stage in ("discover", "extract", "organize"):
+    for stage in ("discover", "extract", "organize", "audit"):
         text = render_prompt(stage, common)
         # Confirm no `{{name}}` placeholders survived.
         assert "{{" not in text, f"unfilled placeholder in {stage}: {text}"
@@ -177,7 +177,7 @@ def test_run_organize_rejects_artifact_missing_required_lists(fresh_runtime, tmp
         run_organize(artifact_path=str(bad_items))
 
 
-def test_cli_run_help_lists_only_new_stages(fresh_runtime):
+def test_cli_run_help_lists_only_active_stages(fresh_runtime):
     from click.testing import CliRunner
 
     from gdb.cli import main
@@ -186,10 +186,76 @@ def test_cli_run_help_lists_only_new_stages(fresh_runtime):
     result = runner.invoke(main, ["run", "--help"])
     assert result.exit_code == 0
     out = result.output
-    for stage in ("discover", "extract", "organize"):
+    for stage in ("discover", "extract", "organize", "audit"):
         assert stage in out
-    for dropped in ("audit", "describe", "verify-links", "build-lattice", "check", "fuzz"):
+    for dropped in ("describe", "verify-links", "build-lattice", "check", "fuzz"):
         assert dropped not in out
+
+
+def test_run_audit_ingests_revised_lattice(fresh_runtime, tmp_path):
+    """Audit emits a revised groups+items artifact (same shape as
+    organize) plus optional notes. The run attrs record group_count,
+    item_count, and the notes summary."""
+    from gdb.pipeline import run_audit
+    from gdb.store import all_rows, loads
+
+    revised = {
+        "groups": [
+            {
+                "family": "Qwen3",
+                "identity_keys": ["org", "collection", "size", "variant"],
+                "items": [
+                    {"kind": "model", "formal_name": "Qwen/Qwen3-8B",
+                     "identity": {"org": "Qwen", "collection": "Qwen3",
+                                  "size": "8B", "variant": "no-thinking"},
+                     "aliases": ["Qwen3-8B"]},
+                    {"kind": "model", "formal_name": "Qwen/Qwen3-8B-Thinking",
+                     "identity": {"org": "Qwen", "collection": "Qwen3",
+                                  "size": "8B", "variant": "thinking"},
+                     "aliases": ["qwen3-reasoning-8b"]},
+                ],
+            },
+        ],
+        "notes": "Split Qwen3-8B by reasoning variant.",
+    }
+    artifact_path = tmp_path / "audit.json"
+    artifact_path.write_text(json.dumps(revised))
+
+    result = run_audit(artifact_path=str(artifact_path))
+    assert result["group_count"] == 1
+    assert result["item_count"] == 2
+
+    rows = all_rows("SELECT id, attrs FROM runs WHERE stage='audit'")
+    assert len(rows) == 1
+    attrs = loads(rows[0]["attrs"])
+    assert attrs["group_count"] == 1
+    assert attrs["item_count"] == 2
+    assert "Split Qwen3-8B" in (attrs.get("notes") or "")
+    assert Path(attrs["artifact_path"]).exists()
+
+
+def test_run_audit_rejects_non_groups_artifact(fresh_runtime, tmp_path):
+    """Audit's output must validate as a groups+items artifact."""
+    import click
+    import pytest
+
+    from gdb.pipeline import run_audit
+
+    bad = tmp_path / "bad.json"
+    bad.write_text(json.dumps({"issues": "not-a-list"}))  # old shape
+    with pytest.raises(click.ClickException):
+        run_audit(artifact_path=str(bad))
+
+
+def test_run_audit_without_lattice_run_raises(fresh_runtime):
+    """Audit needs a prior organize (or audit) run to read from."""
+    import click
+    import pytest
+
+    from gdb.pipeline import run_audit
+
+    with pytest.raises(click.ClickException):
+        run_audit()
 
 
 def test_cli_summary_after_init(fresh_runtime):

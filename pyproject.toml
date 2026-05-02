@@ -24,6 +24,7 @@ packages = ["gdb"]
   "gdb/prompts/discover.md",
   "gdb/prompts/extract.md",
   "gdb/prompts/organize.md",
+  "gdb/prompts/audit.md",
 ]
 
 [tool.pytest.ini_options]
