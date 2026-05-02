@@ -1,21 +1,9 @@
-# Extract Mentions
+# Extract Names
 
-> **Goal: COVERAGE of the names + their atomization + minimal
-> identity + inline link confirmation.** Find every named model
-> and dataset this batch's sources mention. Atomize each name
-> into an ordered list of pieces. Tag each mention with its
-> minimal identity (`family` is required; `size` and `stage`
-> when the surface plainly carries them). Capture the typed
-> link inline when the source states it explicitly (a
-> `from_pretrained` call, a HuggingFace URL, a GitHub repo
-> path). Anchor each mention to the spot in the source where it
-> appears.
-
-This is a **lightweight first pass**. Alias collapse, aux
-facets, conflict resolution, and description writing all
-happen later in the audit and describe stages — they need the
-cluster context that this single-batch pass doesn't have.
-Don't pre-classify beyond the minimal identity above.
+> **Goal: list every model and dataset this batch mentions, in
+> the most specific form the source uses.** Output one line per
+> mention, with `type` ('model' or 'dataset') and `name`.
+> Nothing else.
 
 Read `{{batch_dir}}` and write the artifact to
 `{{artifact_path}}`.
@@ -23,171 +11,107 @@ Read `{{batch_dir}}` and write the artifact to
 ## Inputs
 
 - `{{input_path}}`: JSON with `batch_id` and `batch_dir`.
-- `{{batch_dir}}/MANIFEST.txt`: tab-separated filename, source id,
-  title. Use the filename column when citing source-side anchors.
+- `{{batch_dir}}/MANIFEST.txt`: tab-separated filename, source
+  id, title — for orientation only; you do not cite it.
 
 ## Filesystem scope
 
 Read `{{batch_dir}}` and `{{input_path}}`. Write
 `{{artifact_path}}`. Do not read or write any other local path.
-Web search and HF API / page fetches are allowed for the sole
-purpose of confirming a mention's HF identifier when the source
-text doesn't already give the exact form (e.g., the source says
-`Qwen3-4B` but the HF id is `Qwen/Qwen3-4B`).
+No web browsing. No HF API calls. No classification beyond
+choosing `model` vs `dataset`. No fuzzy matching, normalization,
+or deduplication beyond removing literal duplicates of the same
+(type, name) pair within this batch.
 
-## Output
+## Output schema
 
 ```json
 {
   "mentions": [
-    {
-      "surface": "Qwen/Qwen3-4B",
-      "kind": "model",
-      "identity": {"family": "Qwen3", "size": "4B"},
-      "atoms": ["Qwen3", "4B"],
-      "links": [
-        {"type": "hf_model", "value": "Qwen/Qwen3-4B", "exact": true}
-      ],
-      "anchors": [
-        {"file": "config.py", "source_id": "...", "location": "L10",
-         "excerpt": "model_name = \"Qwen/Qwen3-4B\""}
-      ]
-    }
+    {"type": "model",   "name": "Qwen/Qwen3-7B-Instruct"},
+    {"type": "model",   "name": "Qwen3-7B-Instruct-FP8"},
+    {"type": "dataset", "name": "HuggingFaceTB/finemath"},
+    {"type": "dataset", "name": "finemath-3plus"},
+    {"type": "model",   "name": "OLMo-3-1025-7B-Base"},
+    {"type": "dataset", "name": "MMLU-Pro"}
   ]
 }
 ```
 
-`identity.family` is REQUIRED on every mention. `size` and
-`stage` populate when the surface carries them
-(`Qwen3-7B-Instruct` → `{family: Qwen3, size: 7B, stage:
-Instruct}`). Date snapshots that distinguish releases go in
-`identity.extra.date` (`OLMo-3-1025` → `extra.date: "1025"`).
-Multi-token families like `Qwen3-VL`, `Qwen3-Coder`,
-`Llama-3.1`, `HuggingFaceTB/finemath` stay intact in `family`.
+The artifact has exactly one key, `mentions`, holding a list of
+records. Each record has exactly two fields: `type` (`"model"`
+or `"dataset"`) and `name` (the verbatim name string from the
+source). Do NOT emit any other field — no kind aliases, no
+identity, no atoms, no anchors, no links, no descriptions, no
+file references, no excerpts, no aliases, no aux, no
+descriptors, no concept_path. Adding extra fields will be
+ignored, but bloats the artifact.
 
-## Rules
+## What counts
 
-- Emit model and dataset mentions only. License, software
-  packages, frameworks, and tokenizers are out of scope and the
-  storage layer rejects them.
-- Extract from prose, tables, model/dataset cards, YAML, JSON,
-  and code-shaped calls (`from_pretrained`, `load_dataset`,
-  `model_name_or_path`, `tokenizer_name`, `dataset_name`,
-  config files). Code-shaped calls almost always give the exact
-  HF id — capture the link inline.
-- Every mention needs at least one anchor with a verbatim
-  excerpt and the file path.
+A noun-phrase the source uses to refer to a specific model or
+dataset. Examples (each line is one valid name):
 
-## Atomization (HF-collection-aware)
+```
+Qwen2.5-7B-Instruct
+Qwen/Qwen3-4B
+Llama 3.1
+OLMo-3-1025-7B-Base
+allenai/dolma3-fasttext-quality-classifier
+HuggingFaceTB/finemath
+finemath-3plus
+FineMath-3+
+gpt-4o-mini-2024-07-18
+MMLU-Pro
+AIME 2024
+DeepSeek-R1
+Qwen3-7B-Instruct-FP8
+```
 
-Atoms are the ordered name pieces the source presents. The
-**leftmost atoms are the most general**; size and stage tokens
-sit on the right.
+Skip these (they aren't model/dataset names):
 
-The default split is on `[-_/:\s]+`, BUT family-name punctuation
-must be preserved. Hugging Face publishes peer collections at
-the same tier (e.g. Qwen org publishes `Qwen3`, `Qwen3-VL`,
-`Qwen3-Coder`, `Qwen3Guard`, `Qwen3-Embedding`,
-`Qwen3-VL-Embedding` as **peers** — none nested under another).
-Hyphens inside a family name are not separator hyphens.
+- license names (`Apache-2.0`, `MIT`, `CC-BY-4.0`)
+- software packages, frameworks, tokenizers as such
+  (`transformers`, `vLLM`, `datatrove`, `tiktoken`)
+- author/organization names by themselves (`Anthropic`,
+  `Meta`, `Allen Institute for AI`)
+- paper titles
+- task / capability names that are NOT a dataset
+  (e.g., "math reasoning" the task vs. `MATH-500` the dataset)
 
-Worked examples:
+## "Most specific form" means
 
-| Surface | atoms |
-|---|---|
-| `Qwen3-7B-Instruct` | `["Qwen3", "7B", "Instruct"]` |
-| `Qwen3-VL-72B-Instruct` | `["Qwen3-VL", "72B", "Instruct"]` |
-| `Qwen3Guard-Stream-7B` | `["Qwen3Guard", "Stream", "7B"]` |
-| `Qwen3-Coder-30B-A3B-Instruct` | `["Qwen3-Coder", "30B-A3B", "Instruct"]` |
-| `Llama-3.1-70B-Instruct` | `["Llama-3.1", "70B", "Instruct"]` |
-| `OLMo-3-1025-7B-Base` | `["OLMo-3", "1025", "7B", "Base"]` |
-| `dolma3_longmino_mix-100B-1125` | `["dolma3", "longmino", "mix", "100B", "1125"]` |
-| `HuggingFaceTB/finemath::finemath-3plus` | `["HuggingFaceTB", "finemath", "finemath-3plus"]` |
+Match what the source actually wrote. Don't generalize, don't
+expand.
 
-When uncertain whether a hyphen is a family-internal punctuation
-or a tier separator, check the org's HF collections page. If
-`Qwen3-VL` appears as its own collection, it's one atom.
+- Source says `Qwen2.5-7B-Instruct` → emit `Qwen2.5-7B-Instruct`.
+  Don't generalize to `Qwen2.5`.
+- Source says `the Qwen3 family of models` → emit `Qwen3`. The
+  source said `Qwen3`. Don't invent a size.
+- Source says `from_pretrained("Qwen/Qwen3-4B")` → emit
+  `Qwen/Qwen3-4B` exactly (with the org prefix, because the
+  source has it).
+- Source says `Tülu 3` (with umlaut) → emit `Tülu 3`. Keep the
+  original characters; canonicalization happens later.
+- A surface like `Qwen3-7B-Instruct-FP8` → emit it as is. Do
+  not collapse to its canonical.
+- Source mentions a dataset config: `load_dataset("HuggingFaceTB/finemath", "finemath-3plus")` →
+  emit two records: `{"type": "dataset", "name": "HuggingFaceTB/finemath"}`
+  AND `{"type": "dataset", "name": "finemath-3plus"}`.
 
-## Inline link confirmation
+## Within-batch dedup
 
-When the source explicitly names the link, emit it:
-
-- `from_pretrained("Qwen/Qwen3-4B")` → `{type: "hf_model", value:
-  "Qwen/Qwen3-4B", exact: true}`.
-- `load_dataset("HuggingFaceTB/finemath", "finemath-3plus")` →
-  `{type: "hf_dataset_config", value:
-  "HuggingFaceTB/finemath::finemath-3plus", exact: true}`.
-- A URL `https://huggingface.co/datasets/HuggingFaceTB/finemath`
-  → `{type: "hf_dataset", value: "HuggingFaceTB/finemath",
-  exact: true}`.
-- An arxiv URL or `arXiv:2404.12345` → `{type: "paper_release",
-  value: "https://arxiv.org/abs/2404.12345", exact: true}`.
-- A vendor model id like `gpt-4o-mini-2024-07-18` →
-  `{type: "api_model_id", value: "gpt-4o-mini-2024-07-18",
-  exact: true}`. **NOT** `hf_model`.
-
-When the source uses a display form (e.g., `FineMath-3+`,
-`Qwen3-4B` in prose with no HF id nearby), it's fine to leave
-`links: []`. The audit stage will web-search and add a link.
-
-### Display vs config strings
-
-HF dataset configs have programmatic ids (loadable via
-`load_dataset(repo, "<config-id>")`) that can differ from the
-human display string:
-
-| Display in prose | Loadable config id |
-|---|---|
-| `FineMath-3+` | `finemath-3plus` |
-| `FineMath-4+` | `finemath-4plus` |
-| `InfiMM-WebMath-3+` | `infiwebmath-3plus` |
-| `InfiMM-WebMath-4+` | `infiwebmath-4plus` |
-
-When you confirm the link inline, use the loadable id (the form
-that goes in `<repo>::<config>`).
-
-## Quantization, format, precision
-
-If a surface name ends in a quantization or format suffix
-(`-FP8`, `-FP16`, `-BF16`, `-Q\d+(_\w+)*`, `-AWQ`, `-GPTQ`,
-`-EXL2`, `-BNB-4bit`, `-INT4`, `-INT8`, `-GGUF`, `-MLX`,
-`-SafeTensors`), emit it as a top-level mention as you found it.
-Do NOT pre-collapse it as an alias of the canonical here — the
-audit stage has cluster context and decides whether to fold it
-into the canonical's aliases.
-
-## Date-versioned snapshots
-
-Date tokens that distinguish snapshots
-(`OLMo-3-1025-7B-Base` vs `OLMo-3-1125-7B-Base`,
-`gpt-4o-mini-2024-07-18` vs `gpt-4o-mini-2024-08-06`) come
-through as their own atoms. Each surface is its own mention;
-audit will keep them as separate clusters via
-`identity.extra.date`.
-
-## Subsets and configs
-
-If the source names both a parent dataset and a config (e.g.,
-`HuggingFaceTB/finemath` and `finemath-3plus`), emit BOTH as
-separate mentions. The parent gets `links: [{"type":
-"hf_dataset", "value": "HuggingFaceTB/finemath"}]`; the config
-gets `links: [{"type": "hf_dataset_config", "value":
-"HuggingFaceTB/finemath::finemath-3plus"}]`. Don't collapse the
-config into the parent's aliases — they're sibling configs
-under one repo.
-
-## Within-batch merge
-
-When the same artifact appears in multiple passages of THIS
-batch, emit one mention with multiple `anchors[]` entries. Do
-not duplicate. Cross-batch merge is handled by the check stage.
+If the source mentions the same `(type, name)` pair multiple
+times, emit it once. Don't emit a (type, name) pair twice.
+Do NOT collapse name variants — `Qwen3-7B`, `Qwen 3 7B`, and
+`qwen3-7b` are three separate records here. The organize stage
+handles fuzzy matching across name variants.
 
 ## Completion
 
 Write the artifact to `{{artifact_path}}` and exit 0. An empty
 `mentions[]` list is legal only if the batch genuinely contains
-no model or dataset names; if it does and you wrote none,
-that's a misread.
+no model or dataset names.
 
 You are running as `{{planner_model}}`. Use subagents for
 independent source packets within the batch. Subagents run as

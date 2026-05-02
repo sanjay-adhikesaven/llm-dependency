@@ -5,21 +5,13 @@ from pathlib import Path
 import click
 
 from . import config
-from .pipeline import (
-    run_audit,
-    run_build_lattice,
-    run_check,
-    run_describe,
-    run_discover,
-    run_extract,
-    run_verify_links,
-)
-from .store import all_rows, db, emit_json, loads
+from .pipeline import names_packet, run_discover, run_extract, run_organize
+from .store import all_rows, db, emit_json, loads, read_json
 
 
 @click.group()
 def main():
-    """gdb: discover/extract/link lattice prototype."""
+    """gdb: discover → extract names → organize lattice."""
 
 
 @main.command()
@@ -31,7 +23,9 @@ def init(fresh: bool, yes: bool, i_mean_it: bool):
     if fresh:
         if not (yes and i_mean_it):
             raise click.ClickException("--fresh requires --yes and --I-mean-it")
-        for path in (config.DB_PATH, Path(str(config.DB_PATH) + "-wal"), Path(str(config.DB_PATH) + "-shm")):
+        for path in (config.DB_PATH,
+                     Path(str(config.DB_PATH) + "-wal"),
+                     Path(str(config.DB_PATH) + "-shm")):
             path.unlink(missing_ok=True)
     config.STORAGE.mkdir(parents=True, exist_ok=True)
     with db():
@@ -42,25 +36,10 @@ def init(fresh: bool, yes: bool, i_mean_it: bool):
 
 @main.command()
 def summary():
-    """Show table counts and open violation count."""
-    tables = (
-        "runs",
-        "sources",
-        "batches",
-        "batch_artifacts",
-        "mentions",
-        "mention_violations",
-        "link_checks",
-        "entity_descriptions",
-        "hf_metadata",
-        "family_policies",
-        "entity_relationships",
-        "lattice_nodes",
-        "lattice_edges",
-    )
+    """Show table counts."""
+    tables = ("runs", "sources", "batches", "batch_artifacts", "names")
     counts = {table: all_rows(f"SELECT COUNT(*) AS n FROM {table}")[0]["n"] for table in tables}
-    violations = all_rows("SELECT code, COUNT(*) AS n FROM mention_violations WHERE status='open' GROUP BY code")
-    emit_json({"counts": counts, "open_violations": violations})
+    emit_json({"counts": counts})
 
 
 @main.group()
@@ -70,11 +49,16 @@ def run():
 
 @run.command("discover")
 @click.option("--target", required=True)
-@click.option("--artifact", "artifact_path", help="Ingest an existing discover artifact instead of launching an agent.")
-@click.option("--workspace", "workspace_dir", help="Workspace holding paths referenced by --artifact.")
-@click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
-@click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
-def discover_cmd(target: str, artifact_path: str | None, workspace_dir: str | None, planner_model: str, subagent_model: str):
+@click.option("--artifact", "artifact_path",
+              help="Ingest an existing discover artifact instead of launching an agent.")
+@click.option("--workspace", "workspace_dir",
+              help="Workspace holding paths referenced by --artifact.")
+@click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES),
+              default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES),
+              default=config.CLAUDE_MODEL, show_default=True)
+def discover_cmd(target: str, artifact_path: str | None, workspace_dir: str | None,
+                 planner_model: str, subagent_model: str):
     emit_json(run_discover(
         target=target,
         artifact_path=artifact_path,
@@ -86,11 +70,16 @@ def discover_cmd(target: str, artifact_path: str | None, workspace_dir: str | No
 
 @run.command("extract")
 @click.option("--batch-id", help="Limit to one batch. Required when --artifact is used.")
-@click.option("--artifact", "artifact_path", help="Ingest an existing extract artifact instead of launching an agent.")
-@click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
-@click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
-@click.option("--max-workers", type=int, help="Override GDB_MAX_PARALLEL_BATCHES for this process.")
-def extract_cmd(batch_id: str | None, artifact_path: str | None, planner_model: str, subagent_model: str, max_workers: int | None):
+@click.option("--artifact", "artifact_path",
+              help="Ingest an existing extract artifact instead of launching an agent.")
+@click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES),
+              default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES),
+              default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--max-workers", type=int,
+              help="Override GDB_MAX_PARALLEL_BATCHES for this process.")
+def extract_cmd(batch_id: str | None, artifact_path: str | None,
+                planner_model: str, subagent_model: str, max_workers: int | None):
     if artifact_path and not batch_id:
         raise click.ClickException("--batch-id is required with --artifact")
     if max_workers:
@@ -103,36 +92,19 @@ def extract_cmd(batch_id: str | None, artifact_path: str | None, planner_model: 
     ))
 
 
-@run.command("check")
-@click.option("--artifact", "artifact_path", help="Check a JSON artifact directly instead of DB mentions.")
-def check_cmd(artifact_path: str | None):
-    emit_json(run_check(artifact_path=artifact_path))
-
-
-@run.command("audit")
-@click.option("--artifact", "artifact_path", help="Apply an audit artifact directly instead of launching an agent.")
-@click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
-@click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
-def audit_cmd(artifact_path: str | None, planner_model: str, subagent_model: str):
-    emit_json(run_audit(artifact_path=artifact_path, planner_model=planner_model, subagent_model=subagent_model))
-
-
-@run.command("verify-links")
-def verify_links_cmd():
-    emit_json(run_verify_links())
-
-
-@run.command("build-lattice")
-def build_lattice_cmd():
-    emit_json(run_build_lattice())
-
-
-@run.command("describe")
-@click.option("--artifact", "artifact_path", help="Apply a describe artifact directly instead of launching an agent.")
-@click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
-@click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES), default=config.CLAUDE_MODEL, show_default=True)
-def describe_cmd(artifact_path: str | None, planner_model: str, subagent_model: str):
-    emit_json(run_describe(artifact_path=artifact_path, planner_model=planner_model, subagent_model=subagent_model))
+@run.command("organize")
+@click.option("--artifact", "artifact_path",
+              help="Ingest an existing organize artifact instead of launching an agent.")
+@click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES),
+              default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES),
+              default=config.CLAUDE_MODEL, show_default=True)
+def organize_cmd(artifact_path: str | None, planner_model: str, subagent_model: str):
+    emit_json(run_organize(
+        artifact_path=artifact_path,
+        planner_model=planner_model,
+        subagent_model=subagent_model,
+    ))
 
 
 @main.group()
@@ -140,83 +112,68 @@ def debug():
     """Read-only inspection helpers."""
 
 
-@debug.command("mentions")
+@debug.command("names")
 @click.option("--limit", type=int)
-def debug_mentions(limit: int | None):
-    sql = "SELECT * FROM mentions ORDER BY created_at, id"
+@click.option("--kind", type=click.Choice(["model", "dataset"]))
+def debug_names(limit: int | None, kind: str | None):
+    """List collected names from extract."""
+    sql = "SELECT * FROM names"
+    params: tuple = ()
+    if kind:
+        sql += " WHERE kind = ?"
+        params = (kind,)
+    sql += " ORDER BY kind, name"
     if limit:
         sql += f" LIMIT {int(limit)}"
-    rows = all_rows(sql)
+    emit_json({"names": all_rows(sql, params)})
+
+
+@debug.command("names-packet")
+def debug_names_packet():
+    """Show the deduped (type, name) packet that organize will read.
+    Useful for sanity-checking how many distinct names exist before
+    spending an organize call."""
+    emit_json(names_packet())
+
+
+@debug.command("organize")
+@click.option("--latest/--all", default=True,
+              help="Show only the most recent organize run (default) or all of them.")
+def debug_organize(latest: bool):
+    """Show the groups+items artifact(s) the organize stage produced.
+
+    The artifact lives on disk; the run row's `attrs.artifact_path`
+    points at it. We read the file at display time so consumers get
+    the current contents, not a stale DB snapshot.
+    """
+    rows = all_rows(
+        "SELECT id, attrs, started_at, ended_at FROM runs "
+        "WHERE stage='organize' AND ended_at IS NOT NULL "
+        "ORDER BY started_at DESC"
+    )
+    if latest:
+        rows = rows[:1]
+    out = []
     for row in rows:
-        list_fields = {
-            "aliases_json",
-            "subsets_json",
-            "context_roles_json",
-            "atoms_json",
-            "links_json",
-            "concept_path_json",
-            "anchors_json",
-        }
-        for field in (
-            "identity_json",
-            "descriptors_json",
-            "aliases_json",
-            "subsets_json",
-            "context_roles_json",
-            "atoms_json",
-            "links_json",
-            "concept_path_json",
-            "aux_json",
-            "anchors_json",
-            "attrs",
-        ):
-            row[field.removesuffix("_json")] = loads(row.pop(field), default=[] if field in list_fields else {})
-        row.pop("relationships_json", None)
-    emit_json({"mentions": rows})
-
-
-@debug.command("lattice")
-def debug_lattice():
-    emit_json({
-        "nodes": all_rows("SELECT * FROM lattice_nodes ORDER BY kind, display_name"),
-        "edges": all_rows("SELECT * FROM lattice_edges ORDER BY parent_node_key, child_node_key"),
-    })
-
-
-@debug.command("rejected-mentions")
-@click.option("--batch-id", help="Filter by batch.")
-@click.option("--status", type=click.Choice(["pending", "reviewed", "reingested", "dismissed"]),
-              help="Filter by review status (default: all).")
-@click.option("--limit", type=int, help="Cap rows.")
-def debug_rejected_mentions(batch_id: str | None, status: str | None, limit: int | None):
-    """Show mentions that failed extract-time validation (no anchors,
-    missing surface, invalid kind, malformed shape) and were routed
-    aside for review. Soft errors (bad link shape, missing identity
-    family) are repaired in-place at commit time and don't appear here."""
-    where = []
-    params: list = []
-    if batch_id:
-        where.append("batch_id = ?")
-        params.append(batch_id)
-    if status:
-        where.append("status = ?")
-        params.append(status)
-    sql = "SELECT * FROM rejected_mentions"
-    if where:
-        sql += " WHERE " + " AND ".join(where)
-    sql += " ORDER BY batch_id, artifact_index"
-    if limit:
-        sql += f" LIMIT {int(limit)}"
-    try:
-        rows = all_rows(sql, tuple(params))
-    except Exception as exc:
-        # Table may not exist on a never-extracted DB; surface that cleanly.
-        emit_json({"rejected_mentions": [], "note": str(exc)})
-        return
-    for row in rows:
-        for key in ("reason_codes_json", "errors_json", "raw_json"):
-            row[key.removesuffix("_json")] = loads(row.pop(key), default=[] if "json" in key and key != "raw_json" else {})
-    emit_json({"rejected_mentions": rows, "count": len(rows)})
+        attrs = loads(row["attrs"], default={})
+        path = attrs.get("artifact_path")
+        artifact = None
+        missing = False
+        if path and Path(path).exists():
+            artifact = read_json(path)
+        elif path:
+            missing = True
+        out.append({
+            "run_id": row["id"],
+            "started_at": row["started_at"],
+            "ended_at": row["ended_at"],
+            "artifact_path": path,
+            "group_count": attrs.get("group_count"),
+            "item_count": attrs.get("item_count"),
+            "artifact_missing_on_disk": missing,
+            "artifact": artifact,
+        })
+    emit_json({"organize_runs": out})
 
 
 if __name__ == "__main__":

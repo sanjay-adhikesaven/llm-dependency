@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 import shutil
 import signal
 import subprocess
@@ -14,23 +13,11 @@ from typing import Any
 import click
 
 from . import config
-from .artifacts import (
-    aggregate_mentions,
-    detect_conflicts,
-    normalize_link_candidates,
-    normalize_mention,
-    apply_audit_updates,
-    validate_mention_artifact,
-)
-from .lattice import build_lattice
-from .linker import link_candidates_from_mentions, verify_candidates
 from .store import (
     all_rows,
-    batch_file_map,
     compute_batch_fingerprint,
     db,
     dumps,
-    emit_json,
     json_text,
     loads,
     materialize_batch,
@@ -39,7 +26,6 @@ from .store import (
     read_json,
     scan_and_register,
     set_batch_artifact,
-    truncate,
     upsert_batch_by_fingerprint,
 )
 
@@ -54,7 +40,8 @@ def atomic_write_json(path: Path, payload: Any) -> None:
         tmp.unlink(missing_ok=True)
 
 
-def new_run(stage: str, *, seed: str | None = None, label: str | None = None, parent_run_id: str | None = None) -> str:
+def new_run(stage: str, *, seed: str | None = None, label: str | None = None,
+            parent_run_id: str | None = None) -> str:
     run_id = new_id()
     with db() as conn:
         conn.execute(
@@ -76,19 +63,9 @@ def close_run(run_id: str, attrs: dict) -> None:
 
 
 def subagent_prompt_for(model: str) -> str:
-    """Pick the dispatch-instructions block matching the subagent runtime.
-
-    Claude subagents go via the planner's Task tool; codex subagents
-    must be shelled out via `codex exec` because Task can only spawn
-    Claude. The block returned here is what `{{subagent_prompt}}`
-    expands to inside per-stage prompts.
-    """
     if model.startswith("codex-"):
         effort = model.removeprefix("codex-")
-        return config.SUBAGENT_PROMPT_CODEX.format(
-            codex_model=config.CODEX_MODEL,
-            effort=effort,
-        )
+        return config.SUBAGENT_PROMPT_CODEX.format(codex_model=config.CODEX_MODEL, effort=effort)
     return config.SUBAGENT_PROMPT_CLAUDE.format(model=model)
 
 
@@ -97,17 +74,8 @@ def render_prompt(stage: str, variables: dict[str, str]) -> str:
     if not prompt_path.exists():
         raise click.ClickException(f"prompt not found: {prompt_path}")
     text = prompt_path.read_text()
-    shared = config.PROMPTS_DIR / "shared-context.md"
-    if stage != "shared-context" and shared.exists():
-        text = f"{shared.read_text()}\n---\n\n{text}"
-    # Auto-derive `subagent_prompt` from `subagent_model` so per-stage
-    # prompts can drop the literal `{{subagent_prompt}}` placeholder
-    # and pick up codex-vs-claude dispatch instructions automatically.
     if "subagent_model" in variables and "subagent_prompt" not in variables:
-        variables = {
-            **variables,
-            "subagent_prompt": subagent_prompt_for(variables["subagent_model"]),
-        }
+        variables = {**variables, "subagent_prompt": subagent_prompt_for(variables["subagent_model"])}
     for name, value in variables.items():
         text = text.replace("{{" + name + "}}", value)
     return text
@@ -119,6 +87,23 @@ def runtime_env(run_id: str) -> dict[str, str]:
     env[config.GDB_PATH_ENV] = str(config.DB_PATH)
     env[config.GDB_RUN_ID_ENV] = run_id
     return env
+
+
+def child_pids(pid: int) -> list[int]:
+    try:
+        result = subprocess.run(["pgrep", "-P", str(pid)], capture_output=True, text=True, check=False)
+    except FileNotFoundError:
+        return []
+    return [int(line) for line in result.stdout.splitlines() if line.strip().isdigit()]
+
+
+def kill_descendants(pid: int, sig: signal.Signals) -> None:
+    for child in child_pids(pid):
+        kill_descendants(child, sig)
+        try:
+            os.kill(child, sig)
+        except (ProcessLookupError, PermissionError):
+            pass
 
 
 def terminate_pgrp(pid: int) -> None:
@@ -141,44 +126,12 @@ def terminate_pgrp(pid: int) -> None:
         pass
 
 
-def child_pids(pid: int) -> list[int]:
-    try:
-        result = subprocess.run(["pgrep", "-P", str(pid)], capture_output=True, text=True, check=False)
-    except FileNotFoundError:
-        return []
-    return [int(line) for line in result.stdout.splitlines() if line.strip().isdigit()]
-
-
-def kill_descendants(pid: int, sig: signal.Signals) -> None:
-    for child in child_pids(pid):
-        kill_descendants(child, sig)
-        try:
-            os.kill(child, sig)
-        except (ProcessLookupError, PermissionError):
-            pass
-
-
 def parse_stream_json(stream_path: Path) -> dict:
-    """Parse claude's `--output-format stream-json` jsonl into per-run stats.
-
-    Each line is one event. Of interest:
-    - `assistant` events carry one turn; their `message.content[]` lists
-      `tool_use` entries (for accurate Task / WebFetch / Bash counts) and
-      `text` entries (the planner's user-visible prose, last one wins as
-      `final_text`).
-    - The terminal `result` event carries `total_cost_usd` and a `usage`
-      block (`input_tokens`, `output_tokens`, `cache_creation_input_tokens`,
-      `cache_read_input_tokens`).
-    """
     out: dict[str, Any] = {
-        "turns": 0,
-        "cost_usd": 0.0,
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "cache_creation_input_tokens": 0,
-        "cache_read_input_tokens": 0,
-        "tool_calls": [],
-        "final_text": None,
+        "turns": 0, "cost_usd": 0.0,
+        "input_tokens": 0, "output_tokens": 0,
+        "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0,
+        "tool_calls": [], "final_text": None,
     }
     if not stream_path.exists():
         return out
@@ -207,12 +160,8 @@ def parse_stream_json(stream_path: Path) -> dict:
             if cost is not None:
                 out["cost_usd"] = float(cost)
             usage = rec.get("usage") or {}
-            for key in (
-                "input_tokens",
-                "output_tokens",
-                "cache_creation_input_tokens",
-                "cache_read_input_tokens",
-            ):
+            for key in ("input_tokens", "output_tokens",
+                        "cache_creation_input_tokens", "cache_read_input_tokens"):
                 value = usage.get(key)
                 if isinstance(value, (int, float)):
                     out[key] = int(value)
@@ -228,24 +177,17 @@ def spawn_claude(run_id: str, prompt: str, *, model: str = config.CLAUDE_MODEL) 
     stream_path = run_root / config.RUN_STREAM_FILE
     err_path = run_root / config.RUN_STDERR_FILE
     cmd = [
-        "claude",
-        "-p", prompt,
+        "claude", "-p", prompt,
         "--permission-mode", "bypassPermissions",
-        "--output-format", "stream-json",
-        "--verbose",
+        "--output-format", "stream-json", "--verbose",
         "--model", model,
         "--disallowedTools", "ScheduleWakeup",
     ]
     started = time.monotonic()
     with stream_path.open("w") as stdout, err_path.open("w") as stderr:
         proc = subprocess.Popen(
-            cmd,
-            cwd=config.ROOT,
-            env=runtime_env(run_id),
-            stdout=stdout,
-            stderr=stderr,
-            text=True,
-            start_new_session=True,
+            cmd, cwd=config.ROOT, env=runtime_env(run_id),
+            stdout=stdout, stderr=stderr, text=True, start_new_session=True,
         )
         try:
             rc = proc.wait()
@@ -257,10 +199,7 @@ def spawn_claude(run_id: str, prompt: str, *, model: str = config.CLAUDE_MODEL) 
     tool_calls = stats.pop("tool_calls", [])
     final_text = stats.pop("final_text", None)
     attrs = {
-        "runtime": "claude",
-        "model": model,
-        "exit_code": rc,
-        "elapsed_s": elapsed,
+        "runtime": "claude", "model": model, "exit_code": rc, "elapsed_s": elapsed,
         "tool_call_count": len(tool_calls),
         "tool_calls_by_name": {name: tool_calls.count(name) for name in set(tool_calls)},
         **stats,
@@ -272,19 +211,10 @@ def spawn_claude(run_id: str, prompt: str, *, model: str = config.CLAUDE_MODEL) 
 
 
 def spawn_codex(run_id: str, prompt: str, *, effort: str) -> dict:
-    """Run a single codex CLI invocation as a stage planner.
-
-    The planner is normally Claude, but the dispatcher allows codex
-    here too for stages where the operator wants codex end-to-end.
-    Subagent dispatch (codex-from-Claude) is a separate flow handled
-    inside the planner's prompt via `SUBAGENT_PROMPT_CODEX`.
-    """
     if not shutil.which("codex"):
         raise click.ClickException("codex CLI not found; pass --artifact to ingest an existing stage artifact")
     if effort not in config.CODEX_EFFORT_CHOICES:
-        raise click.ClickException(
-            f"unknown codex effort {effort!r} (choose from {config.CODEX_EFFORT_CHOICES})"
-        )
+        raise click.ClickException(f"unknown codex effort {effort!r}")
     run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
     run_root.mkdir(parents=True, exist_ok=True)
     (run_root / config.RUN_PROMPT_FILE).write_text(prompt)
@@ -301,13 +231,8 @@ def spawn_codex(run_id: str, prompt: str, *, effort: str) -> dict:
     started = time.monotonic()
     with out_path.open("w") as stdout, err_path.open("w") as stderr:
         proc = subprocess.Popen(
-            cmd,
-            cwd=config.ROOT,
-            env=runtime_env(run_id),
-            stdout=stdout,
-            stderr=stderr,
-            text=True,
-            start_new_session=True,
+            cmd, cwd=config.ROOT, env=runtime_env(run_id),
+            stdout=stdout, stderr=stderr, text=True, start_new_session=True,
         )
         try:
             rc = proc.wait()
@@ -315,16 +240,20 @@ def spawn_codex(run_id: str, prompt: str, *, effort: str) -> dict:
             terminate_pgrp(proc.pid)
             raise
     elapsed = time.monotonic() - started
-    model_label = f"codex-{effort}"
-    close_run(run_id, {"runtime": "codex", "model": model_label, "exit_code": rc, "elapsed_s": elapsed})
+    close_run(run_id, {"runtime": "codex", "model": f"codex-{effort}",
+                       "exit_code": rc, "elapsed_s": elapsed})
     return {"run_id": run_id, "exit_code": rc, "elapsed_s": elapsed, "log_dir": str(run_root)}
 
 
 def dispatch_spawn(run_id: str, prompt: str, *, model: str) -> dict:
-    """Pick spawn_codex vs spawn_claude based on the model name."""
     if model.startswith("codex-"):
         return spawn_codex(run_id, prompt, effort=model.removeprefix("codex-"))
     return spawn_claude(run_id, prompt, model=model)
+
+
+# ---------------------------------------------------------------------------
+# Stage 1 — discover
+# ---------------------------------------------------------------------------
 
 
 def ingest_discovery_artifact(artifact: dict, workspace_dir: Path) -> dict:
@@ -333,7 +262,7 @@ def ingest_discovery_artifact(artifact: dict, workspace_dir: Path) -> dict:
     with db() as conn:
         cur = conn.cursor()
         for idx, batch in enumerate(enriched.get("batches") or []):
-            source_ids = [source.get("source_id") for source in batch.get("sources") or [] if source.get("source_id")]
+            source_ids = [s.get("source_id") for s in batch.get("sources") or [] if s.get("source_id")]
             if not source_ids:
                 continue
             fingerprint = compute_batch_fingerprint(cur, source_ids)
@@ -364,23 +293,22 @@ def run_discover(
     workspace = Path(workspace_dir).resolve() if workspace_dir else run_root / config.WORKSPACE_SUBDIR
     workspace.mkdir(parents=True, exist_ok=True)
     artifact_out = run_root / config.DISCOVER_ARTIFACT_FILE
-    variables = {
-        "run_id": run_id,
-        "target": target,
-        "workspace_dir": str(workspace),
-        "worker_dir": str(run_root / config.WORKERS_SUBDIR),
-        "artifact_path": str(artifact_out),
-        "input_path": str(run_root / config.RUN_INPUT_FILE),
-        "planner_model": planner_model,
-        "subagent_model": subagent_model,
-    }
     run_root.mkdir(parents=True, exist_ok=True)
     (run_root / config.RUN_INPUT_FILE).write_text(json_text({"target": target, "workspace_dir": str(workspace)}))
     if artifact_path:
         artifact = read_json(artifact_path)
         used_artifact = Path(artifact_path)
     else:
-        prompt = render_prompt("discover", variables)
+        prompt = render_prompt("discover", {
+            "run_id": run_id,
+            "target": target,
+            "workspace_dir": str(workspace),
+            "worker_dir": str(run_root / config.WORKERS_SUBDIR),
+            "artifact_path": str(artifact_out),
+            "input_path": str(run_root / config.RUN_INPUT_FILE),
+            "planner_model": planner_model,
+            "subagent_model": subagent_model,
+        })
         spawn = dispatch_spawn(run_id, prompt, model=planner_model)
         if spawn["exit_code"] != 0:
             raise click.ClickException(f"discover failed; logs at {spawn['log_dir']}")
@@ -394,216 +322,67 @@ def run_discover(
         "run_id": run_id,
         "artifact_path": str(used_artifact),
         "batches": [
-            {"batch_id": batch.get("batch_id"), "created": batch.get("created"), "source_count": len(batch.get("sources") or [])}
-            for batch in enriched.get("batches") or []
+            {"batch_id": b.get("batch_id"), "created": b.get("created"),
+             "source_count": len(b.get("sources") or [])}
+            for b in enriched.get("batches") or []
         ],
     }
 
 
-def _source_id_for_mention(cur, batch_id: str, mention: dict) -> str | None:
-    if mention.get("source_id"):
-        return mention["source_id"]
-    anchors = mention.get("anchors") or []
-    file = ""
-    if anchors:
-        file = anchors[0].get("file") or ""
-    file_map = batch_file_map(cur, batch_id)
-    for filename, source_id in file_map.items():
-        if filename.casefold() == file.casefold():
-            return source_id
-    return None
+# ---------------------------------------------------------------------------
+# Stage 2 — extract (per batch, name + kind only)
+# ---------------------------------------------------------------------------
 
 
-# Validator codes that commit_mentions can repair in-place. The mention
-# still commits (with stripped/defaulted values) and audit fills the gap
-# downstream via web-search and cluster-level reasoning.
-_SOFT_VALIDATOR_CODES = {
-    "invalid_link_shape",         # strip the bad link
-    "missing_identity_family",    # default family to surface so identity_key derivable
-    "dataset_only_subsets",       # clear subsets (kind != dataset can't carry them)
-}
+def commit_names(artifact: dict, *, batch_id: str | None = None,
+                 run_id: str | None = None) -> dict:
+    """Commit `{type, name}` records from an extract artifact.
 
-# Validator codes that route the offending mention to rejected_mentions.
-# Sibling mentions in the same artifact are unaffected. These are the
-# cases audit cannot repair — anchors are the floor, surface and kind
-# are storage-CHECK-enforced, malformed shape can't be parsed.
-_HARD_VALIDATOR_CODES = {
-    "invalid_mention",     # mention is not a dict
-    "missing_surface",     # nothing to investigate
-    "invalid_kind",        # storage CHECK requires model|dataset
-    "empty_anchors",       # no provenance — the floor
-}
-
-
-def _strip_bad_links(mention: dict, errors: list[dict]) -> None:
-    """Remove links[] entries flagged by `invalid_link_shape`. Mutates
-    `mention` in place. Handles the three containers: top-level links,
-    per-alias links, per-subset links."""
-    by_target: dict[tuple[str, int], set[int]] = {}
-    for err in errors:
-        if err.get("code") != "invalid_link_shape":
-            continue
-        path = err.get("path") or ""
-        m = re.match(r"mentions\[\d+\]\.(links|aliases\[(\d+)\]\.links|subsets\[(\d+)\]\.links)\[(\d+)\]", path)
-        if not m:
-            continue
-        container = m.group(1).split("[", 1)[0]
-        sub_idx = int(m.group(2) or m.group(3) or -1)
-        link_idx = int(m.group(4))
-        by_target.setdefault((container, sub_idx), set()).add(link_idx)
-    for (container, sub_idx), bad in by_target.items():
-        if container == "links":
-            links = mention.get("links") or []
-            mention["links"] = [l for i, l in enumerate(links) if i not in bad]
-        elif container == "aliases":
-            aliases = mention.get("aliases") or []
-            if 0 <= sub_idx < len(aliases) and isinstance(aliases[sub_idx], dict):
-                al = aliases[sub_idx]
-                al_links = al.get("links") or []
-                al["links"] = [l for i, l in enumerate(al_links) if i not in bad]
-        elif container == "subsets":
-            subsets = mention.get("subsets") or []
-            if 0 <= sub_idx < len(subsets) and isinstance(subsets[sub_idx], dict):
-                sb = subsets[sub_idx]
-                sb_links = sb.get("links") or []
-                sb["links"] = [l for i, l in enumerate(sb_links) if i not in bad]
-
-
-def _repair_soft(mention: dict, codes: set[str], errors: list[dict]) -> None:
-    """Mutate `mention` in place to clear soft validator errors so the
-    mention can commit. Each branch is no-op when its code is absent."""
-    if "invalid_link_shape" in codes:
-        _strip_bad_links(mention, errors)
-    if "dataset_only_subsets" in codes:
-        mention["subsets"] = []
-    if "missing_identity_family" in codes:
-        ident = mention.get("identity") if isinstance(mention.get("identity"), dict) else {}
-        if not ident.get("family"):
-            ident["family"] = mention.get("surface") or ""
-        mention["identity"] = ident
-
-
-def commit_mentions(
-    artifact: dict, *, batch_id: str | None = None, run_id: str | None = None
-) -> dict:
-    """Commit mentions per-mention. Each mention either commits (after
-    repair of soft errors) or routes to `rejected_mentions` (for review).
-    The artifact never fails as a whole except on artifact-level shape
-    errors (not a dict, mentions not a list)."""
+    Schema accepted: `{"mentions": [{"type": "model"|"dataset", "name": "..."}, ...]}`.
+    Skips entries that are missing either field, have an invalid kind,
+    or are exact (kind, name) duplicates of another entry in this artifact.
+    No anchors, atoms, identity, links, or descriptions live here.
+    """
     if not isinstance(artifact, dict):
         return {"status": "failed", "errors": [{"code": "invalid_artifact"}],
-                "mentions_committed": 0, "mentions_rejected": 0}
-    mentions_raw = artifact.get("mentions")
-    if not isinstance(mentions_raw, list):
+                "names_committed": 0, "names_skipped": 0}
+    raw = artifact.get("mentions")
+    if not isinstance(raw, list):
         return {"status": "failed", "errors": [{"code": "invalid_artifact"}],
-                "mentions_committed": 0, "mentions_rejected": 0}
+                "names_committed": 0, "names_skipped": 0}
 
-    # Group validator errors by mention index.
-    errors_by_idx: dict[int, list[dict]] = {}
-    for err in validate_mention_artifact(artifact):
-        path = err.get("path") or ""
-        m = re.match(r"mentions\[(\d+)\]", path)
-        if not m:
+    seen: set[tuple[str, str]] = set()
+    skipped: list[dict] = []
+    accepted: list[tuple[str, str]] = []
+    for idx, item in enumerate(raw):
+        if not isinstance(item, dict):
+            skipped.append({"index": idx, "reason": "not_a_dict"})
             continue
-        errors_by_idx.setdefault(int(m.group(1)), []).append(err)
-
-    # Per-mention classification: hard errors → rejected_mentions table,
-    # soft errors → repair in-place and commit, no errors → commit
-    # straight through.
-    rejected: list[tuple[int, dict, list[dict]]] = []
-    repair_log: list[dict] = []
-    for idx, raw in enumerate(mentions_raw):
-        errs = errors_by_idx.get(idx, [])
-        codes = {e.get("code") for e in errs if e.get("code")}
-        hard = codes & _HARD_VALIDATOR_CODES
-        if hard:
-            rejected.append((idx, raw, errs))
+        kind = (item.get("type") or item.get("kind") or "").strip().casefold()
+        name = (item.get("name") or "").strip()
+        if not name:
+            skipped.append({"index": idx, "reason": "empty_name"})
             continue
-        soft = codes & _SOFT_VALIDATOR_CODES
-        if soft and isinstance(raw, dict):
-            _repair_soft(raw, soft, errs)
-            repair_log.append({"index": idx, "codes": sorted(soft)})
-
-    rejected_idxs = {i for i, _, _ in rejected}
-    mentions = [m for i, m in enumerate(mentions_raw) if i not in rejected_idxs]
+        if kind not in ("model", "dataset"):
+            skipped.append({"index": idx, "reason": "invalid_kind", "name": name, "kind": kind})
+            continue
+        key = (kind, name)
+        if key in seen:
+            skipped.append({"index": idx, "reason": "duplicate", "name": name, "kind": kind})
+            continue
+        seen.add(key)
+        accepted.append(key)
 
     committed = 0
     with db() as conn:
         cur = conn.cursor()
-        # Idempotent: existing DBs may not have the table yet.
-        cur.execute("""CREATE TABLE IF NOT EXISTS rejected_mentions (
-          id                 TEXT PRIMARY KEY,
-          batch_id           TEXT,
-          run_id             TEXT,
-          artifact_index     INTEGER,
-          surface            TEXT,
-          reason_codes_json  TEXT NOT NULL DEFAULT '[]',
-          errors_json        TEXT NOT NULL DEFAULT '[]',
-          raw_json           TEXT NOT NULL,
-          status             TEXT NOT NULL DEFAULT 'pending'
-                               CHECK (status IN ('pending','reviewed','reingested','dismissed')),
-          created_at         TEXT NOT NULL
-        )""")
-        for idx, raw, errs in rejected:
-            surf = raw.get("surface") if isinstance(raw, dict) else None
-            cur.execute(
-                """INSERT INTO rejected_mentions
-                   (id, batch_id, run_id, artifact_index, surface,
-                    reason_codes_json, errors_json, raw_json, status, created_at)
-                   VALUES (?,?,?,?,?,?,?,?,?,?)""",
-                (
-                    new_id(), batch_id, run_id, idx, surf or "",
-                    dumps(sorted({e.get("code") for e in errs if e.get("code")})),
-                    dumps(errs),
-                    dumps(raw),
-                    "pending",
-                    now(),
-                ),
-            )
         if batch_id:
-            cur.execute("DELETE FROM mentions WHERE batch_id=?", (batch_id,))
-        for raw in mentions:
-            source_id = None
-            if batch_id:
-                provisional = normalize_mention(raw, batch_id=batch_id)
-                source_id = _source_id_for_mention(cur, batch_id, provisional)
-            mention = normalize_mention(raw, batch_id=batch_id, source_id=source_id)
-            mention_id = mention.get("id") or new_id()
+            cur.execute("DELETE FROM names WHERE batch_id=?", (batch_id,))
+        for kind, name in accepted:
             cur.execute(
-                """INSERT OR REPLACE INTO mentions
-                   (id, batch_id, source_id, kind, surface, surface_key,
-                    identity_json, identity_key, descriptors_json, aliases_json,
-                    subsets_json, context_roles_json, atoms_json,
-                    referent_scope, links_json, concept_path_json,
-                    aux_json, anchors_json, description,
-                    notes, attrs, status, created_at, updated_at)
-                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                (
-                    mention_id,
-                    mention.get("batch_id"),
-                    mention.get("source_id"),
-                    mention["kind"],
-                    mention["surface"],
-                    mention["surface_key"],
-                    dumps(mention["identity"]),
-                    mention["identity_key"],
-                    dumps(mention["descriptors"]),
-                    dumps(mention["aliases"]),
-                    dumps(mention["subsets"]),
-                    dumps(mention["context_roles"]),
-                    dumps(mention["atoms"]),
-                    mention["referent_scope"],
-                    dumps(mention["links"]),
-                    dumps(mention["concept_path"]),
-                    dumps(mention["aux"]),
-                    dumps(mention["anchors"]),
-                    mention.get("description"),
-                    mention.get("notes"),
-                    dumps(mention.get("attrs") or {}),
-                    "active",
-                    now(),
-                    now(),
-                ),
+                """INSERT INTO names (id, batch_id, run_id, kind, name, created_at)
+                   VALUES (?,?,?,?,?,?)""",
+                (new_id(), batch_id, run_id, kind, name, now()),
             )
             committed += 1
         if batch_id:
@@ -611,26 +390,17 @@ def commit_mentions(
                 cur,
                 batch_id=batch_id,
                 stage="extract",
-                artifact_path=str(Path(artifact.get("_artifact_path", "")).resolve()) if artifact.get("_artifact_path") else "",
+                artifact_path=str(Path(artifact.get("_artifact_path", "")).resolve())
+                              if artifact.get("_artifact_path") else "",
                 status="complete",
-                attrs={"mentions_committed": committed, "mentions_rejected": len(rejected)},
+                attrs={"names_committed": committed, "names_skipped": len(skipped)},
             )
         conn.commit()
-    rejected_summary = [
-        {
-            "index": idx,
-            "surface": (raw.get("surface") if isinstance(raw, dict) else None) or "",
-            "codes": sorted({e.get("code") for e in errs if e.get("code")}),
-        }
-        for idx, raw, errs in rejected
-    ]
     return {
         "status": "complete",
-        "mentions_committed": committed,
-        "mentions_rejected": len(rejected),
-        "rejected": rejected_summary,
-        "repaired": repair_log,
-        "errors": [],
+        "names_committed": committed,
+        "names_skipped": len(skipped),
+        "skipped": skipped[:50],
     }
 
 
@@ -644,8 +414,10 @@ def run_extract(
     if artifact_path:
         artifact = read_json(artifact_path)
         artifact["_artifact_path"] = str(artifact_path)
-        return commit_mentions(artifact, batch_id=batch_id)
-    batch_ids = [batch_id] if batch_id else [row["id"] for row in all_rows("SELECT id FROM batches ORDER BY created_at")]
+        return commit_names(artifact, batch_id=batch_id)
+    batch_ids = [batch_id] if batch_id else [
+        row["id"] for row in all_rows("SELECT id FROM batches ORDER BY created_at")
+    ]
     workers = max(1, min(config.MAX_PARALLEL_BATCHES, len(batch_ids) or 1))
 
     def extract_one(bid: str) -> dict:
@@ -654,7 +426,9 @@ def run_extract(
         batch_dir = materialize_batch(bid, run_root / config.BATCH_SUBDIR)
         artifact_out = run_root / config.EXTRACT_ARTIFACT_FILE
         run_root.mkdir(parents=True, exist_ok=True)
-        (run_root / config.RUN_INPUT_FILE).write_text(json_text({"batch_id": bid, "batch_dir": str(batch_dir)}))
+        (run_root / config.RUN_INPUT_FILE).write_text(
+            json_text({"batch_id": bid, "batch_dir": str(batch_dir)})
+        )
         prompt = render_prompt("extract", {
             "run_id": run_id,
             "batch_id": bid,
@@ -670,7 +444,7 @@ def run_extract(
             return {"batch_id": bid, "status": "failed", "log_dir": spawn["log_dir"]}
         artifact = read_json(artifact_out)
         artifact["_artifact_path"] = str(artifact_out)
-        result = commit_mentions(artifact, batch_id=bid, run_id=run_id)
+        result = commit_names(artifact, batch_id=bid, run_id=run_id)
         result["batch_id"] = bid
         result["run_id"] = run_id
         return result
@@ -689,387 +463,92 @@ def run_extract(
     return {"results": results, "failed": len(failed), "parallel_workers": workers}
 
 
-def mention_rows() -> list[dict]:
-    rows = all_rows("SELECT * FROM mentions WHERE status != 'dropped' ORDER BY created_at, id")
-    out: list[dict] = []
-    for row in rows:
-        out.append({
-            "id": row["id"],
-            "batch_id": row["batch_id"],
-            "source_id": row["source_id"],
-            "kind": row["kind"],
-            "surface": row["surface"],
-            "identity": loads(row["identity_json"], default={}),
-            "descriptors": loads(row["descriptors_json"], default={}),
-            "aliases": loads(row["aliases_json"], default=[]),
-            "subsets": loads(row["subsets_json"], default=[]),
-            "context_roles": loads(row["context_roles_json"], default=[]),
-            "atoms": loads(row.get("atoms_json"), default=[]),
-            "referent_scope": row.get("referent_scope") or "ambiguous",
-            "links": loads(row["links_json"], default=[]),
-            "concept_path": loads(row.get("concept_path_json"), default=[]),
-            "aux": loads(row.get("aux_json"), default={}),
-            "anchors": loads(row["anchors_json"], default=[]),
-            "description": row.get("description"),
-            "notes": row["notes"],
-            "attrs": loads(row["attrs"], default={}),
-        })
-    return out
+# ---------------------------------------------------------------------------
+# Stage 3 — organize (one planner reads names file, emits lattice)
+# ---------------------------------------------------------------------------
 
 
-def run_check(*, artifact_path: str | None = None) -> dict:
+def names_packet() -> dict:
+    """The deduped `{type, name}` list the organize planner reads.
+
+    Counts are intentionally absent — they don't change how the planner
+    decides whether two surfaces refer to the same entity.
+    """
+    rows = all_rows(
+        "SELECT DISTINCT kind, name FROM names ORDER BY kind, name"
+    )
+    return {"names": [{"type": r["kind"], "name": r["name"]} for r in rows]}
+
+
+def _validate_organize_artifact(artifact: dict) -> tuple[int, int]:
+    """Sanity-check the organize artifact's groups+items shape and
+    return (group_count, item_count). Raises if shape is wrong."""
+    groups = artifact.get("groups") if isinstance(artifact, dict) else None
+    if not isinstance(groups, list):
+        raise click.ClickException("organize artifact missing groups[]")
+    item_count = 0
+    for i, group in enumerate(groups):
+        if not isinstance(group, dict):
+            raise click.ClickException(f"groups[{i}] is not a dict")
+        items = group.get("items")
+        if not isinstance(items, list):
+            raise click.ClickException(f"groups[{i}].items is not a list")
+        item_count += len(items)
+    return len(groups), item_count
+
+
+def run_organize(
+    *,
+    artifact_path: str | None = None,
+    planner_model: str = config.CLAUDE_MODEL,
+    subagent_model: str | None = None,
+) -> dict:
+    """Single planner reads the consolidated names file, groups by
+    family, collapses surface variants, picks a canonical formal_name
+    and structured identity per item, and writes one record per real
+    artifact.
+
+    With `--artifact`, ingest an externally produced organize artifact
+    instead of spawning a planner. The artifact lives on disk; we
+    record its location in the run row and stop.
+    """
     if artifact_path:
-        artifact = read_json(artifact_path)
-        validation_errors = validate_mention_artifact(artifact)
-        mentions = artifact.get("mentions") if isinstance(artifact, dict) else []
-        conflicts = detect_conflicts(mentions or [])
-    else:
-        validation_errors = []
-        conflicts = detect_conflicts(mention_rows())
-    violations = [
-        {"code": err["code"], "severity": "error", "subject_key": err.get("path"), "details": err}
-        for err in validation_errors
-    ] + conflicts
-    with db() as conn:
-        cur = conn.cursor()
-        cur.execute("UPDATE mention_violations SET status='resolved' WHERE status='open'")
-        for violation in violations:
-            cur.execute(
-                """INSERT INTO mention_violations
-                   (id, code, severity, subject_key, details_json, status, created_at)
-                   VALUES (?,?,?,?,?,?,?)""",
-                (
-                    new_id(),
-                    violation["code"],
-                    violation.get("severity") or "error",
-                    violation.get("subject_key"),
-                    dumps(violation.get("details") or {}),
-                    "open",
-                    now(),
-                ),
-            )
-        conn.commit()
-    return {"violation_count": len(violations), "violations": violations}
-
-
-def cluster_packet() -> dict:
-    """Build the cluster + violations packet that the audit stage reads.
-
-    The audit prompt expects clusters (deduped via aggregate_mentions)
-    plus the open violations. The planner decides how to bucket these
-    and dispatches subagents.
-    """
-    mentions = mention_rows()
-    clusters = aggregate_mentions(mentions)
-    violations = all_rows("SELECT * FROM mention_violations WHERE status='open' ORDER BY created_at, code")
-    members_by_cluster: dict[str, list[str]] = {}
-    for mention in mentions:
-        normalized = normalize_mention(mention)
-        from .artifacts import cluster_key_for_mention
-        ck = cluster_key_for_mention(normalized)
-        if ck:
-            members_by_cluster.setdefault(ck, []).append(normalized.get("id") or "")
-    return {
-        "clusters": [
-            {**cluster, "member_mention_ids": members_by_cluster.get(cluster["cluster_key"], [])}
-            for cluster in clusters
-        ],
-        "violations": [
-            {
-                "id": violation["id"],
-                "code": violation["code"],
-                "severity": violation["severity"],
-                "subject_key": violation["subject_key"],
-                "details": loads(violation["details_json"], default={}),
-            }
-            for violation in violations
-        ],
-    }
-
-
-def run_audit(*, artifact_path: str | None = None, planner_model: str = config.CLAUDE_MODEL, subagent_model: str | None = None) -> dict:
-    """Single-planner cluster audit. The planner reads the cluster packet,
-    buckets clusters, dispatches subagents, and writes one update artifact
-    that we apply to the mention rows.
-
-    Replaces the old separate repair + link-unresolved stages.
-    """
-    if not artifact_path:
-        run_id = new_run("audit", label="audit")
-        run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
-        packet_path = run_root / config.CLUSTER_PACKET_FILE
-        artifact_out = run_root / config.AUDIT_ARTIFACT_FILE
-        atomic_write_json(packet_path, cluster_packet())
-        prompt = render_prompt("audit", {
-            "run_id": run_id,
-            "cluster_packet_path": str(packet_path),
-            "input_path": str(packet_path),
-            "artifact_path": str(artifact_out),
-            "planner_model": planner_model,
-            "subagent_model": subagent_model or planner_model,
+        run_id = new_run("organize", label="organize:ingest")
+        used = Path(artifact_path).resolve()
+        artifact = read_json(str(used))
+        group_count, item_count = _validate_organize_artifact(artifact)
+        close_run(run_id, {
+            "artifact_path": str(used),
+            "group_count": group_count,
+            "item_count": item_count,
         })
-        spawn = dispatch_spawn(run_id, prompt, model=planner_model)
-        if spawn["exit_code"] != 0 or not artifact_out.exists():
-            raise click.ClickException(f"audit failed; logs at {spawn['log_dir']}")
-        artifact_path = str(artifact_out)
-    audit_artifact = read_json(artifact_path)
-    updates = audit_artifact.get("updates") or []
-    expanded = _expand_cluster_updates(updates)
-    audited = apply_audit_updates(mention_rows(), {"updates": expanded})
-    with db() as conn:
-        cur = conn.cursor()
-        for mention in audited:
-            status = mention.get("status") or "active"
-            cur.execute(
-                """UPDATE mentions
-                      SET kind=?, surface=?, surface_key=?, identity_json=?, identity_key=?,
-                          descriptors_json=?, aliases_json=?, subsets_json=?,
-                          context_roles_json=?, atoms_json=?, referent_scope=?,
-                          links_json=?, concept_path_json=?, aux_json=?,
-                          anchors_json=?, description=?,
-                          notes=?, status=?, updated_at=?
-                    WHERE id=?""",
-                (
-                    mention["kind"],
-                    mention["surface"],
-                    mention["surface_key"],
-                    dumps(mention["identity"]),
-                    mention["identity_key"],
-                    dumps(mention["descriptors"]),
-                    dumps(mention["aliases"]),
-                    dumps(mention["subsets"]),
-                    dumps(mention["context_roles"]),
-                    dumps(mention["atoms"]),
-                    mention["referent_scope"],
-                    dumps(mention["links"]),
-                    dumps(mention["concept_path"]),
-                    dumps(mention["aux"]),
-                    dumps(mention["anchors"]),
-                    mention.get("description"),
-                    mention.get("notes"),
-                    status,
-                    now(),
-                    mention["id"],
-                ),
-            )
-        conn.commit()
-    check = run_check()
-    return {"audited_mentions": len(audited), "post_audit": check}
+        return {"run_id": run_id, "artifact_path": str(used),
+                "group_count": group_count, "item_count": item_count}
 
-
-def _expand_cluster_updates(updates: list[dict]) -> list[dict]:
-    """Expand cluster-keyed updates to per-mention updates."""
-    if not isinstance(updates, list):
-        return []
-    mentions = [normalize_mention(m) for m in mention_rows()]
-    from .artifacts import cluster_key_for_mention
-    members_by_cluster: dict[str, list[str]] = {}
-    for mention in mentions:
-        ck = cluster_key_for_mention(mention)
-        if ck:
-            members_by_cluster.setdefault(ck, []).append(mention.get("id") or "")
-    expanded: list[dict] = []
-    for update in updates:
-        if not isinstance(update, dict):
-            continue
-        if update.get("mention_id"):
-            expanded.append(update)
-            continue
-        cluster_key = update.get("cluster_key")
-        members = members_by_cluster.get(cluster_key) if cluster_key else []
-        for member_id in members:
-            expanded.append({**update, "mention_id": member_id})
-    return expanded
-
-
-def run_verify_links() -> dict:
-    mentions = mention_rows()
-    candidates = link_candidates_from_mentions(mentions)
-    checks = verify_candidates(candidates)
-    with db() as conn:
-        cur = conn.cursor()
-        cur.execute("DELETE FROM link_checks")
-        for check in checks:
-            cur.execute(
-                """INSERT INTO link_checks
-                   (id, cluster_key, kind, link_kind, link_value, url, ok,
-                    status_code, error, checked_at)
-                   VALUES (?,?,?,?,?,?,?,?,?,?)""",
-                (
-                    new_id(),
-                    check["cluster_key"],
-                    check["kind"],
-                    check["link_kind"],
-                    check["link_value"],
-                    check["url"],
-                    1 if check["ok"] else 0,
-                    check.get("status_code"),
-                    check.get("error"),
-                    now(),
-                ),
-            )
-        conn.commit()
-    return {"candidate_count": len(candidates), "verified_count": sum(1 for c in checks if c["ok"]), "checks": checks}
-
-
-def run_build_lattice() -> dict:
-    mentions = mention_rows()
-    checks = all_rows("SELECT * FROM link_checks")
-    lattice = build_lattice(mentions, checks)
-    with db() as conn:
-        cur = conn.cursor()
-        cur.execute("DELETE FROM lattice_edges")
-        cur.execute("DELETE FROM lattice_nodes")
-        for node in lattice["nodes"]:
-            cur.execute(
-                """INSERT INTO lattice_nodes
-                   (id, node_key, kind, node_type, identity_json, concept_path_json,
-                    display_name, aliases_json, descriptors_json, links_json,
-                    verified_links_json, aux_json, description, occurrence_count,
-                    projection, flags_json, created_at)
-                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                (
-                    new_id(),
-                    node["node_key"],
-                    node["kind"],
-                    node["node_type"],
-                    dumps(node["identity"]),
-                    dumps(node["concept_path"]),
-                    node["display_name"],
-                    dumps(node["aliases"]),
-                    dumps(node["descriptors"]),
-                    dumps(node["links"]),
-                    dumps(node["verified_links"]),
-                    dumps(node["aux"]),
-                    node.get("description"),
-                    node["occurrence_count"],
-                    1 if node["projection"] else 0,
-                    dumps(node["flags"]),
-                    now(),
-                ),
-            )
-        for edge in lattice["edges"]:
-            cur.execute(
-                """INSERT OR IGNORE INTO lattice_edges
-                   (parent_node_key, child_node_key, rationale)
-                   VALUES (?,?,?)""",
-                (edge["parent_node_key"], edge["child_node_key"], edge["rationale"]),
-            )
-        conn.commit()
-    return {
-        "node_count": len(lattice["nodes"]),
-        "edge_count": len(lattice["edges"]),
-        "flagged_nodes": [node for node in lattice["nodes"] if node["flags"]],
-        "forests": lattice.get("forests") or [],
-        "audit": lattice.get("audit") or {},
-    }
-
-
-
-
-def run_describe(*, artifact_path: str | None = None, planner_model: str = config.CLAUDE_MODEL, subagent_model: str | None = None) -> dict:
-    """Single-planner per-entity-leaf description with inline HF fetch.
-
-    The planner reads the lattice, filters concept nodes out, buckets
-    entity leaves, and dispatches subagents that fetch HF metadata
-    via their native fetch / web tools and write descriptions.
-    Concepts get no descriptions.
-    """
-    fresh_entity_keys: set[str] | None = None
-    if not artifact_path:
-        run_id = new_run("describe", label="describe")
-        run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
-        lattice_path = run_root / config.LATTICE_FILE
-        artifact_out = run_root / config.DESCRIBE_ARTIFACT_FILE
-        mentions = mention_rows()
-        checks = all_rows("SELECT * FROM link_checks")
-        lattice = build_lattice(mentions, checks)
-        atomic_write_json(lattice_path, lattice)
-        # Pin the entity-key set to THIS lattice. Otherwise a stale
-        # lattice_nodes table (or a fresh run before build-lattice has
-        # been called) would silently filter out every description the
-        # planner wrote.
-        fresh_entity_keys = {
-            node["node_key"]
-            for node in lattice.get("nodes") or []
-            if node.get("node_type") == "entity"
-        }
-        prompt = render_prompt("describe", {
-            "run_id": run_id,
-            "lattice_path": str(lattice_path),
-            "input_path": str(lattice_path),
-            "artifact_path": str(artifact_out),
-            "planner_model": planner_model,
-            "subagent_model": subagent_model or planner_model,
-        })
-        spawn = dispatch_spawn(run_id, prompt, model=planner_model)
-        if spawn["exit_code"] != 0 or not artifact_out.exists():
-            raise click.ClickException(f"describe failed; logs at {spawn['log_dir']}")
-        artifact_path = str(artifact_out)
-    describe_artifact = read_json(artifact_path)
-    descriptions = describe_artifact.get("descriptions") or []
-    with db() as conn:
-        cur = conn.cursor()
-        # Concepts NEVER carry descriptions. Drop any entry whose
-        # entity_key isn't a current entity-leaf. In the spawn path we
-        # use the just-built lattice; in the artifact-ingest path we
-        # use the persisted lattice_nodes table.
-        if fresh_entity_keys is not None:
-            entity_keys = fresh_entity_keys
-        else:
-            entity_keys = {
-                row["node_key"]
-                for row in cur.execute(
-                    "SELECT node_key FROM lattice_nodes WHERE node_type='entity'"
-                ).fetchall()
-            }
-        descriptions = [
-            item for item in descriptions
-            if item.get("entity_key") in entity_keys
-        ]
-        for item in descriptions:
-            entity_key = item.get("entity_key")
-            if not entity_key:
-                continue
-            kind = item.get("kind") or "model"
-            existing = cur.execute(
-                "SELECT entity_key FROM entity_descriptions WHERE entity_key=?",
-                (entity_key,),
-            ).fetchone()
-            if existing:
-                cur.execute(
-                    """UPDATE entity_descriptions
-                          SET kind=?, display_name=?, links_json=?, description=?,
-                              metadata_json=?, source_json=?, updated_at=?
-                        WHERE entity_key=?""",
-                    (
-                        kind,
-                        item.get("display_name") or "",
-                        dumps(item.get("links") or []),
-                        item.get("description") or "",
-                        dumps(item.get("metadata") or {}),
-                        dumps(item.get("source") or {}),
-                        now(),
-                        entity_key,
-                    ),
-                )
-            else:
-                cur.execute(
-                    """INSERT INTO entity_descriptions
-                       (entity_key, kind, display_name, links_json, description,
-                        metadata_json, source_json, created_at, updated_at)
-                       VALUES (?,?,?,?,?,?,?,?,?)""",
-                    (
-                        entity_key,
-                        kind,
-                        item.get("display_name") or "",
-                        dumps(item.get("links") or []),
-                        item.get("description") or "",
-                        dumps(item.get("metadata") or {}),
-                        dumps(item.get("source") or {}),
-                        now(),
-                        now(),
-                    ),
-                )
-        conn.commit()
-    return {"description_count": len(descriptions), "descriptions": descriptions}
+    run_id = new_run("organize", label="organize")
+    run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
+    run_root.mkdir(parents=True, exist_ok=True)
+    names_path = run_root / config.ORGANIZE_NAMES_FILE
+    artifact_out = run_root / config.ORGANIZE_ARTIFACT_FILE
+    atomic_write_json(names_path, names_packet())
+    prompt = render_prompt("organize", {
+        "run_id": run_id,
+        "names_path": str(names_path),
+        "input_path": str(names_path),
+        "artifact_path": str(artifact_out),
+        "worker_dir": str(run_root / config.WORKERS_SUBDIR),
+        "planner_model": planner_model,
+        "subagent_model": subagent_model or planner_model,
+    })
+    spawn = dispatch_spawn(run_id, prompt, model=planner_model)
+    if spawn["exit_code"] != 0 or not artifact_out.exists():
+        raise click.ClickException(f"organize failed; logs at {spawn['log_dir']}")
+    artifact = read_json(str(artifact_out))
+    group_count, item_count = _validate_organize_artifact(artifact)
+    close_run(run_id, {
+        "artifact_path": str(artifact_out),
+        "group_count": group_count,
+        "item_count": item_count,
+    })
+    return {"run_id": run_id, "artifact_path": str(artifact_out),
+            "group_count": group_count, "item_count": item_count}
