@@ -650,3 +650,127 @@ def run_audit(
     })
     return {"run_id": run_id, "artifact_path": str(artifact_out),
             "group_count": group_count, "item_count": item_count}
+
+
+# ---------------------------------------------------------------------------
+# Stage 5 — linker (attach official URLs to every item)
+# ---------------------------------------------------------------------------
+
+
+def _latest_lattice_or_audit_or_linker_path() -> Path:
+    """Return the most recent groups+items artifact across organize,
+    audit, OR linker — linker is idempotent over its own output, so a
+    re-run picks up the previous linker's output by default."""
+    rows = all_rows(
+        "SELECT id, stage, attrs FROM runs "
+        "WHERE stage IN ('organize','audit','linker') AND ended_at IS NOT NULL "
+        "ORDER BY started_at DESC LIMIT 1"
+    )
+    if not rows:
+        raise click.ClickException(
+            "no organize / audit / linker run found; run `gdb run organize` first"
+        )
+    attrs = loads(rows[0]["attrs"], default={}) or {}
+    path = attrs.get("artifact_path")
+    if not path or not Path(path).exists():
+        raise click.ClickException(
+            f"{rows[0]['stage']} artifact missing on disk for run {rows[0]['id']}"
+        )
+    return Path(path)
+
+
+def _count_link_stats(artifact: dict) -> dict:
+    """Tally link counts across the artifact: total items, items with
+    >=1 link, items with 0 links, total links emitted, link-kind histogram."""
+    total_items = 0
+    items_with_links = 0
+    total_links = 0
+    by_kind: dict[str, int] = {}
+    for group in artifact.get("groups") or []:
+        for item in group.get("items") or []:
+            total_items += 1
+            links = item.get("links") or []
+            if links:
+                items_with_links += 1
+            for link in links:
+                if not isinstance(link, dict):
+                    continue
+                total_links += 1
+                k = link.get("kind") or "unknown"
+                by_kind[k] = by_kind.get(k, 0) + 1
+    return {
+        "total_items": total_items,
+        "items_with_links": items_with_links,
+        "items_without_links": total_items - items_with_links,
+        "total_links": total_links,
+        "links_by_kind": by_kind,
+    }
+
+
+def run_linker(
+    *,
+    artifact_path: str | None = None,
+    source_path: str | None = None,
+    planner_model: str = config.CLAUDE_MODEL,
+    subagent_model: str | None = None,
+) -> dict:
+    """Attach official URLs to every item in the latest lattice.
+
+    Output schema = input schema + a `links: [{kind, url}]` array per
+    item. Reuses `_validate_organize_artifact` since the structural
+    shape is unchanged.
+
+    With `--artifact`, ingest an externally produced linker artifact.
+    With `--source`, link a specific lattice artifact instead of the
+    most recent one.
+    """
+    if artifact_path:
+        run_id = new_run("linker", label="linker:ingest")
+        used = Path(artifact_path).resolve()
+        artifact = read_json(str(used))
+        group_count, item_count = _validate_organize_artifact(artifact)
+        link_stats = _count_link_stats(artifact)
+        close_run(run_id, {
+            "artifact_path": str(used),
+            "group_count": group_count,
+            "item_count": item_count,
+            **link_stats,
+        })
+        return {"run_id": run_id, "artifact_path": str(used),
+                "group_count": group_count, "item_count": item_count,
+                **link_stats}
+
+    source_artifact_path = (
+        Path(source_path).resolve() if source_path
+        else _latest_lattice_or_audit_or_linker_path()
+    )
+
+    run_id = new_run("linker", label="linker", seed=str(source_artifact_path))
+    run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
+    run_root.mkdir(parents=True, exist_ok=True)
+    artifact_out = run_root / config.LINKER_ARTIFACT_FILE
+    prompt = render_prompt("linker", {
+        "run_id": run_id,
+        "lattice_path": str(source_artifact_path),
+        "input_path": str(source_artifact_path),
+        "artifact_path": str(artifact_out),
+        "worker_dir": str(run_root / config.WORKERS_SUBDIR),
+        "planner_model": planner_model,
+        "subagent_model": subagent_model or planner_model,
+    })
+    spawn = dispatch_spawn(run_id, prompt, model=planner_model)
+    if spawn["exit_code"] != 0 or not artifact_out.exists():
+        raise click.ClickException(f"linker failed; logs at {spawn['log_dir']}")
+    artifact = read_json(str(artifact_out))
+    group_count, item_count = _validate_organize_artifact(artifact)
+    link_stats = _count_link_stats(artifact)
+    close_run(run_id, {
+        "artifact_path": str(artifact_out),
+        "source_artifact_path": str(source_artifact_path),
+        "group_count": group_count,
+        "item_count": item_count,
+        **link_stats,
+    })
+    return {"run_id": run_id, "artifact_path": str(artifact_out),
+            "group_count": group_count, "item_count": item_count,
+            **link_stats}

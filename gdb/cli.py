@@ -5,7 +5,14 @@ from pathlib import Path
 import click
 
 from . import config
-from .pipeline import names_packet, run_audit, run_discover, run_extract, run_organize
+from .pipeline import (
+    names_packet,
+    run_audit,
+    run_discover,
+    run_extract,
+    run_linker,
+    run_organize,
+)
 from .store import all_rows, db, emit_json, loads, read_json
 
 
@@ -127,6 +134,26 @@ def audit_cmd(artifact_path: str | None, source_path: str | None,
     ))
 
 
+@run.command("linker")
+@click.option("--artifact", "artifact_path",
+              help="Ingest an existing linker artifact instead of launching an agent.")
+@click.option("--source", "source_path",
+              help="Link a specific lattice artifact (default: most recent organize / audit / linker).")
+@click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES),
+              default=config.CLAUDE_MODEL, show_default=True)
+@click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES),
+              default=config.CLAUDE_MODEL, show_default=True)
+def linker_cmd(artifact_path: str | None, source_path: str | None,
+               planner_model: str, subagent_model: str):
+    """Attach official URLs (HF / GitHub / paper / blog / vendor docs) to every item."""
+    emit_json(run_linker(
+        artifact_path=artifact_path,
+        source_path=source_path,
+        planner_model=planner_model,
+        subagent_model=subagent_model,
+    ))
+
+
 @main.group()
 def debug():
     """Read-only inspection helpers."""
@@ -231,6 +258,46 @@ def debug_audit(latest: bool):
             "artifact": artifact,
         })
     emit_json({"audit_runs": out})
+
+
+@debug.command("linker")
+@click.option("--latest/--all", default=True,
+              help="Show only the most recent linker run (default) or all of them.")
+def debug_linker(latest: bool):
+    """Show the linked lattice (groups+items+links) and link-coverage stats."""
+    rows = all_rows(
+        "SELECT id, attrs, started_at, ended_at FROM runs "
+        "WHERE stage='linker' AND ended_at IS NOT NULL "
+        "ORDER BY started_at DESC"
+    )
+    if latest:
+        rows = rows[:1]
+    out = []
+    for row in rows:
+        attrs = loads(row["attrs"], default={})
+        path = attrs.get("artifact_path")
+        artifact = None
+        missing = False
+        if path and Path(path).exists():
+            artifact = read_json(path)
+        elif path:
+            missing = True
+        out.append({
+            "run_id": row["id"],
+            "started_at": row["started_at"],
+            "ended_at": row["ended_at"],
+            "source_artifact_path": attrs.get("source_artifact_path"),
+            "group_count": attrs.get("group_count"),
+            "item_count": attrs.get("item_count"),
+            "items_with_links": attrs.get("items_with_links"),
+            "items_without_links": attrs.get("items_without_links"),
+            "total_links": attrs.get("total_links"),
+            "links_by_kind": attrs.get("links_by_kind"),
+            "artifact_path": path,
+            "artifact_missing_on_disk": missing,
+            "artifact": artifact,
+        })
+    emit_json({"linker_runs": out})
 
 
 if __name__ == "__main__":

@@ -18,9 +18,10 @@ def test_render_prompts_have_no_unfilled_placeholders(fresh_runtime):
         "artifact_path": "/a.json", "input_path": "/i.json",
         "names_path": "/n.json", "batch_id": "b",
         "batch_dir": "/b", "organize_path": "/o.json",
+        "lattice_path": "/l.json",
         "planner_model": "opus", "subagent_model": "sonnet",
     }
-    for stage in ("discover", "extract", "organize", "audit"):
+    for stage in ("discover", "extract", "organize", "audit", "linker"):
         text = render_prompt(stage, common)
         # Confirm no `{{name}}` placeholders survived.
         assert "{{" not in text, f"unfilled placeholder in {stage}: {text}"
@@ -186,7 +187,7 @@ def test_cli_run_help_lists_only_active_stages(fresh_runtime):
     result = runner.invoke(main, ["run", "--help"])
     assert result.exit_code == 0
     out = result.output
-    for stage in ("discover", "extract", "organize", "audit"):
+    for stage in ("discover", "extract", "organize", "audit", "linker"):
         assert stage in out
     for dropped in ("describe", "verify-links", "build-lattice", "check", "fuzz"):
         assert dropped not in out
@@ -256,6 +257,83 @@ def test_run_audit_without_lattice_run_raises(fresh_runtime):
 
     with pytest.raises(click.ClickException):
         run_audit()
+
+
+def test_run_linker_ingests_artifact_with_links(fresh_runtime, tmp_path):
+    """Linker output is groups+items+links. Run attrs record link
+    coverage stats."""
+    from gdb.pipeline import run_linker
+    from gdb.store import all_rows, loads
+
+    linked = {
+        "groups": [
+            {
+                "family": "Qwen3",
+                "identity_keys": ["org", "collection", "size"],
+                "items": [
+                    {
+                        "kind": "model",
+                        "formal_name": "Qwen/Qwen3-4B",
+                        "identity": {"org": "Qwen", "collection": "Qwen3", "size": "4B"},
+                        "aliases": ["Qwen3-4B"],
+                        "links": [
+                            {"kind": "hf_model", "url": "https://huggingface.co/Qwen/Qwen3-4B"},
+                            {"kind": "github", "url": "https://github.com/QwenLM/Qwen3"},
+                            {"kind": "paper", "url": "https://arxiv.org/abs/2509.18888"},
+                        ],
+                    },
+                    {
+                        "kind": "model",
+                        "formal_name": "Qwen/Qwen3",
+                        "identity": {"org": "Qwen", "collection": "Qwen3"},
+                        "aliases": ["Qwen3"],
+                        "links": [
+                            {"kind": "hf_collection",
+                             "url": "https://huggingface.co/collections/Qwen/qwen3"},
+                            {"kind": "paper", "url": "https://arxiv.org/abs/2509.18888"},
+                        ],
+                    },
+                    {
+                        "kind": "model",
+                        "formal_name": "obscure/no-link-found",
+                        "identity": {"org": "obscure", "collection": "no-link-found"},
+                        "aliases": ["obscure-thing"],
+                        "links": [],
+                    },
+                ],
+            },
+        ],
+    }
+    artifact_path = tmp_path / "linker.json"
+    artifact_path.write_text(json.dumps(linked))
+
+    result = run_linker(artifact_path=str(artifact_path))
+    assert result["group_count"] == 1
+    assert result["item_count"] == 3
+    assert result["items_with_links"] == 2
+    assert result["items_without_links"] == 1
+    assert result["total_links"] == 5
+    assert result["links_by_kind"]["hf_model"] == 1
+    assert result["links_by_kind"]["hf_collection"] == 1
+    assert result["links_by_kind"]["github"] == 1
+    assert result["links_by_kind"]["paper"] == 2
+
+    rows = all_rows("SELECT id, attrs FROM runs WHERE stage='linker'")
+    assert len(rows) == 1
+    attrs = loads(rows[0]["attrs"])
+    assert attrs["total_links"] == 5
+    assert Path(attrs["artifact_path"]).exists()
+
+
+def test_run_linker_without_lattice_run_raises(fresh_runtime):
+    """Linker needs a prior organize / audit / linker run."""
+    import click
+    import pytest
+
+    from gdb.pipeline import run_linker
+
+    with pytest.raises(click.ClickException):
+        run_linker()
 
 
 def test_cli_summary_after_init(fresh_runtime):
