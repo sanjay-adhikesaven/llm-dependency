@@ -183,5 +183,41 @@ def debug_lattice():
     })
 
 
+@debug.command("rejected-mentions")
+@click.option("--batch-id", help="Filter by batch.")
+@click.option("--status", type=click.Choice(["pending", "reviewed", "reingested", "dismissed"]),
+              help="Filter by review status (default: all).")
+@click.option("--limit", type=int, help="Cap rows.")
+def debug_rejected_mentions(batch_id: str | None, status: str | None, limit: int | None):
+    """Show mentions that failed extract-time validation (no anchors,
+    missing surface, invalid kind, malformed shape) and were routed
+    aside for review. Soft errors (bad link shape, missing identity
+    family) are repaired in-place at commit time and don't appear here."""
+    where = []
+    params: list = []
+    if batch_id:
+        where.append("batch_id = ?")
+        params.append(batch_id)
+    if status:
+        where.append("status = ?")
+        params.append(status)
+    sql = "SELECT * FROM rejected_mentions"
+    if where:
+        sql += " WHERE " + " AND ".join(where)
+    sql += " ORDER BY batch_id, artifact_index"
+    if limit:
+        sql += f" LIMIT {int(limit)}"
+    try:
+        rows = all_rows(sql, tuple(params))
+    except Exception as exc:
+        # Table may not exist on a never-extracted DB; surface that cleanly.
+        emit_json({"rejected_mentions": [], "note": str(exc)})
+        return
+    for row in rows:
+        for key in ("reason_codes_json", "errors_json", "raw_json"):
+            row[key.removesuffix("_json")] = loads(row.pop(key), default=[] if "json" in key and key != "raw_json" else {})
+    emit_json({"rejected_mentions": rows, "count": len(rows)})
+
+
 if __name__ == "__main__":
     main()

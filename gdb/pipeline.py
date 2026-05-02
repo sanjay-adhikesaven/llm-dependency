@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import signal
 import subprocess
@@ -413,14 +414,152 @@ def _source_id_for_mention(cur, batch_id: str, mention: dict) -> str | None:
     return None
 
 
-def commit_mentions(artifact: dict, *, batch_id: str | None = None) -> dict:
-    errors = validate_mention_artifact(artifact)
-    if errors:
-        return {"status": "failed", "errors": errors, "mentions_committed": 0}
-    mentions = artifact.get("mentions") or []
+# Validator codes that commit_mentions can repair in-place. The mention
+# still commits (with stripped/defaulted values) and audit fills the gap
+# downstream via web-search and cluster-level reasoning.
+_SOFT_VALIDATOR_CODES = {
+    "invalid_link_shape",         # strip the bad link
+    "missing_identity_family",    # default family to surface so identity_key derivable
+    "dataset_only_subsets",       # clear subsets (kind != dataset can't carry them)
+}
+
+# Validator codes that route the offending mention to rejected_mentions.
+# Sibling mentions in the same artifact are unaffected. These are the
+# cases audit cannot repair — anchors are the floor, surface and kind
+# are storage-CHECK-enforced, malformed shape can't be parsed.
+_HARD_VALIDATOR_CODES = {
+    "invalid_mention",     # mention is not a dict
+    "missing_surface",     # nothing to investigate
+    "invalid_kind",        # storage CHECK requires model|dataset
+    "empty_anchors",       # no provenance — the floor
+}
+
+
+def _strip_bad_links(mention: dict, errors: list[dict]) -> None:
+    """Remove links[] entries flagged by `invalid_link_shape`. Mutates
+    `mention` in place. Handles the three containers: top-level links,
+    per-alias links, per-subset links."""
+    by_target: dict[tuple[str, int], set[int]] = {}
+    for err in errors:
+        if err.get("code") != "invalid_link_shape":
+            continue
+        path = err.get("path") or ""
+        m = re.match(r"mentions\[\d+\]\.(links|aliases\[(\d+)\]\.links|subsets\[(\d+)\]\.links)\[(\d+)\]", path)
+        if not m:
+            continue
+        container = m.group(1).split("[", 1)[0]
+        sub_idx = int(m.group(2) or m.group(3) or -1)
+        link_idx = int(m.group(4))
+        by_target.setdefault((container, sub_idx), set()).add(link_idx)
+    for (container, sub_idx), bad in by_target.items():
+        if container == "links":
+            links = mention.get("links") or []
+            mention["links"] = [l for i, l in enumerate(links) if i not in bad]
+        elif container == "aliases":
+            aliases = mention.get("aliases") or []
+            if 0 <= sub_idx < len(aliases) and isinstance(aliases[sub_idx], dict):
+                al = aliases[sub_idx]
+                al_links = al.get("links") or []
+                al["links"] = [l for i, l in enumerate(al_links) if i not in bad]
+        elif container == "subsets":
+            subsets = mention.get("subsets") or []
+            if 0 <= sub_idx < len(subsets) and isinstance(subsets[sub_idx], dict):
+                sb = subsets[sub_idx]
+                sb_links = sb.get("links") or []
+                sb["links"] = [l for i, l in enumerate(sb_links) if i not in bad]
+
+
+def _repair_soft(mention: dict, codes: set[str], errors: list[dict]) -> None:
+    """Mutate `mention` in place to clear soft validator errors so the
+    mention can commit. Each branch is no-op when its code is absent."""
+    if "invalid_link_shape" in codes:
+        _strip_bad_links(mention, errors)
+    if "dataset_only_subsets" in codes:
+        mention["subsets"] = []
+    if "missing_identity_family" in codes:
+        ident = mention.get("identity") if isinstance(mention.get("identity"), dict) else {}
+        if not ident.get("family"):
+            ident["family"] = mention.get("surface") or ""
+        mention["identity"] = ident
+
+
+def commit_mentions(
+    artifact: dict, *, batch_id: str | None = None, run_id: str | None = None
+) -> dict:
+    """Commit mentions per-mention. Each mention either commits (after
+    repair of soft errors) or routes to `rejected_mentions` (for review).
+    The artifact never fails as a whole except on artifact-level shape
+    errors (not a dict, mentions not a list)."""
+    if not isinstance(artifact, dict):
+        return {"status": "failed", "errors": [{"code": "invalid_artifact"}],
+                "mentions_committed": 0, "mentions_rejected": 0}
+    mentions_raw = artifact.get("mentions")
+    if not isinstance(mentions_raw, list):
+        return {"status": "failed", "errors": [{"code": "invalid_artifact"}],
+                "mentions_committed": 0, "mentions_rejected": 0}
+
+    # Group validator errors by mention index.
+    errors_by_idx: dict[int, list[dict]] = {}
+    for err in validate_mention_artifact(artifact):
+        path = err.get("path") or ""
+        m = re.match(r"mentions\[(\d+)\]", path)
+        if not m:
+            continue
+        errors_by_idx.setdefault(int(m.group(1)), []).append(err)
+
+    # Per-mention classification: hard errors → rejected_mentions table,
+    # soft errors → repair in-place and commit, no errors → commit
+    # straight through.
+    rejected: list[tuple[int, dict, list[dict]]] = []
+    repair_log: list[dict] = []
+    for idx, raw in enumerate(mentions_raw):
+        errs = errors_by_idx.get(idx, [])
+        codes = {e.get("code") for e in errs if e.get("code")}
+        hard = codes & _HARD_VALIDATOR_CODES
+        if hard:
+            rejected.append((idx, raw, errs))
+            continue
+        soft = codes & _SOFT_VALIDATOR_CODES
+        if soft and isinstance(raw, dict):
+            _repair_soft(raw, soft, errs)
+            repair_log.append({"index": idx, "codes": sorted(soft)})
+
+    rejected_idxs = {i for i, _, _ in rejected}
+    mentions = [m for i, m in enumerate(mentions_raw) if i not in rejected_idxs]
+
     committed = 0
     with db() as conn:
         cur = conn.cursor()
+        # Idempotent: existing DBs may not have the table yet.
+        cur.execute("""CREATE TABLE IF NOT EXISTS rejected_mentions (
+          id                 TEXT PRIMARY KEY,
+          batch_id           TEXT,
+          run_id             TEXT,
+          artifact_index     INTEGER,
+          surface            TEXT,
+          reason_codes_json  TEXT NOT NULL DEFAULT '[]',
+          errors_json        TEXT NOT NULL DEFAULT '[]',
+          raw_json           TEXT NOT NULL,
+          status             TEXT NOT NULL DEFAULT 'pending'
+                               CHECK (status IN ('pending','reviewed','reingested','dismissed')),
+          created_at         TEXT NOT NULL
+        )""")
+        for idx, raw, errs in rejected:
+            surf = raw.get("surface") if isinstance(raw, dict) else None
+            cur.execute(
+                """INSERT INTO rejected_mentions
+                   (id, batch_id, run_id, artifact_index, surface,
+                    reason_codes_json, errors_json, raw_json, status, created_at)
+                   VALUES (?,?,?,?,?,?,?,?,?,?)""",
+                (
+                    new_id(), batch_id, run_id, idx, surf or "",
+                    dumps(sorted({e.get("code") for e in errs if e.get("code")})),
+                    dumps(errs),
+                    dumps(raw),
+                    "pending",
+                    now(),
+                ),
+            )
         if batch_id:
             cur.execute("DELETE FROM mentions WHERE batch_id=?", (batch_id,))
         for raw in mentions:
@@ -474,10 +613,25 @@ def commit_mentions(artifact: dict, *, batch_id: str | None = None) -> dict:
                 stage="extract",
                 artifact_path=str(Path(artifact.get("_artifact_path", "")).resolve()) if artifact.get("_artifact_path") else "",
                 status="complete",
-                attrs={"mentions_committed": committed},
+                attrs={"mentions_committed": committed, "mentions_rejected": len(rejected)},
             )
         conn.commit()
-    return {"status": "complete", "mentions_committed": committed, "errors": []}
+    rejected_summary = [
+        {
+            "index": idx,
+            "surface": (raw.get("surface") if isinstance(raw, dict) else None) or "",
+            "codes": sorted({e.get("code") for e in errs if e.get("code")}),
+        }
+        for idx, raw, errs in rejected
+    ]
+    return {
+        "status": "complete",
+        "mentions_committed": committed,
+        "mentions_rejected": len(rejected),
+        "rejected": rejected_summary,
+        "repaired": repair_log,
+        "errors": [],
+    }
 
 
 def run_extract(
@@ -516,7 +670,7 @@ def run_extract(
             return {"batch_id": bid, "status": "failed", "log_dir": spawn["log_dir"]}
         artifact = read_json(artifact_out)
         artifact["_artifact_path"] = str(artifact_out)
-        result = commit_mentions(artifact, batch_id=bid)
+        result = commit_mentions(artifact, batch_id=bid, run_id=run_id)
         result["batch_id"] = bid
         result["run_id"] = run_id
         return result

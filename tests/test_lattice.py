@@ -11,6 +11,9 @@ def _node_by_type_and_name(lattice, node_type, display_name):
 def test_qwen3_entity_leaf_attaches_to_reviewed_path_not_powerset():
     from gdb.lattice import build_lattice
 
+    # With mechanical tokenization, family `Qwen3` splits into atoms
+    # [Qwen, 3], so the spine becomes [Qwen, 3, 7B, Base] (4 concept
+    # nodes) and the leaf is named by the joined-final-atom display.
     lattice = build_lattice([
         {
             "surface": "Qwen/Qwen3-7B-Base",
@@ -22,11 +25,17 @@ def test_qwen3_entity_leaf_attaches_to_reviewed_path_not_powerset():
         }
     ])
 
-    leaf = _node_by_type_and_name(lattice, "entity", "Qwen3-7B-Base")
-    parent = _node_by_type_and_name(lattice, "concept", "Qwen3-7B-Base")
+    leaves = [n for n in lattice["nodes"] if n["node_type"] == "entity"]
+    assert len(leaves) == 1
+    leaf = leaves[0]
     assert leaf["identity"] == {"link_type": "hf_model", "link_value": "Qwen/Qwen3-7B-Base"}
-    assert {edge["parent_node_key"] for edge in lattice["edges"] if edge["child_node_key"] == leaf["node_key"]} == {parent["node_key"]}
-    assert len([node for node in lattice["nodes"] if node["node_type"] == "concept"]) == 3
+    # 4 concept nodes after tokenization: Qwen, Qwen/3, Qwen/3/7B, Qwen/3/7B/Base
+    concepts = [n for n in lattice["nodes"] if n["node_type"] == "concept"]
+    assert len(concepts) == 4
+    # Leaf attaches to the deepest concept (Qwen/3/7B/Base)
+    parent_keys = {edge["parent_node_key"] for edge in lattice["edges"] if edge["child_node_key"] == leaf["node_key"]}
+    deepest_concept = max(concepts, key=lambda n: len(n.get("concept_path") or []))
+    assert deepest_concept["node_key"] in parent_keys
 
 
 def test_olmo3_size_date_stage_variants_do_not_collapse():

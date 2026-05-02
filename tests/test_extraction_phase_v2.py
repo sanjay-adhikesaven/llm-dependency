@@ -152,9 +152,11 @@ def test_forest_manifest_partitions_multi_family_input_by_root():
     forests = lattice.get("forests") or []
     assert len(forests) == 2
     root_names = {f["root_display_name"] for f in forests}
-    assert root_names == {"Qwen3", "Llama-3"}
-    qwen_forest = next(f for f in forests if f["root_display_name"] == "Qwen3")
-    llama_forest = next(f for f in forests if f["root_display_name"] == "Llama-3")
+    # Mechanical tokenization: Qwen3 → [Qwen, 3], Llama-3 → [Llama, 3];
+    # forest roots become the family-name first atom.
+    assert root_names == {"Qwen", "Llama"}
+    qwen_forest = next(f for f in forests if f["root_display_name"] == "Qwen")
+    llama_forest = next(f for f in forests if f["root_display_name"] == "Llama")
     qwen_keys = {n["node_key"] for n in qwen_forest["nodes"]}
     llama_keys = {n["node_key"] for n in llama_forest["nodes"]}
     assert qwen_keys and llama_keys

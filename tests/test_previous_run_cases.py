@@ -93,7 +93,9 @@ def test_smollm2_quantized_and_format_artifacts_share_concept_but_stay_entities(
 
     leaves = [node for node in lattice["nodes"] if node["node_type"] == "entity"]
     assert len(leaves) == 3
-    assert {tuple(node["concept_path"]) for node in leaves} == {("SmolLM2", "360M", "Instruct")}
+    # Mechanical tokenization splits SmolLM2 → [SmolLM, 2], so the
+    # shared concept_path is now [SmolLM, 2, 360M, Instruct].
+    assert {tuple(node["concept_path"]) for node in leaves} == {("SmolLM", "2", "360M", "Instruct")}
     aliases = {
         alias["surface"]: alias["descriptors"]
         for node in leaves

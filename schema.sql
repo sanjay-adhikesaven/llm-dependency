@@ -124,6 +124,29 @@ CREATE TABLE IF NOT EXISTS mention_violations (
 );
 CREATE INDEX IF NOT EXISTS mention_violations_code_idx ON mention_violations(code, status);
 
+-- Mentions that failed extract-time validation in ways audit cannot
+-- repair (no anchors, malformed shape, missing surface, invalid kind).
+-- Sibling mentions in the same batch still commit; these land here for
+-- later review. Storage layer schema constraints (e.g., kind IN
+-- ('model','dataset')) make this routing necessary; soft errors like
+-- bad link shape get repaired in-place by commit_mentions and never
+-- reach this table.
+CREATE TABLE IF NOT EXISTS rejected_mentions (
+  id                 TEXT PRIMARY KEY,
+  batch_id           TEXT,
+  run_id             TEXT,
+  artifact_index     INTEGER,
+  surface            TEXT,
+  reason_codes_json  TEXT NOT NULL DEFAULT '[]',
+  errors_json        TEXT NOT NULL DEFAULT '[]',
+  raw_json           TEXT NOT NULL,
+  status             TEXT NOT NULL DEFAULT 'pending'
+                       CHECK (status IN ('pending','reviewed','reingested','dismissed')),
+  created_at         TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS rejected_mentions_batch_idx ON rejected_mentions(batch_id, status);
+CREATE INDEX IF NOT EXISTS rejected_mentions_status_idx ON rejected_mentions(status);
+
 CREATE TABLE IF NOT EXISTS link_checks (
   id            TEXT PRIMARY KEY,
   cluster_key   TEXT NOT NULL,

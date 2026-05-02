@@ -102,26 +102,88 @@ def normalize_concept_path(value: Any) -> list[str]:
     return out
 
 
+def tokenize_atom(value: str) -> list[str]:
+    """Mechanically split a name into atomic tokens for the lattice path.
+
+    Rules:
+      - Split on `-`, `_`, whitespace, and `/` (separator characters)
+      - Split between letter and digit (e.g., `Qwen3` → `Qwen | 3`,
+        `Qwen2.5` → `Qwen | 2.5`)
+      - Keep digit→letter combos like `7B`, `70B`, `100M`, `2B` together
+        (size suffixes don't split)
+      - Keep dotted versions (`3.1`, `2.5`, `1.7`) together
+      - Drop empty pieces
+
+    Examples:
+      `Qwen2.5-7B-Instruct` → `[Qwen, 2.5, 7B, Instruct]`
+      `OLMo-3-7B-Instruct`  → `[OLMo, 3, 7B, Instruct]`
+      `Llama-3.1-8B`        → `[Llama, 3.1, 8B]`
+      `MMLU-Pro`            → `[MMLU, Pro]`
+    """
+    if not value:
+        return []
+    out: list[str] = []
+    for part in re.split(r"[\s\-_/]+", str(value).strip()):
+        if not part:
+            continue
+        # Split between letter (lower or upper) and digit-version.
+        # Pattern: letters, then split before any (digit run + optional dot
+        # + digit run + optional uppercase letter suffix).
+        # Use lookahead/lookbehind for non-consuming split.
+        for piece in re.split(r"(?<=[a-zA-Z])(?=[0-9])", part):
+            if piece:
+                out.append(piece)
+    return out
+
+
 def concept_path_from_identity(identity: dict) -> list[str]:
-    """Project identity onto a deterministic concept path.
+    """Project identity onto a deterministic concept path with mechanical
+    tokenization at each axis.
 
     Axis order: family → size → stage → remaining identity fields
-    (alphabetical) → extra.concept_path. Stable regardless of input
-    key order, so the lattice doesn't depend on JSON insertion order.
+    (alphabetical) → extra.concept_path. Each value is tokenized via
+    `tokenize_atom` so compound names like `OLMo-3-7B-Instruct` become
+    [`OLMo`, `3`, `7B`, `Instruct`] and converge with sibling
+    `Olmo-3-7B-Base` under a shared `OLMo / 3 / 7B` prefix.
+
+    Defensive against malformed identity (e.g., when opus put the same
+    string into both `family` and `stage`): if a sub-axis value is
+    already a substring of the family field (case-insensitive), skip
+    it to avoid duplicate path tokens like
+    `Nemotron / Post / training / Code / Post / training / Code`.
+
+    Stable regardless of input key order, so the lattice doesn't depend
+    on JSON insertion order.
     """
-    if not identity.get("family"):
+    family = identity.get("family")
+    if not family:
         return []
-    path = [str(identity["family"])]
+    family_str = str(family)
+    family_norm = re.sub(r"[\s\-_/.]+", " ", family_str.lower()).strip()
+    path = list(tokenize_atom(family_str))
+
+    def already_in_family(value: str) -> bool:
+        v_norm = re.sub(r"[\s\-_/.]+", " ", str(value).lower()).strip()
+        if not v_norm:
+            return True
+        return v_norm in family_norm
+
     for field in ("size", "stage"):
         value = identity.get(field)
-        if value not in (None, "", [], {}):
-            path.append(str(value))
+        if value in (None, "", [], {}):
+            continue
+        if already_in_family(value):
+            continue
+        path.extend(tokenize_atom(str(value)))
     for field in sorted(identity.keys()):
         if field in {"family", "size", "stage", "extra"}:
             continue
         value = identity.get(field)
-        if value not in (None, "", [], {}):
-            path.append(str(value))
+        if value in (None, "", [], {}):
+            continue
+        if already_in_family(value):
+            continue
+        path.extend(tokenize_atom(str(value)))
     extra = identity.get("extra")
     if isinstance(extra, dict):
         concept_path = extra.get("concept_path")
@@ -854,6 +916,13 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
         else:
             cluster_key = identity_key(kind, identity)
         if cluster_key not in clusters:
+            # Always re-derive concept_path from identity at cluster
+            # creation time so the new mechanical tokenizer governs the
+            # lattice spine. Stored per-mention concept_paths (from
+            # earlier extracts) are ignored here in favor of the
+            # canonical identity-derived form.
+            mechanical_path = concept_path_from_identity(identity) if identity.get("family") else []
+            cluster_path = mechanical_path or concept_path
             clusters[cluster_key] = {
                 "cluster_key": cluster_key,
                 "kind": kind,
@@ -865,7 +934,7 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
                 "atoms": [],
                 "referent_scopes": [],
                 "links": [],
-                "concept_path": concept_path,
+                "concept_path": cluster_path,
                 "aux": {},
                 "anchors": [],
                 "descriptions": [],
@@ -932,7 +1001,153 @@ def aggregate_mentions(mentions: Iterable[dict]) -> list[dict]:
     for cluster in clusters.values():
         cluster["display_name"] = choose_display_name(cluster["aliases"], cluster["identity"])
         cluster["description"] = cluster["descriptions"][0] if cluster["descriptions"] else None
-    return sorted(clusters.values(), key=lambda c: (c["kind"], dumps(c["identity"])))
+    collapsed = collapse_surface_drift_clusters(
+        sorted(clusters.values(), key=lambda c: (c["kind"], dumps(c["identity"])))
+    )
+    return canonicalize_concept_paths(collapsed)
+
+
+def canonicalize_concept_paths(clusters: list[dict]) -> list[dict]:
+    """Normalize each unique concept_path-element across clusters to a
+    single canonical label. Collapses casing/spacing/hyphen drift in
+    intermediate path nodes (e.g., `Olmo-3` and `OLMo-3` and `OLMo 3`
+    all become one canonical form), pulling drift-fragmented sibling
+    clusters under a single tree root. The canonical winner is picked
+    by frequency (most occurrences across all clusters), with ties
+    broken in favor of mixed-case labels over all-lowercase ones."""
+    def norm(label: str) -> str:
+        return re.sub(r"[\s\-_/.]+", "", (label or "").lower())
+
+    # Tally: norm-key → list of (label, total_occurrence_weight)
+    weights: dict[str, dict[str, int]] = {}
+    for c in clusters:
+        weight = c.get("occurrence_count") or 1
+        for elem in c.get("concept_path") or []:
+            if not elem:
+                continue
+            k = norm(elem)
+            if not k:
+                continue
+            weights.setdefault(k, {})[elem] = weights.setdefault(k, {}).get(elem, 0) + weight
+
+    # Pick canonical: highest total weight wins; tie → has-uppercase beats
+    # all-lowercase; final tie → lexicographic.
+    def pick(label_weights: dict[str, int]) -> str:
+        return max(
+            label_weights.items(),
+            key=lambda lw: (lw[1], any(c.isupper() for c in lw[0]), lw[0]),
+        )[0]
+
+    canonical = {k: pick(lw) for k, lw in weights.items()}
+
+    # Rewrite each cluster's concept_path with the canonical labels.
+    for c in clusters:
+        path = c.get("concept_path") or []
+        c["concept_path"] = [canonical.get(norm(e), e) for e in path]
+    return clusters
+
+
+def collapse_surface_drift_clusters(clusters: list[dict]) -> list[dict]:
+    """Merge clusters that differ only in surface-form drift (case,
+    spacing, hyphens) into one canonical cluster. Conservative:
+    collapses only when (1) `kind` matches, (2) identity-axes
+    (family/size/stage/extra) normalize aggressively to the same key,
+    AND (3) there is no canonical-link conflict (all unlinked, OR all
+    share the same primary link). Audit would do this same merge via
+    canonical-link convergence; doing it before audit cuts cluster
+    count and audit cost without changing semantics."""
+    def drift_key(cluster: dict) -> str:
+        ident = cluster.get("identity") or {}
+        parts: list[str] = []
+        for k in ("family", "size", "stage"):
+            v = ident.get(k)
+            if v:
+                parts.append(str(v))
+        extra = ident.get("extra") or {}
+        if isinstance(extra, dict):
+            for k in sorted(extra.keys()):
+                parts.append(f"{k}:{extra[k]}")
+        joined = "|".join(p.lower() for p in parts if p)
+        return re.sub(r"[\s\-_/.]+", "", joined)
+
+    def link_signatures(cluster: dict) -> set[tuple[str, str]]:
+        return {
+            (l.get("type"), l.get("value"))
+            for l in (cluster.get("links") or [])
+            if l.get("exact")
+        }
+
+    groups: dict[tuple[str, str], list[dict]] = {}
+    for c in clusters:
+        dk = drift_key(c)
+        # No identity (drift_key empty) → keep cluster as-is using its
+        # cluster_key as the group identity. Prevents false merges when
+        # we have nothing to compare on.
+        key = (c["kind"], dk) if dk else (c["kind"], c["cluster_key"])
+        groups.setdefault(key, []).append(c)
+
+    out: list[dict] = []
+    for group in groups.values():
+        if len(group) == 1:
+            out.append(group[0])
+            continue
+        # Distinct canonical-link signatures across the group means
+        # genuinely different entities collided on the drift key (rare
+        # but possible). Skip the merge.
+        all_sigs: set[tuple[str, str]] = set()
+        for c in group:
+            all_sigs |= link_signatures(c)
+        if len(all_sigs) > 1:
+            out.extend(group)
+            continue
+        # Pick canonical: highest occurrence_count wins, then prefer
+        # the one with at least one exact link.
+        canonical = max(
+            group,
+            key=lambda c: (c.get("occurrence_count") or 0, bool(c.get("links"))),
+        )
+        kind = canonical["kind"]
+        for c in group:
+            if c is canonical:
+                continue
+            canonical["aliases"] = merge_alias_lists(
+                canonical.get("aliases") or [], c.get("aliases") or [], kind=kind,
+            )
+            canonical["descriptors"] = merge_descriptor_values(
+                canonical.get("descriptors") or {}, c.get("descriptors") or {},
+            )
+            canonical["subsets"] = (canonical.get("subsets") or []) + (c.get("subsets") or [])
+            canonical["context_roles"] = list(dict.fromkeys(
+                (canonical.get("context_roles") or []) + (c.get("context_roles") or [])
+            ))
+            canonical["atoms"] = list(dict.fromkeys(
+                (canonical.get("atoms") or []) + (c.get("atoms") or [])
+            ))
+            canonical["referent_scopes"] = list(dict.fromkeys(
+                (canonical.get("referent_scopes") or []) + (c.get("referent_scopes") or [])
+            ))
+            canonical["links"] = normalize_link_candidates(
+                (canonical.get("links") or []) + (c.get("links") or []), kind=kind,
+            )
+            canonical["aux"] = merge_descriptor_values(
+                canonical.get("aux") or {}, c.get("aux") or {},
+            )
+            canonical["anchors"] = (canonical.get("anchors") or []) + (c.get("anchors") or [])
+            canonical["mention_ids"] = (canonical.get("mention_ids") or []) + (c.get("mention_ids") or [])
+            canonical["occurrence_count"] = (
+                (canonical.get("occurrence_count") or 0)
+                + (c.get("occurrence_count") or 0)
+            )
+            if c.get("descriptions"):
+                canonical.setdefault("descriptions", []).extend(c["descriptions"])
+        # display_name + description may need a refresh after merging.
+        canonical["display_name"] = choose_display_name(
+            canonical.get("aliases") or [], canonical.get("identity") or {},
+        )
+        if canonical.get("descriptions"):
+            canonical["description"] = canonical["descriptions"][0]
+        out.append(canonical)
+    return sorted(out, key=lambda c: (c["kind"], dumps(c["identity"])))
 
 
 def merge_alias_lists(current: list[dict], incoming: list[dict], *, kind: str | None = None) -> list[dict]:
