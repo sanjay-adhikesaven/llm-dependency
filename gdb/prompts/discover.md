@@ -26,8 +26,16 @@ family (`^OLMo-3-` for an OLMo-3 target):
   `OLMo-3-7B-Instruct`, `OLMo-3-32B-Base` are all distinct cards
   and all in scope).
 - The target's tech report or paper.
-- The target's own code repo — recipes, configs, training
-  scripts.
+- **The target's own code repos — full `git clone`, NOT
+  README-only.** The recipes, configs, training launchers,
+  shell scripts, and YAML files inside the repo are
+  load-bearing source material for downstream extract: they
+  carry `--dataset_mixer_list` flags, `DataMix.OLMo_mix_*`
+  constants, personal-namespace HF dataset references
+  (`hamishivi/...`, `saurabh5/...`), and YAML mix manifests
+  that NEVER appear in the HF cards or paper. A `curl` of the
+  repo's README is a permanent lineage hole — see "How to
+  fetch" below.
 - The target's official release blog post, if one exists.
 
 ## How to fetch
@@ -47,9 +55,22 @@ HF API (commit SHA):  curl -sL https://huggingface.co/api/models/<repo>/revision
 HF org enumeration:   curl -sL https://huggingface.co/api/models?author=<org>
 arXiv PDF (preferred): curl -sL https://arxiv.org/pdf/<id> -o paper.pdf
 arXiv HTML (if no PDF): curl -sL https://arxiv.org/html/<id>v1 -o paper.html
-GitHub README:        curl -sL https://raw.githubusercontent.com/<owner>/<repo>/HEAD/README.md
-GitHub repo:          git clone --depth 1 https://github.com/<owner>/<repo>
+GitHub README only:   curl -sL https://raw.githubusercontent.com/<owner>/<repo>/HEAD/README.md
+GitHub FULL repo:     git clone --depth 1 https://github.com/<owner>/<repo>
 ```
+
+**For the target's own primary code repos, you MUST use
+`git clone --depth 1`, not `curl` of the README.** A
+README-only fetch is a permanent lineage hole: the actual
+training scripts, mixture YAMLs, launcher flags, and config
+constants live in the repo tree, not in the README. A
+README-only fetch routinely loses 1000+ name mentions for an
+OLMo-class target. The `curl` fallback is only acceptable for
+peripheral / third-party repos cited in passing — never for
+the target's own primary repo set (e.g., for OLMo-3:
+`allenai/OLMo`, `allenai/OLMo-core`, `allenai/open-instruct`,
+`allenai/olmo-cookbook`, `allenai/dolma`,
+`allenai/OLMo-in-loop-evals` are ALL primary).
 
 For papers / tech reports, fetch ONE format: PDF when
 available, HTML when no PDF exists. Same content; don't fetch

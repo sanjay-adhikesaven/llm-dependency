@@ -26,6 +26,8 @@ packages = ["gdb"]
   "gdb/prompts/organize.md",
   "gdb/prompts/audit.md",
   "gdb/prompts/linker.md",
+  "gdb/prompts/relate.md",
+  "gdb/prompts/triage.md",
 ]
 
 [tool.pytest.ini_options]

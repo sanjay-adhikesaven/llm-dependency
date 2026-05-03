@@ -68,11 +68,31 @@ DeepSeek-R1
 Qwen3-7B-Instruct-FP8
 ```
 
-Skip these (they aren't model/dataset names):
+### Neural artifacts framed as tools
+
+Some sources name a neural model with tool-style phrasing
+("using olmOCR (Poznanski et al., 2025a,b)", "we judge with
+GPT-4"). The model is still a model. **Emit it as `model`** when
+the surface names a *neural artifact that processes data*
+(generates, transforms, filters, judges, embeds), even when the
+prose frames it as a tool. Cues to look for:
+
+- it appears alongside a paper citation (`(Author et al., 20XX)`)
+- it is named after a model card slug (`allenai/olmOCR-7B-0225`,
+  `Qwen/Qwen3-32B`)
+- it is described as performing a learned function — OCR,
+  classification, judging, rewriting, embedding, ranking
+
+When in doubt, emit. The organize / audit stages drop noise via
+web verification; missing a real model is irrecoverable.
+
+### Skip these (they aren't model/dataset names)
 
 - license names (`Apache-2.0`, `MIT`, `CC-BY-4.0`)
-- software packages, frameworks, tokenizers as such
-  (`transformers`, `vLLM`, `datatrove`, `tiktoken`)
+- pure-software packages, frameworks, tokenizers as such
+  (`transformers`, `vLLM`, `datatrove`, `tiktoken`,
+  `pyarrow`) — non-neural libraries only. Neural artifacts
+  framed as tools (above) are NOT skipped.
 - author/organization names by themselves (`Anthropic`,
   `Meta`, `Allen Institute for AI`)
 - paper titles

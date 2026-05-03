@@ -49,7 +49,8 @@ RUN_INPUT_FILE = "input.json"
 BATCH_MANIFEST_FILE = "MANIFEST.txt"
 
 # Pipeline stages (execution order)
-STAGE_NAMES = ("discover", "extract", "organize", "audit", "linker")
+STAGE_NAMES = ("discover", "extract", "organize", "audit", "linker",
+               "relate", "triage", "merge")
 
 # Per-stage artifact filenames written under each run_root
 DISCOVER_ARTIFACT_FILE = "discover_artifact.json"
@@ -58,6 +59,10 @@ ORGANIZE_NAMES_FILE = "names.json"
 ORGANIZE_ARTIFACT_FILE = "organize_artifact.json"
 AUDIT_ARTIFACT_FILE = "audit_artifact.json"
 LINKER_ARTIFACT_FILE = "linker_artifact.json"
+RELATE_ARTIFACT_FILE = "relate_artifact.json"
+TRIAGE_ARTIFACT_FILE = "triage_artifact.json"
+TRIAGE_RELATIONS_FILE = "relations.json"
+MERGE_ARTIFACT_FILE = "merge_artifact.json"
 
 # Directory walk filter (skipped during scan, fingerprint, copytree)
 SKIP_DIRS = {"__pycache__", "node_modules", "venv", ".venv", ".git"}
