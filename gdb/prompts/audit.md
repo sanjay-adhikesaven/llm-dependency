@@ -11,10 +11,20 @@ Read `{{organize_path}}` and write the revised artifact to
 
 ## Filesystem scope
 
-Read `{{organize_path}}` and `{{input_path}}` (same file). Write
-`{{artifact_path}}`. Web search and HF / GitHub URL lookups are
-permitted; you'll use them more than organize did because the
-recheck pile demands fresh investigation.
+Read `{{organize_path}}` and `{{input_path}}` (same file). You
+also have access to **the original source files** at
+`{{batches_dir}}` — every batch's paper PDFs, model cards,
+GitHub repos, configs, and other sources discover fetched are
+materialized there as `{{batches_dir}}/<batch_id>/<filename>`.
+Use them: re-reading the original sources is the only way to
+catch over-specification (where the lattice's leaf is more
+specific than what the source mention actually said) or
+under-specification (where a leaf alias is too vague).
+
+Write `{{artifact_path}}`. Web search, WebFetch, and
+HF / GitHub URL lookups are permitted; you'll use them more
+than organize did because the recheck pile demands fresh
+investigation.
 
 ## What runs before you (your input is pre-processed)
 
@@ -34,15 +44,15 @@ restores drops, never renames anything. It does two things:
    - `item_matches_parent_subset` — an existing item's name slug
      appears in some other kept item's `subsets[]`. The
      `item_role` field labels what kind of item it is
-     (`canonical` / `soft-anchored` / `concept` / `unanchored`).
-     Typical action: reshape soft-anchored sub-components under
-     the parent as `<parent>/<slug>` child items; keep
-     foundational concepts (`item_role: concept`) standalone.
+     (`family-root` / `canonical` / `concept` / `unanchored`).
+     Typical action: reshape sub-components under the parent
+     when they have no own canonical anchor; keep
+     foundational concepts standalone.
    - `dropped_matches_parent_subset` — a dropped name's slug
      appears in some kept item's `subsets[]`. Typical action:
-     restore as `<parent>/<slug>` child item with identity
-     inheriting parent + `subset: <slug>`, then remove from
-     `dropped[]`.
+     either leave dropped (the subset is captured in the parent's
+     `subsets[]` field) or restore as a leaf if the dropped
+     name has its own canonical release.
    - `sibling_identity_collision` — two items in the same family
      carry identical identity dicts. You MUST resolve.
    - `cross_org_family` — a family spans multiple `identity.org`
@@ -51,23 +61,121 @@ restores drops, never renames anything. It does two things:
      possibly add a discriminating facet).
    - `formal_name_vs_canonical_url_mismatch` — the formal_name
      doesn't match the canonical path inside its primary HF URL.
-     Typical action: rename to canonical and carry the old form
-     as alias (cosmetic, do in batch via Bash, not subagent).
-   - `phantom_item` — empty aliases AND identity isn't a
-     family-concept root. Drop or fix.
+     **Prescriptive: rename to the canonical HF path (lowercase
+     `<owner>/<repo>` from the URL); move the old form to
+     `aliases[]`.** Skip ONLY when the source explicitly uses the
+     formal_name and not the canonical path.
+   - `phantom_item` — empty aliases. The validator already
+     rejects this; if the hint fires, fix or drop.
+   - `missing_family_root` — a group has 2+ items but no family
+     root (item with identity `{family: X}` only). You MUST
+     synthesize one. Use the bare family name as the formal_name
+     and as an alias. Add `paper` / `blog` / `hf_collection` link
+     if the family has one; otherwise empty `links: []`. No
+     production link.
+   - `over_specified` — a leaf carries a bare family-name alias
+     (e.g., `"olmOCR"`) but its formal_name pins specific facets
+     (`allenai/olmOCR-7B-0225-preview`). **Re-read the source
+     at `{{batches_dir}}` to verify.** If the source mention is
+     genuinely bare ("we use olmOCR" with no version), move the
+     bare alias to the family root and keep release-specific
+     aliases on the leaf. Vague mentions should not silently bind
+     to an arbitrary specific release.
+   - `branch_variant_in_formal_name` — `<repo>@<branch>` HF
+     git-revspec syntax. Collapse all branch variants into one
+     leaf with the canonical repo formal_name; carry branch names
+     in aliases.
+   - `same_url_duplicate` — two items in the same family share
+     the same primary URL. **Prescriptive: merge into one item.**
+     Pick the keeper as: (a) the multi-facet entity over the
+     concept root, (b) else the item with more aliases, (c) else
+     the first lexicographically. Move all surface forms from
+     the merged-out items to the keeper's `aliases[]`. Runtime-
+     mode differences (`thinking` / `no-thinking` chat templates,
+     sampling hyperparameters) belong on edges, NOT as facets.
+   - `concept_subsumed_candidate` — within a family, item A's
+     identity facets are a strict subset of sibling B's, and A
+     has no item-unique anchor (no `hf_model` / `hf_dataset` /
+     `vendor_docs`). A is likely a concept (a partial spec
+     subsumed by B). Confirm `kind` matches the family's nature
+     and that A's `links[]` hold only family-shared anchors
+     (`paper`, `hf_collection`, `blog`) or are empty. **Don't
+     drop A** — vague source mentions need somewhere to land.
+   - `subset_with_anchor` — within a family, item A's facets
+     are a strict subset of sibling B's, and BOTH have unique
+     anchors. Dataset-config / subset-of relationship (e.g.,
+     `HuggingFaceTB/finemath` ⊃ `infimm-webmath/infiwebmath-3+`).
+     Both stay as entities; ensure both descriptions note the
+     relationship so relate can emit a `subset_of` edge.
+   - `same_url_cross_family` — same primary URL appears in items
+     from DIFFERENT families. **Prescriptive: pick the family
+     whose name matches the URL's namespace owner** (e.g.,
+     `allenai/dolmino-mix-1124` → family `Dolmino`, not
+     `OLMo 2`). Remove the duplicate items from other families
+     entirely. Relate captures the cross-family usage as edges.
+   - `concept_with_no_entity` — a family has multiple concept
+     items but no entity. **Prescriptive: do an HF org enumeration
+     before accepting the gap.** Run, in order:
+     ```
+     curl -sL "https://huggingface.co/api/models?author=<org>&search=<family>&limit=50"
+     curl -sL "https://huggingface.co/api/datasets?author=<org>&search=<family>&limit=50"
+     ```
+     Likely creator orgs by family pattern: `allenai/` for OLMo /
+     Dolma / olmOCR; `Qwen/` for Qwen / QwQ; `meta-llama/` for
+     Llama; `mistralai/` for Mistral; `nvidia/` for Nemotron;
+     `openai/` for GPT; `microsoft/` for Phi; `google/` for Gemma;
+     check the Python configs in `{{batches_dir}}` for `from_pretrained`
+     calls if no creator is obvious. If a result HEAD-checks 200
+     and matches the family pattern, restore as an entity. Only
+     accept the gap if the enumeration returns nothing relevant.
+   - `family_root_invented_alias` — family root's aliases don't
+     trace to any input-pile surface form. Vague relate mentions
+     may fail to resolve. **Prescriptive when formal_name has
+     parens-disambig form (`Phi (Microsoft)`, `GPT (OpenAI)`,
+     `Falcon (TII)`):** if NO other family in the output has the
+     same bare formal_name (`Phi`, `GPT`, `Falcon`), rename the
+     root's `formal_name` to the bare form and move the parens
+     form to `aliases[]`. **Also:** scan the input names pile
+     for the family substring (case-insensitive) and add every
+     match to the root's `aliases[]`.
 
-   The hints are **suggestions, not commands**. A hint exists
-   because Python found a pattern; you decide what's right
-   given the broader context. A hint doesn't apply when the
-   item is foundational, when a duplicate name is coincidental,
-   or when the cross-org grouping captures a real product-line
-   relationship.
+   The hints are **suggestions, not commands** (except
+   `missing_family_root`, which is mandatory — every family MUST
+   have a root). A hint exists because Python found a pattern;
+   you decide what's right given the broader context.
 
 So when you read the input artifact: every dataset has populated
 `subsets[]`, the lattice structure is exactly as organize left
 it (no items moved or restored), and `audit_hints[]` lists what
 Python found suspicious. **Your edits are the only changes that
 happen to the lattice.**
+
+## Synthesized concepts you'll see in the lattice
+
+`gdb.subsets.expand_concept_lattice` ran in the pre-pass: every
+interior concept implied by the leaves' facets has been
+materialized as an item with `_generated: true` and aliases
+auto-derived from the natural concept label (e.g., `OLMo 3 7B`
+from facets `{family: OLMo 3, size: 7B}`). These nodes serve as
+anchor points for relate when source specificity falls between
+root and a leaf.
+
+How to handle them:
+
+- **If a `_generated` concept's natural alias matches a source
+  mention** (e.g., the input pile contains `Apertus 8B` and a
+  generated concept has `aliases: ["Apertus 8B"]`), find the
+  leaf where the planner put that source alias, **move the
+  alias from the leaf to the generated concept**, and **clear
+  `_generated: true`**. The concept is now a source-mentioned
+  node that the planner missed.
+- **If a `_generated` concept seems redundant** (e.g., its
+  facets are degenerate within this family), drop it.
+- **Otherwise leave generated concepts alone.** They cost
+  nothing and let relate land vague mentions.
+
+A second `expand_concept_lattice` runs AFTER you complete to
+catch concepts you may have left orphaned. Idempotent.
 
 ## How to think about this pass
 
@@ -176,6 +284,24 @@ to find.
   community, or library namespace — those reasons are common
   cover for the planner not having found the right anchor.
 
+- **Is every family root materialized?** Every group MUST have
+  exactly one item with identity `{family: X}` only — the
+  lattice top. Vague mentions like "Qwen 3" or "OLMo 3 Base"
+  land here. If a `missing_family_root` hint fires, synthesize
+  the root with the bare family name as alias and a paper /
+  blog / hf_collection link if any (no production link).
+
+- **Is anything over-specified?** When an `over_specified` hint
+  fires, the planner glued a bare family-name alias (`"olmOCR"`)
+  onto a specific HF leaf (`allenai/olmOCR-7B-0225-preview`).
+  **Re-read the source files at `{{batches_dir}}` to verify.**
+  Search the source for the alias string. If the source mentions
+  the artifact ONLY at the bare family level (no version pinned),
+  move the alias to the family root and keep only release-
+  specific aliases on the leaf. Vague mentions should never
+  silently bind to an arbitrary specific release; that's the
+  whole point of the family root concept.
+
 - **Are there items with `description: null` that have a
   fetchable source?** Organize sometimes leaves a description
   empty when its first attempt failed (e.g., raw README returned
@@ -244,6 +370,56 @@ Anything that produces a cleaner lattice in the same schema:
 When you make any non-trivial edit, briefly note it in the
 top-level `notes` field — what changed and why. The notes are
 what an operator scans to understand what the audit pass did.
+
+## Sweeps to run before writing the artifact
+
+Two deterministic sweeps to apply at the end of your pass — they
+catch regressions audit's narrative attention may have missed.
+
+### 1. Umbrella-with-subset-facet sweep
+
+For each item where `links[0]` is `hf_dataset` or `hf_model`:
+- If the URL path is `huggingface.co/datasets/<owner>/<repo>` or
+  `huggingface.co/<owner>/<repo>` with NO `/viewer/<config>` and
+  NO `?config=` parameter (i.e., the umbrella page), AND
+- The item's `identity` carries a `subset` facet,
+- **Drop the `subset` facet.** The umbrella isn't the slice; the
+  parent dataset's `subsets[]` field captures the configs.
+  Example: `LLM360/MegaMath` should have `identity={family:
+  MegaMath}`, not `identity={family: MegaMath, subset: 'web'}`.
+
+### 2. Description completion sweep
+
+Walk every item with `description: null` (excluding items
+flagged `_generated: true` — those are Python-derived concepts
+and may legitimately be null). For each, apply the source ladder:
+
+1. `curl <page-url>/raw/main/README.md` (HF raw README)
+2. WebFetch the page URL (renders gated cards)
+3. HF API `huggingface.co/api/<models|datasets>/<owner>/<repo>`
+4. GitHub README first paragraph
+5. arXiv abstract first sentence
+6. WebSearch on `"<formal_name>"` for blog / vendor docs
+
+Cap at 30 items per sweep (the highest-priority ones: family
+roots first, then entity leaves with most aliases). Leave the
+remainder null. Skip silently per item only after the ladder
+fully exhausts on that specific item.
+
+### 3. End-of-pass invariant check
+
+Before writing the artifact, scan for these regressions:
+
+- **No within-family same-URL duplicates.** For each family,
+  for each unique-anchor URL (`hf_model` / `hf_dataset` /
+  `vendor_docs`), at most one item carries it as `links[0]`.
+- **Every input name still traceable.** Read the names pile at
+  `{{input_path}}` (or scan the original organize input). For
+  each name, verify it appears in some item's `aliases` /
+  `formal_name`, in `dropped[]`, or in `gated[]`.
+- **Every family has exactly one root** (identity == {family}).
+
+If any invariant fails, fix it before writing. Note in `notes`.
 
 ## When uncertain
 

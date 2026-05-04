@@ -1,11 +1,15 @@
 # Organize, Resolve, and Describe Names
 
-> **Goal: read every name, group surface variants into family-
-> structured items, find the canonical URL for each item, write a
-> target-independent description, and drop items that can't be
-> unambiguously pointed at.** Every emitted item must resolve to
-> a real artifact you can put a clickable URL on; no invented
-> nodes, no orphan placeholders.
+> **Goal: read every name, cluster surface variants by family,
+> emit one item per source-mentioned name as either an entity
+> (item-unique URL) or a concept (no item-unique URL), find the
+> canonical URL for each entity, write target-independent
+> descriptions, drop unresolvable names.** Match each item's
+> identity to the specificity of the source mention: bare family
+> names land on the family root concept; partial specs land on
+> intermediate concepts; pinned releases land on entities. A
+> Python pass synthesizes any remaining hidden interior concepts
+> after audit.
 
 Read `{{names_path}}` and write the artifact to
 `{{artifact_path}}`.
@@ -25,70 +29,133 @@ are all available — use them as needed to find canonical URLs,
 HEAD-check candidates, and read the artifact's own card / paper
 when writing descriptions.
 
-## Valid node forms (load-bearing — drop if unresolvable)
+## Lattice structure
 
-Every item in the output lattice MUST resolve to ONE of three
-forms:
+The output is a **partial-order lattice** of identity facet sets.
+Each item is either an **entity** or a **concept**.
 
-1. **Open-source model or dataset** — exact HuggingFace
-   identifier `<org>/<repo>` whose page returns 200, OR an
-   official GitHub repo whose page returns 200. The
-   `formal_name` is `<org>/<repo>` (lowercase HF form preferred);
-   primary link is the `hf_model` / `hf_dataset` / `github` URL.
-2. **Closed-source model** — clickable official URL (vendor docs
-   page, API model page, or release-blog landing). The
-   `formal_name` is `<vendor>/<identifier>`; primary link is
-   `vendor_docs`.
-3. **Paper-anchored release** — exact paper URL (arXiv abstract,
-   ACL anthology, venue page) when no HF or GitHub release
-   exists but the artifact is described in a published paper.
-   The `formal_name` is a stable paper-derived label; primary
-   link is `paper`.
+### Entity
 
-If web search cannot resolve a name to one of these forms,
-**DROP the item** to `dropped[]` with a one-line reason. The
-lattice's value comes from each node being unambiguously
-pointable; an item with no canonical anchor is noise.
+A node whose primary URL describes this artifact alone:
+`hf_model`, `hf_dataset`, `vendor_docs`, or a `paper` / `github`
+URL dedicated to this single artifact (no other family member
+shares it). Identity carries `family` plus the facets that pin
+the release (`size`, `stage`, `date`, `version`, ...).
 
-### Drop subset / config names — they're added later
+### Concept
 
-If a name looks like a subset or config of a parent dataset
-(e.g., a sub-corpus of a training mix, an HF dataset config
-slug, an eval-harness reformulation, a quality-tier filter)
-rather than a standalone artifact, **drop it**. A separate
-Python pass (`gdb.subsets`) reads each kept dataset's HF
-README and populates a `subsets[]` field with its
-configs / components / mix-table entries. After organize
-completes, audit's pre-pass cross-checks every dropped name
-against every kept dataset's `subsets[]` and restores hits
-as child items with `formal_name = <parent>/<subset_slug>`.
+A node with no item-unique URL. Concepts cover:
 
-You don't need to recover subsets yourself. Drop them with
-reason like "subset of <parent>" or "config of HF dataset"
-and let the Python pass handle restoration. The cost of
-emitting a subset as a top-level item is wrong identity
-keys, wrong link target, and a node that doesn't fold under
-its parent.
+- **Family root** — `identity = {family: X}` only. Every group has one.
+- **Source-mentioned partial specs** — names the source uses
+  that don't pin a single artifact: `OLMo 3 7B` (no
+  `allenai/OLMo-3-7B` URL exists); `Qwen3-Base` (no size);
+  `BBH::cot` (harness reformulation, no own page).
 
-Cues that a name is a subset / config:
-- It uses an HF config-suffix syntax (`finemath-3plus`,
-  `bbh:cot`, `mmlu:mc`).
-- It uses an eval-harness reformulation suffix
-  (`::cot::xxx`, `_rc_5shot`, `_Gen2MC`).
-- It's named in the input pile alongside its parent (both
-  `HuggingFaceTB/finemath` and `finemath-3plus` appear).
-- It's a known component of a larger mix referenced in the
-  input pile.
+Concept items have `links: []` or only family-shared anchors
+(`paper`, `hf_collection`, `blog`).
 
-### Family-concept exception
+### Subsumption rule
 
-A family-concept item (`Qwen3` the family vs. specific
-`Qwen/Qwen3-4B`) is a valid SEPARATE node ONLY when it has its
-own HF collection URL (`huggingface.co/collections/<org>/...`)
-or its own dedicated paper. Otherwise, family-concept mentions
-collapse as `aliases` of the most-likely specific item — usually
-the chat / instruct variant when the source uses a bare size
-form.
+Within a family, if `A.facets ⊂ B.facets` (strict subset) and A
+has no item-unique URL, A is a concept. Keep A — vague mentions
+need to land somewhere — but don't pretend it's an entity.
+
+If BOTH A and B have item-unique URLs and `A.facets ⊂ B.facets`,
+both are entities. The relationship is dataset-config
+(`HuggingFaceTB/finemath` ⊃ `infimm-webmath/infiwebmath-3+`);
+note it in description.
+
+### Don't overmerge
+
+- **Same URL → one entity.** Surface forms resolving to the same
+  canonical URL are one item; variants live in `aliases[]`.
+  Runtime modes that don't change weights (`thinking` /
+  `no-thinking` chat templates, sampling hyperparameters) are
+  NOT facets; they live on edges.
+- **Different URL → different entity.** Don't collapse two HF
+  pages into one even when names look similar.
+- **Bare alias on the family root, not the leaf.** If source
+  mentions only the bare family name ("olmOCR"), the alias
+  belongs on the family-root concept, not on a specific HF leaf
+  you happened to find.
+- **Don't fold across buckets.** Audit owns harness-fold,
+  date-snapshot-fold, cross-bucket merges. A Python pre-pass
+  flags facet-subsumption pairs and same-URL duplicates; audit
+  decides.
+- **Family-root `formal_name` is the bare family name.** Do NOT
+  add parenthetical disambiguators like `Phi (Microsoft)`,
+  `GPT (OpenAI)`, `Claude (Anthropic)` — use `Phi`, `GPT`,
+  `Claude`. Source mentions use the bare form; the lattice's
+  alias lookup needs to match it. Only audit may add a
+  parenthetical if two families in the final output literally
+  share the same bare name.
+
+### Hidden concepts are auto-generated
+
+You emit only items the source mentions (plus the family root).
+A Python pass after audit synthesizes any remaining interior
+concept by projecting leaves onto subsets of `identity_keys`. If
+source names `OLMo 3 7B Base`, `OLMo 3 7B Instruct`,
+`OLMo 3 32B Base`, you don't manually emit `{family: OLMo 3,
+size: 7B}` — Python derives it.
+
+### Worked example — Qwen3
+
+Source mentions: `Qwen3`, `Qwen3-Base` (no size), `Qwen3 4B`,
+`Qwen/Qwen3-4B`, `Qwen/Qwen3-4B-Base`, `Qwen3-4B (thinking on)`,
+`Qwen3-4B (thinking off)`. Web search resolves two HF URLs
+(`Qwen/Qwen3-4B` and `Qwen/Qwen3-4B-Base`).
+
+```json
+// family-root concept
+{"identity": {"family": "Qwen3"}, "kind": "model",
+ "aliases": ["Qwen3"],
+ "links": [{"kind":"paper","url":"https://arxiv.org/abs/2509.18888"}]}
+
+// concept — source said "Qwen3-Base" with no size
+{"identity": {"family": "Qwen3", "stage": "Base"}, "kind": "model",
+ "aliases": ["Qwen3-Base"], "links": []}
+
+// concept — source said "Qwen3 4B" with no stage
+{"identity": {"family": "Qwen3", "size": "4B"}, "kind": "model",
+ "aliases": ["Qwen3 4B"], "links": []}
+
+// entity — thinking-on / off → SAME HF URL → ONE item
+{"identity": {"family": "Qwen3", "size": "4B", "stage": "chat"},
+ "kind": "model", "formal_name": "Qwen/Qwen3-4B",
+ "aliases": ["Qwen/Qwen3-4B", "Qwen3-4B",
+             "Qwen3-4B (thinking on)", "Qwen3-4B (thinking off)"],
+ "links": [{"kind":"hf_model","url":"https://huggingface.co/Qwen/Qwen3-4B"}]}
+
+// entity
+{"identity": {"family": "Qwen3", "size": "4B", "stage": "Base"},
+ "kind": "model", "formal_name": "Qwen/Qwen3-4B-Base",
+ "aliases": ["Qwen/Qwen3-4B-Base"],
+ "links": [{"kind":"hf_model","url":"https://huggingface.co/Qwen/Qwen3-4B-Base"}]}
+```
+
+### Drop subsets / configs of a parent dataset
+
+If a name is a subset / config slug of a parent dataset (HF
+config suffix, harness reformulation, mix-table component) and
+has no own URL, drop to `dropped[]` with reason
+"subset-of-parent". Python populates the parent's `subsets[]`;
+audit's pre-pass cross-checks dropped names. Cues:
+HF config-suffix (`finemath-3plus`, `bbh:cot`, `mmlu:mc`),
+harness reformulation (`::cot::xxx`, `_rc_5shot`),
+named alongside its parent in the input pile.
+
+### Structural completion (automatic)
+
+A Python pre-pass adds `formal_name` to `aliases[]` and
+synthesizes a virtual family root for any group missing one. You
+don't need to manually echo bare names. Focus on clustering and
+facet decomposition.
+
+If a name has no anchor as entity or concept (genuinely
+unresolvable, not a subset), **DROP** to `dropped[]` with a
+one-line reason.
 
 ## What you decide
 
@@ -294,18 +361,15 @@ After the primary, append every additional official link the
 item has. A HF model that also has a paper AND a GitHub repo
 gets all three — find them all; don't truncate.
 
-### Specificity for family vs. leaf
+### Specificity — link must match identity
 
-A link must resolve to *exactly* what the item represents:
+A URL must resolve to *exactly* what the item represents:
 
-- **Specific artifact** — `identity` carries `size`, `stage`,
-  `date`, or `quantization`. Link to the specific repo.
-- **Family-level** — `identity` only carries broad keys (`org`
-  + `collection`). The item represents "the family", not any
-  one checkpoint. Link to family-level resources only: HF
-  collection page, paper, official creator GitHub repo,
-  release blog. Do NOT point a family-level item at a specific
-  checkpoint.
+- **Entity** — primary link points at the specific artifact
+  page (`hf_model` / `hf_dataset` / `vendor_docs`).
+- **Concept** (family root or partial spec) — never points at a
+  specific checkpoint. Use family-shared anchors only
+  (`hf_collection`, `paper`, `blog`) or empty `links: []`.
 
 ## Description writing
 
@@ -379,18 +443,69 @@ URL you HEAD-verified disagrees with the field.
 
 ## Per-item schema
 
+### Family-root concept (one per group, REQUIRED)
+
+```json
+{
+  "kind": "model",
+  "formal_name": "Qwen3",
+  "identity": {"family": "Qwen3"},
+  "aliases": ["Qwen 3", "Qwen3"],
+  "links": [
+    {"kind": "paper", "url": "https://arxiv.org/abs/2509.18888"}
+  ],
+  "description": "Qwen3 is a family of open-weight language models from Alibaba's Qwen team..."
+}
+```
+
+Foundational data resource (no specific HF release):
+
+```json
+{
+  "kind": "dataset",
+  "formal_name": "Common Crawl",
+  "identity": {"family": "Common Crawl"},
+  "aliases": ["Common Crawl", "common_crawl"],
+  "links": [{"kind": "blog", "url": "https://commoncrawl.org/"}],
+  "description": "Common Crawl is an open repository of web crawl data..."
+}
+```
+
+Empty `links: []` is fine for roots with no concept-level URL.
+
+### Source-mentioned concept (partial spec)
+
+When the source uses a partial specification with no own URL —
+e.g., `Qwen3-Base` (no size), `BBH::cot` (harness reformulation):
+
+```json
+{
+  "kind": "model",
+  "formal_name": "Qwen3-Base",
+  "identity": {"family": "Qwen3", "stage": "Base"},
+  "aliases": ["Qwen3-Base"],
+  "links": [],
+  "description": null
+}
+```
+
+`links: []` (no item-unique URL exists). Audit will fill the
+description if a citable source exists.
+
+### Entity (one per pinnable artifact)
+
 ```json
 {
   "kind": "model",
   "formal_name": "Qwen/Qwen3-4B",
-  "identity": {"org": "Qwen", "collection": "Qwen3", "size": "4B", "stage": "chat"},
+  "identity": {"family": "Qwen3", "size": "4B", "stage": "chat"},
   "aliases": ["Qwen3-4B", "qwen3-4b", "Qwen 3 4B"],
   "links": [
     {"kind": "hf_model", "url": "https://huggingface.co/Qwen/Qwen3-4B"},
     {"kind": "paper",    "url": "https://arxiv.org/abs/2509.18888"},
     {"kind": "github",   "url": "https://github.com/QwenLM/Qwen3"}
   ],
-  "description": "A 4-billion-parameter open language model from Alibaba's Qwen team..."
+  "description": "A 4-billion-parameter open language model..."
 }
 ```
 
@@ -400,24 +515,34 @@ For dataset items, also include a `subsets` field (emit `[]`):
 {
   "kind": "dataset",
   "formal_name": "allenai/dolma3_dolmino_mix-100B-1025",
-  "identity": {...},
-  "aliases": [...],
+  "identity": {"family": "Dolma 3", "size": "100B", "date": "1025"},
+  "aliases": ["dolma3-dolmino-mix-100B-1025"],
   "links": [...],
   "description": "...",
   "subsets": []
 }
 ```
 
+### Field requirements
+
 - `kind`: `"model"` or `"dataset"`. May be re-typed during URL
   resolution per "Kind correction".
-- `formal_name`: the HEAD-verified canonical identifier.
-- `identity`: dict whose keys are the family's `identity_keys`.
-  Must distinguish this item from every family sibling.
+- `formal_name`: human-readable canonical identifier. Entities
+  with HF URLs use `<owner>/<repo>`. Concepts use the bare
+  human-readable name.
+- `identity.family` (REQUIRED): the family / product line
+  identifier. Same value for every item in a group.
+- `identity` other facets: chosen per family. Family root has
+  ONLY `family`. Source-mentioned concepts and entities have
+  `family` plus whichever facets the source pinned.
 - `aliases`: deduped list of every original input surface form
-  that collapsed to this item. The `formal_name` itself goes
-  in `aliases` only if a source emitted it verbatim.
-- `links`: ordered list with primary canonical URL first.
-  Empty list means audit will revisit.
+  that collapsed to this item. ≥1 alias required (phantom items
+  are rejected).
+- `links`: list of URLs the item points at. Concept items
+  (including the family root) may have `links: []` or only
+  family-shared anchors (`paper`, `hf_collection`, `blog`).
+  Entities have ≥1 item-unique URL (`hf_model`, `hf_dataset`,
+  `vendor_docs`, or a dedicated `paper`/`github`).
 - `description`: comprehensive, neutral, target-independent. May
   be `null` if no card / paper could be fetched.
 - `subsets` (datasets only): emit as `[]`. The Python pass
@@ -429,18 +554,20 @@ For dataset items, also include a `subsets` field (emit `[]`):
 ```json
 {
   "family": "Qwen3",
-  "identity_keys": ["org", "collection", "size", "stage"],
+  "identity_keys": ["family", "size", "stage"],
   "items": [ ... ]
 }
 ```
 
-- `family`: a short label you choose. Pick the most recognizable
-  short form (the collection name in most cases).
-- `identity_keys`: the dimensions that vary across this family's
-  items. Pick from open vocabulary; common keys include `org`,
-  `collection`, `version`, `size`, `stage`, `date`,
-  `quantization`, `vendor`, `family`, `variant`. Don't force one
-  schema across unrelated families.
+- `family`: a short label, matches `items[].identity.family` for
+  all items in the group.
+- `identity_keys`: ordered list. **`family` MUST appear and MUST
+  be the first key.** The remaining keys are the dimensions that
+  vary across this family's leaves. Common keys include `size`,
+  `stage`, `date`, `version`, `variant`, `quantization`,
+  `harness`, `subset`, `org` (when family spans multiple orgs
+  like HumanEval published by both `openai` and `evalplus`).
+  Don't force one schema across unrelated families.
 
 ## Output
 
@@ -449,12 +576,22 @@ For dataset items, also include a `subsets` field (emit `[]`):
   "groups": [
     {
       "family": "Qwen3",
-      "identity_keys": ["org", "collection", "size", "stage"],
+      "identity_keys": ["family", "size", "stage"],
       "items": [
         {
           "kind": "model",
+          "formal_name": "Qwen3",
+          "identity": {"family": "Qwen3"},
+          "aliases": ["Qwen 3", "Qwen3"],
+          "links": [
+            {"kind": "paper", "url": "https://arxiv.org/abs/2509.18888"}
+          ],
+          "description": "Qwen3 is a family of open-weight language models..."
+        },
+        {
+          "kind": "model",
           "formal_name": "Qwen/Qwen3-4B",
-          "identity": {"org": "Qwen", "collection": "Qwen3", "size": "4B", "stage": "chat"},
+          "identity": {"family": "Qwen3", "size": "4B", "stage": "chat"},
           "aliases": ["Qwen3-4B", "Qwen 3 4B"],
           "links": [
             {"kind": "hf_model", "url": "https://huggingface.co/Qwen/Qwen3-4B"}
@@ -546,6 +683,15 @@ Walk every family with ≥ 2 items. For each, verify:
    an instruction dataset), they're different families even if
    their names share substrings.
 
+4. **Cross-family URL deduplication.** Scan items across ALL
+   families for shared `hf_model` / `hf_dataset` / `vendor_docs`
+   primary URLs. Two items in DIFFERENT families pointing at the
+   same canonical URL are a missed cross-bucket merge — pick the
+   family whose name matches the URL's namespace owner (e.g.,
+   `allenai/dolmino-mix-1124` belongs to family `Dolmino`, not
+   `OLMo 2`) and remove the others. Per-bucket subagents can't
+   see this; only the consolidation step catches it.
+
 For each split / merge, document briefly in `notes`.
 
 ## Subagent dispatch
@@ -555,11 +701,11 @@ The Task tool is available — subagents run as
 30-100 names per bucket.
 
 When dispatching, transcribe verbatim into each subagent's brief:
-- The "Valid node forms" section (the 3-form criterion + drop-
-  subsets rule).
+- The "Lattice structure" section (Entity / Concept / Subsumption
+  / Don't overmerge / Worked example).
 - The "Disambiguating-facets rule" section.
-- The "Web search and HEAD-verification" section (especially
-  step 3, content verification).
+- The "Resolution" section (especially Check 2, content
+  verification).
 - The "Link kinds" closed-vocabulary table.
 - The "Description writing" section.
 

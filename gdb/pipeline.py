@@ -565,20 +565,63 @@ def names_packet() -> dict:
     return {"names": [{"type": r["kind"], "name": r["name"]} for r in rows]}
 
 
-_LINK_KINDS = frozenset({
-    "hf_model", "hf_dataset", "hf_dataset_config", "hf_collection",
-    "github", "paper", "blog", "vendor_docs",
+# Production link kinds — pin a deployable artifact (HF release,
+# GitHub repo, vendor API model). Required on entity leaves.
+_PRODUCTION_LINK_KINDS = frozenset({
+    "hf_model", "hf_dataset", "github", "vendor_docs",
 })
+# Concept link kinds — describe a family / product line concept
+# (paper, blog, family-level HF collection page). Allowed on family
+# roots and intermediate concept items; never required.
+_CONCEPT_LINK_KINDS = frozenset({
+    "paper", "blog", "hf_collection", "hf_dataset_config",
+})
+_LINK_KINDS = _PRODUCTION_LINK_KINDS | _CONCEPT_LINK_KINDS
+
+
+def _is_family_root(identity: dict) -> bool:
+    """Return True iff identity carries exactly one key, `family` —
+    i.e., this item is the family root concept. The lattice's top."""
+    if not isinstance(identity, dict):
+        return False
+    return list(identity.keys()) == ["family"]
 
 
 def _validate_organize_artifact(artifact: dict) -> tuple[int, int]:
-    """Sanity-check the organize / audit artifact's groups+items shape
-    and return (group_count, item_count). Each item must carry a
-    `links` list (possibly empty — audit may drop empty-links items
-    after one more resolution attempt) and a `description` field
-    (string or null). When `links` is non-empty, the first entry's
-    `kind` must be one of the closed-vocabulary link kinds and `url`
-    must be an http(s) URL string."""
+    """Validate the organize / audit lattice shape and return
+    (group_count, item_count).
+
+    The validator is intentionally minimal — it checks structural
+    invariants only. Quality concerns (root mandate, production-vs-
+    concept link policy, missing descriptions, over-specification,
+    sibling collisions, multi-root groups) are reported as audit hints
+    by `gdb.subsets.flag_audit_issues` and resolved by the audit pass.
+
+    Required:
+
+    1. `groups[]` is a list; each entry is a dict with `items[]` list.
+    2. Every item has `identity.family` — a non-empty string.
+    3. All items in the same group share the same `identity.family`
+       value (sanity check against accidental cross-family bundling).
+    4. Every item has at least one alias (anti-phantom: phantom items
+       invented by HF org enumeration the input never named are
+       rejected).
+    5. `links`, when present and non-empty, has `links[0].kind` in the
+       closed vocabulary and `links[0].url` is an http(s) string.
+    6. `description`, when present, is `null` or a string.
+    7. `subsets`, when present, is a list of non-empty strings.
+    8. `display_name` (if present) is a non-empty string. `formal_name`
+       (legacy / always-present) is a non-empty string.
+
+    Not validated here (these are audit's responsibility):
+    - exactly one family root per group
+    - production-vs-concept link kind policy
+    - description content quality / completeness
+    - URL HEAD-check status
+    - over-specification (bare alias on specific leaf)
+    - sibling identity collision
+    - cross-org family judgment
+    """
     groups = artifact.get("groups") if isinstance(artifact, dict) else None
     if not isinstance(groups, list):
         raise click.ClickException("organize artifact missing groups[]")
@@ -589,100 +632,114 @@ def _validate_organize_artifact(artifact: dict) -> tuple[int, int]:
         items = group.get("items")
         if not isinstance(items, list):
             raise click.ClickException(f"groups[{i}].items is not a list")
+
+        family_value: str | None = None
+
         for j, item in enumerate(items):
+            where = f"groups[{i}].items[{j}]"
             if not isinstance(item, dict):
+                raise click.ClickException(f"{where} is not a dict")
+
+            identity = item.get("identity") or {}
+            if not isinstance(identity, dict):
+                raise click.ClickException(f"{where}.identity must be a dict")
+            family = identity.get("family")
+            if not isinstance(family, str) or not family.strip():
                 raise click.ClickException(
-                    f"groups[{i}].items[{j}] is not a dict"
+                    f"{where} formal_name={item.get('formal_name')!r} "
+                    "missing required `identity.family` "
+                    "(must be a non-empty string identifying the product line)"
                 )
-            if "links" not in item:
+            if family_value is None:
+                family_value = family
+            elif family_value != family:
                 raise click.ClickException(
-                    f"groups[{i}].items[{j}] missing required `links` field"
+                    f"{where} identity.family={family!r} differs from "
+                    f"sibling family={family_value!r} in same group; "
+                    "every item in a group must share the same family value"
                 )
-            links = item["links"]
-            if not isinstance(links, list):
-                raise click.ClickException(
-                    f"groups[{i}].items[{j}].links is not a list"
-                )
-            if links:
-                head = links[0]
-                if not isinstance(head, dict):
-                    raise click.ClickException(
-                        f"groups[{i}].items[{j}].links[0] is not a dict"
-                    )
-                kind = head.get("kind")
-                if kind not in _LINK_KINDS:
-                    raise click.ClickException(
-                        f"groups[{i}].items[{j}].links[0].kind={kind!r} "
-                        f"not in {sorted(_LINK_KINDS)}"
-                    )
-                url = head.get("url")
-                if not isinstance(url, str) or not url.startswith(
-                    ("http://", "https://")
-                ):
-                    raise click.ClickException(
-                        f"groups[{i}].items[{j}].links[0].url={url!r} "
-                        "must be an http(s) URL string"
-                    )
+
+            # Display + formal_name shape (display_name is the new
+            # human-readable label; formal_name is kept for back-compat
+            # and may equal display_name)
+            for fld in ("formal_name", "display_name"):
+                if fld in item and item[fld] is not None:
+                    val = item[fld]
+                    if not isinstance(val, str) or not val.strip():
+                        raise click.ClickException(
+                            f"{where}.{fld} must be a non-empty string"
+                        )
+
+            if "links" in item:
+                links = item["links"]
+                if not isinstance(links, list):
+                    raise click.ClickException(f"{where}.links must be a list")
+                if links:
+                    head = links[0]
+                    if not isinstance(head, dict):
+                        raise click.ClickException(
+                            f"{where}.links[0] is not a dict"
+                        )
+                    kind = head.get("kind")
+                    if kind not in _LINK_KINDS:
+                        raise click.ClickException(
+                            f"{where}.links[0].kind={kind!r} "
+                            f"not in {sorted(_LINK_KINDS)}"
+                        )
+                    url = head.get("url")
+                    if not isinstance(url, str) or not url.startswith(
+                        ("http://", "https://")
+                    ):
+                        raise click.ClickException(
+                            f"{where}.links[0].url={url!r} "
+                            "must be an http(s) URL string"
+                        )
+
             description = item.get("description")
             if description is not None and not isinstance(description, str):
                 raise click.ClickException(
-                    f"groups[{i}].items[{j}].description must be string or null"
+                    f"{where}.description must be string or null"
                 )
-            # subsets[] is only required on datasets, but we accept it on
-            # any item shape so audit-time augmentation doesn't trip a
-            # spurious model-side error.
+
             if "subsets" in item:
                 subsets = item["subsets"]
                 if not isinstance(subsets, list):
                     raise click.ClickException(
-                        f"groups[{i}].items[{j}].subsets must be a list"
+                        f"{where}.subsets must be a list"
                     )
                 for k, s in enumerate(subsets):
                     if not isinstance(s, str) or not s.strip():
                         raise click.ClickException(
-                            f"groups[{i}].items[{j}].subsets[{k}] "
-                            "must be a non-empty string"
+                            f"{where}.subsets[{k}] must be a non-empty string"
                         )
-            # Every item MUST trace to ≥1 real input surface form via
-            # aliases. Empty aliases signals a phantom item invented by
-            # the planner enumerating HF releases the input never named.
-            # The narrow exception is a family-concept root whose
-            # identity carries only broad keys (no size/stage/date/etc.).
+
             aliases = item.get("aliases") or []
+            if not isinstance(aliases, list):
+                raise click.ClickException(f"{where}.aliases must be a list")
             if not aliases:
-                identity = item.get("identity") or {}
-                broad_keys = {"org", "collection", "vendor", "family"}
-                if not _is_family_concept_root(identity, broad_keys):
-                    raise click.ClickException(
-                        f"groups[{i}].items[{j}] formal_name="
-                        f"{item.get('formal_name')!r} has empty aliases — "
-                        "every item must fold ≥1 real input surface form. "
-                        "Family-concept roots (identity only carrying "
-                        f"{sorted(broad_keys)}) are the only exception."
-                    )
+                raise click.ClickException(
+                    f"{where} formal_name={item.get('formal_name')!r} "
+                    "has empty aliases — every item must fold ≥1 real input "
+                    "surface form. Phantom items invented from HF org "
+                    "enumeration are not allowed."
+                )
+
         item_count += len(items)
     return len(groups), item_count
 
 
-def _is_family_concept_root(identity: dict, broad_keys: set[str]) -> bool:
-    """Return True iff `identity` carries only broad-vocabulary keys
-    (no size / stage / date / quantization / variant / subset / harness),
-    qualifying it as a family-concept root that may have empty aliases."""
-    if not isinstance(identity, dict):
-        return False
-    keys = set(identity.keys())
-    return bool(keys) and keys.issubset(broad_keys)
-
-
 def _count_link_stats(artifact: dict) -> dict:
-    """Tally link / description / kind stats across the artifact:
-    total items, items with >=1 link, items with a description, model
-    vs dataset counts, total links, link-kind histogram."""
+    """Tally link / description / kind / lattice-position stats across
+    the artifact: total items, items with >=1 link, items with a
+    description, model vs dataset counts, root vs leaf counts, total
+    links, link-kind histogram."""
     total_items = 0
     items_with_links = 0
     items_with_description = 0
     n_models = 0
     n_datasets = 0
+    n_family_roots = 0
+    n_entity_leaves = 0
     total_links = 0
     by_kind: dict[str, int] = {}
     for group in artifact.get("groups") or []:
@@ -698,6 +755,10 @@ def _count_link_stats(artifact: dict) -> dict:
                 n_models += 1
             elif kind == "dataset":
                 n_datasets += 1
+            if _is_family_root(item.get("identity") or {}):
+                n_family_roots += 1
+            else:
+                n_entity_leaves += 1
             for link in links:
                 if not isinstance(link, dict):
                     continue
@@ -712,6 +773,8 @@ def _count_link_stats(artifact: dict) -> dict:
         "items_without_description": total_items - items_with_description,
         "n_models": n_models,
         "n_datasets": n_datasets,
+        "n_family_roots": n_family_roots,
+        "n_entity_leaves": n_entity_leaves,
         "total_links": total_links,
         "links_by_kind": by_kind,
     }
@@ -736,16 +799,22 @@ def run_organize(
         run_id = new_run("organize", label="organize:ingest")
         used = Path(artifact_path).resolve()
         artifact = read_json(str(used))
+        # Structural completion (idempotent) before validation
+        from .subsets import complete_lattice_structure
+        completion_stats = complete_lattice_structure(artifact)
+        atomic_write_json(used, artifact)
         group_count, item_count = _validate_organize_artifact(artifact)
         link_stats = _count_link_stats(artifact)
         close_run(run_id, {
             "artifact_path": str(used),
             "group_count": group_count,
             "item_count": item_count,
+            "completion": completion_stats,
             **link_stats,
         })
         return {"run_id": run_id, "artifact_path": str(used),
                 "group_count": group_count, "item_count": item_count,
+                "completion": completion_stats,
                 **link_stats}
 
     run_id = new_run("organize", label="organize")
@@ -767,16 +836,25 @@ def run_organize(
     if spawn["exit_code"] != 0 or not artifact_out.exists():
         raise click.ClickException(f"organize failed; logs at {spawn['log_dir']}")
     artifact = read_json(str(artifact_out))
+    # Structural completion before validation: ensure every item's
+    # formal_name is in aliases[], synthesize a virtual family root
+    # for any group missing one. The on-disk artifact is the
+    # post-completion lattice.
+    from .subsets import complete_lattice_structure
+    completion_stats = complete_lattice_structure(artifact)
+    atomic_write_json(artifact_out, artifact)
     group_count, item_count = _validate_organize_artifact(artifact)
     link_stats = _count_link_stats(artifact)
     close_run(run_id, {
         "artifact_path": str(artifact_out),
         "group_count": group_count,
         "item_count": item_count,
+        "completion": completion_stats,
         **link_stats,
     })
     return {"run_id": run_id, "artifact_path": str(artifact_out),
             "group_count": group_count, "item_count": item_count,
+            "completion": completion_stats,
             **link_stats}
 
 
@@ -834,6 +912,10 @@ def run_audit(
         run_id = new_run("audit", label="audit:ingest")
         used = Path(artifact_path).resolve()
         artifact = read_json(str(used))
+        # Expand hidden concepts by facet projection (idempotent).
+        from .subsets import expand_concept_lattice
+        expansion_stats = expand_concept_lattice(artifact)
+        atomic_write_json(used, artifact)
         group_count, item_count = _validate_organize_artifact(artifact)
         link_stats = _count_link_stats(artifact)
         close_run(run_id, {
@@ -841,10 +923,12 @@ def run_audit(
             "group_count": group_count,
             "item_count": item_count,
             "notes": _short_notes(artifact),
+            "expansion": expansion_stats,
             **link_stats,
         })
         return {"run_id": run_id, "artifact_path": str(used),
                 "group_count": group_count, "item_count": item_count,
+                "expansion": expansion_stats,
                 **link_stats}
 
     source_artifact_path = (
@@ -861,14 +945,44 @@ def run_audit(
     # restore matches as child items. The pre-processed lattice is
     # what the LLM auditor sees.
     pre_processed = read_json(str(source_artifact_path))
+    # Build the input-names set so family_root_invented_alias can fire
+    # for roots whose aliases don't trace back to input.
     try:
-        from .subsets import populate_then_flag
-        subset_stats = populate_then_flag(pre_processed)
+        input_names_set = {n["name"] for n in names_packet().get("names", [])
+                           if isinstance(n, dict) and isinstance(n.get("name"), str)}
+    except Exception:
+        input_names_set = None
+    try:
+        from .subsets import populate_then_flag, expand_concept_lattice
+        subset_stats = populate_then_flag(pre_processed,
+                                          input_names_set=input_names_set)
+        # Expand hidden concepts BEFORE audit so the auditor sees the
+        # full interior lattice (synthesized concept nodes are flagged
+        # `_generated: true`). Audit can then merge source-mentioned
+        # aliases onto matching synthesized concepts (clearing the flag)
+        # or drop redundant ones.
+        pre_expansion_stats = expand_concept_lattice(pre_processed)
     except Exception as exc:  # network / parse failures shouldn't block audit
         subset_stats = {"populate": {"error": str(exc)},
                         "restore": {"error": str(exc)}}
+        pre_expansion_stats = {"concepts_synthesized": 0, "error": str(exc)}
     pre_processed_path = run_root / "audit_input_with_subsets.json"
     atomic_write_json(pre_processed_path, pre_processed)
+
+    # Phase 2: materialize all batches into one directory so audit can
+    # re-read the original sources (paper PDFs, model cards, code repos)
+    # for over-specification checks and source-grounded edits. Each batch
+    # gets its own subdir to preserve provenance.
+    batches_dir = run_root / "batches"
+    batches_dir.mkdir(parents=True, exist_ok=True)
+    batch_ids_for_audit = [
+        row["id"] for row in all_rows("SELECT id FROM batches ORDER BY created_at")
+    ]
+    for bid in batch_ids_for_audit:
+        try:
+            materialize_batch(bid, batches_dir / bid)
+        except Exception:
+            pass
 
     artifact_out = run_root / config.AUDIT_ARTIFACT_FILE
     prompt = render_prompt("audit", {
@@ -876,6 +990,7 @@ def run_audit(
         "organize_path": str(pre_processed_path),
         "input_path": str(pre_processed_path),
         "artifact_path": str(artifact_out),
+        "batches_dir": str(batches_dir),
         "worker_dir": str(run_root / config.WORKERS_SUBDIR),
         "planner_model": planner_model,
         "subagent_model": subagent_model or planner_model,
@@ -884,6 +999,11 @@ def run_audit(
     if spawn["exit_code"] != 0 or not artifact_out.exists():
         raise click.ClickException(f"audit failed; logs at {spawn['log_dir']}")
     artifact = read_json(str(artifact_out))
+    # Post-audit: expand_concept_lattice runs again — idempotent. Pre-pass
+    # already synthesized interior concepts; this catches any new gaps if
+    # audit added entities the pre-pass didn't see.
+    post_expansion_stats = expand_concept_lattice(artifact)
+    atomic_write_json(artifact_out, artifact)
     group_count, item_count = _validate_organize_artifact(artifact)
     link_stats = _count_link_stats(artifact)
     close_run(run_id, {
@@ -891,6 +1011,8 @@ def run_audit(
         "source_artifact_path": str(source_artifact_path),
         "pre_processed_path": str(pre_processed_path),
         "subset_stats": subset_stats,
+        "pre_expansion": pre_expansion_stats,
+        "post_expansion": post_expansion_stats,
         "group_count": group_count,
         "item_count": item_count,
         "notes": _short_notes(artifact),
@@ -899,6 +1021,8 @@ def run_audit(
     return {"run_id": run_id, "artifact_path": str(artifact_out),
             "group_count": group_count, "item_count": item_count,
             "subset_stats": subset_stats,
+            "pre_expansion": pre_expansion_stats,
+            "post_expansion": post_expansion_stats,
             **link_stats}
 
 
@@ -927,6 +1051,60 @@ RELATION_DEPENDENCY_KIND = {
 }
 # Closed vocabulary for `dependency_kind`.
 DEPENDENCY_KIND_VALUES = ("direct", "indirect")
+
+
+_VIRTUAL_ADDRESS_RE = __import__("re").compile(
+    r"^(?P<family>[^\[]+?)\s*\[(?P<facets>[^\[\]]*)\]$"
+)
+
+
+def parse_virtual_address(s: str) -> tuple[str, dict[str, str]] | None:
+    """Parse a virtual concept address `<family> [<k>=<v>, ...]` into
+    (family, {facet: value}). Returns None if the string is not a
+    virtual address.
+
+    Examples:
+        "OLMo 3 [stage=Base]"       → ("OLMo 3", {"stage": "Base"})
+        "Qwen3 [size=4B, stage=Base]" → ("Qwen3", {"size": "4B", "stage": "Base"})
+        "olmOCR [version=v1]"       → ("olmOCR", {"version": "v1"})
+        "allenai/Olmo-3-1025-7B"    → None  (no brackets)
+    """
+    if not isinstance(s, str):
+        return None
+    m = _VIRTUAL_ADDRESS_RE.match(s.strip())
+    if not m:
+        return None
+    family = m.group("family").strip()
+    facets_raw = m.group("facets").strip()
+    facets: dict[str, str] = {}
+    if facets_raw:
+        for piece in facets_raw.split(","):
+            piece = piece.strip()
+            if not piece:
+                continue
+            if "=" not in piece:
+                return None
+            k, _, v = piece.partition("=")
+            k = k.strip()
+            v = v.strip()
+            if not k or not v:
+                return None
+            facets[k] = v
+    if not family:
+        return None
+    return family, facets
+
+
+def _lattice_family_names(lattice_artifact: dict) -> set[str]:
+    """Return the set of `identity.family` values across all items."""
+    out: set[str] = set()
+    for group in lattice_artifact.get("groups") or []:
+        for item in group.get("items") or []:
+            ident = item.get("identity") or {}
+            fam = ident.get("family") if isinstance(ident, dict) else None
+            if isinstance(fam, str) and fam:
+                out.add(fam)
+    return out
 
 
 def _is_snake_case_label(value: object) -> bool:
@@ -969,7 +1147,8 @@ def _validate_anchor_list(anchors: object, where: str) -> None:
 
 
 def _validate_relate_artifact(artifact: dict, *,
-                              lattice_formal_names: set[str] | None = None
+                              lattice_formal_names: set[str] | None = None,
+                              lattice_family_names: set[str] | None = None,
                               ) -> dict:
     """Sanity-check the assembled relate artifact's shape. Returns:
 
@@ -1056,11 +1235,24 @@ def _validate_relate_artifact(artifact: dict, *,
             subject = edge.get("subject")
             if not isinstance(subject, str) or not subject.strip():
                 raise click.ClickException(f"{where}.subject is missing")
-            if (lattice_formal_names is not None
-                    and subject not in lattice_formal_names):
-                raise click.ClickException(
-                    f"{where}.subject {subject!r} is not a lattice formal_name"
-                )
+            if lattice_formal_names is not None and subject not in lattice_formal_names:
+                # Subject may also be a virtual concept address
+                # `<family> [<k>=<v>, ...]`. Accept it if the family
+                # name pivots to a known lattice family.
+                virt = parse_virtual_address(subject)
+                if virt is None:
+                    raise click.ClickException(
+                        f"{where}.subject {subject!r} is not a lattice "
+                        "formal_name and not a virtual concept address "
+                        "(format: '<family> [<facet>=<value>, ...]')"
+                    )
+                fam_name, _facets = virt
+                if (lattice_family_names is not None
+                        and fam_name not in lattice_family_names):
+                    raise click.ClickException(
+                        f"{where}.subject virtual address pivots to unknown "
+                        f"family {fam_name!r}; not in lattice"
+                    )
 
             relation = edge.get("relation")
             if not _is_snake_case_label(relation):
@@ -1087,9 +1279,19 @@ def _validate_relate_artifact(artifact: dict, *,
                 raise click.ClickException(
                     f"{where}.object must be a non-empty string"
                 )
-            if (lattice_formal_names is not None
-                    and obj not in lattice_formal_names):
-                off_lattice += 1
+            if lattice_formal_names is not None and obj not in lattice_formal_names:
+                # Object may also be a virtual concept address — that's
+                # still on-lattice (its family pivot resolves). Only
+                # count as off-lattice if neither formal_name nor
+                # virtual address resolves to a known family.
+                virt = parse_virtual_address(obj)
+                fam_resolves = (
+                    virt is not None
+                    and (lattice_family_names is None
+                         or virt[0] in lattice_family_names)
+                )
+                if not fam_resolves:
+                    off_lattice += 1
 
             edge_desc = edge.get("description")
             if not isinstance(edge_desc, str) or not edge_desc.strip():
@@ -1198,6 +1400,7 @@ def commit_relations_artifact(
     run_id: str | None = None,
     artifact_path: Path | None = None,
     lattice_formal_names: set[str] | None = None,
+    lattice_family_names: set[str] | None = None,
 ) -> dict:
     """Validate a relate artifact and record it as a per-batch
     artifact. No DB rows for individual operations or relations —
@@ -1209,7 +1412,9 @@ def commit_relations_artifact(
     introduced this batch.
     """
     stats = _validate_relate_artifact(
-        artifact, lattice_formal_names=lattice_formal_names
+        artifact,
+        lattice_formal_names=lattice_formal_names,
+        lattice_family_names=lattice_family_names,
     )
     if batch_id and artifact_path:
         with db() as conn:
@@ -1268,6 +1473,7 @@ def run_relate(
     # mentions; the planner should not be deprived of extracted-but-
     # unlinkable entities.
     formal_names = _lattice_formal_names(lattice_artifact)
+    family_names = _lattice_family_names(lattice_artifact)
     n_total = sum(len(g.get("items") or []) for g in lattice_artifact.get("groups") or [])
     n_linked = sum(
         1 for g in lattice_artifact.get("groups") or []
@@ -1331,6 +1537,7 @@ def run_relate(
                 run_id=run_id,
                 artifact_path=artifact_out,
                 lattice_formal_names=formal_names,
+                lattice_family_names=family_names,
             )
         except click.ClickException as exc:
             return {"batch_id": bid, "status": "failed",
@@ -1360,7 +1567,363 @@ def run_relate(
 
 
 # ---------------------------------------------------------------------------
-# Stage 6 — triage (one planner classifies upstream nodes)
+# Stage 6 — reconcile (pure-Python lattice-aware merge of relate edges)
+# ---------------------------------------------------------------------------
+
+
+def _identity_for_address(address: str, lattice: dict) -> dict[str, str] | None:
+    """Resolve an edge endpoint string to its identity dict.
+
+    - Lattice formal_name → return that item's identity dict.
+    - Virtual concept address `<family> [<k>=<v>, ...]` → return
+      `{family: <name>, **<facets>}`.
+    - Free-text → return None (off-lattice).
+    """
+    if not isinstance(address, str) or not address:
+        return None
+    # Try formal_name lookup first
+    for grp in lattice.get("groups") or []:
+        for it in grp.get("items") or []:
+            if it.get("formal_name") == address:
+                ident = it.get("identity") or {}
+                return dict(ident) if isinstance(ident, dict) else None
+    # Virtual concept address
+    virt = parse_virtual_address(address)
+    if virt is None:
+        return None
+    fam, facets = virt
+    out: dict[str, str] = {"family": fam}
+    out.update(facets)
+    return out
+
+
+def _identity_subsumes(parent: dict, child: dict) -> bool:
+    """Return True iff `parent` ⊑ `child` (parent identity is a subset
+    of child identity — every key-value pair in parent appears in child).
+    Equivalent to: child is more specific than parent (or equal).
+
+    Required for both endpoints to share `family` (otherwise there's no
+    lineage relationship — they're in different families).
+    """
+    if not isinstance(parent, dict) or not isinstance(child, dict):
+        return False
+    if parent.get("family") != child.get("family"):
+        return False
+    for k, v in parent.items():
+        if child.get(k) != v:
+            return False
+    return True
+
+
+def _edge_subsumes(parent_edge: dict, child_edge: dict, lattice: dict) -> bool:
+    """An edge subsumes another iff:
+    - Same `relation` and `dependency_kind`.
+    - Subject identity of parent ⊑ subject identity of child.
+    - Object identity of parent ⊑ object identity of child.
+    """
+    if parent_edge.get("relation") != child_edge.get("relation"):
+        return False
+    if parent_edge.get("dependency_kind") != child_edge.get("dependency_kind"):
+        return False
+    s1 = _identity_for_address(parent_edge.get("subject", ""), lattice)
+    s2 = _identity_for_address(child_edge.get("subject", ""), lattice)
+    if s1 is None or s2 is None or not _identity_subsumes(s1, s2):
+        return False
+    o1 = _identity_for_address(parent_edge.get("object", ""), lattice)
+    o2 = _identity_for_address(child_edge.get("object", ""), lattice)
+    if o1 is None or o2 is None or not _identity_subsumes(o1, o2):
+        return False
+    # Equal endpoints aren't subsumption — they're corroboration.
+    if s1 == s2 and o1 == o2:
+        return False
+    return True
+
+
+def _edge_siblings_conflict(e1: dict, e2: dict, lattice: dict) -> bool:
+    """Two edges are sibling conflicts if:
+    - Same relation, dependency_kind.
+    - Same subject identity (verbatim).
+    - Object identities share family but differ on at least one
+      facet AND neither object subsumes the other (siblings, not
+      ancestor/descendant).
+    """
+    if e1.get("relation") != e2.get("relation"):
+        return False
+    if e1.get("dependency_kind") != e2.get("dependency_kind"):
+        return False
+    s1 = _identity_for_address(e1.get("subject", ""), lattice)
+    s2 = _identity_for_address(e2.get("subject", ""), lattice)
+    if s1 is None or s2 is None or s1 != s2:
+        return False
+    o1 = _identity_for_address(e1.get("object", ""), lattice)
+    o2 = _identity_for_address(e2.get("object", ""), lattice)
+    if o1 is None or o2 is None:
+        return False
+    if o1.get("family") != o2.get("family"):
+        return False
+    # Same identity → not a conflict, that's corroboration.
+    if o1 == o2:
+        return False
+    # If one subsumes the other → that's subsumption, not conflict.
+    if _identity_subsumes(o1, o2) or _identity_subsumes(o2, o1):
+        return False
+    return True
+
+
+def _all_relate_edges(relate_artifacts: list[dict]) -> list[dict]:
+    """Flatten edges across all per-batch relate artifacts. Each edge
+    is annotated with its source batch_id and event description."""
+    out: list[dict] = []
+    for art in relate_artifacts:
+        bid = art.get("batch_id")
+        for op in art.get("operations") or []:
+            if not isinstance(op, dict):
+                continue
+            event_desc = op.get("description")
+            event_anchors = op.get("anchor_list") or []
+            for edge in op.get("edges") or []:
+                if not isinstance(edge, dict):
+                    continue
+                out.append({
+                    **edge,
+                    "_batch_id": bid,
+                    "_event_description": event_desc,
+                    "_event_anchor_list": list(event_anchors),
+                })
+    return out
+
+
+def _reconcile_edges(edges: list[dict], lattice: dict) -> dict:
+    """Pure-Python reconciliation:
+
+    1. **Corroboration** — group edges by (subject, relation, object).
+       Within each group, accumulate `anchor_list[]` from all sources;
+       if descriptions differ, keep both as `description_variants[]`.
+    2. **Subsumption** — for each pair of corroboration-merged edges
+       sharing relation+dep_kind, if one's endpoints lattice-subsume
+       the other's, mark the vague edge as subsumed by the specific.
+       The specific edge keeps both anchor sets; the vague edge's
+       `subsumed_by` field points at the specific.
+    3. **Conflict** — for sibling-endpoint pairs (same subject + relation,
+       different but not subsumption-related objects in same family),
+       record in `conflicts[]` for human review.
+    """
+    # Phase 1: corroboration. Bucket by (subject, relation, dep_kind, object).
+    bucket: dict[tuple[str, str, str, str], dict] = {}
+    for edge in edges:
+        key = (
+            edge.get("subject") or "",
+            edge.get("relation") or "",
+            edge.get("dependency_kind") or "",
+            edge.get("object") or "",
+        )
+        if key not in bucket:
+            bucket[key] = {
+                "subject": edge.get("subject"),
+                "relation": edge.get("relation"),
+                "dependency_kind": edge.get("dependency_kind"),
+                "object": edge.get("object"),
+                "description": edge.get("description"),
+                "description_variants": [],
+                "anchor_list": list(edge.get("anchor_list") or []),
+                "source_batch_ids": [],
+                "corroboration_count": 0,
+                "subsumed_by": None,
+                "subsumes": [],
+            }
+            if edge.get("_batch_id"):
+                bucket[key]["source_batch_ids"].append(edge["_batch_id"])
+            bucket[key]["corroboration_count"] = 1
+            continue
+        target = bucket[key]
+        target["corroboration_count"] += 1
+        bid = edge.get("_batch_id")
+        if bid and bid not in target["source_batch_ids"]:
+            target["source_batch_ids"].append(bid)
+        for anc in edge.get("anchor_list") or []:
+            target["anchor_list"].append(anc)
+        this_desc = edge.get("description")
+        if (this_desc and target["description"]
+                and this_desc != target["description"]
+                and this_desc not in target["description_variants"]):
+            target["description_variants"].append(this_desc)
+
+    merged_edges = list(bucket.values())
+
+    # Phase 2: subsumption. For each pair of edges, if one subsumes the
+    # other, mark the vague one as subsumed.
+    for i, e_i in enumerate(merged_edges):
+        for j, e_j in enumerate(merged_edges):
+            if i == j:
+                continue
+            # If e_i subsumes (= is more general than) e_j, then e_i is
+            # subsumed BY e_j (the more specific one).
+            if _edge_subsumes(e_i, e_j, lattice):
+                e_i["subsumed_by"] = (
+                    e_j.get("subject"),
+                    e_j.get("relation"),
+                    e_j.get("object"),
+                )
+                e_j["subsumes"].append((
+                    e_i.get("subject"),
+                    e_i.get("relation"),
+                    e_i.get("object"),
+                ))
+                # Push e_i's anchors onto e_j too — the specific edge
+                # inherits the vague edge's evidence.
+                for anc in e_i["anchor_list"]:
+                    e_j["anchor_list"].append(anc)
+
+    # Phase 3: conflicts. Sibling endpoints (same subject + relation,
+    # different objects in same family, neither subsumes the other).
+    conflicts: list[dict] = []
+    seen_conflict_keys: set[frozenset] = set()
+    for i, e_i in enumerate(merged_edges):
+        for j, e_j in enumerate(merged_edges):
+            if i >= j:
+                continue
+            if _edge_siblings_conflict(e_i, e_j, lattice):
+                key = frozenset({
+                    (e_i.get("subject"), e_i.get("relation"), e_i.get("object")),
+                    (e_j.get("subject"), e_j.get("relation"), e_j.get("object")),
+                })
+                if key in seen_conflict_keys:
+                    continue
+                seen_conflict_keys.add(key)
+                conflicts.append({
+                    "subject": e_i.get("subject"),
+                    "relation": e_i.get("relation"),
+                    "object_a": e_i.get("object"),
+                    "object_b": e_j.get("object"),
+                    "anchors_a": list(e_i.get("anchor_list") or []),
+                    "anchors_b": list(e_j.get("anchor_list") or []),
+                })
+
+    # Drop tuples to plain dicts for JSON-friendliness
+    def _tup_to_dict(t):
+        if t is None:
+            return None
+        return {"subject": t[0], "relation": t[1], "object": t[2]}
+
+    for e in merged_edges:
+        e["subsumed_by"] = _tup_to_dict(e["subsumed_by"])
+        e["subsumes"] = [_tup_to_dict(t) for t in e["subsumes"]]
+
+    # Counters
+    canonical_edges = [e for e in merged_edges if e["subsumed_by"] is None]
+    subsumed_edges = [e for e in merged_edges if e["subsumed_by"] is not None]
+    return {
+        "edges": merged_edges,
+        "canonical_edge_count": len(canonical_edges),
+        "subsumed_edge_count": len(subsumed_edges),
+        "total_edge_count": len(merged_edges),
+        "corroboration_count": sum(
+            1 for e in merged_edges if e["corroboration_count"] > 1
+        ),
+        "conflict_count": len(conflicts),
+        "conflicts": conflicts,
+    }
+
+
+def run_reconcile(
+    *,
+    artifact_path: str | None = None,
+    lattice_path: str | None = None,
+    relations_path: str | None = None,
+) -> dict:
+    """Pure-Python reconciliation pass after relate.
+
+    Inputs (resolved automatically when not passed):
+    - lattice: most recent organize/audit artifact
+    - relate artifacts: every per-batch relate artifact registered in
+      batch_artifacts (stage='relate', status='complete')
+
+    Outputs the reconciled artifact at
+    `<run_root>/reconcile_artifact.json` with shape:
+        {
+          "edges": [<merged edge with subsumed_by/subsumes/corroboration_count>, ...],
+          "conflicts": [...],
+          "canonical_edge_count": int,
+          "subsumed_edge_count": int,
+          "corroboration_count": int,
+          "conflict_count": int
+        }
+
+    With `--artifact`, ingest a pre-computed reconcile artifact for
+    shape validation only.
+    """
+    if artifact_path:
+        run_id = new_run("reconcile", label="reconcile:ingest")
+        used = Path(artifact_path).resolve()
+        artifact = read_json(str(used))
+        if not isinstance(artifact, dict) or "edges" not in artifact:
+            raise click.ClickException("reconcile artifact missing 'edges'")
+        close_run(run_id, {
+            "artifact_path": str(used),
+            "total_edge_count": len(artifact.get("edges") or []),
+            "conflict_count": len(artifact.get("conflicts") or []),
+        })
+        return {"run_id": run_id, "artifact_path": str(used),
+                "total_edge_count": len(artifact.get("edges") or []),
+                "conflict_count": len(artifact.get("conflicts") or [])}
+
+    source_lattice_path = (
+        Path(lattice_path).resolve() if lattice_path
+        else _latest_lattice_artifact_path()
+    )
+    lattice = read_json(str(source_lattice_path))
+
+    if relations_path:
+        relate_artifacts = [read_json(relations_path)]
+    else:
+        rows = all_rows(
+            "SELECT batch_id, artifact_path FROM batch_artifacts "
+            "WHERE stage='relate' AND status='complete'"
+        )
+        if not rows:
+            raise click.ClickException(
+                "no relate artifacts found; run `gdb run relate` first"
+            )
+        relate_artifacts = []
+        for row in rows:
+            path = Path(row["artifact_path"])
+            if path.exists():
+                relate_artifacts.append(read_json(str(path)))
+
+    edges = _all_relate_edges(relate_artifacts)
+    result = _reconcile_edges(edges, lattice)
+
+    run_id = new_run("reconcile", label="reconcile",
+                     seed=str(source_lattice_path))
+    run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
+    run_root.mkdir(parents=True, exist_ok=True)
+    artifact_out = run_root / config.RECONCILE_ARTIFACT_FILE
+    atomic_write_json(artifact_out, result)
+
+    close_run(run_id, {
+        "artifact_path": str(artifact_out),
+        "lattice_path": str(source_lattice_path),
+        "input_edge_count": len(edges),
+        "total_edge_count": result["total_edge_count"],
+        "canonical_edge_count": result["canonical_edge_count"],
+        "subsumed_edge_count": result["subsumed_edge_count"],
+        "corroboration_count": result["corroboration_count"],
+        "conflict_count": result["conflict_count"],
+    })
+    return {
+        "run_id": run_id,
+        "artifact_path": str(artifact_out),
+        "input_edge_count": len(edges),
+        "total_edge_count": result["total_edge_count"],
+        "canonical_edge_count": result["canonical_edge_count"],
+        "subsumed_edge_count": result["subsumed_edge_count"],
+        "corroboration_count": result["corroboration_count"],
+        "conflict_count": result["conflict_count"],
+    }
+
+
+# ---------------------------------------------------------------------------
+# Stage 7 — triage (one planner classifies upstream nodes)
 # ---------------------------------------------------------------------------
 
 
@@ -1775,4 +2338,9 @@ def run_expand(
         out["stages"]["relate"] = run_relate(
             planner_model=planner_model, subagent_model=subagent_model,
         )
+    if "reconcile" not in skip:
+        try:
+            out["stages"]["reconcile"] = run_reconcile()
+        except click.ClickException as exc:
+            out["stages"]["reconcile"] = {"status": "skipped", "reason": str(exc)}
     return out

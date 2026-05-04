@@ -17,7 +17,8 @@ def test_render_prompts_have_no_unfilled_placeholders(fresh_runtime):
         "workspace_dir": "/w", "worker_dir": "/w/workers",
         "artifact_path": "/a.json", "input_path": "/i.json",
         "names_path": "/n.json", "batch_id": "b",
-        "batch_dir": "/b", "organize_path": "/o.json",
+        "batch_dir": "/b", "batches_dir": "/bs",
+        "organize_path": "/o.json",
         "lattice_path": "/l.json", "relations_path": "/r.json",
         "planner_model": "opus", "subagent_model": "sonnet",
     }
@@ -105,7 +106,7 @@ def test_names_packet_dedups_kind_and_name_only(fresh_runtime):
 def test_run_organize_ingests_artifact_path(fresh_runtime, tmp_path):
     """An organize run records only the artifact path + counts in the
     run row's attrs. The artifact itself stays on disk, not duplicated
-    in the DB."""
+    in the DB. Each group has a family root + entity leaves."""
     from gdb.pipeline import run_organize
     from gdb.store import all_rows, loads
 
@@ -113,13 +114,23 @@ def test_run_organize_ingests_artifact_path(fresh_runtime, tmp_path):
         "groups": [
             {
                 "family": "Qwen3",
-                "identity_keys": ["org", "collection", "size", "stage"],
+                "identity_keys": ["family", "size", "stage"],
                 "items": [
                     {
                         "kind": "model",
+                        "formal_name": "Qwen3",
+                        "identity": {"family": "Qwen3"},
+                        "aliases": ["Qwen 3", "Qwen3"],
+                        "links": [
+                            {"kind": "paper",
+                             "url": "https://arxiv.org/abs/2509.18888"},
+                        ],
+                        "description": "The Qwen3 family of open-weight language models.",
+                    },
+                    {
+                        "kind": "model",
                         "formal_name": "Qwen/Qwen3-4B-Base",
-                        "identity": {"org": "Qwen", "collection": "Qwen3",
-                                     "size": "4B", "stage": "Base"},
+                        "identity": {"family": "Qwen3", "size": "4B", "stage": "Base"},
                         "aliases": ["Qwen3-4B-Base", "qwen3-4b-base"],
                         "links": [
                             {"kind": "hf_model",
@@ -130,8 +141,7 @@ def test_run_organize_ingests_artifact_path(fresh_runtime, tmp_path):
                     {
                         "kind": "model",
                         "formal_name": "Qwen/Qwen3-7B-Instruct",
-                        "identity": {"org": "Qwen", "collection": "Qwen3",
-                                     "size": "7B", "stage": "Instruct"},
+                        "identity": {"family": "Qwen3", "size": "7B", "stage": "Instruct"},
                         "aliases": ["Qwen3-7B-Instruct", "Qwen 3 7B Instruct",
                                     "qwen3-7b-instruct"],
                         "links": [
@@ -146,18 +156,32 @@ def test_run_organize_ingests_artifact_path(fresh_runtime, tmp_path):
             },
             {
                 "family": "MMLU",
-                "identity_keys": ["family", "subset"],
+                "identity_keys": ["family"],
                 "items": [
                     {
                         "kind": "dataset",
                         "formal_name": "cais/mmlu",
-                        "identity": {"family": "MMLU"},
+                        # MMLU happens to have only one canonical release; the
+                        # leaf and the root collapse — but we still need a
+                        # distinct family root, so we model it with a paper anchor.
+                        "identity": {"family": "MMLU", "org": "cais"},
                         "aliases": ["MMLU"],
                         "links": [
                             {"kind": "hf_dataset",
                              "url": "https://huggingface.co/datasets/cais/mmlu"},
                         ],
                         "description": "Massive Multitask Language Understanding benchmark.",
+                    },
+                    {
+                        "kind": "dataset",
+                        "formal_name": "MMLU",
+                        "identity": {"family": "MMLU"},
+                        "aliases": ["MMLU"],
+                        "links": [
+                            {"kind": "paper",
+                             "url": "https://arxiv.org/abs/2009.03300"},
+                        ],
+                        "description": "MMLU benchmark family root.",
                     },
                 ],
             },
@@ -168,20 +192,21 @@ def test_run_organize_ingests_artifact_path(fresh_runtime, tmp_path):
 
     result = run_organize(artifact_path=str(artifact_path))
     assert result["group_count"] == 2
-    assert result["item_count"] == 3
-    assert result["items_with_links"] == 3
-    assert result["total_links"] == 4
+    assert result["item_count"] == 5
+    assert result["items_with_links"] == 5
+    assert result["n_family_roots"] == 2
+    assert result["n_entity_leaves"] == 3
     assert result["links_by_kind"]["hf_model"] == 2
     assert result["links_by_kind"]["hf_dataset"] == 1
-    assert result["links_by_kind"]["paper"] == 1
+    assert result["links_by_kind"]["paper"] == 3
     assert Path(result["artifact_path"]).read_text() == artifact_path.read_text()
 
     rows = all_rows("SELECT id, attrs FROM runs WHERE stage='organize'")
     assert len(rows) == 1
     attrs = loads(rows[0]["attrs"])
     assert attrs["group_count"] == 2
-    assert attrs["item_count"] == 3
-    assert attrs["items_with_links"] == 3
+    assert attrs["item_count"] == 5
+    assert attrs["n_family_roots"] == 2
     assert Path(attrs["artifact_path"]).exists()
 
 
@@ -202,25 +227,39 @@ def test_run_organize_rejects_artifact_missing_required_lists(fresh_runtime, tmp
         run_organize(artifact_path=str(bad_items))
 
 
-def test_run_organize_rejects_item_missing_links_field(fresh_runtime, tmp_path):
-    """Each item must carry a `links` array (possibly empty). Missing
-    the field outright is a structural failure."""
-    import click
-    import pytest
+def _root_only_group(family="X"):
+    """Helper: a minimal valid group with only a family root."""
+    return {
+        "family": family,
+        "identity_keys": ["family"],
+        "items": [{
+            "kind": "model",
+            "formal_name": family,
+            "identity": {"family": family},
+            "aliases": [family],
+            "links": [],
+            "description": None,
+        }],
+    }
 
+
+def test_run_organize_allows_missing_links_field(fresh_runtime, tmp_path):
+    """The `links` field is optional. When absent, treated as empty.
+    Audit fills in tentative URLs and verifies them."""
     from gdb.pipeline import run_organize
 
     no_links = tmp_path / "no_links.json"
     no_links.write_text(json.dumps({
         "groups": [{
             "family": "X",
-            "identity_keys": ["org"],
-            "items": [{"kind": "model", "formal_name": "X/Y",
-                       "identity": {"org": "X"}, "aliases": []}],
+            "identity_keys": ["family"],
+            "items": [{"kind": "model", "formal_name": "X",
+                       "identity": {"family": "X"}, "aliases": ["X"]}],
         }],
     }))
-    with pytest.raises(click.ClickException, match="links"):
-        run_organize(artifact_path=str(no_links))
+    result = run_organize(artifact_path=str(no_links))
+    assert result["item_count"] == 1
+    assert result["items_with_links"] == 0
 
 
 def test_run_organize_rejects_invalid_link_kind(fresh_runtime, tmp_path):
@@ -234,10 +273,10 @@ def test_run_organize_rejects_invalid_link_kind(fresh_runtime, tmp_path):
     bad_kind.write_text(json.dumps({
         "groups": [{
             "family": "X",
-            "identity_keys": ["org"],
+            "identity_keys": ["family"],
             "items": [{
-                "kind": "model", "formal_name": "X/Y",
-                "identity": {"org": "X"}, "aliases": [],
+                "kind": "model", "formal_name": "X",
+                "identity": {"family": "X"}, "aliases": ["X"],
                 "links": [{"kind": "twitter_thread",
                            "url": "https://twitter.com/x/status/1"}],
                 "description": None,
@@ -259,41 +298,202 @@ def test_run_organize_rejects_invalid_link_url(fresh_runtime, tmp_path):
     bad_url.write_text(json.dumps({
         "groups": [{
             "family": "X",
-            "identity_keys": ["org"],
-            "items": [{
-                "kind": "model", "formal_name": "X/Y",
-                "identity": {"org": "X"}, "aliases": [],
-                "links": [{"kind": "hf_model", "url": "ftp://example/foo"}],
-                "description": None,
-            }],
+            "identity_keys": ["family", "size"],
+            "items": [
+                # Family root
+                {"kind": "model", "formal_name": "X", "identity": {"family": "X"},
+                 "aliases": ["X"], "links": [], "description": None},
+                # Leaf with bad URL
+                {"kind": "model", "formal_name": "X/Y",
+                 "identity": {"family": "X", "size": "1B"}, "aliases": ["X 1B"],
+                 "links": [{"kind": "hf_model", "url": "ftp://example/foo"}],
+                 "description": None},
+            ],
         }],
     }))
     with pytest.raises(click.ClickException, match="url"):
         run_organize(artifact_path=str(bad_url))
 
 
-def test_run_organize_allows_empty_links_array(fresh_runtime, tmp_path):
-    """Items may carry `links: []` (audit will revisit before dropping)."""
+def test_run_organize_allows_root_only_family(fresh_runtime, tmp_path):
+    """A family with only a root (no leaves) is valid: foundational data
+    resources like Common Crawl, AoPS forums often have no specific HF
+    release. Root may have empty links or paper/blog/hf_collection link."""
     from gdb.pipeline import run_organize
 
-    empty_links = tmp_path / "empty_links.json"
-    empty_links.write_text(json.dumps({
+    artifact = tmp_path / "root_only.json"
+    artifact.write_text(json.dumps({
+        "groups": [_root_only_group("Common Crawl")],
+    }))
+    result = run_organize(artifact_path=str(artifact))
+    assert result["group_count"] == 1
+    assert result["item_count"] == 1
+    assert result["n_family_roots"] == 1
+    assert result["n_entity_leaves"] == 0
+    assert result["items_with_links"] == 0
+
+
+def test_run_organize_allows_paper_anchored_leaf(fresh_runtime, tmp_path):
+    """An entity leaf (identity has facets beyond `family`) MAY have a
+    paper-only link or no link. The production-vs-concept distinction
+    is advisory — what makes a node a leaf is its facet set, not its
+    link kind. This supports paper-anchored leaves, internal-codename
+    leaves referenced in source code, and sub-components without a
+    standalone HF release."""
+    from gdb.pipeline import run_organize
+
+    ok = tmp_path / "paper_leaf.json"
+    ok.write_text(json.dumps({
         "groups": [{
             "family": "X",
-            "identity_keys": ["org"],
+            "identity_keys": ["family", "size"],
+            "items": [
+                {"kind": "model", "formal_name": "X", "identity": {"family": "X"},
+                 "aliases": ["X"], "links": [], "description": None},
+                {"kind": "model", "formal_name": "X-7B",
+                 "identity": {"family": "X", "size": "7B"}, "aliases": ["X 7B"],
+                 "links": [{"kind": "paper", "url": "https://arxiv.org/abs/0000.0000"}],
+                 "description": None},
+                {"kind": "model", "formal_name": "X-13B-internal",
+                 "identity": {"family": "X", "size": "13B"},
+                 "aliases": ["X 13B internal"],
+                 "links": [],  # internal codename, no link
+                 "description": None},
+            ],
+        }],
+    }))
+    result = run_organize(artifact_path=str(ok))
+    assert result["item_count"] == 3
+    assert result["n_family_roots"] == 1
+    assert result["n_entity_leaves"] == 2
+
+
+def test_run_organize_allows_single_release_family_root_with_production_link(
+        fresh_runtime, tmp_path):
+    """A family root MAY carry a production link when the family has
+    exactly one canonical release. The root acts as both top and
+    bottom of a single-leaf lattice — useful for one-off models /
+    datasets like `tomh/toxigen_roberta` or `openai-community/gpt2`."""
+    from gdb.pipeline import run_organize
+
+    ok = tmp_path / "single_release.json"
+    ok.write_text(json.dumps({
+        "groups": [{
+            "family": "ToxiGen RoBERTa",
+            "identity_keys": ["family"],
             "items": [{
-                "kind": "model", "formal_name": "X/Y",
-                "identity": {"org": "X"}, "aliases": [],
-                "links": [],
-                "description": None,
+                "kind": "model", "formal_name": "tomh/toxigen_roberta",
+                "identity": {"family": "ToxiGen RoBERTa"},
+                "aliases": ["ToxiGen RoBERTa", "toxigen-roberta"],
+                "links": [{"kind": "hf_model",
+                           "url": "https://huggingface.co/tomh/toxigen_roberta"}],
+                "description": "ToxiGen RoBERTa hate-speech classifier.",
             }],
         }],
     }))
-    result = run_organize(artifact_path=str(empty_links))
-    assert result["group_count"] == 1
+    result = run_organize(artifact_path=str(ok))
     assert result["item_count"] == 1
-    assert result["items_with_links"] == 0
-    assert result["items_without_links"] == 1
+    assert result["n_family_roots"] == 1
+
+
+def test_run_organize_rejects_missing_family_facet(fresh_runtime, tmp_path):
+    """Every item's identity MUST include a `family` key."""
+    import click
+    import pytest
+
+    from gdb.pipeline import run_organize
+
+    bad = tmp_path / "no_family.json"
+    bad.write_text(json.dumps({
+        "groups": [{
+            "family": "X",
+            "identity_keys": ["org", "size"],
+            "items": [{"kind": "model", "formal_name": "X/Y",
+                       "identity": {"org": "X", "size": "7B"},
+                       "aliases": ["X-Y"],
+                       "links": [{"kind": "hf_model",
+                                  "url": "https://huggingface.co/X/Y"}],
+                       "description": None}],
+        }],
+    }))
+    with pytest.raises(click.ClickException, match="identity.family"):
+        run_organize(artifact_path=str(bad))
+
+
+def test_run_organize_synthesizes_missing_family_root(fresh_runtime, tmp_path):
+    """When a group lacks a family root, the Python completion pre-pass
+    synthesizes one (formal_name=family, identity={family: X}, aliases=[X],
+    no links, null description) before validation. The on-disk artifact
+    is the post-completion lattice."""
+    from gdb.pipeline import run_organize
+
+    no_root = tmp_path / "no_root.json"
+    no_root.write_text(json.dumps({
+        "groups": [{
+            "family": "X",
+            "identity_keys": ["family", "size"],
+            "items": [{"kind": "model", "formal_name": "X/Y-7B",
+                       "identity": {"family": "X", "size": "7B"},
+                       "aliases": ["X-7B"],
+                       "links": [{"kind": "hf_model",
+                                  "url": "https://huggingface.co/X/Y-7B"}],
+                       "description": None}],
+        }],
+    }))
+    result = run_organize(artifact_path=str(no_root))
+    # Completion synthesized 1 root + echoed formal_name into aliases
+    assert result["item_count"] == 2
+    assert result["n_family_roots"] == 1
+    assert result["n_entity_leaves"] == 1
+    assert result["completion"]["roots_synthesized"] == 1
+
+
+def test_run_organize_rejects_inconsistent_family_value(fresh_runtime, tmp_path):
+    """All items in a group must share the same identity.family value."""
+    import click
+    import pytest
+
+    from gdb.pipeline import run_organize
+
+    bad = tmp_path / "mixed_family.json"
+    bad.write_text(json.dumps({
+        "groups": [{
+            "family": "X",
+            "identity_keys": ["family"],
+            "items": [
+                {"kind": "model", "formal_name": "X",
+                 "identity": {"family": "X"}, "aliases": ["X"],
+                 "links": [], "description": None},
+                {"kind": "model", "formal_name": "Y/Z",
+                 "identity": {"family": "Y", "size": "7B"}, "aliases": ["Y-Z"],
+                 "links": [{"kind": "hf_model", "url": "https://huggingface.co/Y/Z"}],
+                 "description": None},
+            ],
+        }],
+    }))
+    with pytest.raises(click.ClickException, match="differs from sibling family"):
+        run_organize(artifact_path=str(bad))
+
+
+def test_run_organize_completion_fills_empty_aliases(fresh_runtime, tmp_path):
+    """The Python completion pre-pass echoes formal_name into aliases[]
+    for any item missing it, so empty aliases doesn't fail validation
+    when the formal_name is non-empty (the typical planner mistake)."""
+    from gdb.pipeline import run_organize
+
+    art = tmp_path / "empty_aliases.json"
+    art.write_text(json.dumps({
+        "groups": [{
+            "family": "X",
+            "identity_keys": ["family"],
+            "items": [{"kind": "model", "formal_name": "X",
+                       "identity": {"family": "X"}, "aliases": [],
+                       "links": [], "description": None}],
+        }],
+    }))
+    result = run_organize(artifact_path=str(art))
+    assert result["item_count"] == 1
+    assert result["completion"]["aliases_added"] == 1
 
 
 def test_cli_run_help_lists_only_active_stages(fresh_runtime):
@@ -306,7 +506,7 @@ def test_cli_run_help_lists_only_active_stages(fresh_runtime):
     assert result.exit_code == 0
     out = result.output
     for stage in ("discover", "extract", "organize", "audit",
-                  "relate", "triage", "merge", "expand"):
+                  "relate", "reconcile", "triage", "merge", "expand"):
         assert stage in out
     for dropped in ("linker", "describe", "verify-links", "build-lattice",
                     "check", "fuzz"):
@@ -324,18 +524,25 @@ def test_run_audit_ingests_revised_lattice(fresh_runtime, tmp_path):
         "groups": [
             {
                 "family": "Qwen3",
-                "identity_keys": ["org", "collection", "size", "variant"],
+                "identity_keys": ["family", "size", "variant"],
                 "items": [
+                    # Family root — required
+                    {"kind": "model", "formal_name": "Qwen3",
+                     "identity": {"family": "Qwen3"},
+                     "aliases": ["Qwen3", "Qwen 3"],
+                     "links": [{"kind": "paper",
+                                "url": "https://arxiv.org/abs/2509.18888"}],
+                     "description": "The Qwen3 family of language models."},
                     {"kind": "model", "formal_name": "Qwen/Qwen3-8B",
-                     "identity": {"org": "Qwen", "collection": "Qwen3",
-                                  "size": "8B", "variant": "no-thinking"},
+                     "identity": {"family": "Qwen3", "size": "8B",
+                                  "variant": "no-thinking"},
                      "aliases": ["Qwen3-8B"],
                      "links": [{"kind": "hf_model",
                                 "url": "https://huggingface.co/Qwen/Qwen3-8B"}],
                      "description": "Qwen3 8B without reasoning."},
                     {"kind": "model", "formal_name": "Qwen/Qwen3-8B-Thinking",
-                     "identity": {"org": "Qwen", "collection": "Qwen3",
-                                  "size": "8B", "variant": "thinking"},
+                     "identity": {"family": "Qwen3", "size": "8B",
+                                  "variant": "thinking"},
                      "aliases": ["qwen3-reasoning-8b"],
                      "links": [{"kind": "hf_model",
                                 "url": "https://huggingface.co/Qwen/Qwen3-8B-Thinking"}],
@@ -349,14 +556,19 @@ def test_run_audit_ingests_revised_lattice(fresh_runtime, tmp_path):
     artifact_path.write_text(json.dumps(revised))
 
     result = run_audit(artifact_path=str(artifact_path))
+    # Audit ingest runs expand_concept_lattice — the two leaves with
+    # 2 non-family facets each produce 3 interior concept projections
+    # ({size:8B}, {variant:thinking}, {variant:no-thinking}). Total
+    # items = 1 root + 2 leaves + 3 synthesized concepts = 6.
     assert result["group_count"] == 1
-    assert result["item_count"] == 2
+    assert result["item_count"] == 6
+    assert result["expansion"]["concepts_synthesized"] == 3
 
     rows = all_rows("SELECT id, attrs FROM runs WHERE stage='audit'")
     assert len(rows) == 1
     attrs = loads(rows[0]["attrs"])
     assert attrs["group_count"] == 1
-    assert attrs["item_count"] == 2
+    assert attrs["item_count"] == 6
     assert "Split Qwen3-8B" in (attrs.get("notes") or "")
     assert Path(attrs["artifact_path"]).exists()
 
@@ -604,6 +816,59 @@ def test_relate_validates_anchor_list_shape(fresh_runtime):
         _validate_relate_artifact(bad)
 
 
+def test_parse_virtual_address():
+    """Virtual concept address parsing for relate edge endpoints."""
+    from gdb.pipeline import parse_virtual_address
+
+    assert parse_virtual_address("OLMo 3 [stage=Base]") == (
+        "OLMo 3", {"stage": "Base"})
+    assert parse_virtual_address("Qwen3 [size=4B, stage=Base]") == (
+        "Qwen3", {"size": "4B", "stage": "Base"})
+    assert parse_virtual_address("olmOCR [version=v1]") == (
+        "olmOCR", {"version": "v1"})
+    # Plain formal_name → not a virtual address
+    assert parse_virtual_address("allenai/Olmo-3-1025-7B") is None
+    assert parse_virtual_address("Qwen3") is None
+    # Malformed
+    assert parse_virtual_address("OLMo 3 [stage]") is None  # no =
+    assert parse_virtual_address("OLMo 3 []") == ("OLMo 3", {})  # empty facets ok
+    assert parse_virtual_address("") is None
+    assert parse_virtual_address(None) is None
+
+
+def test_relate_accepts_virtual_concept_address(fresh_runtime):
+    """Subjects/objects can be virtual concept addresses when their
+    family pivots to a known lattice family."""
+    from gdb.pipeline import _validate_relate_artifact
+
+    artifact = json.loads(json.dumps(_well_formed_relate_artifact()))
+    artifact["operations"][0]["edges"][0]["subject"] = "OLMo 3 [stage=Base]"
+    stats = _validate_relate_artifact(
+        artifact,
+        lattice_formal_names={"allenai/Olmo-3-7B-Base", "allenai/dolma3-mix",
+                              "allenai/olmOCR-7B-0225"},
+        lattice_family_names={"OLMo 3", "Dolma 3", "olmOCR"},
+    )
+    assert stats["edge_count"] == 2
+
+
+def test_relate_rejects_virtual_address_with_unknown_family(fresh_runtime):
+    """Virtual address pivoting to an unknown family is rejected."""
+    import click
+    import pytest
+
+    from gdb.pipeline import _validate_relate_artifact
+
+    artifact = json.loads(json.dumps(_well_formed_relate_artifact()))
+    artifact["operations"][0]["edges"][0]["subject"] = "PhantomFamily [size=7B]"
+    with pytest.raises(click.ClickException, match="virtual address"):
+        _validate_relate_artifact(
+            artifact,
+            lattice_formal_names={"allenai/Olmo-3-7B-Base"},
+            lattice_family_names={"OLMo 3"},
+        )
+
+
 def test_relate_off_lattice_object_counts(fresh_runtime):
     """Edges whose object isn't in the lattice formal-names set are
     counted as off-lattice — they're still valid (free-text descriptor)."""
@@ -698,6 +963,163 @@ def test_assemble_relate_artifact_from_jsonl(fresh_runtime, tmp_path):
     stats = _validate_relate_artifact(artifact)
     assert stats["operation_count"] == 2
     assert stats["edge_count"] == 2
+
+
+def test_reconcile_subsumption_collapses_vague_into_specific():
+    """If one source says 'OLMo 3 Base trained_on Dolma 3' and another
+    says 'allenai/Olmo-3-1025-7B trained_on allenai/dolma3_mix-6T-1025-7B',
+    reconcile marks the vague edge as subsumed by the specific."""
+    from gdb.pipeline import _reconcile_edges
+
+    lattice = {
+        "groups": [
+            {"family": "OLMo 3", "items": [
+                {"formal_name": "OLMo 3", "identity": {"family": "OLMo 3"}},
+                {"formal_name": "allenai/Olmo-3-1025-7B",
+                 "identity": {"family": "OLMo 3", "size": "7B",
+                              "stage": "Base", "date": "1025"}},
+            ]},
+            {"family": "Dolma 3", "items": [
+                {"formal_name": "Dolma 3", "identity": {"family": "Dolma 3"}},
+                {"formal_name": "allenai/dolma3_mix-6T-1025-7B",
+                 "identity": {"family": "Dolma 3", "size": "6T",
+                              "date": "1025", "target": "7B"}},
+            ]},
+        ],
+    }
+    edges = [
+        {"subject": "OLMo 3 [stage=Base]", "relation": "trained_on",
+         "dependency_kind": "direct", "object": "Dolma 3",
+         "description": "Olmo 3 base was pretrained on Dolma 3.",
+         "anchor_list": [{"source": "paper.pdf", "explanation": "..."}],
+         "_batch_id": "b1"},
+        {"subject": "allenai/Olmo-3-1025-7B", "relation": "trained_on",
+         "dependency_kind": "direct", "object": "allenai/dolma3_mix-6T-1025-7B",
+         "description": "...", "anchor_list": [
+             {"source": "config.yaml", "explanation": "..."}
+         ], "_batch_id": "b2"},
+    ]
+    result = _reconcile_edges(edges, lattice)
+
+    assert result["total_edge_count"] == 2
+    canonical = [e for e in result["edges"] if e["subsumed_by"] is None]
+    subsumed = [e for e in result["edges"] if e["subsumed_by"] is not None]
+    assert len(canonical) == 1
+    assert len(subsumed) == 1
+    # The specific edge subsumes the vague edge
+    assert canonical[0]["subject"] == "allenai/Olmo-3-1025-7B"
+    assert subsumed[0]["subject"] == "OLMo 3 [stage=Base]"
+    # And inherits its anchors
+    sources = {a["source"] for a in canonical[0]["anchor_list"]}
+    assert "paper.pdf" in sources
+    assert "config.yaml" in sources
+
+
+def test_reconcile_corroboration_stacks_anchors():
+    """Same (subject, relation, object) from two sources stacks evidence."""
+    from gdb.pipeline import _reconcile_edges
+
+    lattice = {"groups": [{"family": "OLMo 3", "items": [
+        {"formal_name": "OLMo 3", "identity": {"family": "OLMo 3"}},
+    ]}]}
+    edges = [
+        {"subject": "OLMo 3", "relation": "trained_on",
+         "dependency_kind": "direct", "object": "OLMo 3",  # toy
+         "description": "Same event, source A.",
+         "anchor_list": [{"source": "paper.pdf", "explanation": "..."}],
+         "_batch_id": "b1"},
+        {"subject": "OLMo 3", "relation": "trained_on",
+         "dependency_kind": "direct", "object": "OLMo 3",
+         "description": "Same event, source B.",
+         "anchor_list": [{"source": "blog.html", "explanation": "..."}],
+         "_batch_id": "b2"},
+    ]
+    result = _reconcile_edges(edges, lattice)
+    assert result["total_edge_count"] == 1
+    e = result["edges"][0]
+    assert e["corroboration_count"] == 2
+    assert {a["source"] for a in e["anchor_list"]} == {"paper.pdf", "blog.html"}
+    # Differing descriptions kept as variants
+    assert "Same event, source B." in e["description_variants"]
+
+
+def test_reconcile_conflict_flags_sibling_endpoints():
+    """Same subject + relation, but objects are different siblings in
+    the same family — flag as conflict."""
+    from gdb.pipeline import _reconcile_edges
+
+    lattice = {
+        "groups": [
+            {"family": "OLMo 3", "items": [
+                {"formal_name": "OLMo 3", "identity": {"family": "OLMo 3"}},
+                {"formal_name": "allenai/Olmo-3-1025-7B",
+                 "identity": {"family": "OLMo 3", "size": "7B"}},
+            ]},
+            {"family": "Dolma 3", "items": [
+                {"formal_name": "Dolma 3", "identity": {"family": "Dolma 3"}},
+                {"formal_name": "allenai/dolma3_mix-A",
+                 "identity": {"family": "Dolma 3", "variant": "A"}},
+                {"formal_name": "allenai/dolma3_mix-B",
+                 "identity": {"family": "Dolma 3", "variant": "B"}},
+            ]},
+        ],
+    }
+    edges = [
+        {"subject": "allenai/Olmo-3-1025-7B", "relation": "trained_on",
+         "dependency_kind": "direct", "object": "allenai/dolma3_mix-A",
+         "description": "...", "anchor_list": [{"source": "a", "explanation": "."}],
+         "_batch_id": "b1"},
+        {"subject": "allenai/Olmo-3-1025-7B", "relation": "trained_on",
+         "dependency_kind": "direct", "object": "allenai/dolma3_mix-B",
+         "description": "...", "anchor_list": [{"source": "b", "explanation": "."}],
+         "_batch_id": "b2"},
+    ]
+    result = _reconcile_edges(edges, lattice)
+    assert result["conflict_count"] == 1
+    conflict = result["conflicts"][0]
+    assert conflict["subject"] == "allenai/Olmo-3-1025-7B"
+    assert {conflict["object_a"], conflict["object_b"]} == {
+        "allenai/dolma3_mix-A", "allenai/dolma3_mix-B",
+    }
+
+
+def test_run_reconcile_ingests_artifact(fresh_runtime, tmp_path):
+    """`--artifact` ingests a pre-computed reconcile artifact."""
+    from gdb.pipeline import run_reconcile
+
+    artifact = tmp_path / "reconcile.json"
+    artifact.write_text(json.dumps({
+        "edges": [
+            {"subject": "a", "relation": "trained_on", "object": "b",
+             "subsumed_by": None, "subsumes": [],
+             "anchor_list": [], "corroboration_count": 1,
+             "source_batch_ids": ["b1"]},
+        ],
+        "conflicts": [],
+        "canonical_edge_count": 1, "subsumed_edge_count": 0,
+        "total_edge_count": 1, "corroboration_count": 0, "conflict_count": 0,
+    }))
+    result = run_reconcile(artifact_path=str(artifact))
+    assert result["total_edge_count"] == 1
+    assert result["conflict_count"] == 0
+
+
+def test_parse_virtual_address_via_reconcile_resolution():
+    """The address resolver routes formal_names AND virtual addresses
+    to identity dicts; off-lattice strings return None."""
+    from gdb.pipeline import _identity_for_address
+
+    lattice = {"groups": [{"family": "X", "items": [
+        {"formal_name": "X", "identity": {"family": "X"}},
+        {"formal_name": "X/leaf", "identity": {"family": "X", "size": "7B"}},
+    ]}]}
+    assert _identity_for_address("X", lattice) == {"family": "X"}
+    assert _identity_for_address("X/leaf", lattice) == {"family": "X", "size": "7B"}
+    # Virtual address — reuses parser even for non-existent leaf
+    assert _identity_for_address("X [stage=Base]", lattice) == {
+        "family": "X", "stage": "Base"}
+    # Free-text (no formal_name match, not a virtual address) → None
+    assert _identity_for_address("totally unknown thing", lattice) is None
 
 
 def test_run_triage_ingests_classification(fresh_runtime, tmp_path):
@@ -981,71 +1403,52 @@ def test_organize_validates_subsets_shape(fresh_runtime, tmp_path):
     bad = tmp_path / "bad.json"
     bad.write_text(json.dumps({
         "groups": [{
-            "family": "X", "identity_keys": ["org"],
-            "items": [{
-                "kind": "dataset", "formal_name": "X/Y",
-                "identity": {"org": "X"}, "aliases": [],
-                "links": [{"kind": "hf_dataset", "url": "https://huggingface.co/datasets/X/Y"}],
-                "description": None,
-                "subsets": ["valid", "", "also valid"],   # empty string mid-list
-            }],
+            "family": "X", "identity_keys": ["family"],
+            "items": [
+                {"kind": "dataset", "formal_name": "X",
+                 "identity": {"family": "X"}, "aliases": ["X"],
+                 "links": [], "description": None},
+                {"kind": "dataset", "formal_name": "X/Y",
+                 "identity": {"family": "X", "size": "1B"}, "aliases": ["X-Y"],
+                 "links": [{"kind": "hf_dataset",
+                            "url": "https://huggingface.co/datasets/X/Y"}],
+                 "description": None,
+                 "subsets": ["valid", "", "also valid"]},
+            ],
         }],
     }))
     with pytest.raises(click.ClickException, match="subsets"):
         run_organize(artifact_path=str(bad))
 
 
-def test_organize_rejects_empty_aliases_when_identity_is_specific(fresh_runtime, tmp_path):
-    """Items with full identity (size/stage/date/etc.) MUST have ≥1 alias.
-    Empty aliases means the item was invented by HF org enumeration,
-    not folded from any input surface form. Hard validator error."""
-    import click
-    import pytest
-
-    from gdb.pipeline import run_organize
-
-    bad = tmp_path / "phantom.json"
-    bad.write_text(json.dumps({
-        "groups": [{
-            "family": "Qwen3", "identity_keys": ["org", "collection", "size", "stage", "date"],
-            "items": [{
-                "kind": "model",
-                "formal_name": "Qwen/Qwen3-4B-Instruct-2507",
-                "identity": {"org": "Qwen", "collection": "Qwen3",
-                             "size": "4B", "stage": "Instruct", "date": "2507"},
-                "aliases": [],
-                "links": [{"kind": "hf_model",
-                           "url": "https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507"}],
-                "description": "...",
-            }],
-        }],
-    }))
-    with pytest.raises(click.ClickException, match="empty aliases"):
-        run_organize(artifact_path=str(bad))
-
-
-def test_organize_allows_empty_aliases_for_family_concept_root(fresh_runtime, tmp_path):
-    """A family-concept root (identity only carrying broad keys: org,
-    collection, vendor, family) may have empty aliases."""
+def test_organize_family_root_with_concept_link_is_valid(fresh_runtime, tmp_path):
+    """Family roots may carry paper / blog / hf_collection links —
+    those describe the concept without pinning a specific release."""
     from gdb.pipeline import run_organize
 
     ok = tmp_path / "concept_root.json"
     ok.write_text(json.dumps({
         "groups": [{
-            "family": "Qwen3", "identity_keys": ["org", "collection", "size", "stage"],
-            "items": [{
-                "kind": "model",
-                "formal_name": "Qwen/Qwen3",
-                "identity": {"org": "Qwen", "collection": "Qwen3"},
-                "aliases": [],
-                "links": [{"kind": "hf_collection",
-                           "url": "https://huggingface.co/collections/Qwen/qwen3"}],
-                "description": "Qwen3 is the latest generation...",
-            }],
+            "family": "Qwen3", "identity_keys": ["family", "size"],
+            "items": [
+                {"kind": "model", "formal_name": "Qwen3",
+                 "identity": {"family": "Qwen3"}, "aliases": ["Qwen3"],
+                 "links": [{"kind": "hf_collection",
+                            "url": "https://huggingface.co/collections/Qwen/qwen3"}],
+                 "description": "Qwen3 is the latest generation..."},
+                {"kind": "model", "formal_name": "Qwen/Qwen3-7B",
+                 "identity": {"family": "Qwen3", "size": "7B"},
+                 "aliases": ["Qwen3-7B"],
+                 "links": [{"kind": "hf_model",
+                            "url": "https://huggingface.co/Qwen/Qwen3-7B"}],
+                 "description": "..."},
+            ],
         }],
     }))
     result = run_organize(artifact_path=str(ok))
-    assert result["item_count"] == 1
+    assert result["item_count"] == 2
+    assert result["n_family_roots"] == 1
+    assert result["n_entity_leaves"] == 1
 
 
 def test_flag_audit_issues_purely_additive():
@@ -1058,17 +1461,20 @@ def test_flag_audit_issues_purely_additive():
     lattice = {
         "groups": [{
             "family": "Dolma3",
-            "identity_keys": ["org", "collection"],
-            "items": [{
-                "kind": "dataset",
-                "formal_name": "allenai/dolma3_dolmino_mix-100B-1025",
-                "identity": {"org": "allenai", "collection": "Dolma3-Dolmino-Mix"},
-                "aliases": [],
-                "links": [{"kind": "hf_dataset",
-                           "url": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025"}],
-                "description": "...",
-                "subsets": ["cranemath", "cranecode"],
-            }],
+            "identity_keys": ["family", "size", "date"],
+            "items": [
+                {"kind": "dataset", "formal_name": "Dolma3",
+                 "identity": {"family": "Dolma3"}, "aliases": ["Dolma 3"],
+                 "links": [], "description": "..."},
+                {"kind": "dataset",
+                 "formal_name": "allenai/dolma3_dolmino_mix-100B-1025",
+                 "identity": {"family": "Dolma3", "size": "100B", "date": "1025"},
+                 "aliases": ["dolma3-dolmino-mix-100B-1025"],
+                 "links": [{"kind": "hf_dataset",
+                            "url": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025"}],
+                 "description": "...",
+                 "subsets": ["cranemath", "cranecode"]},
+            ],
         }],
         "dropped": [
             {"name": "FineMath4+", "kind": "dataset", "reason": "..."},
@@ -1081,63 +1487,64 @@ def test_flag_audit_issues_purely_additive():
     lattice_minus_hints = {k: v for k, v in lattice.items() if k != "audit_hints"}
     assert _json.dumps(lattice_minus_hints, sort_keys=True) == snapshot
 
-    # audit_hints[] populated — the dolmino_mix is foundational (broad
-    # identity), so flagging item_matches_parent_subset for cranemath
-    # / cranecode would only fire if those items existed in the
-    # lattice already. They don't, so no item-side hints expected.
-    # But there's a parent with empty aliases AND broad identity →
-    # this is a valid family-concept root, NO phantom hint expected.
+    # No phantoms because every item has aliases. No missing root.
     hints = lattice.get("audit_hints") or []
     kinds = {h["kind"] for h in hints}
-    assert "phantom_item" not in kinds  # broad identity is OK
+    assert "phantom_item" not in kinds
+    assert "missing_family_root" not in kinds
 
 
 def test_flag_item_matches_parent_subset_with_role_classification():
     """When an item's slug appears in a parent's subsets[], emit a
-    hint with the item's role (canonical / soft-anchored / concept)."""
+    hint with the item's role (canonical / concept / family-root)."""
     from gdb.subsets import flag_audit_issues
 
     lattice = {
         "groups": [
             {
                 "family": "Dolma3",
-                "identity_keys": ["org", "collection"],
-                "items": [{
-                    "kind": "dataset",
-                    "formal_name": "allenai/dolma3_dolmino_pool",
-                    "identity": {"org": "allenai", "collection": "Dolma3"},
-                    "aliases": [],
-                    "links": [{"kind": "hf_dataset",
-                               "url": "https://huggingface.co/datasets/allenai/dolma3_dolmino_pool"}],
-                    "description": "...",
-                    "subsets": ["cranemath", "common-crawl"],
-                }],
+                "identity_keys": ["family", "size"],
+                "items": [
+                    {"kind": "dataset", "formal_name": "Dolma3",
+                     "identity": {"family": "Dolma3"}, "aliases": ["Dolma 3"],
+                     "links": [], "description": "...", "subsets": []},
+                    {"kind": "dataset",
+                     "formal_name": "allenai/dolma3_dolmino_pool",
+                     "identity": {"family": "Dolma3", "size": "pool"},
+                     "aliases": ["dolma3-dolmino-pool"],
+                     "links": [{"kind": "hf_dataset",
+                                "url": "https://huggingface.co/datasets/allenai/dolma3_dolmino_pool"}],
+                     "description": "...",
+                     "subsets": ["cranemath", "common-crawl"]},
+                ],
             },
             {
-                "family": "Olmo 3 / Dolma 3",
-                "identity_keys": ["family", "stage", "size"],
+                "family": "olmo3-tr",
+                "identity_keys": ["family", "size"],
                 "items": [
-                    # soft-anchored sub-component — typical reshape target
+                    {"kind": "dataset", "formal_name": "olmo3-tr",
+                     "identity": {"family": "olmo3-tr"}, "aliases": ["olmo3-tr"],
+                     "links": [], "description": "...", "subsets": []},
+                    # soft-anchored sub-component — paper-anchor, audit may reshape
                     {"kind": "dataset",
-                     "formal_name": "olmo3-tr-cranemath",
-                     "identity": {"family": "olmo3-tr", "stage": "tech-report-introduced",
-                                  "size": "5.62B"},
+                     "formal_name": "allenai/olmo3-tr-cranemath",
+                     "identity": {"family": "olmo3-tr", "size": "5.62B"},
                      "aliases": ["CraneMath"],
-                     "links": [{"kind": "blog", "url": "https://allenai.org/olmo-3-tech-report.pdf"}],
+                     "links": [{"kind": "hf_dataset",
+                                "url": "https://huggingface.co/datasets/allenai/olmo3-tr-cranemath"}],
                      "description": "...", "subsets": []},
                 ],
             },
             {
                 "family": "Common Crawl",
-                "identity_keys": ["org", "collection"],
+                "identity_keys": ["family"],
                 "items": [
-                    # concept root — broad identity AND bare-domain URL —
-                    # hint should label item_role='concept', signaling
-                    # "keep standalone" rather than reshape
+                    # family root with bare-domain URL — hint should label
+                    # item_role='family-root', signaling "keep standalone"
                     {"kind": "dataset",
                      "formal_name": "Common Crawl",
-                     "identity": {"org": "Common Crawl Foundation", "collection": "Common Crawl"},
-                     "aliases": ["common_crawl"],
+                     "identity": {"family": "Common Crawl"},
+                     "aliases": ["Common Crawl", "common_crawl"],
                      "links": [{"kind": "blog", "url": "https://commoncrawl.org/"}],
                      "description": "...", "subsets": []},
                 ],
@@ -1150,14 +1557,14 @@ def test_flag_item_matches_parent_subset_with_role_classification():
              if h["kind"] == "item_matches_parent_subset"]
     by_item = {h["item_formal_name"]: h for h in hints}
 
-    # CraneMath flagged with item_role='soft-anchored'
-    assert "olmo3-tr-cranemath" in by_item
-    assert by_item["olmo3-tr-cranemath"]["item_role"] == "soft-anchored"
-    assert by_item["olmo3-tr-cranemath"]["matched_parent"] == "allenai/dolma3_dolmino_pool"
+    # CraneMath leaf flagged with item_role='canonical' (HF link → leaf)
+    assert "allenai/olmo3-tr-cranemath" in by_item
+    assert by_item["allenai/olmo3-tr-cranemath"]["item_role"] == "canonical"
+    assert by_item["allenai/olmo3-tr-cranemath"]["matched_parent"] == "allenai/dolma3_dolmino_pool"
 
-    # Common Crawl flagged with item_role='concept' (broad identity OR bare-domain)
+    # Common Crawl flagged with item_role='family-root'
     assert "Common Crawl" in by_item
-    assert by_item["Common Crawl"]["item_role"] == "concept"
+    assert by_item["Common Crawl"]["item_role"] == "family-root"
 
 
 def test_flag_dropped_matches_parent_subset():
@@ -1168,17 +1575,20 @@ def test_flag_dropped_matches_parent_subset():
     lattice = {
         "groups": [{
             "family": "FineMath",
-            "identity_keys": ["org", "collection"],
-            "items": [{
-                "kind": "dataset",
-                "formal_name": "HuggingFaceTB/finemath",
-                "identity": {"org": "HuggingFaceTB", "collection": "FineMath"},
-                "aliases": ["FineMath"],
-                "links": [{"kind": "hf_dataset",
-                           "url": "https://huggingface.co/datasets/HuggingFaceTB/finemath"}],
-                "description": "...",
-                "subsets": ["finemath-3plus", "finemath-4plus"],
-            }],
+            "identity_keys": ["family"],
+            "items": [
+                {"kind": "dataset", "formal_name": "FineMath",
+                 "identity": {"family": "FineMath"}, "aliases": ["FineMath"],
+                 "links": [], "description": "...", "subsets": []},
+                {"kind": "dataset",
+                 "formal_name": "HuggingFaceTB/finemath",
+                 "identity": {"family": "FineMath", "org": "HuggingFaceTB"},
+                 "aliases": ["HuggingFaceTB/finemath"],
+                 "links": [{"kind": "hf_dataset",
+                            "url": "https://huggingface.co/datasets/HuggingFaceTB/finemath"}],
+                 "description": "...",
+                 "subsets": ["finemath-3plus", "finemath-4plus"]},
+            ],
         }],
         "dropped": [
             {"name": "FineMath4+", "kind": "dataset", "reason": "no exact match"},
@@ -1205,15 +1615,20 @@ def test_flag_cross_org_family_and_sibling_collision():
         "groups": [
             {
                 "family": "HumanEval",
-                "identity_keys": ["org"],
+                "identity_keys": ["family", "org"],
                 "items": [
+                    {"kind": "dataset", "formal_name": "HumanEval",
+                     "identity": {"family": "HumanEval"}, "aliases": ["HumanEval"],
+                     "links": [], "description": "...", "subsets": []},
                     {"kind": "dataset", "formal_name": "openai/openai_humaneval",
-                     "identity": {"org": "openai"}, "aliases": ["HumanEval"],
+                     "identity": {"family": "HumanEval", "org": "openai"},
+                     "aliases": ["openai_humaneval"],
                      "links": [{"kind": "hf_dataset",
                                 "url": "https://huggingface.co/datasets/openai/openai_humaneval"}],
                      "description": "...", "subsets": []},
                     {"kind": "dataset", "formal_name": "evalplus/humanevalplus",
-                     "identity": {"org": "evalplus"}, "aliases": ["humaneval+"],
+                     "identity": {"family": "HumanEval", "org": "evalplus"},
+                     "aliases": ["humaneval+"],
                      "links": [{"kind": "hf_dataset",
                                 "url": "https://huggingface.co/datasets/evalplus/humanevalplus"}],
                      "description": "...", "subsets": []},
@@ -1221,17 +1636,23 @@ def test_flag_cross_org_family_and_sibling_collision():
             },
             {
                 "family": "Reasoning-traces",
-                "identity_keys": ["org", "collection"],
+                "identity_keys": ["family", "org", "collection"],
                 "items": [
-                    # Identity collision — same identity for both
+                    {"kind": "dataset", "formal_name": "Reasoning-traces",
+                     "identity": {"family": "Reasoning-traces"},
+                     "aliases": ["Reasoning traces"], "links": [],
+                     "description": "...", "subsets": []},
+                    # Identity collision — same identity for both leaves
                     {"kind": "dataset", "formal_name": "allenai/r1-traces",
-                     "identity": {"org": "allenai", "collection": "reasoning-traces"},
+                     "identity": {"family": "Reasoning-traces", "org": "allenai",
+                                  "collection": "reasoning-traces"},
                      "aliases": ["r1"],
                      "links": [{"kind": "hf_dataset",
                                 "url": "https://huggingface.co/datasets/allenai/r1-traces"}],
                      "description": "...", "subsets": []},
                     {"kind": "dataset", "formal_name": "allenai/qwq-traces",
-                     "identity": {"org": "allenai", "collection": "reasoning-traces"},
+                     "identity": {"family": "Reasoning-traces", "org": "allenai",
+                                  "collection": "reasoning-traces"},
                      "aliases": ["qwq"],
                      "links": [{"kind": "hf_dataset",
                                 "url": "https://huggingface.co/datasets/allenai/qwq-traces"}],
@@ -1256,15 +1677,17 @@ def test_flag_canonical_url_mismatch():
         "groups": [{
             "family": "MMLU",
             "identity_keys": ["family"],
-            "items": [{
-                "kind": "dataset", "formal_name": "MMLU",
-                "identity": {"family": "MMLU"},
-                "aliases": ["MMLU"],
-                "links": [{"kind": "hf_dataset",
-                           "url": "https://huggingface.co/datasets/cais/mmlu"}],
-                "description": "...",
-                "subsets": [],
-            }],
+            "items": [
+                {"kind": "dataset", "formal_name": "MMLU-Family",
+                 "identity": {"family": "MMLU"}, "aliases": ["MMLU"],
+                 "links": [], "description": "...", "subsets": []},
+                {"kind": "dataset", "formal_name": "MMLU",
+                 "identity": {"family": "MMLU", "org": "cais"},
+                 "aliases": ["cais/mmlu"],
+                 "links": [{"kind": "hf_dataset",
+                            "url": "https://huggingface.co/datasets/cais/mmlu"}],
+                 "description": "...", "subsets": []},
+            ],
         }],
     }
 
@@ -1284,18 +1707,21 @@ def test_flag_branch_variant_in_formal_name():
     lattice = {
         "groups": [{
             "family": "Marin",
-            "identity_keys": ["org", "collection"],
+            "identity_keys": ["family", "size", "branch"],
             "items": [
+                {"kind": "model", "formal_name": "Marin",
+                 "identity": {"family": "Marin"}, "aliases": ["Marin"],
+                 "links": [], "description": "...", "subsets": []},
                 {"kind": "model",
                  "formal_name": "marin-community/marin-8b-base@phoenix",
-                 "identity": {"org": "marin-community", "collection": "Marin"},
+                 "identity": {"family": "Marin", "size": "8B", "branch": "phoenix"},
                  "aliases": ["Marin 8B Phoenix"],
                  "links": [{"kind": "hf_model",
                             "url": "https://huggingface.co/marin-community/marin-8b-base"}],
                  "description": "...", "subsets": []},
                 {"kind": "model",
                  "formal_name": "marin-community/marin-8b-base@starling",
-                 "identity": {"org": "marin-community", "collection": "Marin"},
+                 "identity": {"family": "Marin", "size": "8B", "branch": "starling"},
                  "aliases": ["Marin 8B Starling"],
                  "links": [{"kind": "hf_model",
                             "url": "https://huggingface.co/marin-community/marin-8b-base"}],
@@ -1315,5 +1741,498 @@ def test_flag_branch_variant_in_formal_name():
 
     # Lattice itself is unchanged (purely additive)
     items = lattice["groups"][0]["items"]
+    assert len(items) == 3
+
+
+def test_complete_lattice_structure_echoes_formal_name_into_aliases():
+    """Phase 1: every item's formal_name is added to aliases[] if missing."""
+    from gdb.subsets import complete_lattice_structure
+
+    lattice = {
+        "groups": [{
+            "family": "X",
+            "items": [
+                {"kind": "model", "formal_name": "X",
+                 "identity": {"family": "X"}, "aliases": [],
+                 "links": [], "description": None},
+                {"kind": "model", "formal_name": "X/Y-7B",
+                 "identity": {"family": "X", "size": "7B"},
+                 "aliases": ["x-y-7b"],
+                 "links": [{"kind": "hf_model",
+                            "url": "https://huggingface.co/X/Y-7B"}],
+                 "description": None},
+            ],
+        }],
+    }
+    stats = complete_lattice_structure(lattice)
+    assert stats["aliases_added"] == 2  # X for item 0, X/Y-7B for item 1
+    items = lattice["groups"][0]["items"]
+    assert "X" in items[0]["aliases"]
+    assert "X/Y-7B" in items[1]["aliases"]
+
+
+def test_complete_lattice_structure_synthesizes_virtual_root():
+    """Phase 2: synthesize a virtual family root for groups that don't
+    have one. Idempotent: calling twice doesn't duplicate."""
+    from gdb.subsets import complete_lattice_structure
+
+    lattice = {
+        "groups": [{
+            "family": "X",
+            "items": [
+                {"kind": "model", "formal_name": "X/Y-7B",
+                 "identity": {"family": "X", "size": "7B"},
+                 "aliases": ["x-y-7b"],
+                 "links": [{"kind": "hf_model",
+                            "url": "https://huggingface.co/X/Y-7B"}],
+                 "description": None},
+            ],
+        }],
+    }
+    stats = complete_lattice_structure(lattice)
+    assert stats["roots_synthesized"] == 1
+    items = lattice["groups"][0]["items"]
     assert len(items) == 2
-    assert items[0]["formal_name"] == "marin-community/marin-8b-base@phoenix"
+    # Synthesized root is at index 0
+    root = items[0]
+    assert root["identity"] == {"family": "X"}
+    assert root["formal_name"] == "X"
+    assert "X" in root["aliases"]
+    assert root["links"] == []
+    assert root.get("_synthesized") is True
+
+    # Idempotent: a second call doesn't add another root
+    stats2 = complete_lattice_structure(lattice)
+    assert stats2["roots_synthesized"] == 0
+    assert len(lattice["groups"][0]["items"]) == 2
+
+
+def test_complete_lattice_structure_skips_when_root_exists():
+    """If a root already exists, don't synthesize another."""
+    from gdb.subsets import complete_lattice_structure
+
+    lattice = {
+        "groups": [{
+            "family": "X",
+            "items": [
+                {"kind": "model", "formal_name": "X-display",
+                 "identity": {"family": "X"}, "aliases": ["X"],
+                 "links": [{"kind": "paper", "url": "https://arxiv.org/abs/0"}],
+                 "description": "..."},
+                {"kind": "model", "formal_name": "X/Y-7B",
+                 "identity": {"family": "X", "size": "7B"},
+                 "aliases": ["x-y-7b"],
+                 "links": [{"kind": "hf_model",
+                            "url": "https://huggingface.co/X/Y-7B"}],
+                 "description": None},
+            ],
+        }],
+    }
+    stats = complete_lattice_structure(lattice)
+    assert stats["roots_synthesized"] == 0
+
+
+def test_flag_missing_family_root():
+    """When a group has 2+ items but no family root (identity == {family: X}
+    only), emit a `missing_family_root` hint so audit synthesizes one."""
+    from gdb.subsets import flag_audit_issues
+
+    lattice = {
+        "groups": [{
+            "family": "Qwen3",
+            "identity_keys": ["family", "size", "stage"],
+            "items": [
+                # Two leaves, no root
+                {"kind": "model", "formal_name": "Qwen/Qwen3-7B",
+                 "identity": {"family": "Qwen3", "size": "7B", "stage": "chat"},
+                 "aliases": ["Qwen3-7B"],
+                 "links": [{"kind": "hf_model",
+                            "url": "https://huggingface.co/Qwen/Qwen3-7B"}],
+                 "description": "...", "subsets": []},
+                {"kind": "model", "formal_name": "Qwen/Qwen3-32B",
+                 "identity": {"family": "Qwen3", "size": "32B", "stage": "chat"},
+                 "aliases": ["Qwen3-32B"],
+                 "links": [{"kind": "hf_model",
+                            "url": "https://huggingface.co/Qwen/Qwen3-32B"}],
+                 "description": "...", "subsets": []},
+            ],
+        }],
+    }
+    flag_audit_issues(lattice)
+    missing = [h for h in (lattice.get("audit_hints") or [])
+               if h["kind"] == "missing_family_root"]
+    assert len(missing) == 1
+    assert missing[0]["family"] == "Qwen3"
+    assert missing[0]["item_count"] == 2
+
+
+def test_flag_over_specified_alias():
+    """When a leaf carries a bare family-name alias (e.g., 'olmOCR') AND
+    its formal_name pins specific facets, emit an `over_specified` hint
+    so audit can split — moving the bare alias to the family root."""
+    from gdb.subsets import flag_audit_issues
+
+    lattice = {
+        "groups": [{
+            "family": "olmOCR",
+            "identity_keys": ["family", "size", "version"],
+            "items": [
+                {"kind": "model", "formal_name": "olmOCR",
+                 "identity": {"family": "olmOCR"}, "aliases": ["olmOCR-family"],
+                 "links": [{"kind": "paper",
+                            "url": "https://arxiv.org/abs/2502.18443"}],
+                 "description": "olmOCR family", "subsets": []},
+                {"kind": "model",
+                 "formal_name": "allenai/olmOCR-7B-0225-preview",
+                 "identity": {"family": "olmOCR", "size": "7B", "version": "0225-preview"},
+                 # Bare 'olmOCR' alias on a fully-specific leaf — flag
+                 "aliases": ["olmOCR", "olmOCR-7B-0225-preview"],
+                 "links": [{"kind": "hf_model",
+                            "url": "https://huggingface.co/allenai/olmOCR-7B-0225-preview"}],
+                 "description": "...", "subsets": []},
+            ],
+        }],
+    }
+    flag_audit_issues(lattice)
+    over = [h for h in (lattice.get("audit_hints") or [])
+            if h["kind"] == "over_specified"]
+    assert len(over) == 1
+    assert over[0]["item_formal_name"] == "allenai/olmOCR-7B-0225-preview"
+    assert over[0]["bare_alias"] == "olmOCR"
+    assert over[0]["item_family"] == "olmOCR"
+
+
+def test_flag_concept_subsumed_candidate():
+    """A.facets ⊂ B.facets within a family, A has no unique anchor →
+    `concept_subsumed_candidate` hint. A is likely a concept."""
+    from gdb.subsets import flag_audit_issues
+
+    lattice = {
+        "groups": [{
+            "family": "Qwen3",
+            "identity_keys": ["family", "size", "stage"],
+            "items": [
+                # A: identity={family, stage:Base}, no links
+                {"kind": "model", "formal_name": "Qwen3-Base",
+                 "identity": {"family": "Qwen3", "stage": "Base"},
+                 "aliases": ["Qwen3-Base"], "links": [],
+                 "description": None, "subsets": []},
+                # B: full identity, has hf_model
+                {"kind": "model", "formal_name": "Qwen/Qwen3-4B-Base",
+                 "identity": {"family": "Qwen3", "size": "4B", "stage": "Base"},
+                 "aliases": ["Qwen/Qwen3-4B-Base"],
+                 "links": [{"kind": "hf_model",
+                            "url": "https://huggingface.co/Qwen/Qwen3-4B-Base"}],
+                 "description": "...", "subsets": []},
+            ],
+        }],
+    }
+    flag_audit_issues(lattice)
+    hints = [h for h in (lattice.get("audit_hints") or [])
+             if h["kind"] == "concept_subsumed_candidate"]
+    assert len(hints) == 1
+    assert hints[0]["subsumed_formal_name"] == "Qwen3-Base"
+    assert hints[0]["subsumes_formal_name"] == "Qwen/Qwen3-4B-Base"
+
+
+def test_flag_subset_with_anchor():
+    """A.facets ⊂ B.facets (both multi-facet), BOTH have unique anchors →
+    `subset_with_anchor` hint (dataset-config / subset-of relationship).
+    Single-key family-root cases are filtered out as design noise."""
+    from gdb.subsets import flag_audit_issues
+
+    lattice = {
+        "groups": [{
+            "family": "FineMath",
+            "identity_keys": ["family", "version", "filter"],
+            "items": [
+                # Family root concept — filtered out of subsumption check
+                {"kind": "dataset", "formal_name": "FineMath",
+                 "identity": {"family": "FineMath"},
+                 "aliases": ["FineMath"],
+                 "links": [], "description": "...", "subsets": []},
+                # Parent dataset — multi-facet identity, has its own URL
+                {"kind": "dataset", "formal_name": "HuggingFaceTB/finemath",
+                 "identity": {"family": "FineMath", "version": "v1"},
+                 "aliases": ["HuggingFaceTB/finemath"],
+                 "links": [{"kind": "hf_dataset",
+                            "url": "https://huggingface.co/datasets/HuggingFaceTB/finemath"}],
+                 "description": "...", "subsets": []},
+                # Child — filter facet adds a key
+                {"kind": "dataset", "formal_name": "infimm-webmath/infiwebmath-3+",
+                 "identity": {"family": "FineMath", "version": "v1", "filter": "score>=3"},
+                 "aliases": ["infiwebmath-3+"],
+                 "links": [{"kind": "hf_dataset",
+                            "url": "https://huggingface.co/datasets/infimm-webmath/infiwebmath-3plus"}],
+                 "description": "...", "subsets": []},
+            ],
+        }],
+    }
+    flag_audit_issues(lattice)
+    hints = [h for h in (lattice.get("audit_hints") or [])
+             if h["kind"] == "subset_with_anchor"]
+    assert len(hints) == 1
+    assert hints[0]["child_formal_name"] == "HuggingFaceTB/finemath"
+    assert hints[0]["parent_formal_name"] == "infimm-webmath/infiwebmath-3+"
+
+
+def test_flag_same_url_duplicate():
+    """Two items in the same family share the same primary URL → dup hint.
+    The thinking/no-thinking case."""
+    from gdb.subsets import flag_audit_issues
+
+    lattice = {
+        "groups": [{
+            "family": "Qwen3",
+            "identity_keys": ["family", "size", "stage", "variant"],
+            "items": [
+                {"kind": "model", "formal_name": "Qwen/Qwen3-4B",
+                 "identity": {"family": "Qwen3", "size": "4B",
+                              "stage": "chat", "variant": "thinking"},
+                 "aliases": ["Qwen3-4B (thinking on)"],
+                 "links": [{"kind": "hf_model",
+                            "url": "https://huggingface.co/Qwen/Qwen3-4B"}],
+                 "description": "...", "subsets": []},
+                {"kind": "model", "formal_name": "Qwen/Qwen3-4B",
+                 "identity": {"family": "Qwen3", "size": "4B",
+                              "stage": "chat", "variant": "no-thinking"},
+                 "aliases": ["Qwen3-4B (thinking off)"],
+                 "links": [{"kind": "hf_model",
+                            "url": "https://huggingface.co/Qwen/Qwen3-4B"}],
+                 "description": "...", "subsets": []},
+            ],
+        }],
+    }
+    flag_audit_issues(lattice)
+    dups = [h for h in (lattice.get("audit_hints") or [])
+            if h["kind"] == "same_url_duplicate"]
+    assert len(dups) == 1
+    assert dups[0]["shared_url"] == "https://huggingface.co/Qwen/Qwen3-4B"
+    assert "Qwen/Qwen3-4B" in dups[0]["items"]
+
+
+def test_expand_concept_lattice_synthesizes_interior_concepts():
+    """expand_concept_lattice projects leaves onto subsets of
+    identity_keys; concepts that don't already exist get materialized."""
+    from gdb.subsets import expand_concept_lattice
+
+    lattice = {
+        "groups": [{
+            "family": "OLMo 3",
+            "identity_keys": ["family", "size", "stage"],
+            "items": [
+                # Family root (concept, exists already)
+                {"kind": "model", "formal_name": "OLMo 3",
+                 "identity": {"family": "OLMo 3"},
+                 "aliases": ["OLMo 3"], "links": [], "description": None},
+                # Two leaves
+                {"kind": "model", "formal_name": "allenai/Olmo-3-7B-Base",
+                 "identity": {"family": "OLMo 3", "size": "7B", "stage": "Base"},
+                 "aliases": ["allenai/Olmo-3-7B-Base"],
+                 "links": [{"kind": "hf_model",
+                            "url": "https://huggingface.co/allenai/Olmo-3-7B-Base"}],
+                 "description": "..."},
+                {"kind": "model", "formal_name": "allenai/Olmo-3-32B-Base",
+                 "identity": {"family": "OLMo 3", "size": "32B", "stage": "Base"},
+                 "aliases": ["allenai/Olmo-3-32B-Base"],
+                 "links": [{"kind": "hf_model",
+                            "url": "https://huggingface.co/allenai/Olmo-3-32B-Base"}],
+                 "description": "..."},
+            ],
+        }],
+    }
+    stats = expand_concept_lattice(lattice)
+    items = lattice["groups"][0]["items"]
+
+    # Each leaf has 2 non-family keys → 2 projections (size-only,
+    # stage-only). Across two leaves: {size:7B}, {size:32B},
+    # {stage:Base} (deduped — same {stage:Base} from both leaves).
+    # Total new: 3.
+    assert stats["concepts_synthesized"] == 3
+    sigs = {tuple(sorted(it["identity"].items())) for it in items}
+    assert (("family", "OLMo 3"), ("size", "7B")) in sigs
+    assert (("family", "OLMo 3"), ("size", "32B")) in sigs
+    assert (("family", "OLMo 3"), ("stage", "Base")) in sigs
+    # Synthesized concepts have _generated flag
+    gen = [it for it in items if it.get("_generated")]
+    assert len(gen) == 3
+    for it in gen:
+        assert it["links"] == []
+        assert it["aliases"]  # non-empty
+
+
+def test_expand_concept_lattice_idempotent():
+    """Running expand_concept_lattice twice adds nothing the second time."""
+    from gdb.subsets import expand_concept_lattice
+
+    lattice = {
+        "groups": [{
+            "family": "X",
+            "identity_keys": ["family", "size", "stage"],
+            "items": [
+                {"kind": "model", "formal_name": "X",
+                 "identity": {"family": "X"},
+                 "aliases": ["X"], "links": [], "description": None},
+                {"kind": "model", "formal_name": "X/Y-7B-Base",
+                 "identity": {"family": "X", "size": "7B", "stage": "Base"},
+                 "aliases": ["X/Y-7B-Base"],
+                 "links": [{"kind": "hf_model",
+                            "url": "https://huggingface.co/X/Y-7B-Base"}],
+                 "description": "..."},
+            ],
+        }],
+    }
+    s1 = expand_concept_lattice(lattice)
+    n1 = len(lattice["groups"][0]["items"])
+    s2 = expand_concept_lattice(lattice)
+    n2 = len(lattice["groups"][0]["items"])
+    assert s1["concepts_synthesized"] == 2  # {size:7B}, {stage:Base}
+    assert s2["concepts_synthesized"] == 0
+    assert n1 == n2
+
+
+def test_flag_same_url_cross_family():
+    """Same primary URL across DIFFERENT families → cross-family hint."""
+    from gdb.subsets import flag_audit_issues
+
+    lattice = {
+        "groups": [
+            {"family": "Dolmino", "identity_keys": ["family"],
+             "items": [
+                 {"kind": "dataset", "formal_name": "allenai/dolmino-mix-1124",
+                  "identity": {"family": "Dolmino"},
+                  "aliases": ["dolmino-mix-1124"],
+                  "links": [{"kind": "hf_dataset",
+                             "url": "https://huggingface.co/datasets/allenai/dolmino-mix-1124"}],
+                  "description": "...", "subsets": []},
+             ]},
+            {"family": "OLMo 2", "identity_keys": ["family"],
+             "items": [
+                 {"kind": "dataset", "formal_name": "allenai/dolmino-mix-1124",
+                  "identity": {"family": "OLMo 2"},
+                  "aliases": ["allenai/dolmino-mix-1124"],
+                  "links": [{"kind": "hf_dataset",
+                             "url": "https://huggingface.co/datasets/allenai/dolmino-mix-1124"}],
+                  "description": "...", "subsets": []},
+             ]},
+        ],
+    }
+    flag_audit_issues(lattice)
+    h = [x for x in (lattice.get("audit_hints") or [])
+         if x["kind"] == "same_url_cross_family"]
+    assert len(h) == 1
+    assert set(h[0]["families"]) == {"Dolmino", "OLMo 2"}
+    assert "dolmino-mix-1124" in h[0]["shared_url"]
+
+
+def test_flag_concept_with_no_entity():
+    """Family with 2+ concepts but no entity → concept_with_no_entity."""
+    from gdb.subsets import flag_audit_issues
+
+    lattice = {
+        "groups": [{
+            "family": "olmOCR",
+            "identity_keys": ["family", "version"],
+            "items": [
+                {"kind": "model", "formal_name": "olmOCR",
+                 "identity": {"family": "olmOCR"},
+                 "aliases": ["olmOCR"],
+                 "links": [{"kind": "hf_collection",
+                            "url": "https://huggingface.co/collections/allenai/olmocr-x"}],
+                 "description": "...", "subsets": []},
+                {"kind": "model", "formal_name": "olmOCR 2",
+                 "identity": {"family": "olmOCR", "version": "2"},
+                 "aliases": ["olmOCR 2"],
+                 "links": [{"kind": "blog",
+                            "url": "https://allenai.org/blog/olmocr-2"}],
+                 "description": "...", "subsets": []},
+            ],
+        }],
+    }
+    flag_audit_issues(lattice)
+    h = [x for x in (lattice.get("audit_hints") or [])
+         if x["kind"] == "concept_with_no_entity"]
+    assert len(h) == 1
+    assert h[0]["family"] == "olmOCR"
+
+
+def test_flag_family_root_invented_alias():
+    """Family root with no alias from input pile → invented_alias hint
+    (only fires when input_names_set is provided)."""
+    from gdb.subsets import flag_audit_issues
+
+    lattice = {
+        "groups": [{
+            "family": "Phi (Microsoft)",
+            "identity_keys": ["family", "version", "size", "stage"],
+            "items": [
+                {"kind": "model", "formal_name": "Phi (Microsoft)",
+                 "identity": {"family": "Phi (Microsoft)"},
+                 "aliases": ["Phi (Microsoft)"],  # synthesized — not in input
+                 "links": [], "description": None, "subsets": []},
+                {"kind": "model", "formal_name": "microsoft/phi-4",
+                 "identity": {"family": "Phi (Microsoft)", "version": "4"},
+                 "aliases": ["Phi-4", "Phi 4"],
+                 "links": [{"kind": "hf_model",
+                            "url": "https://huggingface.co/microsoft/phi-4"}],
+                 "description": "...", "subsets": []},
+            ],
+        }],
+    }
+    input_names = {"Phi-4", "Phi 4", "Phi4-Mini-Instruct", "phi4-mini-instruct"}
+    flag_audit_issues(lattice, input_names_set=input_names)
+    h = [x for x in (lattice.get("audit_hints") or [])
+         if x["kind"] == "family_root_invented_alias"]
+    assert len(h) == 1
+    assert h[0]["family"] == "Phi (Microsoft)"
+
+    # Without input_names_set, the check is skipped
+    lattice2 = {"groups": [lattice["groups"][0]]}
+    lattice2["audit_hints"] = []
+    flag_audit_issues(lattice2)  # no input_names_set
+    h2 = [x for x in (lattice2.get("audit_hints") or [])
+          if x["kind"] == "family_root_invented_alias"]
+    assert len(h2) == 0
+
+
+def test_expand_concept_lattice_skips_existing_projection():
+    """If a projection's identity already matches an existing item
+    (even one organize emitted as a source-mentioned concept),
+    expansion skips it — no duplicate."""
+    from gdb.subsets import expand_concept_lattice
+
+    lattice = {
+        "groups": [{
+            "family": "Qwen3",
+            "identity_keys": ["family", "size", "stage"],
+            "items": [
+                {"kind": "model", "formal_name": "Qwen3",
+                 "identity": {"family": "Qwen3"},
+                 "aliases": ["Qwen3"], "links": [], "description": None},
+                # Source-mentioned concept (already materialized)
+                {"kind": "model", "formal_name": "Qwen3-Base",
+                 "identity": {"family": "Qwen3", "stage": "Base"},
+                 "aliases": ["Qwen3-Base"], "links": [], "description": None},
+                # Leaf
+                {"kind": "model", "formal_name": "Qwen/Qwen3-4B-Base",
+                 "identity": {"family": "Qwen3", "size": "4B", "stage": "Base"},
+                 "aliases": ["Qwen/Qwen3-4B-Base"],
+                 "links": [{"kind": "hf_model",
+                            "url": "https://huggingface.co/Qwen/Qwen3-4B-Base"}],
+                 "description": "..."},
+            ],
+        }],
+    }
+    stats = expand_concept_lattice(lattice)
+    # Projections from the leaf: {size:4B} (new) + {stage:Base} (exists).
+    # Only {size:4B} is synthesized.
+    assert stats["concepts_synthesized"] == 1
+    items = lattice["groups"][0]["items"]
+    sigs = {tuple(sorted(it["identity"].items())) for it in items}
+    assert (("family", "Qwen3"), ("size", "4B")) in sigs
+    # Existing Qwen3-Base concept is preserved (not duplicated)
+    base_concepts = [it for it in items
+                     if it["identity"] == {"family": "Qwen3", "stage": "Base"}]
+    assert len(base_concepts) == 1
+    assert base_concepts[0]["formal_name"] == "Qwen3-Base"
+    assert not base_concepts[0].get("_generated")

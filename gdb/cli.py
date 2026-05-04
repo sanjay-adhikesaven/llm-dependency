@@ -13,6 +13,7 @@ from .pipeline import (
     run_extract,
     run_merge,
     run_organize,
+    run_reconcile,
     run_relate,
     run_triage,
 )
@@ -166,6 +167,30 @@ def relate_cmd(batch_id: str | None, artifact_path: str | None,
     ))
 
 
+@run.command("reconcile")
+@click.option("--artifact", "artifact_path",
+              help="Ingest an existing reconcile artifact for validation.")
+@click.option("--lattice", "lattice_path",
+              help="Lattice path (default: most recent organize / audit).")
+@click.option("--relations", "relations_path",
+              help="Single relate artifact (default: aggregate every per-batch relate artifact).")
+def reconcile_cmd(artifact_path: str | None, lattice_path: str | None,
+                  relations_path: str | None):
+    """Pure-Python lattice-aware reconciliation of relate edges.
+
+    Performs subsumption (merging vague edges into specific ones along
+    the identity lattice), corroboration (stacking anchors when
+    independent sources describe the same dependency), and conflict
+    detection (sibling-endpoint disagreements flagged for review).
+    No LLM call.
+    """
+    emit_json(run_reconcile(
+        artifact_path=artifact_path,
+        lattice_path=lattice_path,
+        relations_path=relations_path,
+    ))
+
+
 @run.command("triage")
 @click.option("--artifact", "artifact_path",
               help="Ingest an existing triage artifact instead of launching an agent.")
@@ -216,7 +241,7 @@ def merge_cmd(artifact_path: str | None, sources: tuple[str, ...],
               default=config.CLAUDE_MODEL, show_default=True)
 @click.option("--skip", multiple=True,
               type=click.Choice(["discover", "extract", "organize", "audit",
-                                 "relate"]),
+                                 "relate", "reconcile"]),
               help="Skip one or more stages. Pass multiple times to skip several.")
 def expand_cmd(node: str, planner_model: str, subagent_model: str,
                skip: tuple[str, ...]):

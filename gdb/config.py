@@ -50,7 +50,7 @@ BATCH_MANIFEST_FILE = "MANIFEST.txt"
 
 # Pipeline stages (execution order)
 STAGE_NAMES = ("discover", "extract", "organize", "audit",
-               "relate", "triage", "merge")
+               "relate", "reconcile", "triage", "merge")
 
 # Per-stage artifact filenames written under each run_root
 DISCOVER_ARTIFACT_FILE = "discover_artifact.json"
@@ -60,6 +60,7 @@ ORGANIZE_ARTIFACT_FILE = "organize_artifact.json"
 AUDIT_ARTIFACT_FILE = "audit_artifact.json"
 RELATE_EVENTS_FILE = "relate_events.jsonl"
 RELATE_ARTIFACT_FILE = "relate_artifact.json"
+RECONCILE_ARTIFACT_FILE = "reconcile_artifact.json"
 TRIAGE_ARTIFACT_FILE = "triage_artifact.json"
 TRIAGE_RELATIONS_FILE = "relations.json"
 MERGE_ARTIFACT_FILE = "merge_artifact.json"

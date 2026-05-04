@@ -63,22 +63,81 @@ Pair-only facts (e.g., "OLMo-3 inspired_by SwallowMath
 recipe") wrap as a singleton-edge event — same shape, just
 one edge in the array. Uniform schema.
 
-## Lattice anchoring (subject — strict)
+## Lattice anchoring — preserve source specificity
 
-The lattice gives you a closed set of canonical entities.
-Every edge's `subject` MUST be a `formal_name` taken verbatim
-from the lattice. Normalize source surface forms to canonical
-formal_names before emitting (use the `aliases[]` arrays for
-the lookup).
+The lattice is a partial order: every family has a **family
+root** (concept node, identity `{family: X}` only, no production
+link) and zero-or-more **entity leaves** (full identity, with HF
+/ GitHub / vendor docs link). **Vague mentions land on the
+family root or on intermediate concept nodes; precise mentions
+land on leaves.** Match the source's specificity exactly — don't
+upgrade vague mentions to specific leaves, and don't downgrade
+specific mentions to roots.
 
-**Objects** can be either lattice formal_names OR free-text
-descriptors when the source mentions an artifact that isn't in
-the lattice (e.g., a researcher's personal-namespace HF
-dataset, an internal codename, or an off-lattice mention that
-audit decided not to keep). Don't drop the edge — emit the
-object as the literal string from the source. The query layer
-distinguishes "object resolves to lattice item" vs "object is
-free text" at read time, no flag needed on the edge.
+### Resolving a mention string to a lattice address
+
+For each mention you'd put in `subject` or `object`:
+
+1. **Try literal alias lookup.** Walk the lattice items. If the
+   normalized mention (lowercase, alphanum-only) equals the
+   normalized form of any item's `formal_name` or `aliases[]`
+   entry, that item is the address. Done.
+
+2. **Otherwise parse the mention into facet hints.** Common
+   patterns:
+   - size: `\d+(\.\d+)?(B|M)` → `size: "7B"` etc.
+   - stage: `Base|Instruct|Chat|Think|SFT|DPO|RL|RL-Zero|Preview` → `stage: <token>`
+   - variant: `thinking|no-thinking|FP8|AWQ|Distill` → `variant: <token>`
+   - date: `\d{4}` or `\d{4}-\d{2}-\d{2}` → `date: <token>`
+
+3. **Find the family** — match the family root whose
+   `identity.family` value (or alias of that root) appears as a
+   prefix or token in the mention. This is your family pivot.
+
+4. **Build the lattice address.** Combine `{family: X}` with the
+   parsed facets. Find the lattice item whose `identity` exactly
+   equals that address:
+   - If a leaf matches exactly → use the leaf's `formal_name`.
+   - If only the family root matches (your facets are empty
+     beyond `family`) → use the root's `formal_name`.
+   - If your facet set lies between the root and some leaves
+     (e.g., paper says "OLMo 3 Base" → `{family: OLMo 3, stage:
+     Base}` — multiple Base leaves exist but no exact-match item)
+     → emit a **virtual concept address** in this notation:
+     ```
+     <family> [<facet1>=<value1>, <facet2>=<value2>, ...]
+     ```
+     Examples:
+     - `OLMo 3 [stage=Base]`
+     - `Qwen3 [size=4B]`
+     - `olmOCR [version=v1]`
+
+   Reconcile (the next stage) merges edges across specificity
+   levels via dict-subset comparison — any virtual address that
+   subsumes some leaves will be folded into a leaf-anchored edge
+   if other sources provided the missing facets.
+
+5. **Off-lattice fallback** — if you can't even find a family
+   pivot (e.g., a personal-namespace HF dataset that wasn't
+   extracted; an internal codename; a name audit dropped), emit
+   the literal source mention as a free-text string. The query
+   layer distinguishes "address resolves to lattice item" vs
+   "free text" at read time, no flag needed on the edge.
+
+### Subject vs object specificity
+
+- **Subjects** are usually leaves (the target's own checkpoints
+  are pinned by `from_pretrained()` calls in configs). Emit
+  leaf-level when the source pins the specific checkpoint.
+- **Subjects can also be virtual concept addresses** when the
+  source describes an event at the family or stage level (e.g.,
+  "for the OLMo 3 Think family we use Qwen3 32B as judge" — the
+  subject is `OLMo 3 [stage=Think]`, not a specific checkpoint).
+  Emit one edge with the concept-level subject, OR emit one
+  per-leaf edge — the global-policy-edges section below
+  describes when to fan out.
+- **Objects** can be leaves, family roots, virtual concept
+  addresses, or free-text. Same matching rules.
 
 If an artifact is mentioned only as a side-comment with no
 relation to anything in the lattice, drop it; don't invent
@@ -283,14 +342,18 @@ both.
 }
 ```
 
-- `subject`: MUST be a verbatim lattice formal_name.
+- `subject`: MUST be one of:
+  - a leaf `formal_name` (full-identity item),
+  - a family-root `formal_name` (item with identity `{family: X}`),
+  - a virtual concept address `<family> [<k>=<v>, ...]` notation
+    when the source's specificity falls between root and leaf.
 - `relation`: canonical from the table above when one fits;
   otherwise a coined snake_case label.
 - `dependency_kind`: `"direct"` or `"indirect"`. Closed
   vocabulary; mismatch with the relation's bucket is a
   validation error.
-- `object`: a lattice formal_name OR a free-text descriptor.
-  No null, no separate "object_text" field.
+- `object`: same shape as subject (leaf / root / virtual concept
+  address) OR a free-text descriptor when no family pivot exists.
 - `description`: lossless prose. MUST capture every
   structurally relevant fact that the relation, subject,
   object, and event description don't already express:
