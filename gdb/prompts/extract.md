@@ -86,6 +86,34 @@ prose frames it as a tool. Cues to look for:
 When in doubt, emit. The organize / audit stages drop noise via
 web verification; missing a real model is irrecoverable.
 
+### Looks like a dataset in context
+
+Some sources name a data source with a non-dataset noun
+("forum", "website", "archive", "repository", "dump",
+"submissions", "competition", "subreddit"). When such a name is
+the SOURCE of training content the target consumed — rewrites,
+scrapes, filtered subsets — **emit it as `dataset`**, not as a
+generic mention to skip. The literal noun is misleading; the
+artifact role is "dataset that fed training". Organize will
+resolve it to its canonical HF / paper release if one exists.
+
+Cues:
+
+- The name appears as the origin / source of content in a
+  data-construction sentence ("sourced rewrites from X",
+  "scraped from X", "filtered from X dumps", "experimented
+  with rewrites of X").
+- The name is well-known as a problem or document corpus
+  with public releases (math problem forums, web archives,
+  encyclopedic projects, scholarly venues, code repositories,
+  question-answer communities).
+- A paper citation follows the name, attributing the dataset
+  paper rather than the forum / website itself.
+
+This rule extends "when in doubt, emit" — but with a specific
+disambiguation: if the name is the source of training data,
+choose `dataset`, not skip-as-task / skip-as-org / skip-as-tool.
+
 ### Skip these (they aren't model/dataset names)
 
 - license names (`Apache-2.0`, `MIT`, `CC-BY-4.0`)
@@ -98,6 +126,73 @@ web verification; missing a real model is irrecoverable.
 - paper titles
 - task / capability names that are NOT a dataset
   (e.g., "math reasoning" the task vs. `MATH-500` the dataset)
+
+### Where artifact names appear (code-file principle)
+
+When reading code files, extract artifact names from places
+where the source REFERENCES an artifact — not from every
+identifier you see. The structural signals are:
+
+- Quoted strings passed to model / dataset loaders:
+  `from_pretrained("Qwen/Qwen3-32B")`,
+  `load_dataset("HuggingFaceTB/finemath", "finemath-3plus")`
+- CLI flags / launcher arguments pinning a model or dataset:
+  `--model Qwen/Qwen3-32B`,
+  `--dataset_mixer_list allenai/Dolci-Think-RL-7B 10000`
+- Config-file fields naming an artifact:
+  `base_model: meta-llama/Llama-3.1-8B`,
+  `datasets: [tatsu-lab/alpaca]`
+- Comments naming the artifact: `# distill from DeepSeek-R1`
+
+Function definitions, class definitions, classmethod names,
+factory constructors, and internal variable names are NOT
+artifact references. They DEFINE or BUILD something; they are
+not the thing itself. Skip them.
+
+When in doubt, ask: is this surface string REFERRING TO an
+existing released artifact, or DEFINING / CONSTRUCTING
+something? References are in scope; definitions are not.
+
+### Skip bibliography-only references
+
+If a name appears ONLY in the paper's References / Bibliography
+section and is not mentioned by name in body prose, tables,
+captions, or code blocks, do NOT emit. A bibliography entry is
+a scholarly citation, not an artifact mention. A name that ALSO
+appears in body prose with a participation claim ("we used X as
+the base", "X was the judge") IS in scope — the bibliography
+rule applies only when bibliography is the sole occurrence.
+
+**Important: a body-prose mention with a paper citation is NOT
+bibliography-only.** Many primary sources cite the upstream
+artifact's paper inline as `(Author et al., 20XX)` while
+describing what the artifact did. That's body prose with a
+participation claim — emit the artifact name even though a
+citation accompanies it. The bibliography-only rule applies
+only when the name is genuinely confined to the References /
+Bibliography section with NO body-prose discussion.
+
+The test: ignore the citation parenthetical. Does the rest of
+the sentence say what the artifact did, where it came from, or
+how it was used? If yes, it's body prose. Emit.
+
+### Skip comparison-baseline-only mentions
+
+If a name appears ONLY as a row in a leaderboard or evaluation
+comparison table with no prose mention elsewhere in the source,
+do NOT emit. A bare table row is just a number; the
+participation claim that makes a comparison interesting ("we
+benchmarked OUR model against X") lives in prose. A name that
+appears in BOTH the comparison table AND prose with any role
+context (judge, distillation source, methodology peer,
+explicit comparison subject) IS in scope.
+
+These two skips key on source position (where in the document a
+name appears), not on entity type or relation type. Indirect
+dependencies — judges, methodology references,
+comparisons-with-context — survive because they appear in
+prose. Pure noise (citation lists, bare leaderboard scores) is
+filtered.
 
 ## "Most specific form" means
 

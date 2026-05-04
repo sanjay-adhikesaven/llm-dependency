@@ -1,51 +1,42 @@
-# Extract Operations and Edges Anchored to the Lattice
+# Extract Operations and Edges from this Batch's Sources
 
 > **Goal: read this batch's source files, identify every
-> training / filtering / generation / transformation EVENT
-> (an `operation`), then emit one EDGE per participant with
-> a closed-enum `relation` classification AND a per-edge
-> description. Subjects are forced to be lattice
-> `formal_name`s — that's the controllability lever.**
+> training / data-construction / evaluation EVENT, and append
+> ONE JSON line per event to `{{artifact_path}}`. Each event
+> wraps its participating edges. Subjects are forced to lattice
+> formal_names — the controllability lever.**
 
 Read the lattice at `{{lattice_path}}` and the source files
-under `{{batch_dir}}`. Write operations + edges to
+under `{{batch_dir}}`. Append events as JSON-Lines records to
 `{{artifact_path}}`.
 
-## Operations vs edges (load-bearing)
+## Append-as-you-go (load-bearing)
 
-A real training event involves multiple participants playing
-different roles. The Olmo-3 7B Think RLVR run, for example,
-involves at least four participants:
+You are NOT producing a single giant JSON object at the end.
+Instead, **after you finish identifying each event, append one
+JSON object as a single line** to `{{artifact_path}}`. The file
+is JSONL — one record per line, each a self-contained event.
+Use:
 
-- the resulting model (`Olmo-3-7B-Think`)
-- the base checkpoint (`Olmo-3-7B-Think-DPO`)
-- the training data (`Dolci-Think-RL-7B`)
-- the judge model (`Qwen/Qwen3-32B`)
+```
+cat >> {{artifact_path}} <<'EOF'
+{"description": "...", "anchor_list": [...], "edges": [...]}
+EOF
+```
 
-We capture this as **one `operation`** (a first-class record
-with a lossless prose description of the whole event) and
-**N `edges`** (lightweight participant pointers), all sharing
-the same `operation_id`.
+(or use the Edit tool to append; either works). Don't keep
+prior events in your working memory — they're persisted on
+disk. After your turn, the pipeline reads this JSONL,
+validates it, and assembles the per-batch artifact.
 
-Why this shape: pairwise edges alone lose the structural fact
-that these participants belong to the SAME event. A
-downstream query like "what models participated in the same
-training event as Qwen3-32B as judge?" needs operation
-grouping. License inheritance and contamination tracing also
-need it: license flows along the operation, not along
-disjoint pairwise edges.
-
-Every edge in `edges[]` MUST point at an operation in
-`operations[]` via `operation_id` — except for STRUCTURAL
-literal-value relations (size, training_tokens, etc.) and
-INDIRECT relations like `used_for_evaluation` /
-`cited_as_baseline` that aren't part of a training pipeline
-event. Those may carry `operation_id: null`.
+This means: NO operation IDs to maintain across edges. Edges
+live INSIDE their operation as a nested array. If you forget
+op-ids you've assigned, that's fine — there are no op-ids.
 
 ## Filesystem scope
 
-Read `{{lattice_path}}` (groups+items+links artifact from
-linker / audit / organize) and every file under
+Read `{{lattice_path}}` (the post-audit lattice — every dataset
+node has `subsets[]` populated) and every file under
 `{{batch_dir}}` recursively (PDFs, markdown, code, configs).
 Skip `__pycache__`, `node_modules`, `.git`, `venv`. Do not
 read anything outside `{{batch_dir}}` except the lattice.
@@ -53,37 +44,79 @@ read anything outside `{{batch_dir}}` except the lattice.
 Web search is **off** for this stage — we want grounded claims
 from the source files, not synthesized knowledge.
 
-## What "lattice-anchored" means
+## What is an event (operation)
+
+A real training or data-construction event involves multiple
+participants playing different roles. The OLMo-3 7B Think DPO
+event, for example, involves at least four participants:
+
+- the resulting model (`allenai/Olmo-3-7B-Think-DPO`)
+- the base checkpoint (`allenai/Olmo-3-7B-Think-SFT`)
+- the chosen-completion generator (`Qwen/Qwen3-32B`, thinking)
+- the rejected-completion generator (`Qwen/Qwen3-0.6B`, thinking)
+
+Capture this as ONE event whose `description` names what
+happened, with N edges nested inside (one per participant
+role).
+
+Pair-only facts (e.g., "OLMo-3 inspired_by SwallowMath
+recipe") wrap as a singleton-edge event — same shape, just
+one edge in the array. Uniform schema.
+
+## Lattice anchoring (subject — strict)
 
 The lattice gives you a closed set of canonical entities.
-Every `subject` you emit MUST be a `formal_name` taken
-verbatim from the lattice. If a source mentions a thing that
-maps to a lattice entity by alias, normalize the surface form
-to the canonical `formal_name` before emitting.
+Every edge's `subject` MUST be a `formal_name` taken verbatim
+from the lattice. Normalize source surface forms to canonical
+formal_names before emitting (use the `aliases[]` arrays for
+the lookup).
 
-If a source mentions something that is *not* in the lattice
-and *cannot* be normalized to one (e.g., a researcher's
-personal-namespace HF dataset, a one-off internal codename,
-**a frontier API model like GPT-4.1 or o4-mini that has no
-HF/GitHub link**), you have two valid moves:
+**Objects** can be either lattice formal_names OR free-text
+descriptors when the source mentions an artifact that isn't in
+the lattice (e.g., a researcher's personal-namespace HF
+dataset, an internal codename, or an off-lattice mention that
+audit decided not to keep). Don't drop the edge — emit the
+object as the literal string from the source. The query layer
+distinguishes "object resolves to lattice item" vs "object is
+free text" at read time, no flag needed on the edge.
 
-1. If it appears as the **object** of a relation whose subject
-   is in the lattice — emit the relation with `object_ref:
-   null`, `object_text: "<the literal string from source>"`,
-   `object_in_lattice: false`. **This includes well-known API
-   judges and synthetic-data generators** — they are real
-   entities and the edge to them is load-bearing for license
-   inheritance and provenance. Don't drop the edge just
-   because the object isn't a HF artifact.
-2. If it appears alone (no relation to any lattice entity)
-   — drop it. Don't invent relations.
+If an artifact is mentioned only as a side-comment with no
+relation to anything in the lattice, drop it; don't invent
+relations.
 
-`subject_in_lattice` is always `true`. We don't extract
-relations between two off-lattice entities; both endpoints
-need to anchor to canonical names for the system to compare
-across batches.
+## Aggregator + leaf rule (load-bearing)
 
-### Global-policy edges (load-bearing)
+Modern training pipelines structure data as **aggregator
+mixes** that compose named **leaf sub-corpora**. The lattice
+encodes this via the dataset node's `subsets[]` field:
+
+```json
+{
+  "kind": "dataset",
+  "formal_name": "allenai/dolma3_dolmino_mix-100B-1025",
+  "subsets": ["cranemath", "cranecode", "finemath4plus", ...]
+}
+```
+
+When the subject `trained_on` an aggregator that has populated
+`subsets[]`, emit `trained_on` edges at BOTH granularities:
+
+- One aggregator-level edge: `subject → trained_on →
+  <aggregator-formal-name>`
+- One leaf-level edge per subset: `subject → trained_on →
+  <aggregator-formal-name>/<subset-slug>` for each entry in
+  the parent's `subsets[]`
+
+The leaf-level edges look redundant with the aggregator-level
+one but they capture the dependency at the granularity
+reference graphs use. Do NOT drop them.
+
+If the source explicitly says only some sub-corpora were used
+(e.g., "Olmo-3-7B-Base used CraneMath and FineMath4+ but not
+the OMR-Rewrite subset of dolmino"), emit leaf edges only for
+the ones the source names.
+
+## Global-policy edges
 
 When the source describes a model as the **global** judge,
 generator, filter, or transformer for a **class** of training
@@ -96,79 +129,89 @@ off". This is a global default for ALL OLMo-3 RLVR runs.
 Emit `filtered_by Qwen/Qwen3-32B` for **every** OLMo-3
 RLVR-trained model: `Olmo-3-7B-Think`, `Olmo-3-32B-Think`,
 `Olmo-3.1-32B-Think`, `Olmo-3-7B-Instruct`, the 5+ RL-Zero
-variants — that's ~10 edges from one global statement.
+variants. Each lands in its own event (no shared op).
 
 Same pattern for global generators: "we distill thinking
-traces from GPT-4.1 and o4-mini" → emit `distilled_from`
-edges to both objects (off-lattice via `object_text` if
-needed) for every model whose midtraining/post-training
-mixture incorporated those traces.
+traces from GPT-4.1 and o4-mini" → emit `generated_by` edges
+to both objects (off-lattice via free-text `object` if the
+lattice doesn't have them) for every model whose midtraining
+or post-training mixture incorporated those traces.
 
 A global statement that you DO NOT expand to per-stage edges
 will manifest downstream as missing license-inheritance and
 provenance edges. Err on the side of expanding.
 
-## Relation taxonomy (canonical labels + coining when needed)
+## Relation taxonomy (canonical labels — coining allowed when none fits)
 
-`relation` is an **open string**, but the canonical labels
-below cover the great majority of LLM-pipeline events. The 5
-DIRECT and 3 INDIRECT buckets are designed to be orthogonal —
-every direct dependency that fits one of them lands in exactly
-one. STRUCTURAL is for artifact-lineage links that aren't
-training-pipeline events.
+`relation` is an open string, but the canonical labels below
+cover the vast majority of LLM-pipeline events. The 5 DIRECT
+and 3 INDIRECT buckets are designed to be orthogonal — every
+direct dependency that fits one of them lands in exactly one.
 
 **Use a canonical label when one fits.** Only coin a new
 snake_case label when the source describes an event that none
 of the canonical values capture. Examples of legitimate
-coining:
-
-- `merged_from` — model souping / weight averaging across
-  multiple checkpoint variants (the canonical
-  `initialized_from` is one-to-one).
-- `deduplicated_by` — a deduplication pipeline that strips
-  documents from a corpus (close to `transformed_by` but the
-  reader benefits from the more specific label).
-- `embedded_by` / `tokenized_by` / `decontaminated_by` — when
-  these are the named operation in the source.
+coining: `merged_from` (model souping), `deduplicated_by`,
+`embedded_by`, `tokenized_by`, `decontaminated_by`.
 
 **Do NOT coin** when the canonical label fits. The planner
-that emits `cited_as_baseline` instead of `used_for_evaluation`
-is an example of bad coining: comparison baselines ARE
-evaluation usage. The cost of frivolous coining is downstream
-analysis splitting on cosmetic variants.
+that emits `cited_as_baseline` instead of skipping the edge
+entirely (baseline comparisons are out-of-scope, see below)
+is bad reasoning, not bad coining.
 
 When you coin, the edge `description` MUST explain the role
 clearly enough that a downstream reader understands what the
-new label means without re-reading the source. Coining
-substitutes prompt-level guidance for runtime LLM judgment;
-make the description carry that weight.
+new label means without re-reading the source.
 
-### DIRECT relations (subject's training pipeline depended on object)
+### DIRECT relations (`dependency_kind: "direct"` — object enters training)
 
-| relation | subject→object | when to use |
+| relation | typical direction | when to use |
 |---|---|---|
-| `trained_on` | M→D | the dataset is pre-training or post-training data for the model |
-| `initialized_from` | M→M | weight initialization (the subject's parameters are copied / continued from the object) |
-| `distilled_from` | M→M | the subject's training data was **generated by** the object — original content comes *from the object model itself* (synthetic data, instruction generation, RL rollouts, distillation traces) |
-| `transformed_by` | M→D, M→M | the subject's training data was **rewritten / OCR'd / reformatted** by the object — content originated *somewhere else* and the object only modified it |
-| `filtered_by` | M→M | the object **decided inclusion** of training samples (judge in pairwise preference, quality-score classifier, reward model used as filter) — content unchanged, only included or excluded |
+| `trained_on` | M → D | the dataset is pretraining or post-training data for the model |
+| `trained_from` | M → M | weight initialization (subject's parameters copied / continued from object) |
+| `generated_by` | M → M | object model generated content used as subject's training data (synthetic data, distillation traces, RL rollouts) |
+| `transformed_by` | M → M / M → D | object rewrote / OCR'd / reformatted content used in training (content originated elsewhere; object only modified) |
+| `filtered_by` | M → M | object decided inclusion (judge in pairwise preference, quality classifier, RM-as-filter) — content unchanged |
 
-### INDIRECT relations (object shaped subject without entering training)
+### INDIRECT relations (`dependency_kind: "indirect"` — object shaped subject without entering training)
 
-| relation | subject→object | when to use |
+| relation | typical direction | when to use |
 |---|---|---|
-| `inspired_by` | M→M | methodology borrowed; no weight or data inheritance |
-| `used_for_ablation` | M→M, M→D | used in an ablation experiment, not the production training run |
-| `used_for_evaluation` | M→D, M→M | benchmark / eval set OR comparison baseline reported in the paper. **Use this for comparison baselines too** — do NOT invent `cited_as_baseline` or any other relation; baselines are evaluation usage. |
+| `inspired_by` | M → M / M → D | methodology borrowed; recipe explicitly cited; no weight or data inheritance |
+| `used_for_ablation` | M → M / M → D | object was a design-space variant in the subject team's OWN ablation studies (not a baseline they compared against) |
+| `used_for_evaluation` | M → M / M → D | benchmark / eval set OR LLM judge model — used to evaluate the release |
 
-### STRUCTURAL relations (artifact-to-artifact lineage, not training-pipeline events)
+### Out-of-scope — do NOT emit
 
-| relation | subject→object | when to use |
-|---|---|---|
-| `subset_of` | D→D | the subject is a subset / filtered copy of the parent |
-| `supersedes` | M/D → M/D | the subject replaces a predecessor |
-| `released_with` | M↔M/D | tokenizer or companion artifact bundled with a release |
-| `contains` | D→D | the subject dataset bundles the object dataset |
+- **Baseline comparisons** ("we report scores against Llama-3
+  in Table 7", "our model outperforms GPT-4 on GSM8K"). These
+  are lateral comparisons, not provenance. Emit nothing — no
+  node, no edge. The test: was this artifact part of the
+  team's OWN development pipeline (ablation, eval, methodology
+  borrowing), or just a published number to compare against?
+  Only the former is in scope.
+- **Generic architecture / algorithm** (Transformer, RoPE,
+  RMSNorm, AdamW, MoE, GQA, SwiGLU). Never edges.
+- **Tokenizers, frameworks, infrastructure** (PyTorch, vLLM,
+  Transformers, datatrove, tiktoken). Never edges.
+- **Vague inspiration** ("inspired by the broader RL
+  literature", "following common practice"). Never edges.
+- **Numeric facts about a node** (size, training_tokens,
+  release_date, parameter_count, context_length). These are
+  NOT edges. They live in node descriptions. The lattice
+  validator will reject them as relations.
+
+### No STRUCTURAL bucket
+
+Subset / contains / supersedes / released_with relationships
+are NOT emitted as edges. Their information lives in:
+- The dataset node's `subsets[]` field (composition).
+- The aggregator+leaf rule (subject emits leaf-level edges).
+- Node descriptions (release ordering, supersession,
+  bundling).
+
+This avoids dataset-as-subject edges and matches the way
+reference graphs encode lineage.
 
 ## Why no overlap among the 5 DIRECT buckets
 
@@ -176,19 +219,19 @@ Two orthogonal axes separate them:
 
 - **Content origin** — where did the training content come from?
   - external data → `trained_on`, `transformed_by`, `filtered_by`
-  - external weights → `initialized_from`
-  - the object model itself → `distilled_from`
+  - external weights → `trained_from`
+  - the object model itself → `generated_by`
 
 - **What the object did to the content**:
   - the object IS the content (weights or generated text) →
-    `initialized_from`, `distilled_from`, `trained_on`
+    `trained_from`, `generated_by`, `trained_on`
   - the object **rewrote** existing content → `transformed_by`
   - the object **only decided inclusion** → `filtered_by`
 
 ```
                   | content from object | content from elsewhere, unchanged | content from elsewhere, modified
-weights           | initialized_from    | —                                  | —
-content (data)    | distilled_from      | trained_on (data) /                | transformed_by
+weights           | trained_from        | —                                  | —
+content (data)    | generated_by        | trained_on (data) /                | transformed_by
                   |                     | filtered_by (decision-only model)  | (rewriter model)
 ```
 
@@ -200,326 +243,209 @@ both.
 ### Worked examples
 
 - `allenai/Olmo-3-7B-Instruct` is initialized from
-  `allenai/Olmo-3-7B-Base` → `initialized_from`.
+  `allenai/Olmo-3-7B-Base` → `trained_from`.
 - `allenai/Olmo-3-7B-Base` was pretrained on
-  `allenai/dolma3-mix` → `trained_on`.
+  `allenai/dolma3_mix-6T-1025-7B` → `trained_on` (aggregator);
+  also emit per-leaf `trained_on` edges for every subset slug
+  in that aggregator's `subsets[]`.
 - A paragraph in Dolma-3 was OCR'd from a PDF by
-  `allenai/olmOCR-7B-0225`. Subject is the dataset that
-  consumed the OCR'd content (or the model that consumed the
-  dataset); object is the OCR model. → `transformed_by`. The
-  *content* came from the PDF, not the OCR model.
-- An RLHF DPO run for `allenai/Olmo-3-7B-Instruct` used
+  `allenai/olmOCR-7B-0225`. Subject is the OLMo-3 model that
+  trained on the OCR'd content; object is the OCR model. →
+  `transformed_by`. Content came from the PDF, not from
+  olmOCR.
+- An RLHF DPO run for `allenai/Olmo-3-7B-Instruct-DPO` used
   `Qwen/Qwen3-32B` as the judge that picked preferred
   responses. → `filtered_by` (judge decided inclusion; it
   didn't generate the responses, it ranked them).
-- `CraneMath` was generated by `Qwen/Qwen3-32B` rewriting math
-  problems. The CraneMath *content* came from
-  Qwen3-32B. From the model that trained on CraneMath:
-  `distilled_from` Qwen3-32B. (If the rewriting was over
-  pre-existing math problems, this could also be argued as
-  `transformed_by` — the rule is: if the object model
-  *substantively rewrote*, it's `transformed_by`; if the
-  object model produced the content from scratch, it's
-  `distilled_from`. Source phrasing decides.)
-- The Olmo-3 paper reports MATH-500 scores for `allenai/Olmo-3-7B-Instruct`.
-  → `used_for_evaluation`.
-- Olmo-3 ablations include a configuration without DPO,
-  measured on AlpacaEval2. AlpacaEval2 here is
-  `used_for_ablation`.
-- The Olmo-3 paper credits Tülu 3's recipe as the basis for
-  its post-training mix. → `inspired_by`.
+- `CraneMath` was generated by `Qwen/Qwen3-32B` rewriting
+  math problems. From the model that trained on the parent
+  Dolmino mix: `generated_by` Qwen3-32B (the content was
+  produced by Qwen3-32B). The CraneMath dataset itself shows
+  up as a leaf-level `trained_on` edge per the
+  aggregator+leaf rule.
 
-## Entity → literal value (numeric facts)
-
-Numeric facts about lattice entities are stored as edges with
-literal objects. `relation` for these is the property name (a
-small closed set):
-
-| relation | example value/unit | what it captures |
-|---|---|---|
-| `size` | 102014 / "prompts" | data size or sample count |
-| `training_tokens` | 5.93e12 / "tokens" | total tokens model was trained on |
-| `context_length` | 65536 / "tokens" | max context window |
-| `release_date` | "2025-10-25" / "iso" | release date |
-| `parameter_count` | 7e9 / "params" | model parameter count |
-| `composition_count` | 29813 / "prompts" | size of one named subsource (use with `object_text` for the sub-source name) |
-
-For these, set `direction: "STRUCTURAL"`, `object_ref: null`,
-`object_in_lattice: false`, and put the value/unit in
-`object_value` / `object_unit`. For `composition_count`, also
-put the sub-source name in `object_text`.
-
-If you observe a numeric fact that doesn't fit any of the
-above, prefer not emitting over inventing. The closed
-vocabulary is the point.
-
-## Provenance kind (canonical labels + coining when needed)
-
-Tag every relation with where exactly it came from. Use one
-of the canonical labels below when it fits; coin a new
-snake_case label when the source class is genuinely new.
-
-**Canonical labels** (cover ~95% of cases):
-
-- `paper_prose` — body text in a PDF / blog
-- `paper_table` — a numbered table inside a PDF / blog
-- `paper_figure` — a figure caption or in-figure label
-- `hf_frontmatter` — YAML frontmatter of an HF README (the
-  `base_model:` / `datasets:` / `license:` block)
-- `hf_card_body` — the prose / tables under the YAML
-- `script_flag` — a CLI flag in a `.sh` / launcher (e.g.
-  `--dataset_mixer_list X 10000`)
-- `code_constant` — a Python / YAML constant assignment
-  (e.g. `MODEL = "o3"`, `DataMix.OLMo_midtraining_mix_0925`)
-- `code_comment` — a `#` comment line near training code
-- `config_yaml` — a non-script YAML / JSON config
-- `markdown_doc` — internal doc markdown (e.g.
-  `docs/olmo3.md`) that isn't an HF card
-
-**Legitimate coining** when the source is a class not
-covered above:
-
-- `notebook_cell` — Jupyter notebook output / cell
-- `wandb_log` — Weights & Biases run / artifact log
-- `tensorboard_event` — TensorBoard event file
-- `release_notes` — GitHub Releases body / CHANGELOG entry
-- `slack_thread` — internal Slack discussion (rare; only if
-  exported into the source set)
-
-The `provenance_kind` lets downstream comparison weight
-sources differently when adjudicating conflicts. Use the
-most specific label — frivolous coining (e.g.,
-`hf_card_body_first_paragraph` when `hf_card_body` fits)
-fragments the analysis surface.
-
-## Output schema
-
-Write a single JSON object to `{{artifact_path}}` containing
-TWO arrays, `operations` and `relations`. Operation IDs are
-batch-local strings (e.g., `op-001`, `op-002`); they don't
-need to be globally unique.
+## Edge schema (nested inside an event)
 
 ```json
 {
-  "batch_id": "{{batch_id}}",
-  "batch_label": "<the batch label, copied from input.json>",
-  "operations": [
+  "subject":         "<lattice formal_name, verbatim>",
+  "relation":        "trained_on",
+  "dependency_kind": "direct",
+  "object":          "<lattice formal_name OR free-text descriptor>",
+  "description":     "<lossless 1-3 sentences, ≤ ~500 chars>",
+  "anchor_list":     [
     {
-      "id": "op-001",
-      "description": "OLMo-3 7B Think RLVR (Stage 3 post-training): RL with verifiable + LM-judge rewards across math, code, IF, and chat domains. Initialized from the Think-DPO checkpoint, trained on Dolci-Think-RL-7B prompts, judged by Qwen3-32B (no thinking).",
-      "evidence": "Stage 3 of post-training is reinforcement learning with a mixture of verifiable and LM-judge rewards across a variety of domains.",
-      "source_path": "olmo-3-tech-report.pdf",
-      "source_line": null,
-      "provenance_kind": "paper_prose"
-    },
-    {
-      "id": "op-002",
-      "description": "Olmo-3 7B Base pretraining (Stage 1): Dolma 3 web mix tokenized via DataMix.OLMo_mix_0625_official, with academic PDFs OCR'd by olmOCR before inclusion.",
-      "evidence": "We pretrain Olmo-3-1025-7B on dolma3_mix... We use olmOCR (Poznanski et al., 2025a,b) for PDF text extraction.",
-      "source_path": "olmo-3-tech-report.pdf",
-      "source_line": null,
-      "provenance_kind": "paper_prose"
-    }
-  ],
-  "relations": [
-    {
-      "operation_id": "op-001",
-      "subject": "allenai/Olmo-3-7B-Think",
-      "subject_in_lattice": true,
-      "relation": "initialized_from",
-      "direction": "DIRECT",
-      "object_ref": "allenai/Olmo-3-7B-Think-DPO",
-      "object_in_lattice": true,
-      "object_text": null,
-      "object_value": null,
-      "object_unit": null,
-      "description": "RL stage starts from the DPO checkpoint",
-      "evidence": "RL stage initialized from the DPO model",
-      "source_path": "olmo-3-tech-report.pdf",
-      "source_line": null,
-      "provenance_kind": "paper_prose"
-    },
-    {
-      "operation_id": "op-001",
-      "subject": "allenai/Olmo-3-7B-Think",
-      "subject_in_lattice": true,
-      "relation": "trained_on",
-      "direction": "DIRECT",
-      "object_ref": "allenai/Dolci-Think-RL-7B",
-      "object_in_lattice": true,
-      "object_text": null,
-      "object_value": null,
-      "object_unit": null,
-      "description": "RL prompt mixture for the Think model (102,014 prompts spanning math, code, IF, chat)",
-      "evidence": "trained_on:\n- allenai/Dolci-Think-RL-7B",
-      "source_path": "olmo-3-tech-report.pdf",
-      "source_line": null,
-      "provenance_kind": "paper_prose"
-    },
-    {
-      "operation_id": "op-001",
-      "subject": "allenai/Olmo-3-7B-Think",
-      "subject_in_lattice": true,
-      "relation": "filtered_by",
-      "direction": "DIRECT",
-      "object_ref": "Qwen/Qwen3-32B",
-      "object_in_lattice": true,
-      "object_text": null,
-      "object_value": null,
-      "object_unit": null,
-      "description": "Qwen3-32B (thinking off) is the LM-judge in the chat / open-ended reward; assigns a [0,1] quality score per response",
-      "evidence": "Unless otherwise stated, for an LM judge we host Qwen3 32B with thinking mode turned off",
-      "source_path": "olmo-3-tech-report.pdf",
-      "source_line": null,
-      "provenance_kind": "paper_prose"
-    },
-    {
-      "operation_id": "op-002",
-      "subject": "allenai/Olmo-3-1025-7B",
-      "subject_in_lattice": true,
-      "relation": "trained_on",
-      "direction": "DIRECT",
-      "object_ref": "allenai/dolma3_mix",
-      "object_in_lattice": true,
-      "object_text": null,
-      "object_value": null,
-      "object_unit": null,
-      "description": "Stage-1 pretraining mixture (~6T tokens)",
-      "evidence": "Pretrained on dolma3_mix",
-      "source_path": "olmo-3-tech-report.pdf",
-      "source_line": null,
-      "provenance_kind": "paper_prose"
-    },
-    {
-      "operation_id": "op-002",
-      "subject": "allenai/dolma3_mix",
-      "subject_in_lattice": true,
-      "relation": "transformed_by",
-      "direction": "DIRECT",
-      "object_ref": "allenai/olmOCR",
-      "object_in_lattice": true,
-      "object_text": null,
-      "object_value": null,
-      "object_unit": null,
-      "description": "Academic PDFs in dolma3_mix were OCR'd to plain text by olmOCR before tokenization",
-      "evidence": "We use olmOCR (Poznanski et al., 2025a,b) to convert PDF pages",
-      "source_path": "olmo-3-tech-report.pdf",
-      "source_line": null,
-      "provenance_kind": "paper_prose"
-    },
-    {
-      "operation_id": null,
-      "subject": "allenai/Dolci-Think-RL-7B",
-      "subject_in_lattice": true,
-      "relation": "size",
-      "direction": "STRUCTURAL",
-      "object_ref": null,
-      "object_in_lattice": false,
-      "object_text": null,
-      "object_value": 102014,
-      "object_unit": "prompts",
-      "description": "total prompt count reported on the dataset card",
-      "evidence": "Total Samples: 102,014",
-      "source_path": "dolci-think-rl-7b.md",
-      "source_line": 67,
-      "provenance_kind": "hf_card_body"
-    },
-    {
-      "operation_id": null,
-      "subject": "allenai/Olmo-3-7B-Think",
-      "subject_in_lattice": true,
-      "relation": "used_for_evaluation",
-      "direction": "INDIRECT",
-      "object_ref": null,
-      "object_in_lattice": false,
-      "object_text": "MATH-500",
-      "object_value": null,
-      "object_unit": null,
-      "description": "Olmo-3-7B-Think is reported on the MATH-500 benchmark in Table 4",
-      "evidence": "MATH-500 78.3",
-      "source_path": "olmo-3-tech-report.pdf",
-      "source_line": null,
-      "provenance_kind": "paper_table"
+      "source":      "<URL or local path>",
+      "position":    "<locator within source: section, page, table, line range, YAML field>",
+      "explanation": "<how the cited source supports this edge; verbatim quote inline>"
     }
   ]
 }
 ```
 
-### Field semantics
+- `subject`: MUST be a verbatim lattice formal_name.
+- `relation`: canonical from the table above when one fits;
+  otherwise a coined snake_case label.
+- `dependency_kind`: `"direct"` or `"indirect"`. Closed
+  vocabulary; mismatch with the relation's bucket is a
+  validation error.
+- `object`: a lattice formal_name OR a free-text descriptor.
+  No null, no separate "object_text" field.
+- `description`: lossless prose. MUST capture every
+  structurally relevant fact that the relation, subject,
+  object, and event description don't already express:
+  training stage (sft/dpo/rl/midtraining/long_context),
+  role sub-variants (Think-SFT vs Instruct-SFT, math vs
+  code), quantities (prompt counts, token counts), specific
+  subsets / filters, ordering / compositional context,
+  caveats. ≤ ~500 chars.
+- `anchor_list`: NON-EMPTY array. Each entry has REQUIRED
+  `source` and `explanation`; RECOMMENDED `position` (the
+  verifier uses position to navigate; absence triggers
+  `external_support_only` downstream).
 
-**Operations:**
-- `id` — batch-local string (`op-001`, `op-002`, ...). Just unique within this artifact.
-- `description` — lossless prose narrative of the event: what was trained, what data, what judge/filter/generator participated, key hyperparameters when present. The description is where mixture weights, learning rates, judge templates, and stage labels live.
-- `evidence` — verbatim excerpt grounding the operation, ≤200 chars.
-- `source_path`, `source_line`, `provenance_kind` — where the event description came from.
+## Event schema (one JSONL line)
 
-**Relations:**
-- `operation_id` — the operation this edge belongs to, OR `null` for STRUCTURAL literals (`size`, `release_date`, etc.) and INDIRECT relations (`used_for_evaluation`, `cited_as_baseline`) that aren't tied to a training event.
-- `subject` — must be a lattice `formal_name`.
-- `relation` — the closed-enum classification (the planner picks which of the 8 buckets fits).
-- `description` — open prose explaining **this participant's role in the operation**. Different from the operation description, which describes the whole event. This edge description is per-edge: what role did this object play?
-- All other fields as before.
+```json
+{
+  "description": "<lossless prose describing the event itself: what happened, who participated in what role, in which training stage>",
+  "anchor_list": [
+    {"source": "...", "position": "...", "explanation": "..."}
+  ],
+  "edges": [
+    { ... edge 1 ... },
+    { ... edge 2 ... },
+    { ... edge 3 ... }
+  ]
+}
+```
 
-### Why both operation description AND edge description
+- `description`: event-level prose. Distinct from per-edge
+  descriptions: this captures the EVENT (the training run, the
+  dataset construction, the eval pass), while edges describe
+  individual participant roles.
+- `anchor_list`: same shape as edge anchors; supports the
+  event-level claim. Often the same primary source as
+  per-edge anchors but can include event-wide citations
+  (e.g., a recipe section that lists all participants).
+- `edges`: NON-EMPTY array. Each edge follows the schema above.
 
-The operation description tells you what happened. The edge description tells you what THIS participant contributed. They're both necessary:
+## Worked example — full event
 
-- Operation: `"OLMo-3 7B Think RLVR — judge=Qwen3-32B, base=Think-DPO, data=Dolci-Think-RL-7B"`
-- Edge `filtered_by`: `"Qwen3-32B (thinking off) is the LM-judge in the chat / open-ended reward; assigns a [0,1] quality score per response"`
-- Edge `trained_on`: `"RL prompt mixture for the Think model (102,014 prompts spanning math, code, IF, chat)"`
+```json
+{
+  "description": "OLMo-3-7B Think DPO post-training event: continued from Olmo-3-7B-Think-SFT, with Qwen3-32B (thinking mode) generating chosen-completion candidates and Qwen3-0.6B (thinking mode) generating rejected candidates per the Delta-Learning recipe (Section 4.3.1).",
+  "anchor_list": [
+    {
+      "source": "https://arxiv.org/abs/2512.13961",
+      "position": "Section 4.3.1, paragraph beginning 'For Think-DPO'",
+      "explanation": "Paper describes the Think-DPO event with named generators."
+    }
+  ],
+  "edges": [
+    {
+      "subject": "allenai/Olmo-3-7B-Think-DPO",
+      "relation": "trained_from",
+      "dependency_kind": "direct",
+      "object": "allenai/Olmo-3-7B-Think-SFT",
+      "description": "Olmo-3-7B-Think-DPO is initialized from the Think-SFT checkpoint and continues training with DPO preference optimization.",
+      "anchor_list": [
+        {
+          "source": "https://arxiv.org/abs/2512.13961",
+          "position": "Section 4.3.1",
+          "explanation": "States that Think-DPO continues from Think-SFT."
+        }
+      ]
+    },
+    {
+      "subject": "allenai/Olmo-3-7B-Think-DPO",
+      "relation": "generated_by",
+      "dependency_kind": "direct",
+      "object": "Qwen/Qwen3-32B",
+      "description": "Qwen3-32B (thinking mode on) generated chosen-completion candidates for the Think-DPO preference pairs per the Delta-Learning recipe.",
+      "anchor_list": [
+        {
+          "source": "https://arxiv.org/abs/2512.13961",
+          "position": "Section 4.3.1, Delta-Learning paragraph",
+          "explanation": "Paper says 'Qwen3 32B thinking generates chosen completions'."
+        }
+      ]
+    },
+    {
+      "subject": "allenai/Olmo-3-7B-Think-DPO",
+      "relation": "generated_by",
+      "dependency_kind": "direct",
+      "object": "Qwen/Qwen3-0.6B",
+      "description": "Qwen3-0.6B (thinking mode on) generated rejected-completion candidates for the Think-DPO preference pairs per the Delta-Learning recipe.",
+      "anchor_list": [
+        {
+          "source": "https://arxiv.org/abs/2512.13961",
+          "position": "Section 4.3.1, Delta-Learning paragraph",
+          "explanation": "Paper says 'Qwen3 0.6B thinking generates rejected completions'."
+        }
+      ]
+    }
+  ]
+}
+```
 
-Same event, three different participant roles, each captured.
-
-`source_path` is the path *relative to* `{{batch_dir}}`.
-`source_line` is best-effort (the line where the evidence
-quote starts); leave it null if PDFs or other unpaginated
-sources make this awkward.
-
-`evidence` is a verbatim excerpt — at most ~200 chars, just
-enough to ground the claim. Don't paraphrase. If the source
-is binary (PDF), excerpt the extracted text.
-
-`description` is open prose: the prov-system `role` style. It
-carries the specifics that the closed `relation` enum can't —
-mixture weights, thresholds, judge templates, stage labels.
-Examples: `"60% of stage-1 pretraining mixture; FineWeb-Edu
-filter at score≥3"`, `"DPO judge model with temperature 0.0"`.
+That's ONE line in `{{artifact_path}}`. The next event you
+identify is the next line. No cross-event references.
 
 ## Coverage expectation
 
-For each lattice entity that this batch's sources mention:
-emit at least one relation if anything substantive is said
-about it. A batch that mentions `Dolci-Think-RL-7B` 30 times
-in passing but never says where it came from, what's in it,
-or what model trained on it — that batch may correctly emit
-zero relations for it. Quality over coverage.
+There is no fixed target count. The number of events depends
+on how richly the source describes the pipeline. Use these
+qualitative checks:
 
-A reasonable batch yields tens to a few hundred relations.
-If you're heading past 1000, you're probably emitting
-restatements of the same fact from different sentences; pick
-the cleanest evidence and skip the rest.
+- For every training stage the source names (pretraining,
+  midtraining, long-context, SFT, DPO, RL, RL-Zero), there
+  should be at least one event covering it.
+- For every aggregator mix the subject `trained_on`, you
+  should have leaf-level edges for every entry in the
+  parent's `subsets[]` (per the aggregator+leaf rule).
+- For every named generator / judge / rewriter / classifier
+  the source mentions, there should be at least one
+  `generated_by` / `filtered_by` / `transformed_by` edge.
+- Every benchmark / eval-judge in the release's eval section
+  becomes a `used_for_evaluation` indirect edge.
+- The team's own ablation tables become `used_for_ablation`
+  indirect edges (only their own design-space variants — not
+  external baselines they compared against).
+
+If you only emit `trained_on` and `trained_from` edges with
+no `generated_by` / `transformed_by` / `filtered_by` / eval
+edges, you've under-covered.
 
 ## Subagent dispatch
 
-The Task tool is available — subagents run as
-`{{subagent_model}}`. If this batch has many sources (>5)
-or large code repos, bucket them and dispatch one subagent
-per bucket. Each subagent reads its slice and returns its
-relations. Aggregate before writing.
+Subagents run as `{{subagent_model}}`. Bucket the source files
+into topical packets (one packet per training stage, per
+dataset family, per eval section) and dispatch one subagent per
+packet. Each subagent appends its events directly to
+`{{artifact_path}}` as it processes.
 
-When dispatching, transcribe verbatim into the subagent's
-brief: (a) the closed relation taxonomy table above,
-(b) the no-overlap matrix, (c) the provenance-kind list,
-(d) the rule that subjects must be lattice `formal_name`s,
-(e) the off-lattice-object channel. Subagents have none of
-your context — rule erosion at dispatch is the main failure
-mode.
+When dispatching, transcribe verbatim into each subagent's brief:
+- The "Append-as-you-go" instruction (file path + how to append).
+- The "Lattice anchoring" rule.
+- The "Aggregator + leaf rule".
+- The "Out-of-scope" list (especially baseline comparisons).
+- The relation taxonomy table.
+- The schemas (edge + event).
+
+Subagents have none of your context. Without these
+transcriptions they will silently revert to old patterns
+(emitting baseline comparisons, missing leaf edges, fabricating
+op-ids).
 
 ## Completion
 
-Write the artifact to `{{artifact_path}}` and exit 0.
+When you've processed all sources and appended all events to
+`{{artifact_path}}`, exit 0. Do NOT emit a final wrapping JSON
+object — the file is JSONL, one event per line, and the
+pipeline reads it as such.
 
-You are running as `{{planner_model}}`. Subagents (when
-dispatched) run as `{{subagent_model}}`.
+You are running as `{{planner_model}}`. Subagents run as
+`{{subagent_model}}`.
 
 {{subagent_prompt}}

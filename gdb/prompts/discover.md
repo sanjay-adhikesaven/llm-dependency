@@ -16,27 +16,39 @@
 
 ## Scope
 
-**Fetch** sources written by the target's creators, naming the
-target as their subject. Use HF and GitHub org APIs to
-enumerate every variant whose repo name matches the target
-family (`^OLMo-3-` for an OLMo-3 target):
+**Fetch ONLY the target's primary materials, narrowly defined.**
+Use HF and GitHub org APIs to enumerate the family-prefix matches:
 
-- Every HF model card and dataset card in the family —
-  including every size and stage variant (e.g., `OLMo-3-7B-Base`,
-  `OLMo-3-7B-Instruct`, `OLMo-3-32B-Base` are all distinct cards
-  and all in scope).
-- The target's tech report or paper.
-- **The target's own code repos — full `git clone`, NOT
-  README-only.** The recipes, configs, training launchers,
-  shell scripts, and YAML files inside the repo are
-  load-bearing source material for downstream extract: they
-  carry `--dataset_mixer_list` flags, `DataMix.OLMo_mix_*`
-  constants, personal-namespace HF dataset references
-  (`hamishivi/...`, `saurabh5/...`), and YAML mix manifests
-  that NEVER appear in the HF cards or paper. A `curl` of the
-  repo's README is a permanent lineage hole — see "How to
-  fetch" below.
-- The target's official release blog post, if one exists.
+- The target's tech report or paper (one PDF; HTML if no PDF).
+- The target's official release blog post (one), if it exists.
+- **The single primary code repo the release notes point at
+  first** — e.g., for OLMo-3 that's `allenai/OLMo-core`. Use
+  full `git clone`, NOT README-only. The recipes, configs,
+  training launchers, and YAML files inside the repo carry
+  `--dataset_mixer_list` flags, `DataMix.*` constants, and
+  personal-namespace HF dataset references that never appear
+  in the HF cards or paper. A `curl` of the README is a
+  permanent lineage hole. Sub-repos (`allenai/open-instruct`,
+  `allenai/dolma`, `allenai/olmo-cookbook`, etc.) are NOT in
+  scope at discover — their names surface in extract from the
+  primary repo / paper, and `expand` can recurse into them
+  later if needed.
+- **Same-generation HF model cards** in the family — match the
+  target's exact generation prefix. For an `OLMo-3` target,
+  match `^Olmo-3-` exactly. NOT `Olmo-3.1-*` (successor),
+  NOT `Tulu-3-*` (predecessor product line),
+  NOT `Olmo-2-*` (predecessor generation). Generation prefix
+  match is the cut.
+- **Same-generation HF dataset cards** under the target's org
+  whose repo name shares the family prefix or is explicitly
+  linked from the tech report.
+
+Cross-generation, cross-family, and predecessor mentions are
+the responsibility of `extract`, not `discover`. If a name
+appears in the target's primary materials but the artifact
+itself isn't a same-generation member of the family, extract
+picks it up from prose; discover never proactively chases it.
+This is what keeps the source set tight.
 
 ## How to fetch
 
@@ -59,7 +71,7 @@ GitHub README only:   curl -sL https://raw.githubusercontent.com/<owner>/<repo>/
 GitHub FULL repo:     git clone --depth 1 https://github.com/<owner>/<repo>
 ```
 
-**For the target's own primary code repos, you MUST use
+**For the target's own primary code repo, you MUST use
 `git clone --depth 1`, not `curl` of the README.** A
 README-only fetch is a permanent lineage hole: the actual
 training scripts, mixture YAMLs, launcher flags, and config
@@ -67,10 +79,7 @@ constants live in the repo tree, not in the README. A
 README-only fetch routinely loses 1000+ name mentions for an
 OLMo-class target. The `curl` fallback is only acceptable for
 peripheral / third-party repos cited in passing — never for
-the target's own primary repo set (e.g., for OLMo-3:
-`allenai/OLMo`, `allenai/OLMo-core`, `allenai/open-instruct`,
-`allenai/olmo-cookbook`, `allenai/dolma`,
-`allenai/OLMo-in-loop-evals` are ALL primary).
+the target's primary release repo.
 
 For papers / tech reports, fetch ONE format: PDF when
 available, HTML when no PDF exists. Same content; don't fetch

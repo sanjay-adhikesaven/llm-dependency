@@ -12,7 +12,7 @@ classification artifact to `{{artifact_path}}`.
 ## Filesystem scope
 
 Read `{{lattice_path}}` (groups+items+links from
-linker / audit / organize) and `{{relations_path}}` (relations
+audit / organize) and `{{relations_path}}` (relations
 artifact, possibly merged across batches). Write
 `{{artifact_path}}`. Web search permitted for sanity-checking
 borderline nodes; use sparingly.
@@ -24,16 +24,17 @@ lattice contains an edge whose **subject** is the target (or a
 descendant of the target) and whose **object** is that
 entity-leaf. Concretely: walk the relations file. For every
 edge whose `subject` is the run's target or transitively
-trained-on/initialized-from/distilled-from/transformed-by/
-filtered-by the target's lineage, the `object_ref` (when set)
-is upstream and a candidate for triage.
+trained-on/trained-from/generated-by/transformed-by/
+filtered-by the target's lineage, the `object` (when it
+resolves to a lattice formal_name) is upstream and a candidate
+for triage.
 
 Do not triage:
 - Concept-level nodes (no resolvable link).
 - The original target itself.
-- Nodes that appear only as STRUCTURAL endpoints
-  (`subset_of` parents, `supersedes` predecessors) — those
-  are lineage notes, not expansion targets.
+- Off-lattice mentions (free-text `object` strings that don't
+  match any lattice formal_name) — they have no canonical
+  release to expand.
 
 ## Classification
 
@@ -133,9 +134,9 @@ Rationale should describe what the operator needs to weigh.
 
 Every entity-leaf upstream of the target must appear in
 exactly one bucket. If you skipped a node (concept, target,
-STRUCTURAL-only), include it in a top-level `skipped[]` array
-with a one-line reason — that lets the operator audit
-coverage.
+off-lattice mention only), include it in a top-level
+`skipped[]` array with a one-line reason — that lets the
+operator audit coverage.
 
 ## Subagent dispatch
 

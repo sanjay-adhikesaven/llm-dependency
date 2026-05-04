@@ -245,10 +245,95 @@ def spawn_codex(run_id: str, prompt: str, *, effort: str) -> dict:
     return {"run_id": run_id, "exit_code": rc, "elapsed_s": elapsed, "log_dir": str(run_root)}
 
 
-def dispatch_spawn(run_id: str, prompt: str, *, model: str) -> dict:
-    if model.startswith("codex-"):
-        return spawn_codex(run_id, prompt, effort=model.removeprefix("codex-"))
-    return spawn_claude(run_id, prompt, model=model)
+def _stream_indicates_rate_limit(stream_path: Path) -> bool:
+    """Return True iff the stream JSONL contains rate-limit / 429 /
+    overloaded error markers. Used by `dispatch_spawn` to decide
+    whether a non-zero exit is worth retrying."""
+    if not stream_path.exists():
+        return False
+    needles = (
+        "rate_limit", "rate-limit", "overloaded_error",
+        "429", "too many requests", "RATE_LIMIT",
+    )
+    try:
+        for line in stream_path.read_text(errors="replace").splitlines():
+            if not line:
+                continue
+            low = line.lower()
+            if any(n.lower() in low for n in needles):
+                return True
+    except OSError:
+        return False
+    return False
+
+
+def dispatch_spawn(
+    run_id: str,
+    prompt: str,
+    *,
+    model: str,
+    max_retries: int = 4,
+) -> dict:
+    """Dispatch one Claude / Codex spawn. On non-zero exit, retry up to
+    `max_retries` times with exponential backoff (10s, 30s, 90s, 270s)
+    when the failure looks rate-limit-related; fail immediately
+    otherwise. Each retry creates a NEW run row so logs / streams
+    don't clobber.
+
+    Rate-limit detection scans the stream JSONL for `rate_limit`,
+    `429`, `overloaded_error`, etc. Codex retries are also rate-limit-
+    triggered but use a coarser stderr scan since codex doesn't emit
+    a JSONL stream.
+    """
+    backoff_schedule = (10, 30, 90, 270)
+
+    def _spawn_once(rid: str) -> dict:
+        if model.startswith("codex-"):
+            return spawn_codex(rid, prompt, effort=model.removeprefix("codex-"))
+        return spawn_claude(rid, prompt, model=model)
+
+    attempt_run_id = run_id
+    last_result: dict = {}
+    for attempt in range(max_retries + 1):
+        result = _spawn_once(attempt_run_id)
+        last_result = result
+        rc = result.get("exit_code", 0)
+        if rc == 0:
+            return result
+        if attempt >= max_retries:
+            break
+
+        # Decide: is this a rate-limit failure worth retrying?
+        run_root = config.STORAGE / config.RUNS_SUBDIR / attempt_run_id
+        rate_limited = False
+        if not model.startswith("codex-"):
+            rate_limited = _stream_indicates_rate_limit(
+                run_root / config.RUN_STREAM_FILE
+            )
+        else:
+            err_path = run_root / config.RUN_STDERR_FILE
+            if err_path.exists():
+                try:
+                    err = err_path.read_text(errors="replace").lower()
+                    rate_limited = any(
+                        n in err for n in
+                        ("rate_limit", "rate-limit", "429",
+                         "too many requests", "overloaded")
+                    )
+                except OSError:
+                    pass
+        if not rate_limited:
+            break
+
+        sleep_s = backoff_schedule[min(attempt, len(backoff_schedule) - 1)]
+        time.sleep(sleep_s)
+        # Mint a fresh run id so the next attempt's stream doesn't
+        # overwrite the failed one.
+        attempt_run_id = new_run(
+            "retry", seed=run_id,
+            label=f"retry:{run_id[:8]}:attempt{attempt + 2}",
+        )
+    return last_result
 
 
 # ---------------------------------------------------------------------------
@@ -480,9 +565,20 @@ def names_packet() -> dict:
     return {"names": [{"type": r["kind"], "name": r["name"]} for r in rows]}
 
 
+_LINK_KINDS = frozenset({
+    "hf_model", "hf_dataset", "hf_dataset_config", "hf_collection",
+    "github", "paper", "blog", "vendor_docs",
+})
+
+
 def _validate_organize_artifact(artifact: dict) -> tuple[int, int]:
-    """Sanity-check the organize artifact's groups+items shape and
-    return (group_count, item_count). Raises if shape is wrong."""
+    """Sanity-check the organize / audit artifact's groups+items shape
+    and return (group_count, item_count). Each item must carry a
+    `links` list (possibly empty — audit may drop empty-links items
+    after one more resolution attempt) and a `description` field
+    (string or null). When `links` is non-empty, the first entry's
+    `kind` must be one of the closed-vocabulary link kinds and `url`
+    must be an http(s) URL string."""
     groups = artifact.get("groups") if isinstance(artifact, dict) else None
     if not isinstance(groups, list):
         raise click.ClickException("organize artifact missing groups[]")
@@ -493,8 +589,132 @@ def _validate_organize_artifact(artifact: dict) -> tuple[int, int]:
         items = group.get("items")
         if not isinstance(items, list):
             raise click.ClickException(f"groups[{i}].items is not a list")
+        for j, item in enumerate(items):
+            if not isinstance(item, dict):
+                raise click.ClickException(
+                    f"groups[{i}].items[{j}] is not a dict"
+                )
+            if "links" not in item:
+                raise click.ClickException(
+                    f"groups[{i}].items[{j}] missing required `links` field"
+                )
+            links = item["links"]
+            if not isinstance(links, list):
+                raise click.ClickException(
+                    f"groups[{i}].items[{j}].links is not a list"
+                )
+            if links:
+                head = links[0]
+                if not isinstance(head, dict):
+                    raise click.ClickException(
+                        f"groups[{i}].items[{j}].links[0] is not a dict"
+                    )
+                kind = head.get("kind")
+                if kind not in _LINK_KINDS:
+                    raise click.ClickException(
+                        f"groups[{i}].items[{j}].links[0].kind={kind!r} "
+                        f"not in {sorted(_LINK_KINDS)}"
+                    )
+                url = head.get("url")
+                if not isinstance(url, str) or not url.startswith(
+                    ("http://", "https://")
+                ):
+                    raise click.ClickException(
+                        f"groups[{i}].items[{j}].links[0].url={url!r} "
+                        "must be an http(s) URL string"
+                    )
+            description = item.get("description")
+            if description is not None and not isinstance(description, str):
+                raise click.ClickException(
+                    f"groups[{i}].items[{j}].description must be string or null"
+                )
+            # subsets[] is only required on datasets, but we accept it on
+            # any item shape so audit-time augmentation doesn't trip a
+            # spurious model-side error.
+            if "subsets" in item:
+                subsets = item["subsets"]
+                if not isinstance(subsets, list):
+                    raise click.ClickException(
+                        f"groups[{i}].items[{j}].subsets must be a list"
+                    )
+                for k, s in enumerate(subsets):
+                    if not isinstance(s, str) or not s.strip():
+                        raise click.ClickException(
+                            f"groups[{i}].items[{j}].subsets[{k}] "
+                            "must be a non-empty string"
+                        )
+            # Every item MUST trace to ≥1 real input surface form via
+            # aliases. Empty aliases signals a phantom item invented by
+            # the planner enumerating HF releases the input never named.
+            # The narrow exception is a family-concept root whose
+            # identity carries only broad keys (no size/stage/date/etc.).
+            aliases = item.get("aliases") or []
+            if not aliases:
+                identity = item.get("identity") or {}
+                broad_keys = {"org", "collection", "vendor", "family"}
+                if not _is_family_concept_root(identity, broad_keys):
+                    raise click.ClickException(
+                        f"groups[{i}].items[{j}] formal_name="
+                        f"{item.get('formal_name')!r} has empty aliases — "
+                        "every item must fold ≥1 real input surface form. "
+                        "Family-concept roots (identity only carrying "
+                        f"{sorted(broad_keys)}) are the only exception."
+                    )
         item_count += len(items)
     return len(groups), item_count
+
+
+def _is_family_concept_root(identity: dict, broad_keys: set[str]) -> bool:
+    """Return True iff `identity` carries only broad-vocabulary keys
+    (no size / stage / date / quantization / variant / subset / harness),
+    qualifying it as a family-concept root that may have empty aliases."""
+    if not isinstance(identity, dict):
+        return False
+    keys = set(identity.keys())
+    return bool(keys) and keys.issubset(broad_keys)
+
+
+def _count_link_stats(artifact: dict) -> dict:
+    """Tally link / description / kind stats across the artifact:
+    total items, items with >=1 link, items with a description, model
+    vs dataset counts, total links, link-kind histogram."""
+    total_items = 0
+    items_with_links = 0
+    items_with_description = 0
+    n_models = 0
+    n_datasets = 0
+    total_links = 0
+    by_kind: dict[str, int] = {}
+    for group in artifact.get("groups") or []:
+        for item in group.get("items") or []:
+            total_items += 1
+            links = item.get("links") or []
+            if links:
+                items_with_links += 1
+            if isinstance(item.get("description"), str) and item.get("description").strip():
+                items_with_description += 1
+            kind = item.get("kind")
+            if kind == "model":
+                n_models += 1
+            elif kind == "dataset":
+                n_datasets += 1
+            for link in links:
+                if not isinstance(link, dict):
+                    continue
+                total_links += 1
+                k = link.get("kind") or "unknown"
+                by_kind[k] = by_kind.get(k, 0) + 1
+    return {
+        "total_items": total_items,
+        "items_with_links": items_with_links,
+        "items_without_links": total_items - items_with_links,
+        "items_with_description": items_with_description,
+        "items_without_description": total_items - items_with_description,
+        "n_models": n_models,
+        "n_datasets": n_datasets,
+        "total_links": total_links,
+        "links_by_kind": by_kind,
+    }
 
 
 def run_organize(
@@ -517,13 +737,16 @@ def run_organize(
         used = Path(artifact_path).resolve()
         artifact = read_json(str(used))
         group_count, item_count = _validate_organize_artifact(artifact)
+        link_stats = _count_link_stats(artifact)
         close_run(run_id, {
             "artifact_path": str(used),
             "group_count": group_count,
             "item_count": item_count,
+            **link_stats,
         })
         return {"run_id": run_id, "artifact_path": str(used),
-                "group_count": group_count, "item_count": item_count}
+                "group_count": group_count, "item_count": item_count,
+                **link_stats}
 
     run_id = new_run("organize", label="organize")
     run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
@@ -545,13 +768,16 @@ def run_organize(
         raise click.ClickException(f"organize failed; logs at {spawn['log_dir']}")
     artifact = read_json(str(artifact_out))
     group_count, item_count = _validate_organize_artifact(artifact)
+    link_stats = _count_link_stats(artifact)
     close_run(run_id, {
         "artifact_path": str(artifact_out),
         "group_count": group_count,
         "item_count": item_count,
+        **link_stats,
     })
     return {"run_id": run_id, "artifact_path": str(artifact_out),
-            "group_count": group_count, "item_count": item_count}
+            "group_count": group_count, "item_count": item_count,
+            **link_stats}
 
 
 # ---------------------------------------------------------------------------
@@ -609,14 +835,17 @@ def run_audit(
         used = Path(artifact_path).resolve()
         artifact = read_json(str(used))
         group_count, item_count = _validate_organize_artifact(artifact)
+        link_stats = _count_link_stats(artifact)
         close_run(run_id, {
             "artifact_path": str(used),
             "group_count": group_count,
             "item_count": item_count,
             "notes": _short_notes(artifact),
+            **link_stats,
         })
         return {"run_id": run_id, "artifact_path": str(used),
-                "group_count": group_count, "item_count": item_count}
+                "group_count": group_count, "item_count": item_count,
+                **link_stats}
 
     source_artifact_path = (
         Path(source_path).resolve() if source_path
@@ -626,11 +855,26 @@ def run_audit(
     run_id = new_run("audit", label="audit", seed=str(source_artifact_path))
     run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
     run_root.mkdir(parents=True, exist_ok=True)
+
+    # Phase 1: Python pre-pass — populate subsets[] on every dataset
+    # node, then cross-check dropped[] against populated subsets[] and
+    # restore matches as child items. The pre-processed lattice is
+    # what the LLM auditor sees.
+    pre_processed = read_json(str(source_artifact_path))
+    try:
+        from .subsets import populate_then_flag
+        subset_stats = populate_then_flag(pre_processed)
+    except Exception as exc:  # network / parse failures shouldn't block audit
+        subset_stats = {"populate": {"error": str(exc)},
+                        "restore": {"error": str(exc)}}
+    pre_processed_path = run_root / "audit_input_with_subsets.json"
+    atomic_write_json(pre_processed_path, pre_processed)
+
     artifact_out = run_root / config.AUDIT_ARTIFACT_FILE
     prompt = render_prompt("audit", {
         "run_id": run_id,
-        "organize_path": str(source_artifact_path),
-        "input_path": str(source_artifact_path),
+        "organize_path": str(pre_processed_path),
+        "input_path": str(pre_processed_path),
         "artifact_path": str(artifact_out),
         "worker_dir": str(run_root / config.WORKERS_SUBDIR),
         "planner_model": planner_model,
@@ -641,193 +885,48 @@ def run_audit(
         raise click.ClickException(f"audit failed; logs at {spawn['log_dir']}")
     artifact = read_json(str(artifact_out))
     group_count, item_count = _validate_organize_artifact(artifact)
-    close_run(run_id, {
-        "artifact_path": str(artifact_out),
-        "source_artifact_path": str(source_artifact_path),
-        "group_count": group_count,
-        "item_count": item_count,
-        "notes": _short_notes(artifact),
-    })
-    return {"run_id": run_id, "artifact_path": str(artifact_out),
-            "group_count": group_count, "item_count": item_count}
-
-
-# ---------------------------------------------------------------------------
-# Stage 5 — linker (attach official URLs to every item)
-# ---------------------------------------------------------------------------
-
-
-def _latest_lattice_or_audit_or_linker_path() -> Path:
-    """Return the most recent groups+items artifact across organize,
-    audit, OR linker — linker is idempotent over its own output, so a
-    re-run picks up the previous linker's output by default."""
-    rows = all_rows(
-        "SELECT id, stage, attrs FROM runs "
-        "WHERE stage IN ('organize','audit','linker') AND ended_at IS NOT NULL "
-        "ORDER BY started_at DESC LIMIT 1"
-    )
-    if not rows:
-        raise click.ClickException(
-            "no organize / audit / linker run found; run `gdb run organize` first"
-        )
-    attrs = loads(rows[0]["attrs"], default={}) or {}
-    path = attrs.get("artifact_path")
-    if not path or not Path(path).exists():
-        raise click.ClickException(
-            f"{rows[0]['stage']} artifact missing on disk for run {rows[0]['id']}"
-        )
-    return Path(path)
-
-
-def _count_link_stats(artifact: dict) -> dict:
-    """Tally link / description / kind-correction stats across the
-    artifact: total items, items with >=1 link, items with a
-    description, items where linker re-typed kind, total links,
-    link-kind histogram."""
-    total_items = 0
-    items_with_links = 0
-    items_with_description = 0
-    n_models = 0
-    n_datasets = 0
-    total_links = 0
-    by_kind: dict[str, int] = {}
-    for group in artifact.get("groups") or []:
-        for item in group.get("items") or []:
-            total_items += 1
-            links = item.get("links") or []
-            if links:
-                items_with_links += 1
-            if isinstance(item.get("description"), str) and item.get("description").strip():
-                items_with_description += 1
-            kind = item.get("kind")
-            if kind == "model":
-                n_models += 1
-            elif kind == "dataset":
-                n_datasets += 1
-            for link in links:
-                if not isinstance(link, dict):
-                    continue
-                total_links += 1
-                k = link.get("kind") or "unknown"
-                by_kind[k] = by_kind.get(k, 0) + 1
-    return {
-        "total_items": total_items,
-        "items_with_links": items_with_links,
-        "items_without_links": total_items - items_with_links,
-        "items_with_description": items_with_description,
-        "items_without_description": total_items - items_with_description,
-        "n_models": n_models,
-        "n_datasets": n_datasets,
-        "total_links": total_links,
-        "links_by_kind": by_kind,
-    }
-
-
-def run_linker(
-    *,
-    artifact_path: str | None = None,
-    source_path: str | None = None,
-    planner_model: str = config.CLAUDE_MODEL,
-    subagent_model: str | None = None,
-) -> dict:
-    """Attach official URLs to every item in the latest lattice.
-
-    Output schema = input schema + a `links: [{kind, url}]` array per
-    item. Reuses `_validate_organize_artifact` since the structural
-    shape is unchanged.
-
-    With `--artifact`, ingest an externally produced linker artifact.
-    With `--source`, link a specific lattice artifact instead of the
-    most recent one.
-    """
-    if artifact_path:
-        run_id = new_run("linker", label="linker:ingest")
-        used = Path(artifact_path).resolve()
-        artifact = read_json(str(used))
-        group_count, item_count = _validate_organize_artifact(artifact)
-        link_stats = _count_link_stats(artifact)
-        close_run(run_id, {
-            "artifact_path": str(used),
-            "group_count": group_count,
-            "item_count": item_count,
-            **link_stats,
-        })
-        return {"run_id": run_id, "artifact_path": str(used),
-                "group_count": group_count, "item_count": item_count,
-                **link_stats}
-
-    source_artifact_path = (
-        Path(source_path).resolve() if source_path
-        else _latest_lattice_or_audit_or_linker_path()
-    )
-
-    run_id = new_run("linker", label="linker", seed=str(source_artifact_path))
-    run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
-    run_root.mkdir(parents=True, exist_ok=True)
-    artifact_out = run_root / config.LINKER_ARTIFACT_FILE
-    prompt = render_prompt("linker", {
-        "run_id": run_id,
-        "lattice_path": str(source_artifact_path),
-        "input_path": str(source_artifact_path),
-        "artifact_path": str(artifact_out),
-        "worker_dir": str(run_root / config.WORKERS_SUBDIR),
-        "planner_model": planner_model,
-        "subagent_model": subagent_model or planner_model,
-    })
-    spawn = dispatch_spawn(run_id, prompt, model=planner_model)
-    if spawn["exit_code"] != 0 or not artifact_out.exists():
-        raise click.ClickException(f"linker failed; logs at {spawn['log_dir']}")
-    artifact = read_json(str(artifact_out))
-    group_count, item_count = _validate_organize_artifact(artifact)
     link_stats = _count_link_stats(artifact)
     close_run(run_id, {
         "artifact_path": str(artifact_out),
         "source_artifact_path": str(source_artifact_path),
+        "pre_processed_path": str(pre_processed_path),
+        "subset_stats": subset_stats,
         "group_count": group_count,
         "item_count": item_count,
+        "notes": _short_notes(artifact),
         **link_stats,
     })
     return {"run_id": run_id, "artifact_path": str(artifact_out),
             "group_count": group_count, "item_count": item_count,
+            "subset_stats": subset_stats,
             **link_stats}
 
 
 # ---------------------------------------------------------------------------
-# Stage 6 — relate (per batch, lattice-anchored typed edges)
+# Stage 5 — relate (per batch, lattice-anchored typed edges)
 # ---------------------------------------------------------------------------
 
 
 _DIRECT_RELATIONS = (
-    "trained_on", "initialized_from", "distilled_from",
+    "trained_on", "trained_from", "generated_by",
     "transformed_by", "filtered_by",
 )
 _INDIRECT_RELATIONS = (
     "inspired_by", "used_for_ablation", "used_for_evaluation",
 )
-_STRUCTURAL_RELATIONS = (
-    "subset_of", "supersedes", "released_with", "contains",
-    # numeric-fact relations carried as STRUCTURAL edges
-    "size", "training_tokens", "context_length", "release_date",
-    "parameter_count", "composition_count",
-)
 # Canonical labels — guidance for the relate prompt and tracking.
 # `relation` is OPEN: the planner may coin a new snake_case label when
 # none of these canonical values fits the source's described event.
 CANONICAL_RELATION_VALUES = (
-    *_DIRECT_RELATIONS, *_INDIRECT_RELATIONS, *_STRUCTURAL_RELATIONS,
+    *_DIRECT_RELATIONS, *_INDIRECT_RELATIONS,
 )
-# Legacy alias kept so external tooling still resolves the symbol;
-# treated as the canonical set, not a closed enum.
-RELATION_VALUES = CANONICAL_RELATION_VALUES
-DIRECTION_VALUES = ("DIRECT", "INDIRECT", "STRUCTURAL")
-# Canonical provenance-kind labels — also OPEN; planner may coin new
-# source classes (e.g., `notebook_cell`, `wandb_log`) when warranted.
-CANONICAL_PROVENANCE_KINDS = (
-    "paper_prose", "paper_table", "paper_figure",
-    "hf_frontmatter", "hf_card_body",
-    "script_flag", "code_constant", "code_comment",
-    "config_yaml", "markdown_doc",
-)
+# Map of canonical relation → its `dependency_kind` bucket.
+RELATION_DEPENDENCY_KIND = {
+    **{r: "direct" for r in _DIRECT_RELATIONS},
+    **{r: "indirect" for r in _INDIRECT_RELATIONS},
+}
+# Closed vocabulary for `dependency_kind`.
+DEPENDENCY_KIND_VALUES = ("direct", "indirect")
 
 
 def _is_snake_case_label(value: object) -> bool:
@@ -844,113 +943,218 @@ def _is_snake_case_label(value: object) -> bool:
     return True
 
 
+def _validate_anchor_list(anchors: object, where: str) -> None:
+    """Validate `anchor_list` shape: non-empty list of dicts with required
+    `source: str` and `explanation: str`; optional `position: str`."""
+    if not isinstance(anchors, list) or not anchors:
+        raise click.ClickException(f"{where}.anchor_list must be a non-empty list")
+    for j, anc in enumerate(anchors):
+        if not isinstance(anc, dict):
+            raise click.ClickException(f"{where}.anchor_list[{j}] is not a dict")
+        src = anc.get("source")
+        if not isinstance(src, str) or not src.strip():
+            raise click.ClickException(
+                f"{where}.anchor_list[{j}].source must be a non-empty string"
+            )
+        expl = anc.get("explanation")
+        if not isinstance(expl, str) or not expl.strip():
+            raise click.ClickException(
+                f"{where}.anchor_list[{j}].explanation must be a non-empty string"
+            )
+        pos = anc.get("position")
+        if pos is not None and not isinstance(pos, str):
+            raise click.ClickException(
+                f"{where}.anchor_list[{j}].position must be a string when present"
+            )
+
+
 def _validate_relate_artifact(artifact: dict, *,
                               lattice_formal_names: set[str] | None = None
                               ) -> dict:
-    """Sanity-check a relate artifact's shape. Returns a stats dict:
-    `{operation_count, relation_count, off_lattice_object_count,
-       coined_relations: {label: count}, coined_provenance_kinds: {label: count}}`.
-    Raises on structural errors only.
+    """Sanity-check the assembled relate artifact's shape. Returns:
 
-    Open-vocabulary fields:
-      - `relation`: must be a non-empty snake_case label. Values
-        outside `CANONICAL_RELATION_VALUES` are allowed but counted
-        as coined.
-      - `provenance_kind`: must be a non-empty snake_case label.
-        Values outside `CANONICAL_PROVENANCE_KINDS` are counted as
-        coined.
+    {
+      "operation_count":       int,
+      "edge_count":            int,
+      "singleton_event_count": int,   # events with exactly 1 edge
+      "off_lattice_object_count": int,
+      "direct_count":          int,
+      "indirect_count":        int,
+      "coined_relations":      {label: count},
+    }
 
-    Closed-vocabulary fields (still enforced):
-      - `direction` ∈ {DIRECT, INDIRECT, STRUCTURAL}
-      - `subject_in_lattice` must be true
-      - `subject` must be a lattice formal_name when the lattice is
-        provided.
-      - `operation_id` must reference an existing operation when set.
+    Schema (post-fix):
+
+    {
+      "batch_id":       "...",
+      "batch_label":    "...",
+      "operations": [
+        {
+          "description": "...",
+          "anchor_list": [{"source": "...", "position"?: "...", "explanation": "..."}],
+          "edges": [
+            {
+              "subject":         "<lattice formal_name>",
+              "relation":        "trained_on" | ... | "<coined>",
+              "dependency_kind": "direct" | "indirect",
+              "object":          "<formal_name OR free-text>",
+              "description":     "...",
+              "anchor_list":     [...]
+            }
+          ]
+        }
+      ]
+    }
+
+    Closed-vocab enforced:
+      - `dependency_kind` ∈ {direct, indirect}.
+      - `subject` must be a lattice formal_name when lattice is provided.
+
+    Open-vocab tracked:
+      - `relation`: snake_case; values outside `CANONICAL_RELATION_VALUES`
+        are counted as coined but not rejected.
     """
     if not isinstance(artifact, dict):
         raise click.ClickException("relate artifact is not a dict")
     operations = artifact.get("operations")
-    relations = artifact.get("relations")
     if not isinstance(operations, list):
         raise click.ClickException("relate artifact missing operations[]")
-    if not isinstance(relations, list):
-        raise click.ClickException("relate artifact missing relations[]")
 
-    op_ids: set[str] = set()
+    canonical_relations = set(CANONICAL_RELATION_VALUES)
+
+    edge_total = 0
+    singleton_events = 0
+    off_lattice = 0
+    direct_count = 0
+    indirect_count = 0
+    coined_relations: dict[str, int] = {}
+
     for i, op in enumerate(operations):
         if not isinstance(op, dict):
             raise click.ClickException(f"operations[{i}] is not a dict")
-        op_id = op.get("id")
-        if not isinstance(op_id, str) or not op_id.strip():
-            raise click.ClickException(f"operations[{i}].id is missing")
-        if op_id in op_ids:
-            raise click.ClickException(f"operations[{i}].id {op_id!r} is duplicated")
-        op_ids.add(op_id)
         desc = op.get("description")
         if not isinstance(desc, str) or not desc.strip():
             raise click.ClickException(
                 f"operations[{i}].description is missing or empty"
             )
+        _validate_anchor_list(op.get("anchor_list"), f"operations[{i}]")
 
-    off_lattice = 0
-    coined_relations: dict[str, int] = {}
-    coined_provenance: dict[str, int] = {}
-    canonical_relations = set(CANONICAL_RELATION_VALUES)
-    canonical_provenance = set(CANONICAL_PROVENANCE_KINDS)
+        edges = op.get("edges")
+        if not isinstance(edges, list) or not edges:
+            raise click.ClickException(
+                f"operations[{i}].edges must be a non-empty list"
+            )
+        if len(edges) == 1:
+            singleton_events += 1
+        edge_total += len(edges)
 
-    for i, rel in enumerate(relations):
-        if not isinstance(rel, dict):
-            raise click.ClickException(f"relations[{i}] is not a dict")
-        subject = rel.get("subject")
-        if not isinstance(subject, str) or not subject.strip():
-            raise click.ClickException(f"relations[{i}].subject is missing")
-        if rel.get("subject_in_lattice") is not True:
-            raise click.ClickException(
-                f"relations[{i}].subject_in_lattice must be true"
-            )
-        if lattice_formal_names is not None and subject not in lattice_formal_names:
-            raise click.ClickException(
-                f"relations[{i}].subject {subject!r} is not a lattice formal_name"
-            )
-        relation = rel.get("relation")
-        if not _is_snake_case_label(relation):
-            raise click.ClickException(
-                f"relations[{i}].relation {relation!r} is not a valid label "
-                f"(non-empty snake_case string ≤64 chars)"
-            )
-        if relation not in canonical_relations:
-            coined_relations[relation] = coined_relations.get(relation, 0) + 1
-        direction = rel.get("direction")
-        if direction not in DIRECTION_VALUES:
-            raise click.ClickException(
-                f"relations[{i}].direction {direction!r} not in {DIRECTION_VALUES}"
-            )
-        provenance = rel.get("provenance_kind")
-        if not _is_snake_case_label(provenance):
-            raise click.ClickException(
-                f"relations[{i}].provenance_kind {provenance!r} is not a "
-                f"valid label (non-empty snake_case string ≤64 chars)"
-            )
-        if provenance not in canonical_provenance:
-            coined_provenance[provenance] = coined_provenance.get(provenance, 0) + 1
-        op_id = rel.get("operation_id")
-        if op_id is not None:
-            if not isinstance(op_id, str):
+        for j, edge in enumerate(edges):
+            where = f"operations[{i}].edges[{j}]"
+            if not isinstance(edge, dict):
+                raise click.ClickException(f"{where} is not a dict")
+
+            subject = edge.get("subject")
+            if not isinstance(subject, str) or not subject.strip():
+                raise click.ClickException(f"{where}.subject is missing")
+            if (lattice_formal_names is not None
+                    and subject not in lattice_formal_names):
                 raise click.ClickException(
-                    f"relations[{i}].operation_id must be a string or null"
+                    f"{where}.subject {subject!r} is not a lattice formal_name"
                 )
-            if op_id not in op_ids:
+
+            relation = edge.get("relation")
+            if not _is_snake_case_label(relation):
                 raise click.ClickException(
-                    f"relations[{i}].operation_id {op_id!r} not found in operations[]"
+                    f"{where}.relation {relation!r} is not a valid label "
+                    f"(non-empty snake_case string ≤64 chars)"
                 )
-        if not rel.get("object_in_lattice"):
-            off_lattice += 1
+            if relation not in canonical_relations:
+                coined_relations[relation] = coined_relations.get(relation, 0) + 1
+
+            dep_kind = edge.get("dependency_kind")
+            if dep_kind not in DEPENDENCY_KIND_VALUES:
+                raise click.ClickException(
+                    f"{where}.dependency_kind {dep_kind!r} not in "
+                    f"{DEPENDENCY_KIND_VALUES}"
+                )
+            if dep_kind == "direct":
+                direct_count += 1
+            else:
+                indirect_count += 1
+
+            obj = edge.get("object")
+            if not isinstance(obj, str) or not obj.strip():
+                raise click.ClickException(
+                    f"{where}.object must be a non-empty string"
+                )
+            if (lattice_formal_names is not None
+                    and obj not in lattice_formal_names):
+                off_lattice += 1
+
+            edge_desc = edge.get("description")
+            if not isinstance(edge_desc, str) or not edge_desc.strip():
+                raise click.ClickException(
+                    f"{where}.description is missing or empty"
+                )
+
+            _validate_anchor_list(edge.get("anchor_list"), where)
+
     return {
         "operation_count": len(operations),
-        "relation_count": len(relations),
+        "edge_count": edge_total,
+        "singleton_event_count": singleton_events,
         "off_lattice_object_count": off_lattice,
+        "direct_count": direct_count,
+        "indirect_count": indirect_count,
         "coined_relations": coined_relations,
-        "coined_provenance_kinds": coined_provenance,
+    }
+
+
+def assemble_relate_artifact_from_jsonl(
+    events_path: Path, *,
+    batch_id: str | None = None,
+    batch_label: str | None = None,
+) -> dict:
+    """Read JSONL events from `events_path`, one event per line, and
+    assemble into a single relate artifact dict:
+
+    {batch_id, batch_label, operations: [<event>, ...]}.
+
+    Each event is the parsed JSON object on its line. The pipeline calls
+    this after the planner exits — the planner appends events as it
+    works, so the JSONL file is the durable record."""
+    operations: list[dict] = []
+    if not events_path.exists():
+        return {
+            "batch_id": batch_id,
+            "batch_label": batch_label,
+            "operations": operations,
+        }
+    text = events_path.read_text()
+    for n, raw in enumerate(text.splitlines(), start=1):
+        line = raw.strip()
+        if not line:
+            continue
+        try:
+            op = loads(line, default=None)
+        except Exception:
+            op = None
+        if op is None:
+            try:
+                op = __import__("json").loads(line)
+            except Exception as e:
+                raise click.ClickException(
+                    f"{events_path} line {n}: not valid JSON: {e!r}"
+                )
+        if not isinstance(op, dict):
+            raise click.ClickException(
+                f"{events_path} line {n}: top-level must be a JSON object"
+            )
+        operations.append(op)
+    return {
+        "batch_id": batch_id,
+        "batch_label": batch_label,
+        "operations": operations,
     }
 
 
@@ -968,10 +1172,10 @@ def _filter_lattice_to_linked(lattice_artifact: dict) -> dict:
     """Drop items with empty `links` and any group that ends up empty.
 
     Used as the relate-stage input so the planner only anchors edges
-    on items the linker confirmed are publicly resolvable. Items without
-    a verified link are not safe subjects for closed-vocabulary edges —
-    they may be private / gated / phantom names that the lattice should
-    not propagate downstream.
+    on items the organize / audit stages confirmed are publicly
+    resolvable. Items without a verified link are not safe subjects
+    for closed-vocabulary edges — they may be private / gated /
+    phantom names that the lattice should not propagate downstream.
     """
     out_groups: list[dict] = []
     for group in lattice_artifact.get("groups") or []:
@@ -1054,17 +1258,15 @@ def run_relate(
 
     source_lattice_path = (
         Path(lattice_path).resolve() if lattice_path
-        else _latest_lattice_or_audit_or_linker_path()
+        else _latest_lattice_artifact_path()
     )
     lattice_artifact = read_json(str(source_lattice_path))
     # Pass the full lattice to the relate planner. Items without a
     # verified link can still be valid edge endpoints (e.g., gated HF
-    # repos, API-only OpenAI judges with no canonical vendor_docs page,
-    # internal AI2 names referenced in source). Filtering them out
-    # systematically removes filtered_by / distilled_from edges to API
-    # judges. The relate prompt's off-lattice channel handles entities
-    # not in the lattice; the planner should not be deprived of
-    # extracted-but-unlinkable entities.
+    # repos, API-only judges, internal AI2 names referenced in source).
+    # The relate prompt's free-text `object` field handles off-lattice
+    # mentions; the planner should not be deprived of extracted-but-
+    # unlinkable entities.
     formal_names = _lattice_formal_names(lattice_artifact)
     n_total = sum(len(g.get("items") or []) for g in lattice_artifact.get("groups") or [])
     n_linked = sum(
@@ -1077,13 +1279,24 @@ def run_relate(
     ]
     workers = max(1, min(config.MAX_PARALLEL_BATCHES, len(batch_ids) or 1))
 
+    def _batch_label(bid: str) -> str | None:
+        rows = all_rows("SELECT label FROM batches WHERE id=?", (bid,))
+        if rows:
+            return rows[0]["label"]
+        return None
+
     def relate_one(bid: str) -> dict:
         run_id = new_run("relate", label=f"relate:{bid[:8]}",
                          seed=str(source_lattice_path))
         run_root = config.STORAGE / config.RUNS_SUBDIR / run_id
         batch_dir = materialize_batch(bid, run_root / config.BATCH_SUBDIR)
+        # The planner appends events as JSONL into events_path during
+        # its turn. After it exits we assemble that JSONL into the
+        # canonical relate_artifact.json.
+        events_path = run_root / config.RELATE_EVENTS_FILE
         artifact_out = run_root / config.RELATE_ARTIFACT_FILE
         run_root.mkdir(parents=True, exist_ok=True)
+        events_path.touch()  # ensure the planner can append from line 1
         (run_root / config.RUN_INPUT_FILE).write_text(
             json_text({"batch_id": bid, "batch_dir": str(batch_dir),
                        "lattice_path": str(source_lattice_path)})
@@ -1094,15 +1307,23 @@ def run_relate(
             "batch_dir": str(batch_dir),
             "lattice_path": str(source_lattice_path),
             "worker_dir": str(run_root / config.WORKERS_SUBDIR),
-            "artifact_path": str(artifact_out),
+            "artifact_path": str(events_path),  # JSONL append target
             "input_path": str(run_root / config.RUN_INPUT_FILE),
             "planner_model": planner_model,
             "subagent_model": subagent_model,
         })
         spawn = dispatch_spawn(run_id, prompt, model=planner_model)
-        if spawn["exit_code"] != 0 or not artifact_out.exists():
+        if spawn["exit_code"] != 0:
             return {"batch_id": bid, "status": "failed", "log_dir": spawn["log_dir"]}
-        artifact = read_json(str(artifact_out))
+        # Assemble JSONL → JSON
+        try:
+            artifact = assemble_relate_artifact_from_jsonl(
+                events_path, batch_id=bid, batch_label=_batch_label(bid),
+            )
+        except click.ClickException as exc:
+            return {"batch_id": bid, "status": "failed",
+                    "log_dir": spawn["log_dir"], "error": str(exc)}
+        atomic_write_json(artifact_out, artifact)
         try:
             result = commit_relations_artifact(
                 artifact,
@@ -1117,6 +1338,7 @@ def run_relate(
         result["batch_id"] = bid
         result["run_id"] = run_id
         result["artifact_path"] = str(artifact_out)
+        result["events_path"] = str(events_path)
         return result
 
     results: list[dict] = []
@@ -1138,7 +1360,7 @@ def run_relate(
 
 
 # ---------------------------------------------------------------------------
-# Stage 7 — triage (one planner classifies upstream nodes)
+# Stage 6 — triage (one planner classifies upstream nodes)
 # ---------------------------------------------------------------------------
 
 
@@ -1172,8 +1394,9 @@ def _validate_triage_artifact(artifact: dict) -> dict[str, int]:
 
 def _aggregate_relations_artifact(out_path: Path) -> Path:
     """Concatenate every batch's relate artifact into one file the
-    triage planner reads. The merge is straightforward: the union of
-    `relations[]` arrays plus a `batch_ids` field tracking origin.
+    triage planner reads. Each batch artifact has the
+    `operations[].edges[]` shape; we flatten edges across all
+    operations and tag each with the batch / event it came from.
     """
     rows = all_rows(
         "SELECT batch_id, artifact_path FROM batch_artifacts "
@@ -1190,14 +1413,26 @@ def _aggregate_relations_artifact(out_path: Path) -> Path:
         if not path.exists():
             continue
         artifact = read_json(str(path))
-        relations = artifact.get("relations") or []
-        for rel in relations:
-            if isinstance(rel, dict):
-                merged.append({**rel, "_batch_id": row["batch_id"]})
+        operations = artifact.get("operations") or []
+        for op_idx, op in enumerate(operations):
+            if not isinstance(op, dict):
+                continue
+            event_desc = op.get("description")
+            event_anchors = op.get("anchor_list") or []
+            for edge in op.get("edges") or []:
+                if not isinstance(edge, dict):
+                    continue
+                merged.append({
+                    **edge,
+                    "_batch_id": row["batch_id"],
+                    "_event_index": op_idx,
+                    "_event_description": event_desc,
+                    "_event_anchor_list": event_anchors,
+                })
         batch_ids.append(row["batch_id"])
     atomic_write_json(out_path, {
         "batch_ids": batch_ids,
-        "relations": merged,
+        "edges": merged,
     })
     return out_path
 
@@ -1229,7 +1464,7 @@ def run_triage(
 
     source_lattice_path = (
         Path(lattice_path).resolve() if lattice_path
-        else _latest_lattice_or_audit_or_linker_path()
+        else _latest_lattice_artifact_path()
     )
 
     run_id = new_run("triage", label="triage", seed=str(source_lattice_path))
@@ -1268,7 +1503,7 @@ def run_triage(
 
 
 # ---------------------------------------------------------------------------
-# Stage 8 — merge (pure-Python cross-run lattice + relations merge)
+# Stage 7 — merge (pure-Python cross-run lattice + relations merge)
 # ---------------------------------------------------------------------------
 
 
@@ -1357,61 +1592,57 @@ def _merge_lattices(artifacts: list[dict]) -> tuple[dict, list[dict]]:
 
 
 def _merge_relations(artifacts: list[dict]) -> tuple[list[dict], list[dict]]:
-    """Pure-Python merge of N relations artifacts. Edges unify by
-    (subject, relation, object_ref or object_text). Evidence /
-    source_path / provenance_kind accumulate. Differing descriptions
-    surface in conflicts.
+    """Pure-Python merge of N relate artifacts. Edges unify by
+    (subject, relation, object). The accumulated `anchor_list` of
+    each merged edge carries every source from every contributing
+    artifact. Differing per-edge descriptions surface in conflicts.
+
+    Each artifact is shaped as `{operations: [{description, anchor_list,
+    edges: [...]}]}`; edges are flattened across all operations.
     """
     by_key: dict[tuple[str, str, str], dict] = {}
     conflicts: list[dict] = []
     for art in artifacts:
-        for rel in art.get("relations") or []:
-            if not isinstance(rel, dict):
+        for op in art.get("operations") or []:
+            if not isinstance(op, dict):
                 continue
-            object_id = rel.get("object_ref") or rel.get("object_text") or ""
-            key = (rel.get("subject") or "", rel.get("relation") or "",
-                   str(object_id))
-            evidence_record = {
-                "evidence": rel.get("evidence"),
-                "source_path": rel.get("source_path"),
-                "source_line": rel.get("source_line"),
-                "provenance_kind": rel.get("provenance_kind"),
-                "description": rel.get("description"),
-            }
-            if key in by_key:
-                target = by_key[key]
-                target.setdefault("provenance", []).append(evidence_record)
-                target_desc = target.get("description")
-                this_desc = rel.get("description")
-                if (this_desc and target_desc and this_desc != target_desc
-                        and this_desc not in (target.get("description_variants") or [])):
-                    variants = list(target.get("description_variants") or [])
-                    if target_desc not in variants:
-                        variants.append(target_desc)
-                    variants.append(this_desc)
-                    target["description_variants"] = variants
-                    conflicts.append({
-                        "kind": "description_variant",
-                        "subject": rel.get("subject"),
-                        "relation": rel.get("relation"),
-                        "object": object_id,
-                        "variants": variants,
-                    })
-            else:
-                merged = {
-                    "subject": rel.get("subject"),
-                    "subject_in_lattice": rel.get("subject_in_lattice"),
-                    "relation": rel.get("relation"),
-                    "direction": rel.get("direction"),
-                    "object_ref": rel.get("object_ref"),
-                    "object_in_lattice": rel.get("object_in_lattice"),
-                    "object_text": rel.get("object_text"),
-                    "object_value": rel.get("object_value"),
-                    "object_unit": rel.get("object_unit"),
-                    "description": rel.get("description"),
-                    "provenance": [evidence_record],
-                }
-                by_key[key] = merged
+            for edge in op.get("edges") or []:
+                if not isinstance(edge, dict):
+                    continue
+                key = (
+                    edge.get("subject") or "",
+                    edge.get("relation") or "",
+                    edge.get("object") or "",
+                )
+                anchors = list(edge.get("anchor_list") or [])
+                if key in by_key:
+                    target = by_key[key]
+                    target.setdefault("anchor_list", []).extend(anchors)
+                    target_desc = target.get("description")
+                    this_desc = edge.get("description")
+                    if (this_desc and target_desc and this_desc != target_desc
+                            and this_desc not in (target.get("description_variants") or [])):
+                        variants = list(target.get("description_variants") or [])
+                        if target_desc not in variants:
+                            variants.append(target_desc)
+                        variants.append(this_desc)
+                        target["description_variants"] = variants
+                        conflicts.append({
+                            "kind": "description_variant",
+                            "subject": edge.get("subject"),
+                            "relation": edge.get("relation"),
+                            "object": edge.get("object"),
+                            "variants": variants,
+                        })
+                else:
+                    by_key[key] = {
+                        "subject": edge.get("subject"),
+                        "relation": edge.get("relation"),
+                        "dependency_kind": edge.get("dependency_kind"),
+                        "object": edge.get("object"),
+                        "description": edge.get("description"),
+                        "anchor_list": anchors,
+                    }
     return (list(by_key.values()), conflicts)
 
 
@@ -1538,10 +1769,6 @@ def run_expand(
         )
     if "audit" not in skip:
         out["stages"]["audit"] = run_audit(
-            planner_model=planner_model, subagent_model=subagent_model,
-        )
-    if "linker" not in skip:
-        out["stages"]["linker"] = run_linker(
             planner_model=planner_model, subagent_model=subagent_model,
         )
     if "relate" not in skip:

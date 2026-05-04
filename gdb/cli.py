@@ -11,7 +11,6 @@ from .pipeline import (
     run_discover,
     run_expand,
     run_extract,
-    run_linker,
     run_merge,
     run_organize,
     run_relate,
@@ -138,32 +137,12 @@ def audit_cmd(artifact_path: str | None, source_path: str | None,
     ))
 
 
-@run.command("linker")
-@click.option("--artifact", "artifact_path",
-              help="Ingest an existing linker artifact instead of launching an agent.")
-@click.option("--source", "source_path",
-              help="Link a specific lattice artifact (default: most recent organize / audit / linker).")
-@click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES),
-              default=config.CLAUDE_MODEL, show_default=True)
-@click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES),
-              default=config.CLAUDE_MODEL, show_default=True)
-def linker_cmd(artifact_path: str | None, source_path: str | None,
-               planner_model: str, subagent_model: str):
-    """Attach official URLs (HF / GitHub / paper / blog / vendor docs) to every item."""
-    emit_json(run_linker(
-        artifact_path=artifact_path,
-        source_path=source_path,
-        planner_model=planner_model,
-        subagent_model=subagent_model,
-    ))
-
-
 @run.command("relate")
 @click.option("--batch-id", help="Limit to one batch. Required when --artifact is used.")
 @click.option("--artifact", "artifact_path",
               help="Ingest an existing relate artifact instead of launching an agent.")
 @click.option("--lattice", "lattice_path",
-              help="Lattice path (default: most recent organize / audit / linker).")
+              help="Lattice path (default: most recent organize / audit).")
 @click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES),
               default=config.CLAUDE_MODEL, show_default=True)
 @click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES),
@@ -191,7 +170,7 @@ def relate_cmd(batch_id: str | None, artifact_path: str | None,
 @click.option("--artifact", "artifact_path",
               help="Ingest an existing triage artifact instead of launching an agent.")
 @click.option("--lattice", "lattice_path",
-              help="Lattice path (default: most recent organize / audit / linker).")
+              help="Lattice path (default: most recent organize / audit).")
 @click.option("--relations", "relations_path",
               help="Pre-aggregated relations file (default: aggregate completed relate artifacts).")
 @click.option("--planner-model", type=click.Choice(config.PLANNER_CHOICES),
@@ -237,7 +216,7 @@ def merge_cmd(artifact_path: str | None, sources: tuple[str, ...],
               default=config.CLAUDE_MODEL, show_default=True)
 @click.option("--skip", multiple=True,
               type=click.Choice(["discover", "extract", "organize", "audit",
-                                 "linker", "relate"]),
+                                 "relate"]),
               help="Skip one or more stages. Pass multiple times to skip several.")
 def expand_cmd(node: str, planner_model: str, subagent_model: str,
                skip: tuple[str, ...]):
@@ -248,6 +227,17 @@ def expand_cmd(node: str, planner_model: str, subagent_model: str,
         subagent_model=subagent_model,
         skip=tuple(skip),
     ))
+
+
+@main.command("viz")
+@click.option("--port", type=int, default=8102, show_default=True,
+              help="HTTP port to serve on.")
+@click.option("--host", default="127.0.0.1", show_default=True,
+              help="Bind address.")
+def viz_cmd(port: int, host: str):
+    """Serve an interactive graph viewer of the current run's lattice + relations."""
+    from .viz import serve
+    serve(port=port, host=host)
 
 
 @main.group()
@@ -356,46 +346,6 @@ def debug_audit(latest: bool):
     emit_json({"audit_runs": out})
 
 
-@debug.command("linker")
-@click.option("--latest/--all", default=True,
-              help="Show only the most recent linker run (default) or all of them.")
-def debug_linker(latest: bool):
-    """Show the linked lattice (groups+items+links) and link-coverage stats."""
-    rows = all_rows(
-        "SELECT id, attrs, started_at, ended_at FROM runs "
-        "WHERE stage='linker' AND ended_at IS NOT NULL "
-        "ORDER BY started_at DESC"
-    )
-    if latest:
-        rows = rows[:1]
-    out = []
-    for row in rows:
-        attrs = loads(row["attrs"], default={})
-        path = attrs.get("artifact_path")
-        artifact = None
-        missing = False
-        if path and Path(path).exists():
-            artifact = read_json(path)
-        elif path:
-            missing = True
-        out.append({
-            "run_id": row["id"],
-            "started_at": row["started_at"],
-            "ended_at": row["ended_at"],
-            "source_artifact_path": attrs.get("source_artifact_path"),
-            "group_count": attrs.get("group_count"),
-            "item_count": attrs.get("item_count"),
-            "items_with_links": attrs.get("items_with_links"),
-            "items_without_links": attrs.get("items_without_links"),
-            "total_links": attrs.get("total_links"),
-            "links_by_kind": attrs.get("links_by_kind"),
-            "artifact_path": path,
-            "artifact_missing_on_disk": missing,
-            "artifact": artifact,
-        })
-    emit_json({"linker_runs": out})
-
-
 @debug.command("lattice")
 @click.option("--query", "-q", help="Substring to match against formal_name or aliases (case-insensitive).")
 @click.option("--kind", type=click.Choice(["model", "dataset"]),
@@ -406,7 +356,7 @@ def debug_linker(latest: bool):
 @click.option("--unlinked-only", is_flag=True, default=False,
               help="Show ONLY items with no resolved link.")
 @click.option("--source", "source_path",
-              help="Search a specific lattice artifact (default: most recent organize / audit / linker).")
+              help="Search a specific lattice artifact (default: most recent organize / audit).")
 @click.option("--limit", type=int, default=50, show_default=True,
               help="Max results.")
 @click.option("--full", is_flag=True,
@@ -415,7 +365,7 @@ def debug_lattice(query: str | None, kind: str | None, family: str | None,
                   include_unlinked: bool, unlinked_only: bool,
                   source_path: str | None,
                   limit: int, full: bool):
-    """Search the latest lattice (organize / audit / linker) by name, kind, family.
+    """Search the latest lattice (organize / audit) by name, kind, family.
 
     By default, only items with at least one verified link are shown.
     Pass --include-unlinked to also surface unresolved items, or
@@ -424,12 +374,12 @@ def debug_lattice(query: str | None, kind: str | None, family: str | None,
     The compact output shows: kind, formal_name, link count, family.
     Use --full for the complete item record.
     """
-    from .pipeline import _latest_lattice_or_audit_or_linker_path
+    from .pipeline import _latest_lattice_artifact_path
 
     if source_path:
         path = Path(source_path).resolve()
     else:
-        path = _latest_lattice_or_audit_or_linker_path()
+        path = _latest_lattice_artifact_path()
     artifact = read_json(str(path))
 
     if unlinked_only and include_unlinked:
