@@ -23,7 +23,7 @@ Scoring is hybrid:
   `subset_match_slug` and the candidate is flagged
   `address_form: "subset"`.
 
-CLI: `python -m gdb.resolve "<mention>" [--top K] [--lattice PATH]`.
+CLI: `python -m lineage.resolve "<mention>" [--top K] [--lattice PATH]`.
 
 The function does NOT pick a winner — it ranks. Relate picks based on
 surrounding source context.
@@ -32,14 +32,11 @@ from __future__ import annotations
 
 import json
 import re
-import sys
 from pathlib import Path
-from typing import Any
 
 import click
 
-from . import config
-from .store import all_rows, db, loads
+from .store import all_rows, loads
 
 
 _UNIQUE_ANCHOR_KINDS = frozenset({"hf_model", "hf_dataset", "vendor_docs"})
@@ -212,7 +209,7 @@ def resolve(
         # Exact alphanum surface match
         if m_alnum and m_alnum in it["alnum_surfaces"]:
             score += 100.0
-            reasons.append(f"exact-alphanum match on surface form")
+            reasons.append("exact-alphanum match on surface form")
 
         # Token overlap (covers fuzzy / multi-word cases)
         common = m_tokens & it["tokens"]
@@ -295,7 +292,7 @@ def main(mention: str, top_k: int, lattice_path: str | None, as_json: bool):
     """Resolve a mention against the lattice.
 
     \b
-    Example: python -m gdb.resolve "OLMo 3 7B Base" --top 3
+    Example: python -m lineage.resolve "OLMo 3 7B Base" --top 3
     """
     path = Path(lattice_path).resolve() if lattice_path else _latest_lattice_path()
     lattice = json.loads(path.read_text())

@@ -56,7 +56,7 @@ print(f"Edges with 2-3 anchors: {sum(c for n,c in anchor_counts.items() if 2 <= 
 print(f"Edges with 4+ anchors: {sum(c for n,c in anchor_counts.items() if n >= 4):,}")
 
 if zero_anchor_edges:
-    print(f"\nSample zero-anchor edges (potential hallucinations):")
+    print("\nSample zero-anchor edges (potential hallucinations):")
     for e in zero_anchor_edges[:10]:
         print(f"  {e['subject'][:40]} --[{e['relation']}]--> {e['object'][:40]}")
 

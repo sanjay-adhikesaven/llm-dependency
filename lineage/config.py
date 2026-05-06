@@ -14,24 +14,24 @@ def _resolve_runtime_path(name: str) -> Path:
     primary = ROOT / name
     if primary.exists():
         return primary
-    data = Path(sysconfig.get_path("data")) / "share" / "gdb-lattice" / name
+    data = Path(sysconfig.get_path("data")) / "share" / "lineage" / name
     return data
 
 
 SCHEMA_PATH = _resolve_runtime_path("schema.sql")
-PROMPTS_DIR = ROOT / "gdb" / "prompts"
+PROMPTS_DIR = ROOT / "lineage" / "prompts"
 if not PROMPTS_DIR.exists():
-    PROMPTS_DIR = Path(sysconfig.get_path("data")) / "share" / "gdb-lattice" / "prompts"
+    PROMPTS_DIR = Path(sysconfig.get_path("data")) / "share" / "lineage" / "prompts"
 
 load_dotenv(ROOT / ".env")
 
 # Environment variable names
-GDB_STORAGE_ENV = "GDB_STORAGE"
-GDB_PATH_ENV = "GDB_PATH"
-GDB_RUN_ID_ENV = "GDB_RUN_ID"
+LINEAGE_STORAGE_ENV = "LINEAGE_STORAGE"
+LINEAGE_PATH_ENV = "LINEAGE_PATH"
+LINEAGE_RUN_ID_ENV = "LINEAGE_RUN_ID"
 
-STORAGE = Path(os.environ.get(GDB_STORAGE_ENV) or ROOT / "storage").resolve()
-DB_PATH = Path(os.environ.get(GDB_PATH_ENV) or STORAGE / "graph.db").resolve()
+STORAGE = Path(os.environ.get(LINEAGE_STORAGE_ENV) or ROOT / "storage").resolve()
+DB_PATH = Path(os.environ.get(LINEAGE_PATH_ENV) or STORAGE / "graph.db").resolve()
 
 # Storage layout — directory names under STORAGE and run_root
 RUNS_SUBDIR = "runs"
@@ -71,12 +71,12 @@ SKIP_DIRS = {"__pycache__", "node_modules", "venv", ".venv", ".git"}
 # Timeouts and limits
 SQLITE_BUSY_TIMEOUT_S = 30.0
 PROCESS_KILL_GRACE_S = 5.0
-MAX_PARALLEL_BATCHES = int(os.environ.get("GDB_MAX_PARALLEL_BATCHES", "32"))
+MAX_PARALLEL_BATCHES = int(os.environ.get("LINEAGE_MAX_PARALLEL_BATCHES", "32"))
 HASH_CHUNK_BYTES = 1 << 20   # streaming chunk size for sha256_file
 
 # Models
-CLAUDE_MODEL = os.environ.get("GDB_CLAUDE_MODEL", "opus")
-CODEX_MODEL = os.environ.get("GDB_CODEX_MODEL", "gpt-5.5")
+CLAUDE_MODEL = os.environ.get("LINEAGE_CLAUDE_MODEL", "opus")
+CODEX_MODEL = os.environ.get("LINEAGE_CODEX_MODEL", "gpt-5.5")
 CODEX_EFFORT_CHOICES = ("low", "medium", "high", "xhigh")
 
 # CLI-restricted model choices. The planner is always Claude (only

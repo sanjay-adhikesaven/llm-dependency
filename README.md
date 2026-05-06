@@ -25,20 +25,20 @@ the LLM-driven dedup stages). Set `ANTHROPIC_API_KEY` before running.
 
 ## Quick start
 
-A full run on a target model has two phases: build the graph with `gdb`,
+A full run on a target model has two phases: build the graph with `lineage`,
 then clean it with `dedup.py`.
 
 ```bash
 # 1. Build the raw graph for a target model.
-gdb init
-gdb run discover --target HuggingFaceTB/SmolLM3-3B
-gdb run extract
-gdb run organize
-gdb run audit
-gdb run relate
-gdb run reconcile
-gdb run triage
-gdb run merge          # writes storage/runs/<id>/merge_artifact.json
+lineage init
+lineage run discover --target HuggingFaceTB/SmolLM3-3B
+lineage run extract
+lineage run organize
+lineage run audit
+lineage run relate
+lineage run reconcile
+lineage run triage
+lineage run merge          # writes storage/runs/<id>/merge_artifact.json
 
 # 2. Run the dedup + filter pipeline on the merge artifact.
 python dedup.py \
@@ -51,12 +51,12 @@ python viz.py --source storage/runs/<id>/graph.json --port 8102
 # open http://127.0.0.1:8102/
 ```
 
-Runtime paths are controlled by `GDB_STORAGE` (state and artifacts) and
-`GDB_PATH` (lattice / cache).
+Runtime paths are controlled by `LINEAGE_STORAGE` (state and artifacts) and
+`LINEAGE_PATH` (lattice / cache).
 
 ## Pipeline
 
-The base `gdb` pipeline has eight stages.
+The base `lineage` pipeline has eight stages.
 
 | Stage | Runtime | Job |
 |---|---|---|
@@ -69,16 +69,16 @@ The base `gdb` pipeline has eight stages.
 | `triage` | Python | flag candidate ghosts for further review |
 | `merge` | Python | merge per-batch artifacts into a single graph JSON |
 
-The CLI lives in `gdb/cli.py`; stage implementations are in `gdb/pipeline.py`.
+The CLI lives in `lineage/cli.py`; stage implementations are in `lineage/pipeline.py`.
 Stage prompts (used by the Claude planners) are markdown files in
-`gdb/prompts/`.
+`lineage/prompts/`.
 
 ### Recursive expansion
 
 The base pipeline produces the immediate (one-hop) dependencies of a single
 target. To recover a multi-hop graph across several seed releases, run the
-pipeline once per seed (re-using `GDB_STORAGE` per seed), then re-run it on
-each upstream artifact `gdb run merge` discovers, until a chosen depth is
+pipeline once per seed (re-using `LINEAGE_STORAGE` per seed), then re-run it on
+each upstream artifact `lineage run merge` discovers, until a chosen depth is
 reached. A reference implementation of this beam-search-style expansion is
 not bundled in this repo because its useful parameters (which seeds, which
 high-betweenness bridge artifacts to expand first, per-seed ranking) are
@@ -157,8 +157,8 @@ python -m pytest tests/ -q
 
 ```
 .
-├── gdb/                # base pipeline package
-│   ├── cli.py          # `gdb` CLI entry point
+├── lineage/        # base pipeline package
+│   ├── cli.py          # `lineage` CLI entry point
 │   ├── config.py
 │   ├── pipeline.py     # stage implementations
 │   ├── prompts/        # stage-level markdown prompts

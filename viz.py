@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""V4 graph visualizer — tuned for 20k-edge graphs.
+"""Graph visualizer — tuned for 20k-edge graphs.
 
-Key differences from gdb/viz.py:
+Key features:
   - Loads merged artifact directly (no SQLite)
   - Min-degree slider (default 5) so initial view is manageable
   - Physics OFF by default — user toggles on if they want force layout
   - Top-hub spotlight: when no filter is active, shows just top-150 nodes by degree
   - Fast-rebuild path that doesn't recreate the network on every filter change
 
-Run:  python viz_v4.py [--port 8102] [--source v4|v3|v2|original]
+Run:  python viz.py [--port 8102] [--source v4|v3|v2|original]
 Open: http://127.0.0.1:8102/
 """
 from __future__ import annotations
@@ -554,8 +554,8 @@ def main() -> None:
     print(f"  → {s['node_count']:,} nodes  ({s['lattice_node_count']:,} lattice + {s['off_lattice_node_count']:,} off-lattice)")
     print(f"  → {s['edge_count']:,} edges, {len(s['relations'])} distinct relations")
     print()
-    print(f"Default initial view: top 200 nodes by degree (≥10), physics OFF.")
-    print(f"Use the search box to focus on a specific model — it'll pivot to ego mode automatically.")
+    print("Default initial view: top 200 nodes by degree (≥10), physics OFF.")
+    print("Use the search box to focus on a specific model — it'll pivot to ego mode automatically.")
     print()
 
     handler = make_handler(payload)

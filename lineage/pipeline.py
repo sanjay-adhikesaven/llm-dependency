@@ -83,9 +83,9 @@ def render_prompt(stage: str, variables: dict[str, str]) -> str:
 
 def runtime_env(run_id: str) -> dict[str, str]:
     env = os.environ.copy()
-    env[config.GDB_STORAGE_ENV] = str(config.STORAGE)
-    env[config.GDB_PATH_ENV] = str(config.DB_PATH)
-    env[config.GDB_RUN_ID_ENV] = run_id
+    env[config.LINEAGE_STORAGE_ENV] = str(config.STORAGE)
+    env[config.LINEAGE_PATH_ENV] = str(config.DB_PATH)
+    env[config.LINEAGE_RUN_ID_ENV] = run_id
     return env
 
 
@@ -635,7 +635,7 @@ def _validate_organize_artifact(artifact: dict) -> tuple[int, int]:
     invariants only. Quality concerns (root mandate, production-vs-
     concept link policy, missing descriptions, over-specification,
     sibling collisions, multi-root groups) are reported as audit hints
-    by `gdb.subsets.flag_audit_issues` and resolved by the audit pass.
+    by `lineage.subsets.flag_audit_issues` and resolved by the audit pass.
 
     Required:
 
@@ -917,7 +917,7 @@ def _latest_lattice_artifact_path() -> Path:
     )
     if not rows:
         raise click.ClickException(
-            "no organize or audit run found; run `gdb run organize` first"
+            "no organize or audit run found; run `lineage run organize` first"
         )
     attrs = loads(rows[0]["attrs"], default={}) or {}
     path = attrs.get("artifact_path")
@@ -1923,7 +1923,7 @@ def run_reconcile(
         )
         if not rows:
             raise click.ClickException(
-                "no relate artifacts found; run `gdb run relate` first"
+                "no relate artifacts found; run `lineage run relate` first"
             )
         relate_artifacts = []
         for row in rows:
@@ -2008,7 +2008,7 @@ def _aggregate_relations_artifact(out_path: Path) -> Path:
     )
     if not rows:
         raise click.ClickException(
-            "no relate artifacts found; run `gdb run relate` first"
+            "no relate artifacts found; run `lineage run relate` first"
         )
     merged: list[dict] = []
     batch_ids: list[str] = []

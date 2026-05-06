@@ -1,6 +1,6 @@
-"""Tests for gdb.resolve — the lattice resolution / search function."""
+"""Tests for lineage.resolve — the lattice resolution / search function."""
 
-from gdb.resolve import resolve
+from lineage.resolve import resolve
 
 
 def _lattice(*items_per_group):

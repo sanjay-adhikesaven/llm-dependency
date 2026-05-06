@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Dedup pipeline for LLM dependency graphs.
 
-Reads a merged JSON graph (output of `gdb run merge`), runs four stages
+Reads a merged JSON graph (output of `lineage run merge`), runs four stages
 of dedup + filtering, and writes a cleaned JSON graph. Each stage can be
 run in isolation:
 
@@ -19,8 +19,7 @@ The four stages are conceptually independent:
     4. release     — LLM classifies KEEP / DROP per node; rewires edges through
                      dropped intermediates along compatible relations.
 
-Defaults match the hero-run configuration. See REPRODUCE.md for the full
-parameter sheet.
+See README.md for parameter defaults.
 """
 from __future__ import annotations
 
@@ -34,7 +33,6 @@ from threading import Lock
 
 from dedup_lib import (
     DEFAULT_WORKERS,
-    PAREN_ALIAS_RE,
     StageLogger,
     assert_invariants,
     call_opus,
@@ -51,7 +49,6 @@ from dedup_lib import (
     save_graph,
     signature,
     split_org,
-    to_str,
     tokenize,
     ConflictGuardedUnionFind,
 )

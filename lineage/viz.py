@@ -4,18 +4,16 @@ Reads the latest lattice artifact (audit / organize) and every
 completed relate artifact, materializes a graph (nodes = lattice items,
 edges = relations grouped by operation), and serves it on localhost.
 
-Usage: `python -m gdb.cli viz --port 8102`
+Usage: `python -m lineage.cli viz --port 8102`
 """
 from __future__ import annotations
 
-import html
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from typing import Any
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import urlparse
 
-from . import config
 from .pipeline import _latest_lattice_artifact_path
 from .store import all_rows, read_json
 

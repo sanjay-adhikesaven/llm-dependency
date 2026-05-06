@@ -22,7 +22,7 @@ from .store import all_rows, db, emit_json, loads, read_json
 
 @click.group()
 def main():
-    """gdb: discover → extract names → organize lattice."""
+    """lineage: discover → extract names → organize lattice."""
 
 
 @main.command()
@@ -88,7 +88,7 @@ def discover_cmd(target: str, artifact_path: str | None, workspace_dir: str | No
 @click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES),
               default=config.CLAUDE_MODEL, show_default=True)
 @click.option("--max-workers", type=int,
-              help="Override GDB_MAX_PARALLEL_BATCHES for this process.")
+              help="Override LINEAGE_MAX_PARALLEL_BATCHES for this process.")
 def extract_cmd(batch_id: str | None, artifact_path: str | None,
                 planner_model: str, subagent_model: str, max_workers: int | None):
     if artifact_path and not batch_id:
@@ -149,7 +149,7 @@ def audit_cmd(artifact_path: str | None, source_path: str | None,
 @click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES),
               default=config.CLAUDE_MODEL, show_default=True)
 @click.option("--max-workers", type=int,
-              help="Override GDB_MAX_PARALLEL_BATCHES for this process.")
+              help="Override LINEAGE_MAX_PARALLEL_BATCHES for this process.")
 def relate_cmd(batch_id: str | None, artifact_path: str | None,
                lattice_path: str | None, planner_model: str,
                subagent_model: str, max_workers: int | None):

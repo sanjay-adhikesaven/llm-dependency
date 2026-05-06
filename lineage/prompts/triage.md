@@ -3,7 +3,7 @@
 > **Goal: read the lattice + relations, classify every
 > upstream entity-leaf as `auto_expand`, `decline`, or
 > `manual`.** The output is a queue the operator works
-> through with `gdb run expand --node <formal_name>`. We do
+> through with `lineage run expand --node <formal_name>`. We do
 > not auto-recurse — depth is operator-gated.
 
 Read `{{lattice_path}}` and `{{relations_path}}`. Write the
@@ -49,7 +49,7 @@ single-hop extract can't see — chains of distillation,
 multi-stage data mixing, judges-of-judges, OCR / rewriter
 models whose training corpora propagate through. Bias toward
 expanding; the operator still gates actual depth via
-`gdb run expand --node`, so this bucket is a recommendation
+`lineage run expand --node`, so this bucket is a recommendation
 queue, not an auto-trigger.
 
 The single gate: the node must have **documented composition

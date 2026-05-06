@@ -347,8 +347,6 @@ def flag_audit_issues(lattice: dict, *, input_names_set: set | None = None) -> d
             # must trace to input pile, including family roots whose alias
             # is the bare family name as the source wrote it).
             aliases = it.get("aliases") or []
-            identity = it.get("identity") or {}
-            ident_keys = set(identity.keys()) if isinstance(identity, dict) else set()
             if not aliases:
                 add("phantom_item",
                     item_formal_name=fn, item_family=family,
