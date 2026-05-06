@@ -19,19 +19,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
-REPO = Path("/Users/sanjayadhikesaven/Downloads/graph")
-RUN_DIR = REPO / "storage/runs/c6c6dfd9-0fb3-4d87-a5a7-01533c3af16d"
-
-SOURCES = {
-    "v8": RUN_DIR / "merge_artifact_deduped_v8.json",
-    "v7": RUN_DIR / "merge_artifact_deduped_v7.json",
-    "v6": RUN_DIR / "merge_artifact_deduped_v6.json",
-    "v5": RUN_DIR / "merge_artifact_deduped_v5.json",
-    "v4": RUN_DIR / "merge_artifact_deduped_v4.json",
-    "v3": RUN_DIR / "merge_artifact_deduped_v3.json",
-    "v2": RUN_DIR / "merge_artifact_deduped.json",
-    "original": RUN_DIR / "merge_artifact.json",
-}
+# Path to the merged graph JSON is provided via --source.
 
 
 def load_data(path: Path) -> dict:
@@ -549,17 +537,18 @@ def make_handler(graph_payload: dict):
 
 
 def main() -> None:
-    p = argparse.ArgumentParser()
+    p = argparse.ArgumentParser(description="Visualize a merged dependency-graph JSON.")
+    p.add_argument("--source", required=True, type=Path,
+                   help="Path to the merged graph JSON (e.g. merge_artifact.json or a deduped output).")
     p.add_argument("--port", type=int, default=8102)
     p.add_argument("--host", default="127.0.0.1")
-    p.add_argument("--source", choices=list(SOURCES), default="v8")
     args = p.parse_args()
 
-    src_path = SOURCES[args.source]
+    src_path = args.source
     if not src_path.exists():
         print(f"ERROR: source not found: {src_path}", file=sys.stderr); sys.exit(1)
 
-    print(f"Loading {args.source}: {src_path.name}")
+    print(f"Loading {src_path}")
     payload = load_data(src_path)
     s = payload["stats"]
     print(f"  → {s['node_count']:,} nodes  ({s['lattice_node_count']:,} lattice + {s['off_lattice_node_count']:,} off-lattice)")

@@ -448,11 +448,9 @@ def test_run_organize_synthesizes_missing_family_root(fresh_runtime, tmp_path):
     assert result["completion"]["roots_synthesized"] == 1
 
 
-def test_run_organize_rejects_inconsistent_family_value(fresh_runtime, tmp_path):
-    """All items in a group must share the same identity.family value."""
-    import click
-    import pytest
-
+def test_run_organize_warns_on_inconsistent_family_value(fresh_runtime, tmp_path, capsys):
+    """Mixed-family groups are permitted (synthetic-data lineage often produces
+    them) — they emit a warning to stderr rather than raising."""
     from gdb.pipeline import run_organize
 
     bad = tmp_path / "mixed_family.json"
@@ -471,8 +469,10 @@ def test_run_organize_rejects_inconsistent_family_value(fresh_runtime, tmp_path)
             ],
         }],
     }))
-    with pytest.raises(click.ClickException, match="differs from sibling family"):
-        run_organize(artifact_path=str(bad))
+    run_organize(artifact_path=str(bad))  # must not raise
+    captured = capsys.readouterr()
+    assert "differs from sibling family" in (captured.err + captured.out), \
+        "expected a family-mismatch warning to be emitted"
 
 
 def test_run_organize_completion_fills_empty_aliases(fresh_runtime, tmp_path):

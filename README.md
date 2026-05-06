@@ -1,34 +1,36 @@
 # llm-dependency
 
-Reconstructs recursive, evidence-grounded dependency graphs of LLM releases
+Reconstruct recursive, evidence-grounded dependency graphs of LLM releases
 from public artifacts (technical reports, model and dataset cards, code
 repositories, release blogs).
 
 The system reads heterogeneous public release artifacts, identifies and
-resolves artifact mentions across sources, builds operation-level
-dependency claims anchored in source excerpts, reconciles overlapping or
-conflicting evidence, and recursively expands upstream artifacts to trace
-multi-hop chains. The output is a single self-contained JSON graph
-(`merge_artifact_deduped_v8.json`) with nodes for models / datasets and
-edges for relationships such as `trained_from`, `trained_on`,
+resolves artifact mentions across sources, builds operation-level dependency
+claims anchored in source excerpts, reconciles overlapping or conflicting
+evidence, and produces a self-contained JSON graph with nodes for models /
+datasets and edges for relationships such as `trained_from`, `trained_on`,
 `generated_by`, `filtered_by`, `transformed_by`, `used_for_evaluation`,
-`inspired_by`, `decontaminated_against`, etc.
+`inspired_by`, and `decontaminated_against`.
 
-Reproduction details for the hero run (4 seed releases — OLMo 3, DR-Tulu,
-Nemotron-3, SmolLM3 — yielding 2,844 nodes / 14,769 edges / 51,456
-anchors) are in [`REPRODUCE.md`](REPRODUCE.md).
-
-## Quick start
+## Install
 
 ```bash
 git clone git@github.com:sanjay-adhikesaven/llm-dependency.git
 cd llm-dependency
 python -m pip install -e .
+```
 
-# Initialize storage (./storage/graph.db is the pipeline state DB)
+The package depends on the `claude` CLI being available in `PATH` (used by
+the LLM-driven dedup stages). Set `ANTHROPIC_API_KEY` before running.
+
+## Quick start
+
+A full run on a target model has two phases: build the graph with `gdb`,
+then clean it with `dedup.py`.
+
+```bash
+# 1. Build the raw graph for a target model.
 gdb init
-
-# Run the base pipeline against a target model / dataset
 gdb run discover --target HuggingFaceTB/SmolLM3-3B
 gdb run extract
 gdb run organize
@@ -36,100 +38,114 @@ gdb run audit
 gdb run relate
 gdb run reconcile
 gdb run triage
-gdb run merge
+gdb run merge          # writes storage/runs/<id>/merge_artifact.json
+
+# 2. Run the dedup + filter pipeline on the merge artifact.
+python dedup.py \
+    --source storage/runs/<id>/merge_artifact.json \
+    --dest   storage/runs/<id>/graph.json \
+    --stages all
+
+# 3. Browse the cleaned graph.
+python viz.py --source storage/runs/<id>/graph.json --port 8102
+# open http://127.0.0.1:8102/
 ```
 
 Runtime paths are controlled by `GDB_STORAGE` (state and artifacts) and
-`GDB_PATH` (lattice / cache). The CLI is in `gdb/cli.py`; pipeline stages
-live in `gdb/pipeline.py`.
+`GDB_PATH` (lattice / cache).
 
 ## Pipeline
 
-The base pipeline has eight stages:
+The base `gdb` pipeline has eight stages.
 
 | Stage | Runtime | Job |
 |---|---|---|
-| `discover` | one Claude planner | fetch sources for the target into batches |
-| `extract` | one Claude planner per batch (Python parallel) | per source: surface mentions, kind, atoms, inline links, source-side anchors |
-| `organize` | Python | dedup mentions into clusters, detect identity conflicts |
-| `audit` | one Claude planner → fans out subagents | per cluster: identity, aux, aliases, concept_path, confirmed link, conflict resolution |
-| `relate` | one Claude planner per batch | extract dependency claims (operations + edges + anchors) against the resolved lattice |
-| `reconcile` | Python | merge overlapping claims; refinement, consolidation, conflict detection |
-| `triage` | Python | flag candidate ghosts for further expansion |
-| `merge` | Python | merge per-batch artifacts into a single graph |
+| `discover` | one Claude planner | fetch the target's official artifacts (paper, model and dataset cards, repo, release blog) into topical batches |
+| `extract` | one Claude planner per batch (parallel) | per source: surface every model/dataset mention with kind, atoms, inline links, and source-side anchors |
+| `organize` | Python | dedup mentions into clusters; detect identity conflicts |
+| `audit` | one Claude planner → fans out subagents | per cluster: identity, aliases, concept_path, confirmed link, conflict resolution |
+| `relate` | one Claude planner per batch | extract operation-level dependency claims (operations + edges + anchors) against the resolved lattice |
+| `reconcile` | Python | merge overlapping claims via refinement, consolidation, and conflict detection |
+| `triage` | Python | flag candidate ghosts for further review |
+| `merge` | Python | merge per-batch artifacts into a single graph JSON |
 
-## Recursive expansion (beam search)
+The CLI lives in `gdb/cli.py`; stage implementations are in `gdb/pipeline.py`.
+Stage prompts (used by the Claude planners) are markdown files in
+`gdb/prompts/`.
 
-The base pipeline recovers one-hop dependencies for a single target. To
-recover deep recursive ancestry across the seed corpus we layer a beam
-expansion on top.
+### Recursive expansion
 
-| Script | Role |
-|---|---|
-| `beam_v5.py` | 4-phase beam search: bridge → d=2 → d=3 → d=4. Per-seed per-level top-K = 5 by parent-count ranking; pre-seeded set of 12 high-betweenness bridge nodes; worker cap 8. |
-| `recurse_v4.py` | Focused depth+0 expansion of the top-N ghost nodes that triage flagged for `auto_expand` but never received worker capacity. |
-| `resume_bfs.py` | BFS expansion across all seeds with reduced concurrency. State is recovered from existing artifacts. |
-| `retry_v3.py` | Retry pass for nodes whose expansion didn't complete (in-flight when an orchestrator was killed, or marked `ERROR`). |
-| `auto_merge_combined.py` | Polls for `recurse_v4` and `beam_v5` to exit, then triggers a final merge. |
-| `snapshot_merge.py` | Out-of-band merge into an isolated `GDB_STORAGE` so mid-run snapshots don't interfere with the live merge DB. |
-| `watch_and_merge.py` | Polls for `retry_v3.py` to exit, waits 60 s for final disk writes, then runs `gdb run merge`. |
-| `final_orchestrator.py` | Wakeup-to-done orchestrator: chains retries until convergence, then merges. Idempotent (writes `run-logs/RUN_DONE.txt` at completion); refuses to start a second merge if one is running; aggressive disk pre-flight cleanup. |
-| `keep_alive_orchestrator.sh` | Bash wrapper that re-runs `final_orchestrator.py` if it dies prematurely (OOM, system blip), up to `MAX_LOOPS=20`. |
+The base pipeline produces the immediate (one-hop) dependencies of a single
+target. To recover a multi-hop graph across several seed releases, run the
+pipeline once per seed (re-using `GDB_STORAGE` per seed), then re-run it on
+each upstream artifact `gdb run merge` discovers, until a chosen depth is
+reached. A reference implementation of this beam-search-style expansion is
+not bundled in this repo because its useful parameters (which seeds, which
+high-betweenness bridge artifacts to expand first, per-seed ranking) are
+target-specific. The algorithm we used:
 
-## Post-merge dedup pipeline (V1 → V8)
+1. Run the base pipeline against each seed; merge into a per-seed graph.
+2. From each per-seed graph, take the top-K newly-discovered upstream
+   artifacts at depth $d$, ranked by *parent count* (how many edges from the
+   already-expanded subgraph point at them).
+3. Run the base pipeline against each of those upstream artifacts; merge.
+4. Repeat for $d \in \{2, 3, 4\}$.
+5. Optionally pre-seed a small set of high-betweenness bridge artifacts
+   (popular benchmarks, common base models) before any per-seed expansion
+   so the seed families share an upstream backbone.
 
-The base merge produces a graph (V0) with substantial cross-source
-surface-form duplication. We layer eight sequential dedup stages on top
-of the merge artifact, each preserving prior outputs on disk.
+## Dedup pipeline
 
-| Stage | Script | Role |
+`dedup.py` runs four stages over the merged JSON graph; each stage can also
+be run in isolation.
+
+| Stage | Mechanism | What it does |
 |---|---|---|
-| **V1** | `dedup_graph.py` | Heuristic dedup: categorical drops (internal paths), signature-based clustering with hard separators (org / bare_norm / versions / sizes / stages / dates), no-org name folding, canonical pick, low-signal filter, edge rewrite + anchor merge. |
-| **V2** | `dedup_apply_splits.py` | NO\_SPLIT preservation: re-runs V1 clustering deterministically, parses Opus verdicts on borderline clusters, reverts over-merges (e.g., MMLU subjects, AIME 2024 vs 2025, OLMo-2 stage checkpoints, FLAN community re-releases). |
-| **V3** | `dedup_v3.py` | Fuzzy surface-form merge: hyphen-collapsed alt-key (`rl-zero` ↔ `rlzero`), version normalization (`3_3` ↔ `3.3`), bare-vs-prefixed merge with most-popular-target tiebreak. Adds `paren_specifier` and `bracket_specifier` to the signature so subset distinctions (e.g., MMLU STEM vs humanities) survive. |
-| **V4** | (superseded by V5; not in repo) | Hub audit, free-form drop reasons, batch=80, 8-way parallel. Used in early development; superseded once V5's tagged outputs were available. |
-| **V5** | `opus_verify_v5.py` | Deep hub audit with Opus 4.7 + `--effort max`. Top 75 OUT-hubs + top 30 IN-hubs, 40-edge batches sorted by anchor count, 12 parallel workers. Tagged drop categories: `DUPLICATE / HALLUCINATED / VACUOUS / WRONG_RELATION`. |
-| **V6** | `dedup_v6.py` | Whole-graph node dedup. Three high-precision signals: lex-collapse, token-Jaccard ≥ 0.60 (top-3 candidates per node), substring containment. **No connected-components clustering** (initial design with anchor-co-citation + co-neighborhood signals fused unrelated hubs into mega-clusters; see `REPRODUCE.md`). 24-way parallel. |
-| **V7** | `release_filter_v7.py` | Release-only filter. Opus classifies every node as KEEP (released artifact) or DROP (intermediate research checkpoint, internal training-data variant, prose alias). Transitive edge rewiring through DROP nodes along compatible relation pairs. |
-| **V8** | `dedup_v8.py` + `dedup_v8_fix.py` | Cross-org / suffix dedup with conflict-guarded union. Cross-org bare-lex match (catches `OpenAI/GPT-2` ↔ `openai-community/gpt2`), suffix-stripping (`-turbo`, `-Instruct`, `-hf`), bare-no-slash → prefixed family. The `_fix` step adds a conflict guard that skips any union that would combine components with mutually-conflicting specifier sets (different dates, versions, sizes, or stages). |
+| `heuristic` | no LLM | Signature-based clustering with hard separators on org × bare_norm × versions × sizes × stages × dates × parens × bracket attrs. Folds bare names into the highest-degree compatible prefixed cluster. Drops internal paths and free-text descriptive nodes. Filters low-signal concept names with degree < 3. |
+| `hub-audit` | Opus 4.7 + max thinking | For each top out-hub and in-hub, asks the LLM to drop edges that are duplicates, hallucinations, vacuous concepts, or wrong-relation. Tagged drop categories. |
+| `node-dedup` | Opus 4.7 + max thinking | Builds candidate dedup clusters across the whole graph from five high-precision signals (lex-collapse, token-Jaccard ≥ 0.6, substring containment, cross-org bare-lex match, suffix stripping). Verifies each cluster with the LLM. Applies decisions via a conflict-guarded union-find that refuses to merge components with mutually conflicting versions / sizes / stages / dates. |
+| `release` | Opus 4.7 + high effort | Classifies every node as KEEP (officially released artifact / standard benchmark) or DROP (intermediate research checkpoint, internal training-data variant, prose alias). For each dropped node, transitively rewires `A → DROP → B` chains along compatible relation pairs (`trained_from`+`trained_from`, `trained_on`+`trained_on`, etc.) so released-to-released ancestry stays connected. |
 
-Each script writes its output to a new file alongside V0:
-`merge_artifact_deduped.json` (V2), `_v3.json`, `_v5.json`, `_v6.json`,
-`_v7.json`, `_v8.json`. Prior versions are preserved for rollback /
-comparison.
+Each stage reads JSON, applies its operation, writes JSON. Sanity invariants
+(distinct version numbers, distinct year-stamped releases, all seed targets
+present, conflict-free dates / sizes / stages) are asserted before every
+write.
 
-Sanity invariants are asserted before each write:
+```bash
+# Run all four stages end-to-end (default).
+python dedup.py --source merge.json --dest graph.json --stages all
 
-- Olmo-3 nodes > 0 **and** Olmo-3.1 nodes > 0 (different version numbers
-  must stay distinct)
-- All four seed prefixes still present
-- AIME 2024 ≠ AIME 2025
-- Some `cais/mmlu` subject splits preserved
-- (V8-fix) `OLMo-2-0325-32B-Instruct` ≠ `OLMo-2-1124-32B-Instruct`
+# Or run a single stage.
+python dedup.py --source merge.json    --dest after_heuristic.json --stages heuristic
+python dedup.py --source after_heuristic.json --dest after_hub.json --stages hub-audit
+python dedup.py --source after_hub.json --dest after_node.json     --stages node-dedup
+python dedup.py --source after_node.json --dest graph.json         --stages release
+```
+
+The hub-audit and node-dedup stages take ~25 min each on a 15k-edge graph
+with 24 parallel `claude` workers; release-filter takes under 2 min.
 
 ## Visualizer
 
 ```bash
-python viz_v4.py --port 8102 --source v8
-# open http://127.0.0.1:8102/
+python viz.py --source path/to/graph.json --port 8102
 ```
 
-A self-contained HTTP server that loads any version (V0 / V2–V8) of the
-merged artifact directly. Default view caps at top 200 nodes by degree
-with min-degree ≥ 10 and physics off (otherwise vis-network locks the
-browser at ~15k edges). Search auto-pivots to ego mode on the selected
-node; ego (1-hop) and ego (2-hop) buttons in the toolbar.
+A self-contained HTTP server with a vis-network frontend. Default view caps
+at the top 200 nodes by degree (min-degree ≥ 10) with physics off; raise
+the slider or trigger an ego mode (1-hop or 2-hop) on any selected node to
+explore further. Search auto-pivots to ego mode on the matching node.
 
-## Edge auditing
+## Edge audit
 
 ```bash
-python edge_audit.py
+python edge_audit.py --source path/to/graph.json
 ```
 
-Static edge-pattern analysis for spotting residual noise after dedup
-(top-degree hubs, near-duplicate object names, weak-evidence patterns,
-zero-anchor edges). Used during development; useful as a quick
-sanity-check on any new graph version.
+Static edge-pattern analyzer: top hubs, anchor-coverage distribution,
+near-duplicate object/subject names that survived dedup, weak-evidence
+claims, and (subject, object) pairs with multiple distinct relations. Useful
+as a quick sanity-check on any graph version.
 
 ## Tests
 
@@ -141,46 +157,29 @@ python -m pytest tests/ -q
 
 ```
 .
-├── gdb/                    # base pipeline package (CLI + 8 stages)
-│   ├── cli.py
-│   ├── pipeline.py
-│   ├── prompts/            # stage-level prompts (Markdown)
-│   ├── resolve.py          # identity-lattice resolver
-│   ├── store.py            # SQLite-backed pipeline state
-│   ├── subsets.py
-│   └── viz.py              # legacy viewer (reads SQLite)
-├── beam_v5.py              # recursive beam expansion
-├── recurse_v4.py           # focused ghost-node expansion
-├── resume_bfs.py           # BFS expansion orchestrator
-├── retry_v3.py             # retry pass for unfinished nodes
-├── auto_merge_combined.py  # polls for completion, triggers final merge
-├── snapshot_merge.py       # isolated out-of-band merge
-├── watch_and_merge.py      # watch retry_v3, then merge
-├── final_orchestrator.py   # wakeup-to-done orchestrator
-├── keep_alive_orchestrator.sh  # bash wrapper around final_orchestrator
-├── dedup_graph.py          # V1 heuristic dedup
-├── dedup_apply_splits.py   # V2 NO_SPLIT reverts
-├── dedup_v3.py             # V3 fuzzy surface-form merge
-├── opus_verify_v5.py       # V5 deep hub audit (Opus 4.7 + max thinking)
-├── dedup_v6.py             # V6 whole-graph node dedup
-├── release_filter_v7.py    # V7 release-only filter
-├── dedup_v8.py             # V8 cross-org / suffix dedup
-├── dedup_v8_fix.py         # V8 conflict-guarded union fix
-├── viz_v4.py               # custom visualizer (reads merged JSON)
-├── edge_audit.py           # post-dedup noise pattern analyzer
+├── gdb/                # base pipeline package
+│   ├── cli.py          # `gdb` CLI entry point
+│   ├── config.py
+│   ├── pipeline.py     # stage implementations
+│   ├── prompts/        # stage-level markdown prompts
+│   ├── resolve.py      # identity-lattice resolver
+│   ├── store.py        # SQLite-backed pipeline state
+│   └── subsets.py      # HF metadata subset population
+├── dedup.py            # 4-stage dedup pipeline (CLI)
+├── dedup_lib.py        # shared dedup helpers (signatures, union-find, LLM, …)
+├── viz.py              # HTTP visualizer for a merged JSON graph
+├── edge_audit.py       # static noise-pattern analyzer
 ├── tests/
-├── paper/                  # paper artifacts (tex)
 ├── prompts/                # investigator prompt (master + per-subject copies, used by baselines)
-├── baselines/              # baseline runs against the same 4 subjects
+├── baselines/              # baseline runs against the same subjects
 │   ├── launch_baselines.py
-│   └── outputs/            # 16 baseline JSON graphs (4 systems × 4 subjects)
+│   └── outputs/            # baseline JSON graphs
 ├── eval/                   # pooled LLM-as-judge verifier and verdict outputs
 │   ├── pooled_eval.py
 │   └── outputs/            # verifications.jsonl, score.json, score_per_target.json
 ├── pyproject.toml
 ├── schema.sql
-├── README.md               # this file
-└── REPRODUCE.md            # full hero-run reproduction notes
+└── README.md
 ```
 
 ## Baselines and evaluation
@@ -252,29 +251,22 @@ ANTHROPIC_API_KEY=sk-ant-... python3 pooled_eval.py \
 Only clusters your system contributes that aren't already covered get
 fresh verifier calls. Existing verdicts are preserved.
 
-## Concept terminology
+## Concepts
 
 - **operation** — a structured group of edges that jointly describes one
   pipeline event (e.g., a DPO step). Edges within an operation share an
-  anchor list and description. This preserves event structure where a
-  flat pairwise edge list would erase it.
+  anchor list and description, preserving the event structure that a flat
+  pairwise edge list would erase.
 - **anchor** — a source-side citation: file path, position, and verbatim
   excerpt grounding a claim to a specific spot in the source corpus.
-- **identity lattice** — a partial-order structure for artifact identity
-  with vague-mention roots, partial-spec intermediate nodes, and
-  pinned-link entity leaves. Each node is an open-vocabulary set of
-  facets (`family`, `size`, `stage`, …); subset ordering on facet sets
-  defines the hierarchy.
-- **dependency-kind** — coarse type label (`direct` / `indirect`) on
-  every edge, distinguishing artifacts that materially enter weights /
-  training data from those that merely influence development decisions.
+- **identity lattice** — partial-order structure for artifact identity with
+  vague-mention roots, partial-spec intermediate nodes, and pinned-link
+  entity leaves. Each node is an open-vocabulary set of facets (`family`,
+  `size`, `stage`, …); subset ordering on facet sets defines the hierarchy.
+- **dependency-kind** — coarse type label (`direct` / `indirect`) on every
+  edge, distinguishing artifacts that materially enter weights or training
+  data from those that merely influence development decisions.
 
 ## License
 
-TBD (add `LICENSE` file before public release).
-
-## Citation
-
-```bibtex
-% TBD: add bibtex entry once the paper is public
-```
+TBD (add `LICENSE` before public release).

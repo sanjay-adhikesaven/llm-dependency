@@ -1,23 +1,38 @@
 #!/usr/bin/env python3
-"""Audit edge count patterns — find noisy clusters.
+"""Audit edge-count patterns — find residual noise after dedup.
 
-Checks:
-  1. Top hubs by outgoing / incoming edges (legit benchmark hubs vs noise)
-  2. Edge anchor distribution — how many edges have <1 anchor (claim without evidence)?
-  3. Near-duplicate object names that didn't merge (e.g., "MATH" vs "MATH (Hendrycks)" vs "Hendrycks/MATH")
-  4. Subject-side near-dupes (model variants pointing at same target)
-  5. Per-relation breakdown of low-anchor edges
-  6. Self-loops, duplicate (s,r,o) checks
-  7. Specific suspicious relations: evaluation hubs that have 100+ models pointing at them
+Checks performed:
+  1. Edge anchor distribution (zero-anchor edges, single-anchor edges, etc.)
+  2. Top hubs by outgoing / incoming edges
+  3. Per-relation anchor and degree breakdown
+  4. Near-duplicate object names that survived dedup
+  5. Near-duplicate subject names that survived dedup
+  6. Suspect concept-only edges (both endpoints are short bare names)
+  7. Weak-evidence claims (≤1 anchor in a high-frequency relation)
+  8. (subject, object) pairs with multiple distinct relations
+
+Run:  python edge_audit.py --source path/to/merge_artifact.json
 """
-import json, re
+import argparse
+import json
+import re
+import sys
 from collections import defaultdict, Counter
 from pathlib import Path
 
-GRAPH = json.loads(Path("/Users/sanjayadhikesaven/Downloads/graph/storage/runs/c6c6dfd9-0fb3-4d87-a5a7-01533c3af16d/merge_artifact_deduped.json").read_text())
+p = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
+p.add_argument("--source", required=True, type=Path, help="Path to a merged graph JSON.")
+args = p.parse_args()
+
+if not args.source.exists():
+    print(f"ERROR: source not found: {args.source}", file=sys.stderr)
+    sys.exit(1)
+
+GRAPH = json.loads(args.source.read_text())
 edges = GRAPH["relations"]
 groups = GRAPH["lattice"]["groups"]
 
+print(f"Source: {args.source}")
 print(f"Total edges: {len(edges):,}")
 print(f"Total lattice groups: {len(groups):,}\n")
 
