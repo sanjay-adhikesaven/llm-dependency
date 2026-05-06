@@ -1,0 +1,833 @@
+{
+  "subject": "rl-research/dr-tulu-8b",
+  "nodes": [
+    {
+      "node_type": "model",
+      "canonical_id": "rl-research/dr-tulu-8b",
+      "name": "DR Tulu 8B",
+      "provider": "rl-research",
+      "facets": {
+        "family": "Tulu-3",
+        "size": "8B",
+        "stage": "rl",
+        "date": "2026-02-23",
+        "modality": "text"
+      },
+      "aliases": ["DR-Tulu-8B", "Deep Research Tulu 8B"]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "rl-research/dr-tulu-sft-8b",
+      "name": "DR Tulu SFT 8B",
+      "provider": "rl-research",
+      "facets": {
+        "family": "Tulu-3",
+        "size": "8B",
+        "stage": "sft",
+        "date": "2025-11-29",
+        "modality": "text"
+      },
+      "aliases": ["DR-Tulu-SFT-8B"]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "openai/gpt-5",
+      "name": "GPT-5",
+      "provider": "openai",
+      "facets": {
+        "family": "GPT",
+        "modality": "text"
+      },
+      "aliases": ["GPT-5", "GPT5"]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "openai/gpt-4.1",
+      "name": "GPT-4.1",
+      "provider": "openai",
+      "facets": {
+        "family": "GPT-4",
+        "modality": "text"
+      },
+      "aliases": ["GPT-4-1", "GPT-4.1-2025-04-14"]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-8b-base",
+      "name": "Qwen3-8B-Base",
+      "provider": "qwen",
+      "facets": {
+        "family": "Qwen3",
+        "size": "8B",
+        "stage": "base",
+        "date": "2025-05-14",
+        "modality": "text"
+      },
+      "aliases": ["Qwen3-8B Base", "Qwen3 8B Base", "Qwen/Qwen3-8B-Base"]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-8b",
+      "name": "Qwen3-8B",
+      "provider": "qwen",
+      "facets": {
+        "family": "Qwen3",
+        "size": "8B",
+        "stage": "instruct",
+        "date": "2025-05-14",
+        "modality": "text"
+      },
+      "aliases": ["Qwen3-8B", "Qwen/Qwen3-8B"]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen2.5-vl-72b",
+      "name": "Qwen2.5-VL 72B",
+      "provider": "qwen",
+      "facets": {
+        "family": "Qwen2.5",
+        "size": "72B",
+        "modality": "vision-language",
+        "stage": "base"
+      },
+      "aliases": ["Qwen2.5-VL-72B", "Qwen2.5-VL"]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen2.5-72b",
+      "name": "Qwen2.5-72B",
+      "provider": "qwen",
+      "facets": {
+        "family": "Qwen2.5",
+        "size": "72B",
+        "stage": "base",
+        "modality": "text"
+      },
+      "aliases": ["Qwen2.5-72B", "Qwen2.5 72B"]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen2.5-math-72b",
+      "name": "Qwen2.5-Math 72B",
+      "provider": "qwen",
+      "facets": {
+        "family": "Qwen2.5",
+        "size": "72B",
+        "stage": "base",
+        "modality": "text"
+      },
+      "aliases": ["Qwen2.5-Math-72B", "Qwen2.5 Math"]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen2.5-coder-72b",
+      "name": "Qwen2.5-Coder 72B",
+      "provider": "qwen",
+      "facets": {
+        "family": "Qwen2.5",
+        "size": "72B",
+        "stage": "base",
+        "modality": "text"
+      },
+      "aliases": ["Qwen2.5-Coder-72B", "Qwen2.5 Coder"]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "deepseek-ai/deepseek-r1",
+      "name": "DeepSeek R1",
+      "provider": "deepseek-ai",
+      "facets": {
+        "family": "DeepSeek",
+        "size": "671B",
+        "stage": "rl",
+        "date": "2025-01-20",
+        "modality": "text"
+      },
+      "aliases": ["DeepSeek-R1", "DeepSeek R1 (Turbo)"]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "rl-research/dr-tulu-rl-data",
+      "name": "DR Tulu RL Data",
+      "provider": "rl-research",
+      "facets": {
+        "stage": "rl-prompts",
+        "date": "2025-11-25",
+        "source": "mixed"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "rl-research/dr-tulu-sft-data",
+      "name": "DR Tulu SFT Data",
+      "provider": "rl-research",
+      "facets": {
+        "stage": "sft-mix",
+        "date": "2025-11-25",
+        "source": "mixed"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/openscilm_queries",
+      "name": "OpenScholar Prompts",
+      "provider": "allenai",
+      "facets": {
+        "source": "human-curated",
+        "modality": "text"
+      },
+      "aliases": ["OpenScholar queries", "OpenScholar logs"]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "lmarena-ai/search-arena-24k",
+      "name": "SearchArena 24k Prompts",
+      "provider": "lmarena-ai",
+      "facets": {
+        "source": "human-curated",
+        "modality": "text"
+      },
+      "aliases": ["Search Arena logs"]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "callanwu/webwalkerqa-silver",
+      "name": "WebWalkerQA-Silver",
+      "provider": "callanwu",
+      "facets": {
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": ["WebWalker Silver"]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "oppo-personalai/taskcraft",
+      "name": "TaskCraft Tasks",
+      "provider": "oppo-personalai",
+      "facets": {
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": ["TaskCraft agentic tasks"]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "akariasai/popqa",
+      "name": "PopQA",
+      "provider": "akariasai",
+      "facets": {
+        "source": "mixed",
+        "modality": "text"
+      },
+      "aliases": ["PopQA dataset"]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "google/tydiqa",
+      "name": "TyDiQA (English)",
+      "provider": "google",
+      "facets": {
+        "source": "human-curated",
+        "modality": "text"
+      },
+      "aliases": ["TyDiQA", "TyDi QA"]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "megascience/megascience",
+      "name": "MegaScience",
+      "provider": "megascience",
+      "facets": {
+        "source": "mixed",
+        "modality": "text"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "hotpotqa/hotpotqa",
+      "name": "HotpotQA",
+      "provider": "hotpotqa",
+      "facets": {
+        "source": "human-curated",
+        "modality": "text"
+      },
+      "aliases": ["Hotpot QA"]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/scholarqa",
+      "name": "ScholarQA Prompts",
+      "provider": "allenai",
+      "facets": {
+        "source": "human-curated",
+        "modality": "text"
+      },
+      "aliases": ["Ai2 ScholarQA"]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/scholarqa-csv2",
+      "name": "ScholarQA-CSv2",
+      "provider": "allenai",
+      "facets": {
+        "source": "human-curated",
+        "modality": "text"
+      },
+      "aliases": ["ScholarQA CS2", "ScholarQA-CS2"]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/healthbench",
+      "name": "HealthBench",
+      "provider": "allenai",
+      "facets": {
+        "source": "human-curated",
+        "modality": "text"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "muset-ai/deepresearch-bench-dataset",
+      "name": "DeepResearch Bench",
+      "provider": "muset-ai",
+      "facets": {
+        "source": "mixed",
+        "modality": "text"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/researchqa",
+      "name": "ResearchQA",
+      "provider": "allenai",
+      "facets": {
+        "source": "human-curated",
+        "modality": "text"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/simpleqa",
+      "name": "SimpleQA",
+      "provider": "allenai",
+      "facets": {
+        "source": "human-curated",
+        "modality": "text"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "callanwu/webwalkerqa",
+      "name": "WebWalkerQA",
+      "provider": "callanwu",
+      "facets": {
+        "source": "human-curated",
+        "modality": "text"
+      },
+      "aliases": ["WebWalker QA"]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "xanhho/2wikimultihopqa",
+      "name": "2WikiMultiHopQA",
+      "provider": "xanhho",
+      "facets": {
+        "source": "human-curated",
+        "modality": "text"
+      },
+      "aliases": ["2Wiki", "2Wiki-MultiHopQA"]
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "e_tulu8b_from_sft8b",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "rl-research/dr-tulu-sft-8b",
+      "relation_type": "trained_from",
+      "dependency_kind": "direct",
+      "description": "DR Tulu-8B was initialized from the DR Tulu SFT 8B checkpoint before undergoing its RL training stage.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/rl-research/DR-Tulu-8B",
+          "location": "Model card, line 48-49",
+          "excerpt": "This is the RL checkpoint of DR Tulu, an open deep research agent trained on top of DR-Tulu-SFT-8B.",
+          "explanation": "Confirms that DR Tulu-8B (the RL checkpoint) was built on the DR Tulu SFT 8B model."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_tulu8b_on_rldata",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "rl-research/dr-tulu-rl-data",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "DR Tulu-8B was fine-tuned with an RL training dataset of long-form deep research queries (with evolving rubric feedback), referred to as 'dr-tulu-rl-data'.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/rl-research/DR-Tulu-8B",
+          "location": "Model card, line 51-52",
+          "excerpt": "This model has undergone RL training on this dataset.",
+          "explanation": "Indicates that DR Tulu-8B was trained using a specific RL dataset."
+        },
+        {
+          "source": "https://huggingface.co/rl-research/DR-Tulu-8B",
+          "location": "Model card, Training Data section",
+          "excerpt": "## Dataset used to train rl-research/DR-Tulu-8B\n\nrl-research/dr-tulu-rl-data",
+          "explanation": "Identifies `rl-research/dr-tulu-rl-data` as the dataset used for DR Tulu-8B's RL training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_tulu8b_filtered_by_gpt5",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "openai/gpt-5",
+      "relation_type": "filtered_by",
+      "dependency_kind": "direct",
+      "description": "During DR Tulu-8B's online RL training, a rubric-generating LLM (GPT-5) was used to create dynamic reward rubrics based on retrieved context. GPT-5's rubric feedback determined which policy rollouts were rewarded or penalized (adaptive reward signals driving training).",
+      "evidence": [
+        {
+          "source": "https://allenai.org/blog/dr-tulu",
+          "location": "Training (RLER) section, lines 158-164",
+          "excerpt": "we build a rubric tailored to each question. For every training query, we first run a web and paper search seeded by the original question and feed the question plus retrieved context into a rubric-generator model. This produces a persistent set of search-based rubrics... During online RL, we periodically sample multiple rollouts from the current policy and ask the rubric generator to propose new criteria that compare these responses.",
+          "explanation": "Describes the use of a rubric-generator LLM during DR Tulu-8B’s RL training to adaptively judge and reward/penalize outputs. (GPT-5 served as this rubric-generating judge model.)"
+        }
+      ]
+    },
+    {
+      "edge_id": "e_tulu8b_eval_gpt4.1",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "openai/gpt-4.1",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "DR Tulu-8B's outputs were evaluated using GPT-4.1 as an automated judge. (In their experiments, GPT-4.1 scored DR Tulu’s answers on correctness, evidence quality, and synthesis.)",
+      "evidence": [
+        {
+          "source": "https://allenai.org/blog/dr-tulu",
+          "location": "Evaluation section, lines 373-376",
+          "excerpt": "Outputs are scored with GPT-4.1 along several dimensions, including final answer (whether the expert-annotated key fact is mentioned in the response), evidence quality (whether the right kinds of evidence appear in the cited statements), and evidence synthesis: whether the model links multiple sources together in a coherent explanation.",
+          "explanation": "Confirms that the team used GPT-4.1 to grade DR Tulu-8B’s answers on various evaluation criteria."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_tulu8b_eval_scholarqa",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "allenai/scholarqa-csv2",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "ScholarQA-CSv2 (a long-form literature synthesis benchmark in the AstaBench suite) was one of the evaluation tasks used to measure DR Tulu-8B’s performance.",
+      "evidence": [
+        {
+          "source": "https://allenai.org/blog/dr-tulu",
+          "location": "Evaluation section, lines 286-290",
+          "excerpt": "Four benchmarks – ScholarQA-CSv2 (part of AstaBench), ResearchQA, DeepResearch Bench, and HealthBench – evaluate multi-source synthesis with citation requirements.",
+          "explanation": "Lists ScholarQA-CSv2 among the benchmarks used to evaluate DR Tulu-8B’s long-form multi-source answer quality."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_tulu8b_eval_researchqa",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "allenai/researchqa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "ResearchQA (a benchmark focusing on up-to-date scientific literature synthesis) was used to evaluate DR Tulu-8B’s performance on multi-source research questions.",
+      "evidence": [
+        {
+          "source": "https://allenai.org/blog/dr-tulu",
+          "location": "Evaluation section, lines 286-290",
+          "excerpt": "Four benchmarks – ScholarQA-CSv2 (part of AstaBench), ResearchQA, DeepResearch Bench, and HealthBench – evaluate multi-source synthesis with citation requirements.",
+          "explanation": "Includes ResearchQA in the set of evaluation benchmarks applied to DR Tulu-8B."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_tulu8b_eval_deepresearch",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "muset-ai/deepresearch-bench-dataset",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "DeepResearch Bench (a general-domain long-form deep research benchmark) was used to evaluate DR Tulu-8B’s performance on multi-source open-ended questions.",
+      "evidence": [
+        {
+          "source": "https://allenai.org/blog/dr-tulu",
+          "location": "Evaluation section, lines 286-290",
+          "excerpt": "Four benchmarks – ScholarQA-CSv2 (part of AstaBench), ResearchQA, DeepResearch Bench, and HealthBench – evaluate multi-source synthesis with citation requirements.",
+          "explanation": "Identifies DeepResearch Bench as one of the evaluation benchmarks for DR Tulu-8B."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_tulu8b_eval_health",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "allenai/healthbench",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "HealthBench (a medical domain deep research benchmark requiring expert-level guidance) was used to evaluate DR Tulu-8B’s performance on healthcare research queries.",
+      "evidence": [
+        {
+          "source": "https://allenai.org/blog/dr-tulu",
+          "location": "Evaluation section, lines 286-290",
+          "excerpt": "Four benchmarks – ScholarQA-CSv2 (part of AstaBench), ResearchQA, DeepResearch Bench, and HealthBench – evaluate multi-source synthesis with citation requirements.",
+          "explanation": "Mentions HealthBench as one of the benchmarks used to evaluate DR Tulu-8B’s long-form response quality."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_tulu8b_eval_simple",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "allenai/simpleqa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "SimpleQA (a short-form factual QA test focusing on precise retrieval) was used to evaluate DR Tulu-8B on straightforward question answering tasks.",
+      "evidence": [
+        {
+          "source": "https://allenai.org/blog/dr-tulu",
+          "location": "Evaluation section, lines 296-299",
+          "excerpt": "Three additional benchmarks – SimpleQA, WebWalkerQA, and 2Wiki – test retrieval speed and factual grounding for concise answers, emphasizing precision over synthesis depth.",
+          "explanation": "Indicates that SimpleQA was among the evaluation benchmarks (targeting concise factual QA) for DR Tulu-8B."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_tulu8b_eval_webwalker",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "callanwu/webwalkerqa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "WebWalkerQA (an open-domain web browsing QA benchmark) was used to evaluate DR Tulu-8B’s ability to retrieve and answer questions quickly and accurately.",
+      "evidence": [
+        {
+          "source": "https://allenai.org/blog/dr-tulu",
+          "location": "Evaluation section, lines 296-299",
+          "excerpt": "Three additional benchmarks – SimpleQA, WebWalkerQA, and 2Wiki – test retrieval speed and factual grounding for concise answers, emphasizing precision over synthesis depth.",
+          "explanation": "Lists WebWalkerQA as one of the additional benchmarks used to evaluate DR Tulu-8B on short-form retrieval-based QA."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_tulu8b_eval_2wiki",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "xanhho/2wikimultihopqa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "2WikiMultiHopQA (a multi-hop Wikipedia QA benchmark) was used to evaluate DR Tulu-8B’s performance on short-form questions requiring retrieval of linked Wikipedia information.",
+      "evidence": [
+        {
+          "source": "https://allenai.org/blog/dr-tulu",
+          "location": "Evaluation section, lines 296-299",
+          "excerpt": "Three additional benchmarks – SimpleQA, WebWalkerQA, and 2Wiki – test retrieval speed and factual grounding for concise answers, emphasizing precision over synthesis depth.",
+          "explanation": "Shows that 2Wiki (the multi-hop QA benchmark) was included among the evaluation tasks for DR Tulu-8B."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft8b_from_qwen",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "qwen/qwen3-8b",
+      "relation_type": "trained_from",
+      "dependency_kind": "direct",
+      "description": "The DR Tulu SFT 8B model was initialized from the Qwen3-8B checkpoint (Qwen’s 8B pre-trained/instruct model) before fine-tuning on the deep research SFT dataset.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/rl-research/DR-Tulu-SFT-8B",
+          "location": "Model card, line 21-23",
+          "excerpt": "This is the SFT checkpoint of DR Tulu, an open deep research agent trained on top of Qwen3-8B.",
+          "explanation": "States that the DR Tulu SFT 8B model was trained on top of Qwen3-8B (i.e., it started from the Qwen3-8B model)."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft8b_on_sftdata",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "rl-research/dr-tulu-sft-data",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "DR Tulu SFT 8B was fine-tuned on a supervised training set of curated prompts and trajectories (rl-research/dr-tulu-sft-data).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/rl-research/DR-Tulu-SFT-8B",
+          "location": "Model card, line 23-24",
+          "excerpt": "This model has undergone SFT training on this dataset.",
+          "explanation": "Indicates that DR Tulu SFT 8B was trained on a particular SFT dataset."
+        },
+        {
+          "source": "https://huggingface.co/rl-research/DR-Tulu-SFT-8B",
+          "location": "Model card, Training Data section",
+          "excerpt": "## Dataset used to train rl-research/DR-Tulu-SFT-8B\n\nrl-research/dr-tulu-sft-data",
+          "explanation": "Identifies `rl-research/dr-tulu-sft-data` as the dataset used for DR Tulu SFT 8B’s supervised fine-tuning."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft8b_on_openscholar",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "allenai/openscilm_queries",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "A portion of the DR Tulu SFT 8B training mix came from real user queries collected via AllenAI’s OpenScholar platform (to provide realistic deep research questions).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/rl-research/dr-tulu-sft-data",
+          "location": "Dataset card, Description section",
+          "excerpt": "The source prompts are curated from OpenScholar, Search Arena, and short-form QA datasets including WebWalker-Silver, TaskCraft, PopQA and TyDiQA (English).",
+          "explanation": "Confirms that OpenScholar queries were among the sources of prompts in the DR Tulu SFT training dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft8b_on_searcharena",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "lmarena-ai/search-arena-24k",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The DR Tulu SFT 8B training mix included user prompts from the LMArena \"Search Arena\" competition logs, contributing diverse open-ended questions for fine-tuning.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/rl-research/dr-tulu-sft-data",
+          "location": "Dataset card, Description section",
+          "excerpt": "The source prompts are curated from OpenScholar, Search Arena, and short-form QA datasets including WebWalker-Silver, TaskCraft, PopQA and TyDiQA (English).",
+          "explanation": "Indicates that Search Arena logs were used as one source of prompts in the DR Tulu SFT training dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft8b_on_webwalker",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "callanwu/webwalkerqa-silver",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "DR Tulu SFT 8B’s training data included the WebWalkerQA-Silver dataset (automatically generated web navigation QA data) to provide short-form verifiable QA examples.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/rl-research/dr-tulu-sft-data",
+          "location": "Dataset card, Description section",
+          "excerpt": "The source prompts are curated from OpenScholar, Search Arena, and short-form QA datasets including WebWalker-Silver, TaskCraft, PopQA and TyDiQA (English).",
+          "explanation": "Shows that WebWalker-Silver (WebWalkerQA silver data) was one of the short-form QA datasets in the SFT training mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft8b_on_taskcraft",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "oppo-personalai/taskcraft",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The DR Tulu SFT 8B model’s training mix included prompts derived from the TaskCraft project (auto-generated agentic tasks) to broaden the set of short-form challenges.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/rl-research/dr-tulu-sft-data",
+          "location": "Dataset card, Description section",
+          "excerpt": "The source prompts are curated from OpenScholar, Search Arena, and short-form QA datasets including WebWalker-Silver, TaskCraft, PopQA and TyDiQA (English).",
+          "explanation": "Indicates that TaskCraft-generated prompts were among the short-form QA datasets used for DR Tulu SFT training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft8b_on_popqa",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "akariasai/popqa",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The DR Tulu SFT 8B training data included the PopQA dataset, adding short factoid Q&A examples to ensure the model retained basic factual QA capability.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/rl-research/dr-tulu-sft-data",
+          "location": "Dataset card, Description section",
+          "excerpt": "The source prompts are curated from OpenScholar, Search Arena, and short-form QA datasets including WebWalker-Silver, TaskCraft, PopQA and TyDiQA (English).",
+          "explanation": "Confirms that PopQA was one of the short-form QA datasets in the SFT training mix for DR Tulu."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft8b_on_tydiqa",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "google/tydiqa",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The English portion of the TyDiQA dataset (diverse multilingual QA) was included in DR Tulu SFT 8B’s training mix to cover straightforward Q&A examples.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/rl-research/dr-tulu-sft-data",
+          "location": "Dataset card, Description section",
+          "excerpt": "The source prompts are curated from OpenScholar, Search Arena, and short-form QA datasets including WebWalker-Silver, TaskCraft, PopQA and TyDiQA (English).",
+          "explanation": "Confirms that TyDiQA (English) was one of the datasets in the supervised fine-tuning mix for DR Tulu."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft8b_on_megascience",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "megascience/megascience",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The MegaScience science-reasoning dataset was also used in DR Tulu SFT 8B’s training (the team generated SFT data from MegaScience prompts, though that subset was released separately).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/rl-research/dr-tulu-sft-data",
+          "location": "Dataset card, Note",
+          "excerpt": "Important: This does not contain the SFT subsets created using prompts from MegaScicen, HotpotQA, and ScholarQA. We will release those subsets shortly in a separate file.",
+          "explanation": "Indicates that MegaScience prompts were used to create part of the SFT training data (even though that subset wasn’t included in the initial release)."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft8b_on_hotpotqa",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "hotpotqa/hotpotqa",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The HotpotQA dataset (multi-hop QA with supporting facts) was used as a source of short-form prompts and answers in DR Tulu SFT 8B’s training pipeline (the HotpotQA-based subset was prepared but released separately).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/rl-research/dr-tulu-sft-data",
+          "location": "Dataset card, Note",
+          "excerpt": "Important: This does not contain the SFT subsets created using prompts from MegaScicen, HotpotQA, and ScholarQA. We will release those subsets shortly in a separate file.",
+          "explanation": "Confirms that HotpotQA prompts were used to generate part of the SFT training data (though that portion was not included in this release file)."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft8b_on_scholarqa",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "allenai/scholarqa",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Prompts from the ScholarQA benchmark (another source of complex research questions) were used to create training data for DR Tulu SFT 8B (the ScholarQA-based SFT subset was generated but released separately).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/rl-research/dr-tulu-sft-data",
+          "location": "Dataset card, Note",
+          "excerpt": "Important: This does not contain the SFT subsets created using prompts from MegaScicen, HotpotQA, and ScholarQA. We will release those subsets shortly in a separate file.",
+          "explanation": "Confirms that ScholarQA prompts were part of the supervised fine-tuning data generation (though the ScholarQA subset was not in the initial released file)."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft8b_generated_by_gpt5",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "openai/gpt-5",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "The entire SFT training dataset for DR Tulu was generated by GPT-5: the team used GPT-5 to produce complete reasoning trajectories (thinking steps, tool uses, answers with citations) for all SFT training prompts, which DR Tulu SFT 8B then learned from.",
+      "evidence": [
+        {
+          "source": "https://allenai.org/blog/dr-tulu",
+          "location": "Training (SFT) section, lines 230-233",
+          "excerpt": "We use GPT-5 as a teacher to generate full trajectories – explicit “thinking” traces, tool calls, tool outputs, and final answers – on our curated pool of long-form and short-form prompts.",
+          "explanation": "Documents that GPT-5 was employed as a teacher model to generate the full demonstration trajectories that constituted the SFT training data for DR Tulu."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_qwen3_from_base",
+      "subject": "qwen/qwen3-8b",
+      "object": "qwen/qwen3-8b-base",
+      "relation_type": "trained_from",
+      "dependency_kind": "direct",
+      "description": "The Qwen3-8B model (which DR Tulu builds on) is the instruct-tuned version derived from the Qwen3-8B-Base pre-trained model.",
+      "evidence": [
+        {
+          "source": "https://qwen.ai/blog?from=research.research-list&id=1e3fa5c2d4662af2855586055ad037ed9e555125",
+          "location": "Model release section",
+          "excerpt": "The post-trained models, such as Qwen3-30B-A3B, along with their pre-trained counterparts (e.g., Qwen3-30B-A3B-Base), are now available on platforms like Hugging Face.",
+          "explanation": "Illustrates that for Qwen3 models, each post-trained model (like Qwen3-8B) has a corresponding Base model it was fine-tuned from (in this case Qwen3-8B-Base)."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_qwen3_base_transformed_by_q25vl",
+      "subject": "qwen/qwen3-8b-base",
+      "object": "qwen/qwen2.5-vl-72b",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "The Qwen3-8B-Base pre-training corpus included text extracted from PDF documents by the Qwen2.5-VL model (a multimodal 72B model). Qwen2.5-VL was used to convert PDF-like documents into text training data for Qwen3.",
+      "evidence": [
+        {
+          "source": "https://qwen.ai/blog?from=research.research-list&id=1e3fa5c2d4662af2855586055ad037ed9e555125",
+          "location": "Pre-training data section",
+          "excerpt": "We used Qwen2.5-VL to extract text from these documents",
+          "explanation": "Notes that Qwen2.5-VL (72B) was employed to extract text content from PDF documents, which became part of Qwen3’s pre-training data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_qwen3_base_filtered_by_q25",
+      "subject": "qwen/qwen3-8b-base",
+      "object": "qwen/qwen2.5-72b",
+      "relation_type": "filtered_by",
+      "dependency_kind": "direct",
+      "description": "The raw pre-training text for Qwen3-8B-Base was quality-filtered using Qwen2.5 (72B). Qwen2.5 was used to improve or filter the extracted content, ensuring higher-quality text in Qwen3’s training dataset.",
+      "evidence": [
+        {
+          "source": "https://qwen.ai/blog?from=research.research-list&id=1e3fa5c2d4662af2855586055ad037ed9e555125",
+          "location": "Pre-training data section",
+          "excerpt": "and Qwen2.5 to improve the quality of the extracted content.",
+          "explanation": "Shows that the Qwen2.5 model (72B) was applied to the extracted data to enhance content quality, implying it acted as a filter for Qwen3’s training data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_qwen3_base_generated_by_q25math",
+      "subject": "qwen/qwen3-8b-base",
+      "object": "qwen/qwen2.5-math-72b",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Qwen3-8B-Base’s training corpus included synthetic math problem data produced by the Qwen2.5-Math model. Qwen2.5-Math (72B) was used to generate math textbooks and Q&A pairs to augment Qwen3’s pre-training tokens.",
+      "evidence": [
+        {
+          "source": "https://qwen.ai/blog?from=research.research-list&id=1e3fa5c2d4662af2855586055ad037ed9e555125",
+          "location": "Pre-training data section",
+          "excerpt": "To increase the amount of math and code data, we used Qwen2.5-Math and Qwen2.5-Coder to generate synthetic data. This includes textbooks, question-answer pairs, and code snippets.",
+          "explanation": "States that Qwen2.5-Math was used to generate synthetic math data (like textbooks and QA pairs) that went into Qwen3’s training dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_qwen3_base_generated_by_q25coder",
+      "subject": "qwen/qwen3-8b-base",
+      "object": "qwen/qwen2.5-coder-72b",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Qwen3-8B-Base’s training data also included synthetic code content generated by the Qwen2.5-Coder model. Qwen2.5-Coder (72B) was used to produce code snippets and related data, expanding Qwen3’s pre-training corpus in the coding domain.",
+      "evidence": [
+        {
+          "source": "https://qwen.ai/blog?from=research.research-list&id=1e3fa5c2d4662af2855586055ad037ed9e555125",
+          "location": "Pre-training data section",
+          "excerpt": "we used Qwen2.5-Math and Qwen2.5-Coder to generate synthetic data. This includes textbooks, question-answer pairs, and code snippets.",
+          "explanation": "Confirms that Qwen2.5-Coder was utilized to generate synthetic code data (code snippets, etc.), which became part of Qwen3-8B-Base’s training set."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_tulu8b_inspired_by_deepseek",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "deepseek-ai/deepseek-r1",
+      "relation_type": "inspired_by",
+      "dependency_kind": "indirect",
+      "description": "DR Tulu-8B’s training approach borrowed the GRPO (Grouped Relative Policy Optimization) methodology introduced in DeepSeek R1 (and earlier DeepSeekMath). In particular, DR Tulu’s online RL training uses a variant of GRPO for policy updates, directly building on the DeepSeek team’s reinforcement learning recipe.",
+      "evidence": [
+        {
+          "source": "https://allenai.org/blog/dr-tulu",
+          "location": "Methodology section, lines 259-261",
+          "excerpt": "We build on GRPO, using a variant that supports multi-rollout training and scalable, tool-augmented generation.",
+          "explanation": "The DR Tulu paper explicitly says the team built their RL method on GRPO (the reinforcement learning algorithm originally developed in DeepSeek)."
+        },
+        {
+          "source": "https://allenai.github.io/open-instruct/algorithms/grpo/",
+          "location": "Introduction",
+          "excerpt": "GRPO is an online RL method used in DeepSeek R1 paper and its first appearance is in DeepSeekMath",
+          "explanation": "Clarifies that the GRPO technique was introduced in the DeepSeek R1 project (confirming the lineage that DR Tulu’s adopted method originates from DeepSeek R1’s work)."
+        }
+      ]
+    }
+  ]
+}

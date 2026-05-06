@@ -1,0 +1,90 @@
+{
+  "per_system": [
+    {
+      "system": "gpt55pro",
+      "verified": 299,
+      "refuted": 4,
+      "unclear": 6,
+      "error": 1,
+      "precision": 0.9867986798679867
+    },
+    {
+      "system": "gpt54pro",
+      "verified": 263,
+      "refuted": 3,
+      "unclear": 5,
+      "error": 0,
+      "precision": 0.9887218045112782
+    },
+    {
+      "system": "cc",
+      "verified": 264,
+      "refuted": 1,
+      "unclear": 2,
+      "error": 0,
+      "precision": 0.9962264150943396
+    },
+    {
+      "system": "o3dr",
+      "verified": 169,
+      "refuted": 3,
+      "unclear": 2,
+      "error": 1,
+      "precision": 0.9825581395348837
+    },
+    {
+      "system": "prov",
+      "verified": 467,
+      "refuted": 13,
+      "unclear": 31,
+      "error": 0,
+      "precision": 0.9729166666666667
+    },
+    {
+      "system": "prov_unbounded",
+      "verified": 4007,
+      "refuted": 117,
+      "unclear": 110,
+      "error": 2,
+      "precision": 0.9716294859359845
+    }
+  ],
+  "raw_counts": {
+    "gpt55pro": {
+      "verified": 299,
+      "refuted": 4,
+      "unclear": 6,
+      "error": 1
+    },
+    "gpt54pro": {
+      "verified": 263,
+      "refuted": 3,
+      "unclear": 5,
+      "error": 0
+    },
+    "cc": {
+      "verified": 264,
+      "refuted": 1,
+      "unclear": 2,
+      "error": 0
+    },
+    "o3dr": {
+      "verified": 169,
+      "refuted": 3,
+      "unclear": 2,
+      "error": 1
+    },
+    "prov": {
+      "verified": 467,
+      "refuted": 13,
+      "unclear": 31,
+      "error": 0
+    },
+    "prov_unbounded": {
+      "verified": 4007,
+      "refuted": 117,
+      "unclear": 110,
+      "error": 2
+    }
+  }
+}

@@ -1,0 +1,2107 @@
+{
+  "subject": "allenai/olmo-3-1125-32b",
+  "nodes": [
+    {
+      "node_type": "model",
+      "canonical_id": "allenai/olmo-3-1125-32b",
+      "name": "OLMo 3 32B Base",
+      "provider": "allenai",
+      "aliases": [
+        "allenai/OLMo-3-1125-32B",
+        "allenai/Olmo-3-1125-32B",
+        "Olmo-3-32B",
+        "OLMo 3 32B",
+        "Olmo 3 32B Base",
+        "Olmo-3-1125-32B"
+      ],
+      "facets": {
+        "family": "OLMo-3",
+        "size": "32B",
+        "stage": "base",
+        "date": "2025-11-25",
+        "modality": "text"
+      }
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-32b",
+      "name": "Qwen3-32B",
+      "provider": "qwen",
+      "aliases": [
+        "Qwen/Qwen3-32B",
+        "Qwen3 32B",
+        "Qwen3-32B",
+        "Qwen3"
+      ],
+      "facets": {
+        "family": "Qwen3",
+        "size": "32B",
+        "modality": "text"
+      }
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen2.5-32b-instruct",
+      "name": "Qwen2.5-32B-Instruct",
+      "provider": "qwen",
+      "aliases": [
+        "Qwen/Qwen2.5-32B-Instruct",
+        "Qwen2.5 32B Instruct",
+        "Qwen2.5-32B-Instruct"
+      ],
+      "facets": {
+        "family": "Qwen2.5",
+        "size": "32B",
+        "stage": "instruct",
+        "modality": "text"
+      }
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen2.5-coder-32b-instruct",
+      "name": "Qwen2.5-Coder-32B-Instruct",
+      "provider": "qwen",
+      "aliases": [
+        "Qwen/Qwen2.5-Coder-32B-Instruct",
+        "Qwen2.5-Coder-32B-Instruct"
+      ],
+      "facets": {
+        "family": "Qwen2.5-Coder",
+        "size": "32B",
+        "stage": "instruct",
+        "modality": "code"
+      }
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "openai/gpt-4o-mini",
+      "name": "GPT-4o mini",
+      "provider": "openai",
+      "aliases": [
+        "GPT 4o-mini",
+        "GPT-4o-mini",
+        "gpt-4o-mini-2024-07-18"
+      ],
+      "facets": {
+        "family": "GPT-4o",
+        "size": "mini",
+        "modality": "text"
+      }
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "openai/gpt-4.1",
+      "name": "GPT-4.1",
+      "provider": "openai",
+      "aliases": [
+        "GPT-4.1",
+        "gpt-4.1",
+        "gpt-4-1",
+        "gpt-4.1-2025-04-14"
+      ],
+      "facets": {
+        "family": "GPT-4.1",
+        "modality": "text"
+      }
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "openai/o4-mini",
+      "name": "o4-mini",
+      "provider": "openai",
+      "aliases": [
+        "o4-mini",
+        "OpenAI o4-mini"
+      ],
+      "facets": {
+        "family": "o4",
+        "size": "mini",
+        "modality": "text"
+      }
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "google/gemma-3-12b",
+      "name": "Gemma 3 12B",
+      "provider": "google",
+      "aliases": [
+        "Gemma 3 12B",
+        "google/gemma-3-12b",
+        "google/gemma-3-12b-it"
+      ],
+      "facets": {
+        "family": "Gemma-3",
+        "size": "12B",
+        "modality": "text"
+      }
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "google/gemma-3-4b",
+      "name": "Gemma 3 4B",
+      "provider": "google",
+      "aliases": [
+        "Gemma 3 4B",
+        "google/gemma-3-4b",
+        "google/gemma-3-4b-it"
+      ],
+      "facets": {
+        "family": "Gemma-3",
+        "size": "4B",
+        "modality": "text"
+      }
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "allenai/olmo-2-0325-32b-instruct",
+      "name": "OLMo 2 32B Instruct",
+      "provider": "allenai",
+      "aliases": [
+        "OLMo 2 Instruct 32B",
+        "Olmo 2 Instruct 32B",
+        "allenai/OLMo-2-0325-32B-Instruct"
+      ],
+      "facets": {
+        "family": "OLMo-2",
+        "size": "32B",
+        "stage": "instruct",
+        "modality": "text"
+      }
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "allenai/dolma3-fasttext-weborganizer-topic-classifier",
+      "name": "Dolma 3 fastText WebOrganizer topic classifier",
+      "provider": "allenai",
+      "aliases": [
+        "dolma3-fasttext-weborganizer-topic-classifier",
+        "WebOrganizer topic classifier"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "data-filtering"
+      }
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "allenai/dolma3-fasttext-quality-classifier",
+      "name": "Dolma 3 fastText quality classifier",
+      "provider": "allenai",
+      "aliases": [
+        "dolma3-fasttext-quality-classifier",
+        "Dolma 3 quality classifier"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "data-filtering"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3_mix-6t",
+      "name": "Dolma 3 Mix",
+      "provider": "allenai",
+      "aliases": [
+        "Dolma 3 Mix",
+        "allenai/dolma3_mix-6T",
+        "allenai/dolma3_mix-5.5T-1125",
+        "dolma3_mix-6T"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "pretraining",
+        "source": "mixed"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "commoncrawl/common-crawl",
+      "name": "Common Crawl",
+      "provider": "commoncrawl",
+      "aliases": [
+        "CommonCrawl",
+        "Common Crawl Web pages",
+        "104 CommonCrawl dumps"
+      ],
+      "facets": {
+        "family": "Common Crawl",
+        "stage": "web-corpus",
+        "source": "web"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/olmocr-science-pdfs",
+      "name": "olmOCR science PDFs",
+      "provider": "allenai",
+      "aliases": [
+        "olmOCR science PDFs",
+        "OLMOCR Science PDFs",
+        "olmOCR PDFs",
+        "Academic PDFs"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "pretraining-and-long-context",
+        "source": "academic-pdfs"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacetb/stack-edu",
+      "name": "Stack-Edu",
+      "provider": "huggingfacetb",
+      "aliases": [
+        "Stack-Edu",
+        "StackEdu",
+        "HuggingFaceTB/Stack-Edu",
+        "Stack-Edu (Rebalanced)"
+      ],
+      "facets": {
+        "family": "Stack-Edu",
+        "stage": "code-pretraining",
+        "source": "code"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "eleutherai/proof-pile-2",
+      "name": "Proof-Pile-2 arXiv papers",
+      "provider": "eleutherai",
+      "aliases": [
+        "Proof-Pile-2",
+        "arXiv Papers with LaTeX",
+        "arXiv documents from Proof-Pile-2"
+      ],
+      "facets": {
+        "family": "Proof-Pile-2",
+        "stage": "pretraining",
+        "source": "academic-latex"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacetb/finemath",
+      "name": "FineMath",
+      "provider": "huggingfacetb",
+      "aliases": [
+        "HuggingFaceTB/finemath",
+        "FineMath 3+",
+        "FineMath4+",
+        "Finemath-4plus"
+      ],
+      "facets": {
+        "family": "FineMath",
+        "stage": "math-web",
+        "source": "web"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "wikimedia/wikipedia-wikibooks",
+      "name": "Wikipedia and Wikibooks",
+      "provider": "wikimedia",
+      "aliases": [
+        "Wikipedia & Wikibooks",
+        "English and Simple Wikipedia and Wikibooks"
+      ],
+      "facets": {
+        "family": "Wikimedia",
+        "stage": "pretraining",
+        "source": "encyclopedic"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-dolmino-mix",
+      "name": "Dolma 3 Dolmino Mix",
+      "provider": "allenai",
+      "aliases": [
+        "Dolma 3 Dolmino Mix",
+        "Dolma3 Dolmino Mix",
+        "Dolmino Mix"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "mixed"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-tinymath-mind",
+      "name": "TinyMATH Mind",
+      "provider": "allenai",
+      "aliases": [
+        "TinyMATH Mind",
+        "TinyMATH-MIND"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "synthetic"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-tinymath-pot",
+      "name": "TinyMATH PoT",
+      "provider": "allenai",
+      "aliases": [
+        "TinyMATH PoT",
+        "TinyMATH-PoT"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "synthetic"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-cranemath",
+      "name": "CraneMath",
+      "provider": "allenai",
+      "aliases": [
+        "CraneMath",
+        "CraneMath Data"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "synthetic"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-megamatt",
+      "name": "MegaMatt",
+      "provider": "allenai",
+      "aliases": [
+        "MegaMatt",
+        "Megamath-Web-Pro regenerated data"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "synthetic"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolmino-math",
+      "name": "Dolmino Math",
+      "provider": "allenai",
+      "aliases": [
+        "Dolmino Math",
+        "Dolmino-1 math",
+        "OLMo 2 Dolmino Mix Math subset"
+      ],
+      "facets": {
+        "family": "Dolmino",
+        "stage": "midtraining",
+        "source": "mixed"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-stackedu-fim",
+      "name": "StackEdu FIM",
+      "provider": "allenai",
+      "aliases": [
+        "StackEdu (FIM)",
+        "Stack-Edu (FIM)",
+        "FIM-transformed Stack-Edu"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "code"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-cranecode",
+      "name": "CraneCode",
+      "provider": "allenai",
+      "aliases": [
+        "CraneCode",
+        "CraneCode SGCR",
+        "CraneCode SCOR"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "synthetic-code"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-reddit-to-flashcards",
+      "name": "Reddit To Flashcards",
+      "provider": "allenai",
+      "aliases": [
+        "Reddit-to-Flashcards",
+        "Reddit To Flashcards"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "synthetic-qa"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-wiki-to-rcqa",
+      "name": "Wiki To RCQA",
+      "provider": "allenai",
+      "aliases": [
+        "Wiki-to-RCQA",
+        "Wiki To RCQA"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "synthetic-qa"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-cc",
+      "name": "Nemotron CC",
+      "provider": "nvidia",
+      "aliases": [
+        "Nemotron CC",
+        "Nemotron Synth QA",
+        "diverse QA pairs synth subset"
+      ],
+      "facets": {
+        "family": "Nemotron",
+        "stage": "midtraining",
+        "source": "synthetic-qa"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-math-meta-reasoning",
+      "name": "Math Meta-Reasoning",
+      "provider": "allenai",
+      "aliases": [
+        "Math Meta-Reasoning",
+        "Meta-reasoning math data"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "synthetic-reasoning"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-code-meta-reasoning",
+      "name": "Code Meta-Reasoning",
+      "provider": "allenai",
+      "aliases": [
+        "Code Meta-Reasoning",
+        "Meta-reasoning code data"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "synthetic-reasoning"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-program-verifiable",
+      "name": "Program-Verifiable",
+      "provider": "allenai",
+      "aliases": [
+        "Program-Verifiable",
+        "Program-verifiable data"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "synthetic-reasoning"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-omr-rewrite-fullthoughts",
+      "name": "OMR Rewrite FullThoughts",
+      "provider": "allenai",
+      "aliases": [
+        "OMR Rewrite FullThoughts",
+        "OMR rewrite full-thoughts",
+        "OpenMathReasoning Full-Thoughts rewrite"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "synthetic-reasoning"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-qwq-reasoning-traces",
+      "name": "QwQ Reasoning Traces",
+      "provider": "allenai",
+      "aliases": [
+        "QWQ Reasoning Traces",
+        "QwQ reasoning traces"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "synthetic-reasoning"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-general-reasoning-mix",
+      "name": "General Reasoning Mix",
+      "provider": "allenai",
+      "aliases": [
+        "General Reasoning Mix"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "synthetic-reasoning"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-gemini-reasoning-traces",
+      "name": "Gemini Reasoning Traces",
+      "provider": "allenai",
+      "aliases": [
+        "Gemini Reasoning Traces",
+        "Gemini reasoning traces"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "synthetic-reasoning"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/llama-nemotron-reasoning-traces",
+      "name": "Llama Nemotron Reasoning Traces",
+      "provider": "nvidia",
+      "aliases": [
+        "Llama Nemotron Reasoning Traces",
+        "Llama Nemotron reasoning traces"
+      ],
+      "facets": {
+        "family": "Llama-Nemotron",
+        "stage": "midtraining",
+        "source": "synthetic-reasoning"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "open-thoughts/openthoughts2-reasoning-traces",
+      "name": "OpenThoughts2 Reasoning Traces",
+      "provider": "open-thoughts",
+      "aliases": [
+        "OpenThoughts2 Reasoning Traces",
+        "OpenThoughts2",
+        "OpenThoughts 2"
+      ],
+      "facets": {
+        "family": "OpenThoughts",
+        "stage": "midtraining",
+        "source": "synthetic-reasoning"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/tulu-3-sft-mix",
+      "name": "Tulu 3 SFT data",
+      "provider": "allenai",
+      "aliases": [
+        "Tulu 3 SFT",
+        "Tülu 3 SFT data",
+        "Tulu3 SFT data"
+      ],
+      "facets": {
+        "family": "Tulu-3",
+        "stage": "sft-mix",
+        "source": "instruction"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolmino-1-flan",
+      "name": "Dolmino 1 Flan",
+      "provider": "allenai",
+      "aliases": [
+        "Dolmino 1 Flan",
+        "Dolmino-1 Flan"
+      ],
+      "facets": {
+        "family": "Dolmino",
+        "stage": "midtraining",
+        "source": "instruction"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-stem-heavy-crawl",
+      "name": "STEM-Heavy Crawl",
+      "provider": "allenai",
+      "aliases": [
+        "STEM-Heavy Crawl",
+        "Stem-heavy crawl"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "web"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-common-crawl-hq",
+      "name": "Common Crawl HQ subset",
+      "provider": "allenai",
+      "aliases": [
+        "Common Crawl (HQ subset)",
+        "Common Crawl High Q.",
+        "Stage 1 web data top quality buckets"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "midtraining",
+        "source": "web"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-longmino-mix",
+      "name": "Dolma 3 Longmino Mix",
+      "provider": "allenai",
+      "aliases": [
+        "Dolma 3 Longmino Mix",
+        "Longmino Mix",
+        "Dolma 3 Longmino"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "long_context",
+        "source": "mixed"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-longmino-synthetic-cwe",
+      "name": "Dolma 3 Longmino synthetic CWE",
+      "provider": "allenai",
+      "aliases": [
+        "olmOCR PDFs + synth CWE",
+        "Common Word Extraction",
+        "Longmino synthetic CWE"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "long_context",
+        "source": "synthetic"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3-longmino-synthetic-rex",
+      "name": "Dolma 3 Longmino synthetic REX",
+      "provider": "allenai",
+      "aliases": [
+        "olmOCR PDFs + synth REX",
+        "Rewriting EXpressions",
+        "Longmino synthetic REX"
+      ],
+      "facets": {
+        "family": "Dolma-3",
+        "stage": "long_context",
+        "source": "synthetic"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "hendrycks/math",
+      "name": "MATH",
+      "provider": "hendrycks",
+      "aliases": [
+        "MATH training set",
+        "MATH benchmark",
+        "hendrycks_math"
+      ],
+      "facets": {
+        "family": "MATH",
+        "source": "benchmark"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "tokyotech-llm/swallow-math",
+      "name": "SwallowMath",
+      "provider": "tokyotech-llm",
+      "aliases": [
+        "SwallowMath",
+        "tokyotech-llm/swallow-math",
+        "SwallowMath dataset"
+      ],
+      "facets": {
+        "family": "Swallow",
+        "stage": "synthetic-math",
+        "source": "synthetic"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "tigerlab/megamath-web-pro",
+      "name": "MegaMath-Web-Pro",
+      "provider": "tigerlab",
+      "aliases": [
+        "Megamath-Web-Pro",
+        "MegaMath-Web-Pro",
+        "Megamath-Web-Pro data"
+      ],
+      "facets": {
+        "family": "MegaMath-Web",
+        "stage": "math-web",
+        "source": "web"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "bigcode/the-stack-v2-train-smol-ids",
+      "name": "The Stack v2 train smol ids",
+      "provider": "bigcode",
+      "aliases": [
+        "bigcode/the-stack-v2-train-smol-ids",
+        "the-stack-v2-smol",
+        "The Stack v2 Smol",
+        "Python subset of the-stack-v2-smol"
+      ],
+      "facets": {
+        "family": "The-Stack-v2",
+        "stage": "code-pretraining",
+        "source": "code"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "tokyotech-llm/swallow-code",
+      "name": "SwallowCode",
+      "provider": "tokyotech-llm",
+      "aliases": [
+        "SwallowCode",
+        "SwallowCode dataset"
+      ],
+      "facets": {
+        "family": "Swallow",
+        "stage": "synthetic-code",
+        "source": "synthetic"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "wikimedia/wikipedia",
+      "name": "Wikipedia",
+      "provider": "wikimedia",
+      "aliases": [
+        "Wikipedia passages",
+        "Wikipedia"
+      ],
+      "facets": {
+        "family": "Wikimedia",
+        "source": "encyclopedic"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/openmathreasoning",
+      "name": "OpenMathReasoning",
+      "provider": "nvidia",
+      "aliases": [
+        "OpenMathReasoning",
+        "OpenMathReasoning dataset",
+        "OMR"
+      ],
+      "facets": {
+        "family": "OpenMathReasoning",
+        "stage": "reasoning-traces",
+        "source": "synthetic"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "pandalla/pandalla-math-dataset-v1.0",
+      "name": "Pandalla-Math Dataset v1.0",
+      "provider": "pandalla",
+      "aliases": [
+        "Pandalla-Math",
+        "pandalla/pandalla-math-dataset-v1.0",
+        "Pandalla-Math dataset"
+      ],
+      "facets": {
+        "family": "Pandalla-Math",
+        "stage": "synthetic-math",
+        "source": "synthetic"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "google-research/flan",
+      "name": "Flan",
+      "provider": "google-research",
+      "aliases": [
+        "Flan",
+        "FLAN",
+        "Flan dataset"
+      ],
+      "facets": {
+        "family": "FLAN",
+        "stage": "instruction",
+        "source": "mixed"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/olmobaeeval",
+      "name": "OlmoBaseEval",
+      "provider": "allenai",
+      "aliases": [
+        "OlmoBaseEval",
+        "Base Easy suite",
+        "Base Main suite",
+        "OLMo 3 Eval suite"
+      ],
+      "facets": {
+        "family": "OLMoBaseEval",
+        "stage": "evaluation",
+        "source": "benchmark-suite"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "hsieh/ruler",
+      "name": "RULER",
+      "provider": "hsieh",
+      "aliases": [
+        "RULER",
+        "RULER benchmark",
+        "RULER dev suite"
+      ],
+      "facets": {
+        "family": "RULER",
+        "stage": "evaluation",
+        "source": "benchmark"
+      }
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "princeton-nlp/helmet",
+      "name": "HELMET",
+      "provider": "princeton-nlp",
+      "aliases": [
+        "HELMET",
+        "HELMET benchmark",
+        "HELMET held-out eval"
+      ],
+      "facets": {
+        "family": "HELMET",
+        "stage": "evaluation",
+        "source": "benchmark-suite"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "e_olmo3_dolma3_mix",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3_mix-6t",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Stage 1 pretraining used Dolma 3 Mix, the 6T-token natural-data pretraining mix for OLMo 3 Base.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.4, page 13",
+          "excerpt": "We first train Olmo 3 Base on Dolma 3 Mix, our 6T token pretraining data mix.",
+          "explanation": "Directly identifies Dolma 3 Mix as the first-stage pretraining data for OLMo 3 Base."
+        },
+        {
+          "source": "https://github.com/allenai/dolma3",
+          "location": "README",
+          "excerpt": "Dolma 3 Mix, a diverse 5.9T-token pre-training dataset",
+          "explanation": "Confirms the released Dolma 3 Mix artifact and its role as OLMo 3 pretraining data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_commoncrawl",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "commoncrawl/common-crawl",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Common Crawl web pages are the largest Dolma 3 Mix leaf source for stage-1 pretraining: 4.51T tokens, 76.1% of the 6T mix, from 104 dumps with cutoff Dec. 31, 2024.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 4, page 13; Section 3.4.1, page 14",
+          "excerpt": "Common Crawl Web pages ... 4.51T (76.1%)",
+          "explanation": "Table 4 lists Common Crawl as a component of the final Dolma 3 Mix used for training."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.4.1, page 14",
+          "excerpt": "We start with 104 dumps from the CommonCrawl corpus, with a cutoff date of December 31, 2024.",
+          "explanation": "Specifies the Common Crawl source pool used to create the web-data leaf."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_olmocr_pdfs",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/olmocr-science-pdfs",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "olmOCR science PDFs fed multiple OLMo 3 Base stages: 805B tokens in Dolma 3 Mix pretraining, an HQ subset in Dolmino midtraining, and the natural long-document backbone for Longmino long-context extension.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 4, page 13",
+          "excerpt": "olmOCR science PDFs Academic documents ... 805B (13.6%)",
+          "explanation": "Table 4 lists olmOCR science PDFs as a leaf source in the pretraining mix."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Sections 3.6 and 3.6.1, pages 30-31",
+          "excerpt": "The backbone of our long-context data pool is scientific PDFs scraped from the web and processed by olmOCR.",
+          "explanation": "Shows the same PDF collection was the backbone of the long-context training pool."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_stack_edu",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "huggingfacetb/stack-edu",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Stack-Edu Rebalanced supplied GitHub-code pretraining data, contributing 409B tokens (6.89%) to the 6T Dolma 3 Mix.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 4, page 13; Section 3.4.3, page 16",
+          "excerpt": "Stack-Edu (Rebalanced) GitHub code ... 409B (6.89%)",
+          "explanation": "Table 4 names Stack-Edu as a code leaf in the final pretraining mix."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.4.3, page 16",
+          "excerpt": "For code data, we use Stack-Edu ... an improved curation of GitHub repositories from the-stack-v2 dataset",
+          "explanation": "Confirms the Stack-Edu artifact and its source role."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_proofpile_arxiv",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "eleutherai/proof-pile-2",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The pretraining mix included the arXiv/LaTeX-paper source, documented as arXiv documents from Proof-Pile-2, with 50.8B tokens in the 6T mix.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 4, page 13",
+          "excerpt": "arXiv Papers with LaTeX ... 50.8B (0.86%)",
+          "explanation": "Table 4 lists arXiv papers as a Dolma 3 Mix leaf source."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.4.3, page 16",
+          "excerpt": "we include arXiv documents from the Proof-Pile-2 dataset",
+          "explanation": "Resolves the arXiv leaf to Proof-Pile-2 as the upstream released dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_finemath_train",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "huggingfacetb/finemath",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "FineMath 3+ math web pages were part of stage-1 Dolma 3 Mix pretraining, contributing 152B tokens (2.56%).",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 4, page 13",
+          "excerpt": "FineMath 3+ Math web pages ... 152B (2.56%)",
+          "explanation": "Table 4 lists FineMath 3+ as a leaf source of the pretraining data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_wikipedia_wikibooks",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "wikimedia/wikipedia-wikibooks",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Wikipedia and Wikibooks supplied encyclopedic data to the Dolma 3 Mix pretraining stage, contributing 2.51B tokens.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 4 and Section 3.4.3, pages 13 and 16",
+          "excerpt": "Wikipedia & Wikibooks Encyclopedic ... 2.51B (0.04%)",
+          "explanation": "Table 4 lists Wikipedia and Wikibooks as a pretraining leaf source."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.4.3, page 16",
+          "excerpt": "we include the Wikipedia and Wikibooks sources from Dolma",
+          "explanation": "Confirms these encyclopedia sources were included."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_dolmino_mix",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-dolmino-mix",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Stage 2 midtraining continued OLMo 3 Base on Dolma 3 Dolmino Mix for about 100B tokens; the same mix also supplied the 66% short-context component during the stage-3 long-context extension.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5, page 20",
+          "excerpt": "During this midtrain stage, we use 100B high-quality tokens ... Dolma 3 Dolmino Mix.",
+          "explanation": "Directly states that Dolmino Mix was the 100B-token midtraining data."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.6, page 30",
+          "excerpt": "We mix 34% long-context data with 66% high-quality short-context data sampled from Dolma 3 Dolmino Mix",
+          "explanation": "Shows Dolmino Mix also entered the long-context extension mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_tinymath_mind",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-tinymath-mind",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "TinyMATH Mind was a synthetic math midtraining leaf in Dolma 3 Dolmino Mix: 898M tokens (0.9%) of the 100B mix.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Math (synth) TinyMATH Mind** ... 898M (0.9%)",
+          "explanation": "Table 5 lists TinyMATH Mind as a source in the midtraining mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_tinymath_pot",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-tinymath-pot",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "TinyMATH PoT was a synthetic math midtraining leaf in Dolma 3 Dolmino Mix: 241M tokens (0.24%) of the 100B mix.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Math (synth) TinyMATH PoT** ... 241M (0.24%)",
+          "explanation": "Table 5 lists TinyMATH PoT as a source in the midtraining mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_cranemath_train",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-cranemath",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "CraneMath was included as a synthetic math midtraining source, contributing 5.62B tokens (5.63%) to Dolma 3 Dolmino Mix.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Math (synth) CraneMath* ... 5.62B (5.63%)",
+          "explanation": "Table 5 lists CraneMath as a leaf of the final midtraining data mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_megamatt_train",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-megamatt",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "MegaMatt was included as a synthetic math midtraining source, contributing 1.73B tokens (1.73%) to Dolma 3 Dolmino Mix.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Math (synth) MegaMatt* ... 1.73B (1.73%)",
+          "explanation": "Table 5 lists MegaMatt as a leaf source in the midtraining mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_dolmino_math",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolmino-math",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The final midtraining mix reused the OLMo 2 Dolmino Mix Math subset, after additional decontamination filtering, contributing 10.7B tokens.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5 and Section 3.5.2, pages 20 and 22",
+          "excerpt": "Math (synth) Dolmino Mathˆˆ ... 10.7B (10.7%)",
+          "explanation": "Table 5 lists Dolmino Math in the final Dolma 3 Dolmino Mix."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 22",
+          "excerpt": "We include the entirety of the 10.7B-token OLMo 2 Dolmino Mix Math subset.",
+          "explanation": "Confirms the Dolmino Math source and the decontaminated reuse."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_stackedu_fim",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-stackedu-fim",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The midtraining mix included a quality-filtered Stack-Edu FIM code source, with 50% fill-in-the-middle-transformed documents and 10.0B training tokens.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Code StackEdu (FIM)ˆ ... 10.0B (10.0%)",
+          "explanation": "Table 5 lists StackEdu (FIM) as a source in the midtraining mix."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 23",
+          "excerpt": "50% of documents reflect fill-in-the-middle (FIM) transformation",
+          "explanation": "Describes the transformation applied to this Stack-Edu midtraining leaf."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_cranecode_train",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-cranecode",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "CraneCode was a synthetic Python/code midtraining source in Dolma 3 Dolmino Mix, contributing 10.0B tokens (10.0%).",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Python (synth) CraneCode* ... 10.0B (10.0%)",
+          "explanation": "Table 5 lists CraneCode as a midtraining data source."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_reddit_flashcards",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-reddit-to-flashcards",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Reddit To Flashcards was a synthetic QA midtraining source, contributing 5.90B tokens (5.9%) to Dolma 3 Dolmino Mix.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "QA (synth) Reddit To Flashcards** ... 5.90B (5.9%)",
+          "explanation": "Table 5 lists Reddit To Flashcards as a source in the midtraining mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_wiki_rcqa",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-wiki-to-rcqa",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Wiki To RCQA was a synthetic QA/reading-comprehension source in Dolma 3 Dolmino Mix, contributing 3.0B tokens.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "QA (synth) Wiki To RCQA** ... 3.0B (3.0%)",
+          "explanation": "Table 5 lists Wiki To RCQA as a source in the midtraining mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_nemotron_cc",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "nvidia/nemotron-cc",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The Dolmino midtraining mix included the diverse-QA-pairs synthetic subset of Nemotron CC, contributing 5.0B tokens.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5 and Section 3.5.2, pages 20 and 23",
+          "excerpt": "QA (synth) Nemotron Synth QAˆ ... 5.0B (5.0%)",
+          "explanation": "Table 5 lists the Nemotron Synth QA source in the final midtraining mix."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 23",
+          "excerpt": "We include the “diverse QA pairs” synth subset of the Nemotron CC dataset",
+          "explanation": "Resolves the source to the Nemotron CC dataset and the included subset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_math_meta_reasoning",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-math-meta-reasoning",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Math Meta-Reasoning was included as a synthetic thinking-trace midtraining source, contributing 381M tokens.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Thinking (synth) Math Meta-Reasoning** ... 381M (0.38%)",
+          "explanation": "Table 5 lists Math Meta-Reasoning as a midtraining leaf."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_code_meta_reasoning",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-code-meta-reasoning",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Code Meta-Reasoning was included as a synthetic thinking-trace midtraining source, contributing 459M tokens.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Thinking (synth) Code Meta-Reasoning** ... 459M (0.46%)",
+          "explanation": "Table 5 lists Code Meta-Reasoning as a midtraining leaf."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_program_verifiable",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-program-verifiable",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Program-Verifiable synthetic reasoning data was included in midtraining, contributing 159M tokens to Dolma 3 Dolmino Mix.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Thinking (synth) Program-Verifiable** ... 159M (0.16%)",
+          "explanation": "Table 5 lists Program-Verifiable as a midtraining leaf source."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_omr_fullthoughts",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-omr-rewrite-fullthoughts",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "OMR Rewrite FullThoughts was included as a rewritten thinking-trace midtraining source, contributing 850M tokens.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Thinking (synth) OMR Rewrite FullThoughtsˆ ... 850M (0.85%)",
+          "explanation": "Table 5 lists OMR Rewrite FullThoughts in the midtraining mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_qwq_traces",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-qwq-reasoning-traces",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "QwQ Reasoning Traces were included as a thinking-trace midtraining source, contributing 1.87B tokens.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Thinking (synth) QWQ Reasoning Tracesˆ ... 1.87B (1.87%)",
+          "explanation": "Table 5 lists QWQ Reasoning Traces as a midtraining source."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_general_reasoning_mix",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-general-reasoning-mix",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "General Reasoning Mix was included as a thinking-trace midtraining source, contributing 1.87B tokens.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Thinking (synth) General Reasoning Mixˆ ... 1.87B (1.87%)",
+          "explanation": "Table 5 lists General Reasoning Mix as a midtraining source."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_gemini_traces",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-gemini-reasoning-traces",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Gemini Reasoning Traces were included as a thinking-trace midtraining source, contributing 246M tokens.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Thinking (synth) Gemini Reasoning Tracesˆ ... 246M (0.25%)",
+          "explanation": "Table 5 lists Gemini Reasoning Traces as a midtraining source."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_llama_nemotron_traces",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "nvidia/llama-nemotron-reasoning-traces",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Llama Nemotron Reasoning Traces were included as a thinking-trace midtraining source, contributing 1.25B tokens.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Thinking (synth) Llama Nemotron Reasoning Tracesˆ ... 1.25B (1.25%)",
+          "explanation": "Table 5 lists Llama Nemotron Reasoning Traces as a midtraining source."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Appendix A.3.3, page 94",
+          "excerpt": "Llama Nemotron reasoning traces ... contains thinking trace data for math, code, general reasoning, and instruction following.",
+          "explanation": "Describes the content of the Llama Nemotron reasoning-trace source."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_openthoughts2",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "open-thoughts/openthoughts2-reasoning-traces",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "OpenThoughts2 Reasoning Traces were included as a thinking-trace midtraining source, contributing 1.25B tokens.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Thinking (synth) OpenThoughts2 Reasoning Tracesˆ ... 1.25B (1.25%)",
+          "explanation": "Table 5 lists OpenThoughts2 Reasoning Traces as a midtraining source."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Appendix A.3.3, page 94",
+          "excerpt": "OpenThoughts2 reasoning traces ... contains thinking traces in domains of math, science, code, and puzzles.",
+          "explanation": "Describes the content of the OpenThoughts2 source."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_tulu3_sft",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/tulu-3-sft-mix",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Tulu 3 SFT instruction data was included during base-model midtraining to prime instruction following, contributing 1.1B tokens.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5 and Section 3.5.2, page 23",
+          "excerpt": "Instruction (synth) Tulu 3 SFTˆˆ ... 1.1B (1.1%)",
+          "explanation": "Table 5 lists Tulu 3 SFT data as a midtraining source."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 23",
+          "excerpt": "We sample instruction data from the SFT set from Tülu 3.",
+          "explanation": "Confirms the instruction data came from Tulu 3 SFT."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_dolmino_flan",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolmino-1-flan",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Dolmino 1 Flan was included as instruction/QA data in the midtraining mix, contributing 5.0B tokens.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "Instruction (synth) Dolmino 1 Flanˆˆ ... 5.0B (5.0%)",
+          "explanation": "Table 5 lists Dolmino 1 Flan as a midtraining source."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_google_flan",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "google-research/flan",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The Dolmino 1 Flan source was a subset of the external Flan dataset, with the same preprocessing previously used in OLMo 2.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 23",
+          "excerpt": "we also find the Flan dataset ... improves performance in QA tasks, and as a result included a subset of the Flan dataset",
+          "explanation": "Directly states that a Flan subset was included in the final midtraining data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_pdfs_hq",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/olmocr-science-pdfs",
+      "relation_type": "trained_on_hq_subset",
+      "dependency_kind": "direct",
+      "description": "In addition to pretraining and long-context use, a high-quality filtered subset of the olmOCR science PDF pool contributed 4.99B tokens (5.0%) to Dolma 3 Dolmino Mix.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5, page 20",
+          "excerpt": "PDFs olmOCR science PDFs (HQ subset)ˆ ... 4.99B (5.0%)",
+          "explanation": "Table 5 lists an HQ subset of olmOCR science PDFs as a midtraining source."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_stem_heavy_crawl",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-stem-heavy-crawl",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "STEM-Heavy Crawl was a high-quality web midtraining source crawled by Ai2, contributing 4.99B tokens (5.0%).",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5 and Section 3.5.2, pages 20 and 25",
+          "excerpt": "Web pages STEM-Heavy Crawlˆ ... 4.99B (5.0%)",
+          "explanation": "Table 5 lists STEM-Heavy Crawl as a midtraining source."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 25",
+          "excerpt": "We also create a separate high-quality web collection, crawled between September 12, 2024 and June 3rd, 2025",
+          "explanation": "Describes the source and collection window for STEM-Heavy Crawl."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_commoncrawl_hq",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-common-crawl-hq",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "A high-quality subset of stage-1 Common Crawl web data was used in midtraining, contributing 22.4B tokens (22.5%) to Dolma 3 Dolmino Mix.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 5 and Section 3.5.2, pages 20 and 24",
+          "excerpt": "Web pages Common Crawl (HQ subset)ˆ ... 22.4B (22.5%)",
+          "explanation": "Table 5 lists Common Crawl HQ subset as a midtraining source."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 24",
+          "excerpt": "Stage 1 web data We sample documents from the top two quality buckets (top 10% quality).",
+          "explanation": "Explains the HQ subset construction."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_longmino_mix",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-longmino-mix",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Stage 3 long-context extension used Dolma 3 Longmino Mix; for OLMo 3 32B, the extension trained for 100B tokens, with 34% long-context data and 66% Dolmino short-context data.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.6, pages 29-30",
+          "excerpt": "Dolma 3 Longmino Mix consists of over 600 billion tokens; statistics in Table 11.",
+          "explanation": "Introduces the long-context mix used for the extension stage."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.6, page 30",
+          "excerpt": "train using this mix for an additional 50B tokens for Olmo 3 7B and 100B tokens for Olmo 3 32B",
+          "explanation": "Specifies that OLMo 3 32B was trained on the Longmino mix for 100B tokens."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_longmino_cwe",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-longmino-synthetic-cwe",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Longmino included synthetic Common Word Extraction (CWE) augmentation over olmOCR PDFs; the 50B reference mix used 1.94B CWE tokens, and the 100B 32B mix kept the same proportions.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 11 and Section 3.6.2, pages 29 and 33",
+          "excerpt": "olmOCR PDFs + synth CWE 32K-64K ... 1.94B (3.88%)",
+          "explanation": "Table 11 lists the CWE synthetic leaf of Dolma 3 Longmino Mix."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 11 caption, page 29",
+          "excerpt": "The 100B mix for Olmo 3 32B maintains the same proportions as the 50B mix.",
+          "explanation": "Shows the CWE proportion applies to the OLMo 3 32B long-context mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_longmino_rex",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-longmino-synthetic-rex",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Longmino included synthetic Rewriting EXpressions (REX) augmentation over olmOCR PDFs; the 50B reference mix used 6.08B REX tokens, and the 100B 32B mix kept the same proportions.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 11 and Section 3.6.2, pages 29 and 33",
+          "excerpt": "olmOCR PDFs + synth REX 32K-64K ... 6.08B (12.2%)",
+          "explanation": "Table 11 lists the REX synthetic leaf of Dolma 3 Longmino Mix."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 11 caption, page 29",
+          "excerpt": "The 100B mix for Olmo 3 32B maintains the same proportions as the 50B mix.",
+          "explanation": "Shows the REX proportion applies to the OLMo 3 32B long-context mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_gemma3_12b_filter",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "google/gemma-3-12b",
+      "relation_type": "filtered_by",
+      "dependency_kind": "direct",
+      "description": "Gemma 3 12B was used in the olmOCR science-PDF PII-removal pipeline: it classified each document’s first page for sensitive standalone PII or sensitive linked information, shaping PDF inclusion in OLMo 3 training data.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.4.2, page 16",
+          "excerpt": "we classify documents using a prompt to Gemma 3 12B ... to determine if they contain any sensitive standalone PII",
+          "explanation": "Directly documents Gemma 3 12B as a filtering model in the PDF data pipeline."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_gemma3_4b_filter",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "google/gemma-3-4b",
+      "relation_type": "filtered_by",
+      "dependency_kind": "direct",
+      "description": "Gemma 3 4B was used in the olmOCR science-PDF PII-removal pipeline to assign document-type flags on the first 5,000 characters; those flags informed filtering rules for PDF training data.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.4.2, page 16",
+          "excerpt": "Next, we use Gemma 3 4B on the first 5,000 characters of each document to arrive at a set of flags",
+          "explanation": "Directly documents Gemma 3 4B as a classifier/filtering model in the PDF pipeline."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_weborganizer_classifier",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-fasttext-weborganizer-topic-classifier",
+      "relation_type": "filtered_by",
+      "dependency_kind": "direct",
+      "description": "The Dolma 3 fastText WebOrganizer topic classifier partitioned web/PDF documents into topic buckets used for Dolma 3 Mix mixing and quality-aware sampling.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.4.2 footnote and Section 3.4.4, pages 15-19",
+          "excerpt": "huggingface.co/allenai/dolma3-fasttext-weborganizer-topic-classifier",
+          "explanation": "The paper footnote identifies the released topic classifier used in the Dolma 3 data pipeline."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.4.4, page 17",
+          "excerpt": "we applied data mixing ... across the WebOrganizer topics within the web data and PDF sources",
+          "explanation": "Shows the classifier’s topic outputs were used to shape the training mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_quality_classifier",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3-fasttext-quality-classifier",
+      "relation_type": "filtered_by",
+      "dependency_kind": "direct",
+      "description": "The Dolma 3 fastText quality classifier supplied document-quality scores used for web quality-aware upsampling, Common Crawl HQ selection, and STEM-Heavy Crawl filtering.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.4.2 footnote and Section 3.5.2, pages 15 and 25",
+          "excerpt": "huggingface.co/allenai/dolma3-fasttext-quality-classifier",
+          "explanation": "The paper footnote identifies the released quality classifier used in Dolma 3 data processing."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 25",
+          "excerpt": "we choose to filter this set using the quality classifier introduced in Section §3.4.1",
+          "explanation": "Shows classifier outputs directly affected inclusion of STEM-Heavy Crawl data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_qwen3_cranemath",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "qwen/qwen3-32b",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "Qwen3-32B rewrote FineMath4+ examples into CraneMath, a midtraining source for OLMo 3 32B. The paper describes CraneMath as a Qwen3 rewrite of FineMath4+ using the SwallowMath prompt; the Dolma3 README resolves the generator to Qwen3-32B.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 22",
+          "excerpt": "we generate an independent reproduction of SwallowMath by rewriting FineMath4+ ... using Qwen3",
+          "explanation": "Documents Qwen3 as the rewriting model for CraneMath."
+        },
+        {
+          "source": "https://raw.githubusercontent.com/allenai/dolma3/main/datasets/dolma3_dolmino_mix/cranemath/README.md",
+          "location": "CraneMath README",
+          "excerpt": "for CraneMath we used Qwen3-32B for all data generation",
+          "explanation": "Resolves the Qwen3 generator to the specific Qwen3-32B model."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_finemath_cranemath_source",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "huggingfacetb/finemath",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "FineMath4+ was the source corpus rewritten into CraneMath, which then entered OLMo 3 32B midtraining.",
+      "evidence": [
+        {
+          "source": "https://raw.githubusercontent.com/allenai/dolma3/main/datasets/dolma3_dolmino_mix/cranemath/README.md",
+          "location": "CraneMath README, Source Materials and Recipe",
+          "excerpt": "Base Dataset: [Finemath-4plus] ... Starting with Finemath-4plus ... use Qwen3-32B to rewrite",
+          "explanation": "Shows FineMath4+ was the input corpus transformed into CraneMath."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_swallowmath_inspired",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "tokyotech-llm/swallow-math",
+      "relation_type": "inspired_by",
+      "dependency_kind": "indirect",
+      "description": "The CraneMath construction recipe explicitly borrowed the SwallowMath prompt/procedure while substituting Qwen3-32B and permissively licensed FineMath4+ inputs.",
+      "evidence": [
+        {
+          "source": "https://raw.githubusercontent.com/allenai/dolma3/main/datasets/dolma3_dolmino_mix/cranemath/README.md",
+          "location": "CraneMath README, Source Materials and Recipe",
+          "excerpt": "Inspiration: [SwallowMath] Paper outlining the data generation procedure",
+          "explanation": "Shows SwallowMath was a methodological inspiration for CraneMath."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 22",
+          "excerpt": "rewriting FineMath4+ with the SwallowMath prompt",
+          "explanation": "The OLMo 3 paper states the specific SwallowMath prompt was reused."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_megamath_source",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "tigerlab/megamath-web-pro",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "MegaMatt was produced by filtering Megamath-Web-Pro data occurring after June 2023 and rewriting it with Qwen3; the resulting MegaMatt data was included in midtraining.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 22",
+          "excerpt": "we collect the Megamath-Web-Pro data occurring after June 2023 ... and rewrite it using Qwen3",
+          "explanation": "Identifies MegaMath-Web-Pro as the source material transformed into MegaMatt."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_qwen25coder_cranecode",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "qwen/qwen2.5-coder-32b-instruct",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "Qwen2.5-Coder-32B-Instruct generated the two-stage SGCR/SCOR code rewrites used to create CraneCode, a 10B-token midtraining source.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Appendix A.3.2, page 92",
+          "excerpt": "both using the prompts from the original SwallowCode paper and Qwen/Qwen2.5-Coder-32B-Instruct",
+          "explanation": "Specifies the model used for CraneCode rewriting."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_stackv2_smol_cranecode",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "bigcode/the-stack-v2-train-smol-ids",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "CraneCode was built from Python files in The Stack v2 Smol, filtered for compilation/linting and then rewritten; those transformed files entered OLMo 3 midtraining via CraneCode.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2 and Appendix A.3.2, pages 23 and 92",
+          "excerpt": "we source data from the Python subset of the-stack-v2-smol",
+          "explanation": "Identifies The Stack v2 Smol as CraneCode’s source data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_swallowcode_inspired",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "tokyotech-llm/swallow-code",
+      "relation_type": "inspired_by",
+      "dependency_kind": "indirect",
+      "description": "CraneCode was explicitly designed as a fully open replica of the SwallowCode recipe, borrowing its prompts and two-stage rewriting pipeline while changing the generator to Qwen2.5-Coder-32B-Instruct.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Appendix A.3.2, page 92",
+          "excerpt": "we also created a fully-open replica of SwallowCode ... which we call CraneCode",
+          "explanation": "States that CraneCode replicated the SwallowCode methodology."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Appendix A.3.2, page 92",
+          "excerpt": "both using the prompts from the original SwallowCode paper",
+          "explanation": "Confirms the specific SwallowCode prompts were reused."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_gpt4omini_flashcards",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "openai/gpt-4o-mini",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "GPT-4o-mini rewrote Reddit submission-comment pairs into multiple-choice QA flashcards for the Reddit-to-Flashcards midtraining source.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 23",
+          "excerpt": "use GPT 4o-mini to rewrite submission-comment pairs ... into multiple-choice QA pairs",
+          "explanation": "Directly identifies GPT-4o-mini as the transformer for Reddit-to-Flashcards."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_qwen25_wiki_rcqa",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "qwen/qwen2.5-32b-instruct",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Qwen2.5 32B Instruct generated passage-based QA pairs from Wikipedia passages for the Wiki-to-RCQA midtraining source.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 23",
+          "excerpt": "We collect Wikipedia passages and prompted Qwen2.5 32B Instruct to generate QA pairs",
+          "explanation": "Directly identifies Qwen2.5 32B Instruct as the generator for Wiki-to-RCQA."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_wikipedia_wiki_rcqa_source",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "wikimedia/wikipedia",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "Wikipedia passages were the source texts transformed into Wiki-to-RCQA synthetic QA examples for midtraining.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 23",
+          "excerpt": "We collect Wikipedia passages and prompted Qwen2.5 32B Instruct to generate QA pairs",
+          "explanation": "Identifies Wikipedia passages as the source material for Wiki-to-RCQA."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_gpt41_generated",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "openai/gpt-4.1",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "GPT-4.1 generated thinking traces for Math/Code Meta-Reasoning and Program-Verifiable midtraining data, alongside o4-mini.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 24",
+          "excerpt": "we prompt GPT-4.1 and o4-mini to generate thinking traces",
+          "explanation": "Directly names GPT-4.1 as a generator for meta-reasoning traces."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 24",
+          "excerpt": "distill thinking traces from GPT-4.1 and o4-mini models",
+          "explanation": "Directly names GPT-4.1 as a distillation model for Program-Verifiable data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_o4mini_generated",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "openai/o4-mini",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "o4-mini generated thinking traces for Math/Code Meta-Reasoning and Program-Verifiable midtraining data, alongside GPT-4.1.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 24",
+          "excerpt": "we prompt GPT-4.1 and o4-mini to generate thinking traces",
+          "explanation": "Directly names o4-mini as a generator for meta-reasoning traces."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 24",
+          "excerpt": "distill thinking traces from GPT-4.1 and o4-mini models",
+          "explanation": "Directly names o4-mini as a distillation model for Program-Verifiable data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_gpt41_omr_rewrite",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "openai/gpt-4.1",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "GPT-4.1 lightly rewrote OpenMathReasoning items into OMR Full-Thoughts, editing clarity, flow, formatting, and LaTeX while preserving reasoning.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 24",
+          "excerpt": "instructing GPT-4.1 to edit items for clarity, flow, and formatting",
+          "explanation": "Directly identifies GPT-4.1 as the model used to transform OpenMathReasoning into OMR Full-Thoughts."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_openmathreasoning_source",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "nvidia/openmathreasoning",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "OpenMathReasoning was the source for the OMR Full-Thoughts rewrite and for the QwQ reasoning-trace subset included in Dolma 3 Dolmino Mix.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 24",
+          "excerpt": "We also consider 9 different versions of rewriting ... of the OpenMathReasoning dataset",
+          "explanation": "Identifies OpenMathReasoning as the source dataset transformed into OMR Full-Thoughts."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Appendix A.3.3, page 94",
+          "excerpt": "QwQ reasoning traces consists of the QwQ subset of the OpenMathReasoning dataset",
+          "explanation": "Shows another included Dolmino leaf was a subset of OpenMathReasoning."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_math_seed",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "hendrycks/math",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "The MATH training set seeded TinyMATH: for each of 7,500 MATH training examples, the team generated 100 similar problems plus PoT and MIND variants used in midtraining.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 22",
+          "excerpt": "For each of the 7500 examples in the MATH training set, we generate 100 new, similar problems.",
+          "explanation": "Shows MATH training examples were source material transformed into TinyMATH data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_pandalla_inspired",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "pandalla/pandalla-math-dataset-v1.0",
+      "relation_type": "inspired_by",
+      "dependency_kind": "indirect",
+      "description": "The meta-reasoning data construction borrowed the annotation style of Pandalla-Math, using annotations such as problem classification, difficulty analysis, solution approaches, pitfalls, and verification methods.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.2, page 24",
+          "excerpt": "detailed annotations ... modeled after the Pandalla-Math dataset",
+          "explanation": "States the meta-reasoning annotation recipe was modeled after Pandalla-Math."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_olmo2_longmino_gen",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/olmo-2-0325-32b-instruct",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "OLMo 2 Instruct 32B generated all Longmino synthetic CWE and REX aggregation tasks inserted into long-document PDF training examples for the long-context extension stage.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.6.2, page 33",
+          "excerpt": "we ultimately use OLMo 2 Instruct 32B for all generations",
+          "explanation": "Directly names OLMo 2 Instruct 32B as the generator for Longmino synthetic augmentation."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.6.2, page 33",
+          "excerpt": "CWE ... REX ... prompt OLMo 2 Instruct",
+          "explanation": "Shows both CWE and REX synthetic tasks were prompted from OLMo 2 Instruct."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_olmobaeeval_eval",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/olmobaeeval",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "OLMo 3 Base was evaluated with OlmoBaseEval, including Base Easy and Base Main suites with 43 tasks spanning math, code, QA, STEM, non-STEM, and held-out benchmarks.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.3.4, page 12",
+          "excerpt": "The resulting OlmoBaseEval consists of a Base Easy suite ... and a Base Main suite",
+          "explanation": "Identifies the evaluation suite used for base-model development and reporting."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.3.4, page 12",
+          "excerpt": "OlmoBaseEval contains 43 tasks",
+          "explanation": "Documents the scope of the evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_olmobaeeval_ablation",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/olmobaeeval",
+      "relation_type": "used_for_ablation",
+      "dependency_kind": "indirect",
+      "description": "OlmoBaseEval was used to make development decisions in pretraining/midtraining data ablations, including microanneals and integration tests comparing candidate data sources and mixes.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Sections 2.1 and 3.5.1, pages 4 and 21",
+          "excerpt": "We develop OlmoBaseEval ... to support decision-making during base model development",
+          "explanation": "States OlmoBaseEval shaped development decisions, not just final reporting."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.5.1, page 21",
+          "excerpt": "We then compare the performance ... against that of a baseline microanneal",
+          "explanation": "Shows the team ran ablation-style microanneals to assess candidate data sources."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_ruler_eval",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "hsieh/ruler",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "RULER was used to evaluate the OLMo 3 32B long-context Base checkpoint at 4K through 65K context lengths.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.6 and Table 12, pages 30 and 32",
+          "excerpt": "RULER ... is a benchmark of synthetic long-context tasks",
+          "explanation": "Identifies RULER as a long-context benchmark used for OLMo 3."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 12, page 32",
+          "excerpt": "Olmo 3 32B 96.10 94.57 90.42 86.22 79.70",
+          "explanation": "Table 12 reports OLMo 3 32B RULER scores across context lengths."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_ruler_ablation",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "hsieh/ruler",
+      "relation_type": "used_for_ablation",
+      "dependency_kind": "indirect",
+      "description": "RULER was the primary metric guiding long-context recipe development, including ablations of data choice, synthetic augmentation, document packing, attention scaling, and extension token budget.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.6, page 30",
+          "excerpt": "we use RULER as the primary metric to guide our long-context recipe development",
+          "explanation": "Directly supports RULER as an ablation/development benchmark."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Figure 13 caption, page 31",
+          "excerpt": "Five key components of the Olmo 3 long-context extension recipe measured on the RULER benchmark.",
+          "explanation": "Shows RULER was used in recipe ablations."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_helmet_eval",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "princeton-nlp/helmet",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "HELMET was held out as an unseen long-context evaluation suite and used to report final OLMo 3 32B long-context performance.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Section 3.6 and Table 12, pages 30 and 32",
+          "excerpt": "HELMET ... is a suite of long-context benchmarks ... We keep HELMET as an unseen evaluation suite",
+          "explanation": "Directly identifies HELMET as a held-out evaluation suite for final checkpoints."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2512.13961",
+          "location": "Table 12, page 32",
+          "excerpt": "HELMET (held-out eval)",
+          "explanation": "Table 12 reports OLMo 3 32B results on the HELMET held-out evaluation."
+        }
+      ]
+    }
+  ]
+}

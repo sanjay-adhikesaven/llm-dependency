@@ -1,0 +1,1829 @@
+{
+  "subject": "huggingfacetb/smollm3-3b",
+  "nodes": [
+    {
+      "node_type": "model",
+      "canonical_id": "huggingfacetb/smollm3-3b",
+      "name": "SmolLM3 3B",
+      "provider": "huggingfacetb",
+      "aliases": ["HuggingFaceTB/SmolLM3-3B", "SmolLM3-3B", "SmolLM3 3B Instruct"],
+      "facets": {"family": "SmolLM3", "size": "3B", "stage": "instruct", "date": "2025-07-08", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-32b",
+      "name": "Qwen3-32B",
+      "provider": "qwen",
+      "aliases": ["Qwen/Qwen3-32B", "Qwen3 32B"],
+      "facets": {"family": "Qwen3", "size": "32B", "stage": "instruct", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-0.6b",
+      "name": "Qwen3-0.6B",
+      "provider": "qwen",
+      "aliases": ["Qwen/Qwen3-0.6B", "Qwen3 0.6B"],
+      "facets": {"family": "Qwen3", "size": "0.6B", "stage": "instruct", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-235b-a22b",
+      "name": "Qwen3-235B-A22B",
+      "provider": "qwen",
+      "aliases": ["Qwen/Qwen3-235B-A22B", "Qwen3 235B"],
+      "facets": {"family": "Qwen3", "size": "MoE-A22B", "stage": "instruct", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "deepseek-ai/deepseek-v3-0324",
+      "name": "DeepSeek-V3-0324",
+      "provider": "deepseek-ai",
+      "aliases": ["deepseek-ai/DeepSeek-V3-0324", "DeepSeek V3 (March 24)"],
+      "facets": {"family": "DeepSeek-V3", "size": "MoE-671B", "stage": "instruct", "date": "2025-03-24"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "mistralai/mixtral-8x7b-instruct-v0.1",
+      "name": "Mixtral-8x7B-Instruct-v0.1",
+      "provider": "mistralai",
+      "aliases": ["mistralai/Mixtral-8x7B-Instruct-v0.1", "Mixtral 8x7B Instruct"],
+      "facets": {"family": "Mixtral", "size": "MoE-8x7B", "stage": "instruct"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "meta-llama/llama-3.1-70b-instruct",
+      "name": "Llama-3.1-70B-Instruct",
+      "provider": "meta-llama",
+      "aliases": ["meta-llama/Llama-3.1-70B-Instruct", "LLama-3.1-70B-Instruct", "Llama 3.1 70B Instruct"],
+      "facets": {"family": "Llama-3.1", "size": "70B", "stage": "instruct"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "meta-llama/meta-llama-3-70b-instruct",
+      "name": "Llama-3-70B-Instruct",
+      "provider": "meta-llama",
+      "aliases": ["meta-llama/Meta-Llama-3-70B-Instruct", "Llama3-70B-Instruct", "Llama 3 70B Instruct"],
+      "facets": {"family": "Llama-3", "size": "70B", "stage": "instruct"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "meta-llama/llama-3.1-405b-instruct",
+      "name": "Llama-3.1-405B-Instruct",
+      "provider": "meta-llama",
+      "aliases": ["meta-llama/Llama-3.1-405B-Instruct", "Llama 3.1 405B Instruct"],
+      "facets": {"family": "Llama-3.1", "size": "405B", "stage": "instruct"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwq-32b",
+      "name": "QwQ-32B",
+      "provider": "qwen",
+      "aliases": ["Qwen/QwQ-32B"],
+      "facets": {"family": "QwQ", "size": "32B", "stage": "rl", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "deepseek-ai/deepseek-r1",
+      "name": "DeepSeek-R1",
+      "provider": "deepseek-ai",
+      "aliases": ["deepseek-ai/DeepSeek-R1", "DeepSeek R1", "R1"],
+      "facets": {"family": "DeepSeek-R1", "size": "MoE-671B", "stage": "rl"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen2.5-32b-instruct",
+      "name": "Qwen2.5-32B-Instruct",
+      "provider": "qwen",
+      "aliases": ["Qwen/Qwen2.5-32B-Instruct"],
+      "facets": {"family": "Qwen2.5", "size": "32B", "stage": "instruct"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen2.5-32b",
+      "name": "Qwen2.5-32B",
+      "provider": "qwen",
+      "aliases": ["Qwen/Qwen2.5-32B"],
+      "facets": {"family": "Qwen2.5", "size": "32B", "stage": "base"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "allenai/olmo-2-1124-7b",
+      "name": "OLMo 2 7B",
+      "provider": "allenai",
+      "aliases": ["allenai/OLMo-2-1124-7B", "OLMo-2-7B", "OLMo 2"],
+      "facets": {"family": "OLMo-2", "size": "7B", "stage": "base", "date": "2024-11-24"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen2.5-7b",
+      "name": "Qwen2.5-7B",
+      "provider": "qwen",
+      "aliases": ["Qwen/Qwen2.5-7B", "Qwen2.5"],
+      "facets": {"family": "Qwen2.5", "size": "7B", "stage": "base"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacefw/fineweb-edu",
+      "name": "FineWeb-Edu",
+      "provider": "huggingfacefw",
+      "aliases": ["HuggingFaceFW/fineweb-edu", "FineWeb-Edu"],
+      "facets": {"family": "FineWeb", "stage": "pretraining", "source": "web"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "mlfoundations/dclm-baseline-1.0",
+      "name": "DCLM Baseline 1.0",
+      "provider": "mlfoundations",
+      "aliases": ["mlfoundations/dclm-baseline-1.0", "DCLM"],
+      "facets": {"stage": "pretraining", "source": "web"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacefw/fineweb-2",
+      "name": "FineWeb-2",
+      "provider": "huggingfacefw",
+      "aliases": ["HuggingFaceFW/fineweb-2", "FineWeb2"],
+      "facets": {"family": "FineWeb", "stage": "pretraining", "source": "web"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "epfml/fineweb2-hq",
+      "name": "FineWeb2-HQ",
+      "provider": "epfml",
+      "aliases": ["epfml/FineWeb2-HQ", "FineWeb2-HQ"],
+      "facets": {"family": "FineWeb", "stage": "pretraining", "source": "web"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacetb/finemath",
+      "name": "FineMath",
+      "provider": "huggingfacetb",
+      "aliases": ["HuggingFaceTB/finemath", "FineMath3+", "FineMath4+", "InfiMM-WebMath-3+", "InfiMM-WebMath-4+", "InfiWebMath3+", "InfiWebMath4+"],
+      "facets": {"family": "FineMath", "stage": "pretraining", "source": "web"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "bigcode/the-stack-v2",
+      "name": "The Stack v2",
+      "provider": "bigcode",
+      "aliases": ["bigcode/the-stack-v2", "Stack v2", "StarCoder2Data"],
+      "facets": {"stage": "pretraining", "source": "code"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacetb/issues-kaggle-notebooks",
+      "name": "Issues-Kaggle-Notebooks",
+      "provider": "huggingfacetb",
+      "aliases": ["HuggingFaceTB/issues-kaggle-notebooks", "Jupyter and Kaggle notebooks, GitHub issues"],
+      "facets": {"stage": "pretraining", "source": "code"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacetb/stackexchange_2025_md",
+      "name": "StackExchange 2025 MD",
+      "provider": "huggingfacetb",
+      "aliases": ["HuggingFaceTB/stackexchange_2025_md", "StackExchange"],
+      "facets": {"stage": "pretraining", "source": "web"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "llm360/megamath",
+      "name": "MegaMath",
+      "provider": "llm360",
+      "aliases": ["LLM360/MegaMath"],
+      "facets": {"stage": "pretraining", "source": "mixed"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacetb/stack-edu",
+      "name": "Stack-Edu",
+      "provider": "huggingfacetb",
+      "aliases": ["HuggingFaceTB/stack-edu"],
+      "facets": {"stage": "pretraining", "source": "code"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacetb/smollm-corpus",
+      "name": "SmolLM-Corpus",
+      "provider": "huggingfacetb",
+      "aliases": ["HuggingFaceTB/smollm-corpus", "Cosmopedia v2", "FineWeb-Edu-Dedup", "Python-Edu"],
+      "facets": {"stage": "pretraining", "source": "mixed"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolmino-mix-1124",
+      "name": "Dolmino Mix 1124",
+      "provider": "allenai",
+      "aliases": ["allenai/dolmino-mix-1124", "Dolmino"],
+      "facets": {"stage": "pretraining", "source": "mixed", "date": "2024-11-24"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/openmathreasoning",
+      "name": "OpenMathReasoning",
+      "provider": "nvidia",
+      "aliases": ["nvidia/OpenMathReasoning"],
+      "facets": {"stage": "pretraining", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/opencodereasoning",
+      "name": "OpenCodeReasoning",
+      "provider": "nvidia",
+      "aliases": ["nvidia/OpenCodeReasoning"],
+      "facets": {"stage": "pretraining", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "facebook/natural_reasoning",
+      "name": "Natural Reasoning",
+      "provider": "facebook",
+      "aliases": ["facebook/natural_reasoning"],
+      "facets": {"stage": "pretraining", "source": "mixed"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "infi-mm/infimm-webmath-40b",
+      "name": "InfiMM-WebMath-40B",
+      "provider": "infi-mm",
+      "aliases": ["Infi-MM/InfiMM-WebMath-40B", "InfiMM-WebMath", "InfiWebMath"],
+      "facets": {"stage": "pretraining", "source": "web"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "open-thoughts/openthoughts3-1.2m",
+      "name": "OpenThoughts3-1.2M",
+      "provider": "open-thoughts",
+      "aliases": ["open-thoughts/OpenThoughts3-1.2M", "OpenThoughts3"],
+      "facets": {"stage": "midtraining", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/llama-nemotron-post-training-dataset",
+      "name": "Llama-Nemotron-Post-Training-Dataset",
+      "provider": "nvidia",
+      "aliases": ["nvidia/Llama-Nemotron-Post-Training-Dataset", "Llama-Nemotron-Post-Training-Dataset-v1.1"],
+      "facets": {"stage": "midtraining", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacetb/smoltalk2",
+      "name": "SmolTalk2",
+      "provider": "huggingfacetb",
+      "aliases": ["HuggingFaceTB/smoltalk2"],
+      "facets": {"family": "SmolTalk", "stage": "sft-mix", "source": "mixed"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacetb/smoltalk",
+      "name": "SmolTalk",
+      "provider": "huggingfacetb",
+      "aliases": ["HuggingFaceTB/smoltalk", "Smol-Magpie-Ultra", "Smol-Constraints", "Smol-Rewrite", "Smol-Summarize"],
+      "facets": {"family": "SmolTalk", "stage": "sft-mix", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/llama-3.1-tulu-3-8b-preference-mixture",
+      "name": "Llama-3.1-Tulu-3-8B Preference Mixture",
+      "provider": "allenai",
+      "aliases": ["allenai/llama-3.1-tulu-3-8b-preference-mixture", "Tulu 3 8B Preference Mixture", "Tulu3 preference dataset"],
+      "facets": {"family": "Tulu-3", "stage": "dpo-pref", "source": "mixed"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/tulu-3-sft-personas-instruction-following",
+      "name": "Tulu 3 SFT Personas Instruction-Following",
+      "provider": "allenai",
+      "aliases": ["allenai/tulu-3-sft-personas-instruction-following", "Tulu 3 Personas IF"],
+      "facets": {"family": "Tulu-3", "stage": "sft-mix", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "cohereforai/aya_dataset",
+      "name": "Aya Dataset",
+      "provider": "cohereforai",
+      "aliases": ["CohereForAI/aya_dataset", "Aya"],
+      "facets": {"stage": "sft-mix", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "simplescaling/s1k-1.1",
+      "name": "s1K-1.1",
+      "provider": "simplescaling",
+      "aliases": ["simplescaling/s1K-1.1", "s1k-1.1"],
+      "facets": {"stage": "sft-mix", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "teknium/openhermes-2.5",
+      "name": "OpenHermes-2.5",
+      "provider": "teknium",
+      "aliases": ["teknium/OpenHermes-2.5", "OpenHermes2.5"],
+      "facets": {"stage": "sft-mix", "source": "mixed"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nousresearch/hermes-function-calling-v1",
+      "name": "Hermes Function-Calling v1",
+      "provider": "nousresearch",
+      "aliases": ["NousResearch/hermes-function-calling-v1"],
+      "facets": {"stage": "sft-mix", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "open-r1/mixture-of-thoughts",
+      "name": "Mixture-of-Thoughts",
+      "provider": "open-r1",
+      "aliases": ["open-r1/Mixture-of-Thoughts"],
+      "facets": {"stage": "sft-mix", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "thudm/longalign-10k",
+      "name": "LongAlign-10k",
+      "provider": "thudm",
+      "aliases": ["THUDM/LongAlign-10k", "LongAlign", "LongAlign-64k-context-lang-annotated"],
+      "facets": {"stage": "sft-mix", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "rowan/hellaswag",
+      "name": "HellaSwag",
+      "provider": "rowan",
+      "aliases": ["Rowan/hellaswag", "HellaSwag", "MLMM HellaSwag (multilingual)"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/ai2_arc",
+      "name": "ARC (AI2 Reasoning Challenge)",
+      "provider": "allenai",
+      "aliases": ["allenai/ai2_arc", "ARC", "ARC-CF", "ARC-Challenge"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/winogrande",
+      "name": "Winogrande",
+      "provider": "allenai",
+      "aliases": ["allenai/winogrande", "Winogrande"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "tau/commonsense_qa",
+      "name": "CommonsenseQA",
+      "provider": "tau",
+      "aliases": ["tau/commonsense_qa", "CommonsenseQA", "CSQA"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "cais/mmlu",
+      "name": "MMLU",
+      "provider": "cais",
+      "aliases": ["cais/mmlu", "MMLU", "MMLU-CF"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "tiger-lab/mmlu-pro",
+      "name": "MMLU-Pro",
+      "provider": "tiger-lab",
+      "aliases": ["TIGER-Lab/MMLU-Pro", "MMLU Pro CF"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "ybisk/piqa",
+      "name": "PIQA",
+      "provider": "ybisk",
+      "aliases": ["ybisk/piqa", "PIQA"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/openbookqa",
+      "name": "OpenBookQA",
+      "provider": "allenai",
+      "aliases": ["allenai/openbookqa", "OpenBookQA"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "openai/gsm8k",
+      "name": "GSM8K",
+      "provider": "openai",
+      "aliases": ["openai/gsm8k", "gsm8k", "GSM8k"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "hendrycks/math",
+      "name": "MATH",
+      "provider": "hendrycks",
+      "aliases": ["hendrycks/competition_math", "MATH benchmark"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "evalplus/humanevalplus",
+      "name": "HumanEval+",
+      "provider": "evalplus",
+      "aliases": ["evalplus/humanevalplus", "HumanEval+"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "evalplus/mbppplus",
+      "name": "MBPP+",
+      "provider": "evalplus",
+      "aliases": ["evalplus/mbppplus", "MBPP+"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "opencompass/aime2025",
+      "name": "AIME 2025",
+      "provider": "opencompass",
+      "aliases": ["opencompass/AIME2025", "AIME 2025", "AIME"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "idavidrein/gpqa",
+      "name": "GPQA",
+      "provider": "idavidrein",
+      "aliases": ["Idavidrein/gpqa", "GPQA Diamond"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "livecodebench/code_generation_lite",
+      "name": "LiveCodeBench",
+      "provider": "livecodebench",
+      "aliases": ["livecodebench/code_generation_lite", "LiveCodeBench v4"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "facebook/flores",
+      "name": "Flores-200",
+      "provider": "facebook",
+      "aliases": ["facebook/flores", "Flores-200"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "facebook/belebele",
+      "name": "Belebele",
+      "provider": "facebook",
+      "aliases": ["facebook/belebele", "Belebele"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "cohereforai/global-mmlu",
+      "name": "Global MMLU",
+      "provider": "cohereforai",
+      "aliases": ["CohereForAI/Global-MMLU"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "princeton-nlp/ruler",
+      "name": "RULER",
+      "provider": "princeton-nlp",
+      "aliases": ["princeton-nlp/RULER", "Ruler 64k", "Ruler"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "princeton-nlp/helmet",
+      "name": "HELMET",
+      "provider": "princeton-nlp",
+      "aliases": ["princeton-nlp/HELMET"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "google/ifeval",
+      "name": "IFEval",
+      "provider": "google",
+      "aliases": ["google/IFEval", "IFEval"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "mixeval/mixeval",
+      "name": "MixEval",
+      "provider": "mixeval",
+      "aliases": ["MixEval Hard"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "gorilla-llm/berkeley-function-calling-leaderboard",
+      "name": "Berkeley Function-Calling Leaderboard (BFCL)",
+      "provider": "gorilla-llm",
+      "aliases": ["gorilla-llm/Berkeley-Function-Calling-Leaderboard", "BFCL"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "qintongli/gsm-plus",
+      "name": "GSM-Plus",
+      "provider": "qintongli",
+      "aliases": ["qintongli/GSM-Plus", "GSM-Plus"],
+      "facets": {"stage": "evaluation"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "google/boolq",
+      "name": "BoolQ",
+      "provider": "google",
+      "aliases": ["google/boolq", "BoolQ"],
+      "facets": {"stage": "evaluation"}
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "e_pre_fineweb_edu",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "huggingfacefw/fineweb-edu",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Pretraining (Stages 1 and 2) — FineWeb-Edu was used as part of the 85% web mix (12% multilingual) in the staged 11.2T-token curriculum.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Pretraining section, three-stage data mix bullet",
+          "excerpt": "Web: 85% (12% multilingual) - FineWeb-Edu, DCLM, FineWeb2 and FineWeb2-HQ",
+          "explanation": "Names FineWeb-Edu among the four web sources composing 85% of the pretraining mix."
+        },
+        {
+          "source": "https://huggingface.co/collections/HuggingFaceTB/smollm3-pretraining-datasets-685a7353fdc01aecde51b1d9",
+          "location": "Pretraining datasets collection",
+          "excerpt": "HuggingFaceFW/fineweb-edu",
+          "explanation": "Authoritative SmolLM3 pretraining dataset collection lists FineWeb-Edu by HF repo path."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_pre_dclm",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "mlfoundations/dclm-baseline-1.0",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Pretraining web component — DCLM-baseline-1.0 was one of four web datasets composing the 85% web slice across Stages 1 and 2.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Pretraining section, three-stage data mix bullet",
+          "excerpt": "Web: 85% (12% multilingual) - FineWeb-Edu, DCLM, FineWeb2 and FineWeb2-HQ",
+          "explanation": "Lists DCLM as a constituent web source of the pretraining mix."
+        },
+        {
+          "source": "https://huggingface.co/collections/HuggingFaceTB/smollm3-pretraining-datasets-685a7353fdc01aecde51b1d9",
+          "location": "Pretraining datasets collection",
+          "excerpt": "mlfoundations/dclm-baseline-1.0",
+          "explanation": "Resolves DCLM to its authoritative HF release."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_pre_fineweb_2",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "huggingfacefw/fineweb-2",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Pretraining multilingual web component — FineWeb2 contributed to the 12% multilingual portion of the 85% web slice.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Pretraining section, three-stage data mix bullet",
+          "excerpt": "Web: 85% (12% multilingual) - FineWeb-Edu, DCLM, FineWeb2 and FineWeb2-HQ",
+          "explanation": "Names FineWeb2 among the four web sources of the pretraining mix."
+        },
+        {
+          "source": "https://huggingface.co/collections/HuggingFaceTB/smollm3-pretraining-datasets-685a7353fdc01aecde51b1d9",
+          "location": "Pretraining datasets collection",
+          "excerpt": "HuggingFaceFW/fineweb-2",
+          "explanation": "Resolves FineWeb2 to its authoritative HF release."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_pre_fineweb2_hq",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "epfml/fineweb2-hq",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Pretraining high-quality multilingual web component contributing to the 12% multilingual portion.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Pretraining section, three-stage data mix bullet",
+          "excerpt": "Web: 85% (12% multilingual) - FineWeb-Edu, DCLM, FineWeb2 and FineWeb2-HQ",
+          "explanation": "Lists FineWeb2-HQ as a web source."
+        },
+        {
+          "source": "https://huggingface.co/collections/HuggingFaceTB/smollm3-pretraining-datasets-685a7353fdc01aecde51b1d9",
+          "location": "Pretraining datasets collection",
+          "excerpt": "epfml/FineWeb2-HQ",
+          "explanation": "Resolves FineWeb2-HQ to its authoritative EPFL HF release."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_pre_finemath",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "huggingfacetb/finemath",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Math pretraining — Stage 1 used FineMath3+ (3% math slice) and Stage 2 used FineMath4+ (within 10% math slice). Both are released under HuggingFaceTB/finemath which also hosts the InfiMM-WebMath-3+/4+ filtered subsets.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Pretraining section, three-stage data mix bullet",
+          "excerpt": "Math: 3% - FineMath3+ and InfiWebMath3+ ... Math: 10% - Introducing FineMath4+, InfiWebMath4+, and MegaMath",
+          "explanation": "Names FineMath3+ and FineMath4+ as math pretraining sources."
+        },
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/finemath",
+          "location": "Dataset card overview",
+          "excerpt": "FineMath consists of 34B tokens (FineMath-3+) and 54B tokens (FineMath-3+ with InfiMM-WebMath-3+) of mathematical educational content filtered from CommonCrawl",
+          "explanation": "Confirms FineMath3+/4+ and InfiWebMath3+/4+ are released under the HuggingFaceTB/finemath repository."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_pre_stack_v2",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "bigcode/the-stack-v2",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Pretraining code component — The Stack v2 (16 programming languages), StarCoder2 pull requests, and adjacent code corpora supplied the 12% code slice in Stage 1.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Pretraining section, three-stage data mix bullet",
+          "excerpt": "Code: 12% - The Stack v2 (16 programming languages), StarCoder2 pull requests, Jupyter and Kaggle notebooks, GitHub issues, and StackExchange",
+          "explanation": "Names The Stack v2 as the primary code pretraining source."
+        },
+        {
+          "source": "https://huggingface.co/collections/HuggingFaceTB/smollm3-pretraining-datasets-685a7353fdc01aecde51b1d9",
+          "location": "Pretraining datasets collection",
+          "excerpt": "bigcode/the-stack-v2",
+          "explanation": "Resolves The Stack v2 to its BigCode HF release."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_pre_issues_kaggle",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "huggingfacetb/issues-kaggle-notebooks",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Pretraining code component supplying GitHub issues, Jupyter and Kaggle notebooks for the code slice.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Pretraining section, three-stage data mix bullet",
+          "excerpt": "Jupyter and Kaggle notebooks, GitHub issues, and StackExchange",
+          "explanation": "Names the Jupyter/Kaggle/issues components of the code mix."
+        },
+        {
+          "source": "https://huggingface.co/collections/HuggingFaceTB/smollm3-pretraining-datasets-685a7353fdc01aecde51b1d9",
+          "location": "Pretraining datasets collection",
+          "excerpt": "HuggingFaceTB/issues-kaggle-notebooks",
+          "explanation": "Resolves the issues+kaggle+notebooks slice to its authoritative HF release."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_pre_stackexchange",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "huggingfacetb/stackexchange_2025_md",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Pretraining StackExchange Q&A component, published as the 2025 markdown processed corpus.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Pretraining section, three-stage data mix bullet",
+          "excerpt": "Jupyter and Kaggle notebooks, GitHub issues, and StackExchange",
+          "explanation": "Names StackExchange as a pretraining code/Q&A source."
+        },
+        {
+          "source": "https://huggingface.co/collections/HuggingFaceTB/smollm3-pretraining-datasets-685a7353fdc01aecde51b1d9",
+          "location": "Pretraining datasets collection",
+          "excerpt": "HuggingFaceTB/stackexchange_2025_md",
+          "explanation": "Resolves StackExchange to its authoritative HuggingFaceTB markdown release."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_pre_megamath",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "llm360/megamath",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Stage 2 math pretraining — MegaMath was added in the Stage 2 (8T → 10T) math slice along with FineMath4+ and InfiWebMath4+; SmolLM3 used Qwen Q&A, Pro synthetic rewrites, and text-code interleaved blocks subsets.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Pretraining section, Stage 2 description",
+          "excerpt": "Math: 10% - Introducing FineMath4+, InfiWebMath4+, and MegaMath (including Qwen Q&A, Pro synthetic rewrites, and text-code interleaved blocks)",
+          "explanation": "Names MegaMath as the new Stage-2 math source and identifies the specific subsets used."
+        },
+        {
+          "source": "https://huggingface.co/collections/HuggingFaceTB/smollm3-pretraining-datasets-685a7353fdc01aecde51b1d9",
+          "location": "Pretraining datasets collection",
+          "excerpt": "LLM360/MegaMath",
+          "explanation": "Resolves MegaMath to its authoritative LLM360 release."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_pre_stack_edu",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "huggingfacetb/stack-edu",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Stage 2 code pretraining — Stack-Edu (125B-token educational-code subset of The Stack v2) was added when the code slice rose from 12% to 15%.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Pretraining section, Stage 2 description",
+          "excerpt": "Code: 15% - Adding Stack-Edu",
+          "explanation": "Names Stack-Edu as the Stage-2 code addition."
+        },
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/stack-edu",
+          "location": "Dataset card overview",
+          "excerpt": "Stack-Edu is a 125B token dataset of educational code filtered from The Stack v2",
+          "explanation": "Confirms the Stack-Edu identity and source."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_pre_smollm_corpus",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "huggingfacetb/smollm-corpus",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Pretraining synthetic / educational corpus — smollm-corpus bundles Cosmopedia v2 (synthetic textbooks generated by Mixtral-8x7B-Instruct-v0.1), FineWeb-Edu-Dedup, and Python-Edu, used as part of the SmolLM3 pretraining mix.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/collections/HuggingFaceTB/smollm3-pretraining-datasets-685a7353fdc01aecde51b1d9",
+          "location": "Pretraining datasets collection (Stage 2 entry)",
+          "excerpt": "HuggingFaceTB/smollm-corpus",
+          "explanation": "Lists smollm-corpus among the SmolLM3 pretraining datasets."
+        },
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smollm-corpus",
+          "location": "Dataset card, Cosmopedia v2 section",
+          "excerpt": "Cosmopedia v2 is an enhanced version of Cosmopedia, the largest synthetic dataset for pre-training, consisting of over 39 million textbooks, blog posts, and stories generated by Mixtral-8x7B-Instruct-v0.1",
+          "explanation": "Confirms Cosmopedia v2's generator (used to derive the generated_by edge to Mixtral)."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_pre_dolmino",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "allenai/dolmino-mix-1124",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Pretraining mix component — Dolmino Mix 1124 (AllenAI's curated mix used in OLMo 2) was part of the SmolLM3 pretraining datasets collection.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/collections/HuggingFaceTB/smollm3-pretraining-datasets-685a7353fdc01aecde51b1d9",
+          "location": "Pretraining datasets collection",
+          "excerpt": "allenai/dolmino-mix-1124",
+          "explanation": "Authoritative SmolLM3 pretraining dataset collection lists Dolmino Mix 1124."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_pre_openmathreasoning",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "nvidia/openmathreasoning",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Stage 3 reasoning/instruction pretraining — NVIDIA's OpenMathReasoning was introduced as part of the Stage 3 decay-mix reasoning data.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Pretraining section, Stage 3 description",
+          "excerpt": "introducing instruction and reasoning datasets such as OpenMathReasoning",
+          "explanation": "Names OpenMathReasoning as a Stage-3 reasoning data source."
+        },
+        {
+          "source": "https://huggingface.co/collections/HuggingFaceTB/smollm3-pretraining-datasets-685a7353fdc01aecde51b1d9",
+          "location": "Pretraining datasets collection",
+          "excerpt": "nvidia/OpenMathReasoning",
+          "explanation": "Resolves OpenMathReasoning to its authoritative NVIDIA HF release."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_pre_opencodereasoning",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "nvidia/opencodereasoning",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Stage-2/3 reasoning pretraining — NVIDIA's OpenCodeReasoning (R1-generated competitive-programming traces) appears in the SmolLM3 pretraining datasets collection.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/collections/HuggingFaceTB/smollm3-pretraining-datasets-685a7353fdc01aecde51b1d9",
+          "location": "Pretraining datasets collection",
+          "excerpt": "nvidia/OpenCodeReasoning",
+          "explanation": "SmolLM3 pretraining collection lists OpenCodeReasoning as a constituent dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_pre_natural_reasoning",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "facebook/natural_reasoning",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Stage 3 (decay) reasoning pretraining — Meta's Natural Reasoning dataset entered the Stage-3 decay mix.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/collections/HuggingFaceTB/smollm3-pretraining-datasets-685a7353fdc01aecde51b1d9",
+          "location": "Pretraining datasets collection (Stage 3)",
+          "excerpt": "facebook/natural_reasoning",
+          "explanation": "SmolLM3 pretraining collection lists Natural Reasoning under Stage 3 (decay)."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_pre_infimm_webmath",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "infi-mm/infimm-webmath-40b",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Math pretraining substrate — InfiWebMath3+ (Stage 1) and InfiWebMath4+ (Stage 2) are filtered subsets of InfiMM-WebMath-40B (released by HuggingFaceTB under the FineMath repo using the FineMath classifier).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Pretraining section, Stages 1 and 2 math bullets",
+          "excerpt": "Math: 3% - FineMath3+ and InfiWebMath3+ ... Math: 10% - Introducing FineMath4+, InfiWebMath4+, and MegaMath",
+          "explanation": "Names InfiWebMath3+ and InfiWebMath4+ as math pretraining sources."
+        },
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/finemath",
+          "location": "Dataset card, InfiWebMath section",
+          "excerpt": "We also release a filtered English text-only portion of the InfiMM-WebMath-40B dataset, classified using the same approach as FineMath",
+          "explanation": "Identifies InfiMM-WebMath-40B as the source corpus that was filtered to produce the InfiWebMath3+/4+ subsets."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_mid_openthoughts3",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "open-thoughts/openthoughts3-1.2m",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Mid-training reasoning data — OpenThoughts3-1.2M contributed to the 35B-token mid-training reasoning mix and also reappeared as both think and no_think SFT subsets in SmolTalk2.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Mid-training section",
+          "excerpt": "Our mid-training dataset contained 35B tokens sourced from Open Thought's OpenThoughts3-1.2M",
+          "explanation": "Names OpenThoughts3-1.2M as a primary mid-training reasoning source."
+        },
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "Mid-Training Datasets section",
+          "excerpt": "OpenThoughts3-1.2M: 1.14M rows",
+          "explanation": "SmolTalk2's mid-training subset confirms inclusion of OpenThoughts3-1.2M."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_mid_nemotron",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "nvidia/llama-nemotron-post-training-dataset",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Mid-training reasoning data — SmolLM3 used a subset of NVIDIA's Llama-Nemotron-Post-Training-Dataset-v1.1, specifically the rows containing R1-generated reasoning traces.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Mid-training section",
+          "excerpt": "and a subset from NVIDIA's Llama-Nemotron-Post-Training-Dataset-v1.1 with reasoning traces from R1",
+          "explanation": "Confirms the dataset and the specific R1-traces subset used."
+        },
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "Mid-Training Datasets section",
+          "excerpt": "Llama-Nemotron-Post-Training-Dataset: 3.64M rows",
+          "explanation": "SmolTalk2 mid-training subset confirms the row count used by SmolLM3."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_post_smoltalk2",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "huggingfacetb/smoltalk2",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Aggregator — SmolTalk2 is HuggingFaceTB's released bundle of all SmolLM3 mid-training, SFT (think + no_think), and preference subsets used in SmolLM3 post-training (~1.8B tokens SFT + APO preferences).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Comments / Resources",
+          "excerpt": "We released all the datasets we used for training in [SmolTalk2]",
+          "explanation": "SmolLM3 team confirms SmolTalk2 contains the post-training data used."
+        },
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "Dataset card overview",
+          "excerpt": "Mid, SFT and Preference subsets",
+          "explanation": "Defines SmolTalk2 as the aggregator of mid-training, SFT, and preference data for SmolLM3."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_post_smoltalk",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "huggingfacetb/smoltalk",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Post-training SFT source — original SmolTalk (with subsets including Smol-Magpie-Ultra, Smol-Constraints, Smol-Rewrite, Smol-Summarize, everyday-conversations, systemchats-30k) was used directly as no_think SFT data and as the prompt source for new Qwen3-32B-generated reasoning subsets in SmolTalk2.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "SFT Datasets sections (think and no_think)",
+          "excerpt": "244736 rows generated with Qwen3-32B with the prompts in SmolTalk ... SmolTalk (smollm3_smol-magpie-ultra): 406843 rows ... SmolTalk (smollm3_smol-rewrite): 53262 rows",
+          "explanation": "SmolTalk subsets are reused directly and as prompt sources for SmolTalk2's reasoning data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_post_tulu3_pref",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "allenai/llama-3.1-tulu-3-8b-preference-mixture",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Preference (APO) post-training data — AllenAI's Tulu 3 8B Preference Mixture supplied the no_think preference pairs and (with Qwen3-32B/Qwen3-0.6B regenerating responses) the think preference pairs.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Off-policy model alignment / APO section",
+          "excerpt": "a combination of the Tulu3 preference dataset for non-reasoning mode and new synthetic preference pairs for reasoning mode, that we generated from Qwen3-32B and Qwen3-0.6B",
+          "explanation": "Names the Tulu3 preference dataset as the no_think preference source."
+        },
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "Preference/DPO Datasets section",
+          "excerpt": "Tulu 3 8B Preference Mixture (no_think): 231k rows ... Tulu 3 8B Preference Mixture (think): 216k rows where we generate the chosen responses with Qwen3-32B and the rejected responses with Qwen3-0.6B",
+          "explanation": "Confirms both think and no_think preference subsets are derived from the Tulu 3 8B mixture."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_post_tulu3_personas",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "allenai/tulu-3-sft-personas-instruction-following",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Post-training SFT source — Tulu 3 SFT Personas IF was used directly (29,970 no_think rows) and as the prompt source for the new Multi-Turn IF subset (28,217 rows; turns generated with Qwen3-235B-A22B, responses with Qwen3-32B).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "SFT Datasets (think + no_think) — Multi-Turn IF and Tulu 3 entries",
+          "excerpt": "Tulu 3 SFT Personas IF: 29970 rows ... [NEW] Multi-Turn IF: 28217 rows ... We source prompts from Tulu 3 Personas IF, generate 2 verifiable turns using Qwen3-235B-A22B, and generate responses with Qwen3-32B in reasoning mode",
+          "explanation": "Confirms both direct use and use as a prompt source for synthesized data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_post_aya",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "cohereforai/aya_dataset",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Post-training SFT source — Cohere's Aya dataset prompts were used to generate 15,222 reasoning-mode SFT rows via Qwen3-32B for SmolTalk2.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "SFT think Datasets — Aya entry",
+          "excerpt": "Aya: 15222 rows generated with Qwen3-32B with the prompts in Aya",
+          "explanation": "Names Aya as the prompt source for a SmolTalk2 reasoning subset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_post_s1k",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "simplescaling/s1k-1.1",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Post-training reasoning SFT source — s1K-1.1 (835 rows) was included directly in the SmolTalk2 reasoning SFT mix.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "SFT think Datasets — s1k-1.1 entry",
+          "excerpt": "s1k-1.1: 835 rows",
+          "explanation": "Lists s1K-1.1 among think-mode SFT sources."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_post_openhermes",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "teknium/openhermes-2.5",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Post-training no_think SFT source — OpenHermes-2.5 contributed 384,900 no_think rows to SmolTalk2.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "SFT no_think Datasets — OpenHermes-2.5 entry",
+          "excerpt": "OpenHermes-2.5: 384900 rows",
+          "explanation": "Names OpenHermes-2.5 in the no_think SFT mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_post_hermes_fc",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "nousresearch/hermes-function-calling-v1",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Post-training no_think SFT source — Hermes function-calling v1 contributed 8,961 rows to SmolTalk2 supporting tool-calling capabilities.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "SFT no_think Datasets — hermes-function-calling-v1 entry",
+          "excerpt": "hermes-function-calling-v1: 8961 rows",
+          "explanation": "Names Hermes function-calling v1 in the no_think SFT mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_post_mixture_thoughts",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "open-r1/mixture-of-thoughts",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Post-training no_think SFT source — Mixture of Thoughts (science split) contributed 86,110 rows to SmolTalk2 with reasoning traces removed.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "SFT no_think Datasets — Mixture of Thoughts entry",
+          "excerpt": "Mixture of Thoughts (science): 86110 rows where we remove the reasoning trace",
+          "explanation": "Names Mixture of Thoughts as a no_think SFT source."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_post_longalign",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "thudm/longalign-10k",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Long-context post-training SFT source — LongAlign was filtered to 64k-token samples, used directly (6,249 no_think rows) and as the prompt source for 7,526 Qwen3-32B-generated reasoning rows.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "SFT Datasets — LongAlign entries",
+          "excerpt": "LongAlign-64k-context-lang-annotated: 7526 rows generated with Qwen3-32B with the prompts in LongAlign-64k ... LongAlign-64k-context-lang-annotated (lang_6): 6249 examples. We filter LongAlign for samples up to 64k tokens",
+          "explanation": "Confirms LongAlign serves as both direct SFT source and prompt source for synthesized reasoning data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_gen_qwen3_32b",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "qwen/qwen3-32b",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Primary post-training data generator — Qwen3-32B (a) generated reasoning-mode SFT data for SmolTalk2 think subsets (SmolTalk multilingual/everyday/systemchats: 244,736 rows each; LongAlign: 7,526; Aya: 15,222; Table-GPT: 13,201; Multi-Turn IF responses), (b) generated chosen completions for the 216k Tulu-3 think preference pairs, and (c) translated Smol-Magpie-Ultra and Smol-Constraints prompts into 8 languages.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Post-training synthetic data section",
+          "excerpt": "we generated synthetic data by prompting Qwen3-32B in reasoning mode with prompts from existing non-reasoning datasets",
+          "explanation": "Names Qwen3-32B as the SFT reasoning data generator."
+        },
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "SFT think + Preference sections",
+          "excerpt": "generated with Qwen3-32B with the prompts in SmolTalk ... we generate the chosen responses with Qwen3-32B and the rejected responses with Qwen3-0.6B",
+          "explanation": "Documents Qwen3-32B's role for both reasoning SFT generation and preference-pair chosen completions."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_gen_qwen3_06b",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "qwen/qwen3-0.6b",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Preference rejected-response generator — Qwen3-0.6B was deliberately used to produce weaker rejected responses for the 216k Tulu-3 think preference pairs, paired against Qwen3-32B chosen responses for APO post-training.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Preference data construction subsection",
+          "excerpt": "We selected generations from Qwen3-32B as 'chosen' and responses from Qwen3-0.6B as 'rejected'",
+          "explanation": "Documents Qwen3-0.6B's role as the rejected-response generator in the preference mix."
+        },
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "Preference/DPO Datasets section",
+          "excerpt": "we generate the chosen responses with Qwen3-32B and the rejected responses with Qwen3-0.6B",
+          "explanation": "Cross-confirms the Qwen3-0.6B rejected-generator role."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_gen_qwen3_235b",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "qwen/qwen3-235b-a22b",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Generator of verifiable instruction-following turns — Qwen3-235B-A22B produced the two verifiable turns for the 28,217-row Multi-Turn IF SFT subset (responses then synthesized by Qwen3-32B in reasoning mode).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "SFT think Datasets — Multi-Turn IF entry",
+          "excerpt": "We source prompts from Tulu 3 Personas IF, generate 2 verifiable turns using Qwen3-235B-A22B, and generate responses with Qwen3-32B in reasoning mode",
+          "explanation": "Identifies Qwen3-235B-A22B as the generator of verifiable IF turns used in SmolLM3's SFT mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_gen_dsv3_0324",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "deepseek-ai/deepseek-v3-0324",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Generator of agentic tool-calling traces — DeepSeek-V3-0324 produced the 9,079-row smolagents-toolcalling-traces SFT subset in SmolTalk2.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "SFT think Datasets — smolagents-toolcalling-traces entry",
+          "excerpt": "[NEW] smolagents-toolcalling-traces: 9079 rows ... deepseek-ai/DeepSeek-V3-0324",
+          "explanation": "Identifies DeepSeek-V3-0324 as the generator of the tool-calling-traces subset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_gen_mixtral",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "mistralai/mixtral-8x7b-instruct-v0.1",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Pretraining synthetic-data generator (transitive via SmolLM-Corpus / Cosmopedia v2) — Mixtral-8x7B-Instruct-v0.1 generated the >39M synthetic textbooks, blog posts, and stories in Cosmopedia v2, which is a subset of the SmolLM-Corpus pretraining mix used in SmolLM3.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/collections/HuggingFaceTB/smollm3-pretraining-datasets-685a7353fdc01aecde51b1d9",
+          "location": "Pretraining datasets collection",
+          "excerpt": "HuggingFaceTB/smollm-corpus",
+          "explanation": "Confirms smollm-corpus is part of SmolLM3's pretraining."
+        },
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smollm-corpus",
+          "location": "Cosmopedia v2 subsection",
+          "excerpt": "Cosmopedia v2 is an enhanced version of Cosmopedia, the largest synthetic dataset for pre-training, consisting of over 39 million textbooks, blog posts, and stories generated by Mixtral-8x7B-Instruct-v0.1",
+          "explanation": "Names Mixtral-8x7B-Instruct-v0.1 as the generator of Cosmopedia v2 content used in SmolLM-Corpus."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_gen_llama31_405b",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "meta-llama/llama-3.1-405b-instruct",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Post-training SFT data generator (transitive via SmolTalk / Smol-Magpie-Ultra) — Llama-3.1-405B-Instruct generated the 400K Smol-Magpie-Ultra SFT rows via the Magpie pipeline; Smol-Magpie-Ultra is a SmolTalk subset reused as 406,843 no_think SFT rows in SmolTalk2.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+          "location": "SFT no_think Datasets — smol-magpie-ultra entry",
+          "excerpt": "SmolTalk (smollm3_smol-magpie-ultra): 406843 rows",
+          "explanation": "Confirms Smol-Magpie-Ultra (a SmolTalk subset) is included in SmolLM3's no_think SFT data."
+        },
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk",
+          "location": "Dataset card, Smol-Magpie-Ultra subsection",
+          "excerpt": "Smol-Magpie-Ultra: the core component of our mix, consisting of 400K samples generated using the Magpie pipeline with /Llama-3.1-405B-Instruct",
+          "explanation": "Identifies Llama-3.1-405B-Instruct as the generator behind Smol-Magpie-Ultra."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_gen_qwq_32b",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "qwen/qwq-32b",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Reasoning-trace generator (transitive via OpenThoughts3-1.2M and OpenMathReasoning) — QwQ-32B generated 16x annotations per question for OpenThoughts3-1.2M (used in mid-training and SFT) and produced part of the chain-of-thought solutions in NVIDIA's OpenMathReasoning (used in Stage 3 pretraining).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/open-thoughts/OpenThoughts3-1.2M",
+          "location": "Construction steps section",
+          "excerpt": "Annotate each question 16x with QwQ-32B, arriving at a 1.2M dataset",
+          "explanation": "Documents QwQ-32B as the OpenThoughts3 annotator."
+        },
+        {
+          "source": "https://huggingface.co/datasets/nvidia/OpenMathReasoning",
+          "location": "Dataset construction section",
+          "excerpt": "We used Qwen2.5-32B-Instruct to preprocess problems, and DeepSeek-R1 and QwQ-32B to generate solutions",
+          "explanation": "Documents QwQ-32B as one of two solution generators for OpenMathReasoning."
+        },
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Mid-training / Stage 3 sections",
+          "excerpt": "Our mid-training dataset contained 35B tokens sourced from Open Thought's OpenThoughts3-1.2M ... introducing instruction and reasoning datasets such as OpenMathReasoning",
+          "explanation": "Grounds back to SmolLM3's own documentation that both datasets are used."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_gen_dsr1",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "deepseek-ai/deepseek-r1",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Reasoning-trace generator (transitive via Llama-Nemotron R1 subset, OpenMathReasoning, and OpenCodeReasoning) — DeepSeek-R1 produced the R1-traces subset of the NVIDIA Llama-Nemotron mid-training data, the R1-generated solutions in OpenMathReasoning, and all output responses in OpenCodeReasoning.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Mid-training section",
+          "excerpt": "and a subset from NVIDIA's Llama-Nemotron-Post-Training-Dataset-v1.1 with reasoning traces from R1",
+          "explanation": "Direct subject-side citation that R1's reasoning traces fed SmolLM3's mid-training."
+        },
+        {
+          "source": "https://huggingface.co/datasets/nvidia/OpenMathReasoning",
+          "location": "Dataset construction section",
+          "excerpt": "DeepSeek-R1 and QwQ-32B to generate solutions",
+          "explanation": "Confirms R1's role in OpenMathReasoning, which SmolLM3 uses in Stage 3."
+        },
+        {
+          "source": "https://huggingface.co/datasets/nvidia/OpenCodeReasoning",
+          "location": "Data overview",
+          "excerpt": "The output responses are generated by R1",
+          "explanation": "Confirms R1 generated all OpenCodeReasoning outputs."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_xform_qwen25_32b_inst",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "qwen/qwen2.5-32b-instruct",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "Pretraining-data preprocessor (transitive via OpenMathReasoning) — Qwen2.5-32B-Instruct preprocessed/refined the AoPS forum problems whose reasoning solutions form OpenMathReasoning, which entered SmolLM3 Stage 3 pretraining.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/nvidia/OpenMathReasoning",
+          "location": "Source of prompts section",
+          "excerpt": "Problem statement extracted from AoPS forums and refined with Qwen2.5-32B-Instruct ... We used Qwen2.5-32B-Instruct to preprocess problems",
+          "explanation": "Identifies Qwen2.5-32B-Instruct as the AoPS-problem preprocessor for OpenMathReasoning."
+        },
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Pretraining Stage 3",
+          "excerpt": "introducing instruction and reasoning datasets such as OpenMathReasoning",
+          "explanation": "Grounds the chain back to SmolLM3's pretraining mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_filt_llama31_70b",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "meta-llama/llama-3.1-70b-instruct",
+      "relation_type": "filtered_by",
+      "dependency_kind": "direct",
+      "description": "Math-pretraining filter source (transitive via FineMath classifier) — Llama-3.1-70B-Instruct produced the synthetic annotations used to train the FineMath educational-content classifier; that classifier filtered CommonCrawl into FineMath3+/4+ and InfiWebMath3+/4+, which entered SmolLM3 Stage 1 and Stage 2 math pretraining.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/finemath",
+          "location": "Dataset construction section",
+          "excerpt": "we trained a mathematical content classifier using annotations generated by LLama-3.1-70B-Instruct",
+          "explanation": "Identifies Llama-3.1-70B-Instruct as the annotation source training the FineMath classifier."
+        },
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Pretraining math bullets",
+          "excerpt": "Math: 3% - FineMath3+ and InfiWebMath3+ ... Math: 10% - Introducing FineMath4+, InfiWebMath4+",
+          "explanation": "Grounds the chain back to SmolLM3's pretraining."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_filt_llama3_70b",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "meta-llama/meta-llama-3-70b-instruct",
+      "relation_type": "filtered_by",
+      "dependency_kind": "direct",
+      "description": "Code-pretraining filter source (transitive via Stack-Edu classifiers) — Llama3-70B-Instruct generated the synthetic annotations used to train the 15 language-specific StarEncoder-based classifiers that filtered The Stack v2 into the 125B-token Stack-Edu, used in SmolLM3 Stage 2 code pretraining.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/HuggingFaceTB/stack-edu",
+          "location": "Dataset construction section",
+          "excerpt": "Trained 15 language-specific classifiers, using StarEncoder model on synthetic annotations generated by Llama3-70B-Instruct",
+          "explanation": "Identifies Llama3-70B-Instruct as the source of annotations for the Stack-Edu classifiers."
+        },
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Pretraining Stage 2 code bullet",
+          "excerpt": "Code: 15% - Adding Stack-Edu",
+          "explanation": "Grounds the chain back to SmolLM3's Stage-2 code mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_insp_olmo2",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "allenai/olmo-2-1124-7b",
+      "relation_type": "inspired_by",
+      "dependency_kind": "indirect",
+      "description": "Methodology — SmolLM3 borrowed OLMo 2's recipe of removing weight decay from embedding layers to improve training stability; embedding norms naturally stabilized at healthier values in SmolLM3 ablations.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Architecture / training stability subsection",
+          "excerpt": "Following OLMo 2, we remove weight decay from embedding layers to improve training stability",
+          "explanation": "Explicitly cites OLMo 2 as the methodological precedent for embedding-layer weight-decay removal."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_insp_qwen25",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "qwen/qwen2.5-7b",
+      "relation_type": "inspired_by",
+      "dependency_kind": "indirect",
+      "description": "Methodology — SmolLM3 borrowed Qwen2.5's approach of using YARN to extrapolate context beyond the trained window (64k → 128k inference).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Long-context section",
+          "excerpt": "Following Qwen2.5, we use YARN to extrapolate beyond the training context length",
+          "explanation": "Explicitly cites Qwen2.5 as the methodological precedent for the YARN context-length extrapolation recipe."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_hellaswag",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "rowan/hellaswag",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Base-model commonsense reasoning evaluation; also evaluated multilingually via MLMM HellaSwag.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Base model evaluation section",
+          "excerpt": "HellaSwag, ARC, BoolQ",
+          "explanation": "Names HellaSwag in the base-model eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_arc",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "allenai/ai2_arc",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Base-model science/reasoning evaluation (reported as ARC and ARC-CF).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Base model evaluation section",
+          "excerpt": "HellaSwag, ARC, BoolQ",
+          "explanation": "Names ARC in the base-model eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_winogrande",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "allenai/winogrande",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Base-model commonsense reasoning evaluation.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Base model evaluation section",
+          "excerpt": "HellaSwag, ARC, Winogrande, CommonsenseQA",
+          "explanation": "Names Winogrande in the base-model eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_csqa",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "tau/commonsense_qa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Base-model commonsense Q&A evaluation.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Base model evaluation section",
+          "excerpt": "HellaSwag, ARC, Winogrande, CommonsenseQA",
+          "explanation": "Names CommonsenseQA in the base-model eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_mmlu",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "cais/mmlu",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Knowledge benchmark — reported as MMLU-CF (cloze-form) for the base model.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Base model evaluation section",
+          "excerpt": "MMLU-CF, MMLU Pro CF, PIQA",
+          "explanation": "Names MMLU in the base-model eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_mmlu_pro",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "tiger-lab/mmlu-pro",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Base-model knowledge evaluation (reported as MMLU Pro CF).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Base model evaluation section",
+          "excerpt": "MMLU-CF, MMLU Pro CF, PIQA",
+          "explanation": "Names MMLU-Pro in the base-model eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_piqa",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "ybisk/piqa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Base-model physical commonsense evaluation.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Base model evaluation section",
+          "excerpt": "MMLU Pro CF, PIQA, OpenBookQA",
+          "explanation": "Names PIQA in the base-model eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_openbookqa",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "allenai/openbookqa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Base-model science Q&A evaluation.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Base model evaluation section",
+          "excerpt": "PIQA, OpenBookQA, GSM8K",
+          "explanation": "Names OpenBookQA in the base-model eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_gsm8k",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "openai/gsm8k",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Grade-school math reasoning evaluation for both base and instruct variants.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Base model evaluation section",
+          "excerpt": "GSM8K, MATH, HumanEval+",
+          "explanation": "Names GSM8K in the base-model eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_math",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "hendrycks/math",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Competition-level math evaluation.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Base model evaluation section",
+          "excerpt": "GSM8K, MATH, HumanEval+",
+          "explanation": "Names MATH in the base-model eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_humanevalplus",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "evalplus/humanevalplus",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Code-generation evaluation (extended HumanEval).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Base model evaluation section",
+          "excerpt": "GSM8K, MATH, HumanEval+, MBPP+",
+          "explanation": "Names HumanEval+ in the base-model eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_mbppplus",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "evalplus/mbppplus",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Code-generation evaluation (extended MBPP).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Base model evaluation section",
+          "excerpt": "GSM8K, MATH, HumanEval+, MBPP+",
+          "explanation": "Names MBPP+ in the base-model eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_aime2025",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "opencompass/aime2025",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Competition math benchmark used for the instruct/reasoning model — SmolLM3 reports 36.7% with reasoning vs 9.3% without.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Extended-thinking evaluation section",
+          "excerpt": "notable gains in challenging tasks like AIME 2025 (36.7% vs 9.3%)",
+          "explanation": "Names AIME 2025 in the instruct/reasoning eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_gpqa",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "idavidrein/gpqa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Graduate-level reasoning evaluation (Diamond split) for the instruct model.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Extended-thinking evaluation section",
+          "excerpt": "graduate-level reasoning on GPQA Diamond (41.7% vs 35.7%)",
+          "explanation": "Names GPQA Diamond in the instruct/reasoning eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_livecodebench",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "livecodebench/code_generation_lite",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Competitive-programming evaluation (LiveCodeBench v4) for the instruct model.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Extended-thinking evaluation section",
+          "excerpt": "competitive programming on LiveCodeBench (30.0% vs 15.2%)",
+          "explanation": "Names LiveCodeBench in the instruct/reasoning eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_flores",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "facebook/flores",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Multilingual translation benchmark.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Multilingual evaluation section",
+          "excerpt": "MLMM HellaSwag, Flores-200, Belebele",
+          "explanation": "Names Flores-200 in the multilingual eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_belebele",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "facebook/belebele",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Multilingual reading comprehension benchmark.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Multilingual evaluation section",
+          "excerpt": "MLMM HellaSwag, Flores-200, Belebele",
+          "explanation": "Names Belebele in the multilingual eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_global_mmlu",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "cohereforai/global-mmlu",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Multilingual knowledge benchmark used for both base and instruct evaluations.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Multilingual evaluation section",
+          "excerpt": "tested on multilingual benchmarks including Global MMLU",
+          "explanation": "Names Global MMLU in the multilingual eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_ruler",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "princeton-nlp/ruler",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Long-context evaluation benchmark — SmolLM3 reports RULER results at 32k/64k/128k.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Long-context evaluation section",
+          "excerpt": "Long-context performance on Ruler 64k shows the model can handle extended sequences effectively",
+          "explanation": "Names RULER in the long-context eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_helmet",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "princeton-nlp/helmet",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Long-context evaluation benchmark used alongside RULER.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Long-context section",
+          "excerpt": "didn't further boost performance on RULER and HELMET benchmarks",
+          "explanation": "Names HELMET in the long-context eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_ifeval",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "google/ifeval",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Instruction-following benchmark for the instruct model.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B",
+          "location": "Instruct evaluation section",
+          "excerpt": "IFEval, MixEval Hard, BFCL (tool calling)",
+          "explanation": "Names IFEval in the instruct eval suite on the model card."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_mixeval",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "mixeval/mixeval",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "MixEval Hard — diverse general-purpose benchmark for the instruct model.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B",
+          "location": "Instruct evaluation section",
+          "excerpt": "IFEval, MixEval Hard, BFCL (tool calling)",
+          "explanation": "Names MixEval Hard in the instruct eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_bfcl",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "gorilla-llm/berkeley-function-calling-leaderboard",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Tool-calling evaluation benchmark for the instruct model.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B",
+          "location": "Instruct evaluation section",
+          "excerpt": "IFEval, MixEval Hard, BFCL (tool calling)",
+          "explanation": "Names BFCL in the instruct eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_gsm_plus",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "qintongli/gsm-plus",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Robust grade-school math benchmark used for the instruct model.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B",
+          "location": "Instruct evaluation section (no extended thinking)",
+          "excerpt": "AIME 2025, GSM-Plus, LiveCodeBench v4, GPQA Diamond",
+          "explanation": "Names GSM-Plus in the instruct eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_eval_boolq",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "google/boolq",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Base-model yes/no reading comprehension evaluation.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Base model evaluation section",
+          "excerpt": "HellaSwag, ARC, BoolQ",
+          "explanation": "Names BoolQ in the base-model eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_abl_ruler",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "princeton-nlp/ruler",
+      "relation_type": "used_for_ablation",
+      "dependency_kind": "indirect",
+      "description": "Used as the metric in the team's long-context data-mix ablations — they tested upsampling specific long-context data and found no further improvement on RULER, deciding that NoPE plus the natural decay-mix long samples were sufficient.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Long-context ablation paragraph",
+          "excerpt": "During ablations, we found that upsampling specific long context data such as code repositories, books, and long web pages (beyond the naturally long samples in our mixture) didn't further boost performance on RULER and HELMET benchmarks",
+          "explanation": "Identifies RULER as the ablation metric the team used to pick between data-mix options."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_abl_helmet",
+      "subject": "huggingfacetb/smollm3-3b",
+      "object": "princeton-nlp/helmet",
+      "relation_type": "used_for_ablation",
+      "dependency_kind": "indirect",
+      "description": "Used alongside RULER as the metric in the team's long-context data-mix ablations.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/blog/smollm3",
+          "location": "Long-context ablation paragraph",
+          "excerpt": "didn't further boost performance on RULER and HELMET benchmarks",
+          "explanation": "Identifies HELMET as a co-metric in the long-context data-mix ablation."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_qwq_from_qwen25_32b",
+      "subject": "qwen/qwq-32b",
+      "object": "qwen/qwen2.5-32b",
+      "relation_type": "trained_from",
+      "dependency_kind": "direct",
+      "description": "QwQ-32B (a depth-1 generator for SmolLM3 via OpenThoughts3 and OpenMathReasoning) was post-trained from the Qwen2.5-32B base via SFT and reinforcement learning.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/Qwen/QwQ-32B",
+          "location": "Model tree section",
+          "excerpt": "Base model: Qwen/Qwen2.5-32B",
+          "explanation": "QwQ-32B's HF card explicitly names Qwen2.5-32B as its base model."
+        },
+        {
+          "source": "https://huggingface.co/Qwen/QwQ-32B",
+          "location": "Compatibility note",
+          "excerpt": "QwQ is based on Qwen2.5",
+          "explanation": "Reinforces the QwQ → Qwen2.5 base lineage."
+        }
+      ]
+    }
+  ]
+}

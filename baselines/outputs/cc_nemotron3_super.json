@@ -1,0 +1,1917 @@
+{
+  "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+  "nodes": [
+    {
+      "node_type": "model",
+      "canonical_id": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "name": "NVIDIA Nemotron 3 Super 120B-A12B BF16 (post-trained)",
+      "provider": "nvidia",
+      "aliases": ["NVIDIA-Nemotron-3-Super-120B-A12B-BF16", "Nemotron 3 Super", "N-3-Super", "Nemotron-3-Super-120B-A12B-BF16"],
+      "facets": {"family": "Nemotron-3", "size": "120B-A12B", "stage": "post-trained", "modality": "text", "date": "2026-03-11"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "name": "NVIDIA Nemotron 3 Super 120B-A12B Base BF16",
+      "provider": "nvidia",
+      "aliases": ["NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16", "Nemotron 3 Super 120B-A12B Base", "Nemotron-3-Super-120B-A12B-Base-BF16"],
+      "facets": {"family": "Nemotron-3", "size": "120B-A12B", "stage": "base", "modality": "text", "date": "2026-03-11"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "nvidia/qwen3-nemotron-235b-a22b-genrm-2603",
+      "name": "Qwen3-Nemotron-235B-A22B-GenRM-2603",
+      "provider": "nvidia",
+      "aliases": ["Qwen3-Nemotron-235B-A22B-GenRM-2603", "Nemotron 3 Super GenRM"],
+      "facets": {"family": "Nemotron-3", "size": "235B-A22B", "stage": "rm", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "nvidia/nvidia-nemotron-nano-3-30b-a3b",
+      "name": "NVIDIA Nemotron 3 Nano 30B-A3B",
+      "provider": "nvidia",
+      "aliases": ["Nemotron 3 Nano", "Nemotron-Nano-V3", "Nemotron 3 Nano (NVIDIA, 2025a)"],
+      "facets": {"family": "Nemotron-3", "size": "30B-A3B", "stage": "post-trained", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-235b-a22b-thinking-2507",
+      "name": "Qwen3 235B-A22B Thinking 2507",
+      "provider": "qwen",
+      "aliases": ["Qwen3-235B-A22B-Thinking-2507", "Qwen/Qwen3-235B-A22B-Thinking-2507"],
+      "facets": {"family": "Qwen3", "size": "235B-A22B", "stage": "think", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-235b-a22b-instruct-2507",
+      "name": "Qwen3 235B-A22B Instruct 2507",
+      "provider": "qwen",
+      "aliases": ["Qwen3-235B-A22B-Instruct-2507", "Qwen/Qwen3-235B-A22B-Instruct-2507", "Qwen3-235B-A22B-2507"],
+      "facets": {"family": "Qwen3", "size": "235B-A22B", "stage": "instruct", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-235b-a22b",
+      "name": "Qwen3 235B-A22B",
+      "provider": "qwen",
+      "aliases": ["Qwen3-235B-A22B", "Qwen/Qwen3-235B-A22B"],
+      "facets": {"family": "Qwen3", "size": "235B-A22B", "stage": "base", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-coder-480b-a35b-instruct",
+      "name": "Qwen3-Coder 480B-A35B Instruct",
+      "provider": "qwen",
+      "aliases": ["Qwen3-Coder-480B-A35B-Instruct", "Qwen3-Coder-480B", "Qwen/Qwen3-Coder-480B-A35B-Instruct"],
+      "facets": {"family": "Qwen3-Coder", "size": "480B-A35B", "stage": "instruct", "modality": "code"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-32b",
+      "name": "Qwen3 32B",
+      "provider": "qwen",
+      "aliases": ["Qwen3-32B", "Qwen/Qwen3-32B"],
+      "facets": {"family": "Qwen3", "size": "32B", "stage": "base", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-30b-a3b",
+      "name": "Qwen3 30B-A3B",
+      "provider": "qwen",
+      "aliases": ["Qwen3-30B-A3B", "Qwen/Qwen3-30B-A3B"],
+      "facets": {"family": "Qwen3", "size": "30B-A3B", "stage": "base", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-4b-thinking-2507",
+      "name": "Qwen3 4B Thinking 2507",
+      "provider": "qwen",
+      "aliases": ["Qwen3-4B-Thinking-2507", "Qwen/Qwen3-4B-Thinking-2507"],
+      "facets": {"family": "Qwen3", "size": "4B", "stage": "think", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-embedding-0.6b",
+      "name": "Qwen3-Embedding 0.6B",
+      "provider": "qwen",
+      "aliases": ["Qwen3-Embedding-0.6", "Qwen3-Embedding-0.6B", "Qwen/Qwen3-Embedding-0.6B"],
+      "facets": {"family": "Qwen3-Embedding", "size": "0.6B", "stage": "embedding", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen2.5-72b-instruct",
+      "name": "Qwen2.5 72B Instruct",
+      "provider": "qwen",
+      "aliases": ["Qwen2.5-72B-Instruct", "Qwen/Qwen2.5-72B-Instruct", "Qwen2.5-72B"],
+      "facets": {"family": "Qwen2.5", "size": "72B", "stage": "instruct", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen2.5-14b-instruct",
+      "name": "Qwen2.5 14B Instruct",
+      "provider": "qwen",
+      "aliases": ["Qwen2.5-Instruct-14b", "Qwen2.5-14B-Instruct", "Qwen/Qwen2.5-14B-Instruct"],
+      "facets": {"family": "Qwen2.5", "size": "14B", "stage": "instruct", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "deepseek-ai/deepseek-r1",
+      "name": "DeepSeek-R1",
+      "provider": "deepseek-ai",
+      "aliases": ["DeepSeek-R1", "deepseek-ai/DeepSeek-R1"],
+      "facets": {"family": "DeepSeek-R1", "stage": "rl-reasoning", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "deepseek-ai/deepseek-r1-0528",
+      "name": "DeepSeek-R1-0528",
+      "provider": "deepseek-ai",
+      "aliases": ["DeepSeek-R1-0528", "deepseek-r1-0528", "deepseek-ai/DeepSeek-R1-0528"],
+      "facets": {"family": "DeepSeek-R1", "stage": "rl-reasoning", "date": "2025-05-28", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "deepseek-ai/deepseek-v3",
+      "name": "DeepSeek-V3",
+      "provider": "deepseek-ai",
+      "aliases": ["DeepSeek-V3", "deepseek-ai/DeepSeek-V3"],
+      "facets": {"family": "DeepSeek-V3", "stage": "instruct", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "deepseek-ai/deepseek-v3.2-exp",
+      "name": "DeepSeek-V3.2-Exp",
+      "provider": "deepseek-ai",
+      "aliases": ["DeepSeek-V3.2", "deepseek-v3.2", "deepseek-ai/DeepSeek-V3.2-Exp"],
+      "facets": {"family": "DeepSeek-V3", "stage": "experimental", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "openai/gpt-oss-120b",
+      "name": "GPT-OSS-120B",
+      "provider": "openai",
+      "aliases": ["gpt-oss-120b", "GPT-OSS 120B", "openai/gpt-oss-120b"],
+      "facets": {"family": "gpt-oss", "size": "120B", "stage": "instruct", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "openai/gpt-oss-20b",
+      "name": "GPT-OSS-20B",
+      "provider": "openai",
+      "aliases": ["gpt-oss-20b", "GPT-OSS 20B", "openai/gpt-oss-20b"],
+      "facets": {"family": "gpt-oss", "size": "20B", "stage": "instruct", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "moonshotai/kimi-k2-instruct",
+      "name": "Kimi K2 Instruct",
+      "provider": "moonshotai",
+      "aliases": ["Kimi K2", "Kimi-K2", "moonshotai/Kimi-K2-Instruct"],
+      "facets": {"family": "Kimi-K2", "stage": "instruct", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "minimaxai/minimax-m2",
+      "name": "MiniMax-M2",
+      "provider": "minimaxai",
+      "aliases": ["MiniMax-M2", "Minimax M2.5", "MiniMaxAI/MiniMax-M2"],
+      "facets": {"family": "MiniMax-M2", "stage": "instruct", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "zai-org/glm-4.7",
+      "name": "GLM-4.7",
+      "provider": "zai-org",
+      "aliases": ["GLM-4.7", "Z.ai GLM-4.7", "zai-org/GLM-4.7"],
+      "facets": {"family": "GLM-4", "stage": "instruct", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "mistralai/mistral-nemo-instruct-2407",
+      "name": "Mistral-NeMo-12B-Instruct",
+      "provider": "mistralai",
+      "aliases": ["Mistral-NeMo-12B-Instruct", "Mistral-Nemo", "mistralai/Mistral-Nemo-Instruct-2407"],
+      "facets": {"family": "Mistral-NeMo", "size": "12B", "stage": "instruct", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "microsoft/phi-4",
+      "name": "Phi-4",
+      "provider": "microsoft",
+      "aliases": ["phi-4", "microsoft/phi-4", "Phi 4"],
+      "facets": {"family": "Phi", "size": "14B", "stage": "instruct", "modality": "text"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-super-post-training-data",
+      "name": "Nemotron-Super-Post-Training-Data",
+      "provider": "nvidia",
+      "aliases": ["Nemotron-Super-Post-Training-Data"],
+      "facets": {"family": "Nemotron-3", "stage": "sft-rl-mix", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-pretraining-specialized-v1.1",
+      "name": "Nemotron-Pretraining-Specialized-v1.1",
+      "provider": "nvidia",
+      "aliases": ["Nemotron-Pretraining-Specialized-v1.1", "Nemotron-Pretraining-Specialized-v1"],
+      "facets": {"family": "Nemotron-3", "stage": "pretraining", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-cc",
+      "name": "Nemotron-CC",
+      "provider": "nvidia",
+      "aliases": ["Nemotron-CC", "Nemotron-CC-v2", "Nemotron-CC-v2.1", "Su et al. 2025"],
+      "facets": {"family": "Nemotron-CC", "stage": "pretraining", "source": "web"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-cc-math-v1",
+      "name": "Nemotron-CC-Math-v1",
+      "provider": "nvidia",
+      "aliases": ["Nemotron-CC-Math-v1", "Nemotron-CC-Math", "Mahabadi et al., 2025"],
+      "facets": {"family": "Nemotron-CC", "stage": "pretraining", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-cc-code-v1",
+      "name": "Nemotron-CC-Code-v1",
+      "provider": "nvidia",
+      "aliases": ["Nemotron-CC-Code-v1", "Nemotron-CC-Code"],
+      "facets": {"family": "Nemotron-CC", "stage": "pretraining", "source": "web"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-pretraining-code-v1",
+      "name": "Nemotron-Pretraining-Code-v1",
+      "provider": "nvidia",
+      "aliases": ["Nemotron-Pretraining-Code-v1"],
+      "facets": {"family": "Nemotron-3", "stage": "pretraining", "source": "mixed"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-prismmath",
+      "name": "Nemotron-PrismMath",
+      "provider": "nvidia",
+      "aliases": ["Nemotron-PrismMath"],
+      "facets": {"family": "Nemotron-3", "stage": "pretraining", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-mind",
+      "name": "Nemotron-MIND",
+      "provider": "nvidia",
+      "aliases": ["Nemotron-MIND", "MIND (Akter et al., 2024)"],
+      "facets": {"family": "Nemotron", "stage": "pretraining", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-personas-usa",
+      "name": "Nemotron-Personas-USA",
+      "provider": "nvidia",
+      "aliases": ["Nemotron-Personas-USA", "Meyer & Corneil 2025"],
+      "facets": {"family": "Nemotron", "stage": "synthetic-seed", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/helpsteer3",
+      "name": "HelpSteer 3",
+      "provider": "nvidia",
+      "aliases": ["Helpsteer 3", "HelpSteer3", "Wang et al. 2025c"],
+      "facets": {"family": "HelpSteer", "stage": "rm-pref", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/aegis-ai-content-safety-dataset-2.0",
+      "name": "Nemotron Content Safety v2 (AEGIS 2.0)",
+      "provider": "nvidia",
+      "aliases": ["Nemotron Content Safety v2", "AEGIS2.0", "Ghosh et al., 2025"],
+      "facets": {"family": "AEGIS", "stage": "safety", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacefw/fineweb-2",
+      "name": "FineWeb-2",
+      "provider": "huggingfacefw",
+      "aliases": ["FineWeb-2", "HuggingFaceFW/fineweb-2"],
+      "facets": {"family": "FineWeb", "stage": "pretraining", "source": "web"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacefw/finepdfs",
+      "name": "FinePDFs",
+      "provider": "huggingfacefw",
+      "aliases": ["finepdfs", "Kydlíček et al., 2025"],
+      "facets": {"family": "FineWeb", "stage": "pretraining", "source": "web"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacetb/finemath",
+      "name": "FineMath",
+      "provider": "huggingfacetb",
+      "aliases": ["FineMath", "HuggingFaceTB/finemath"],
+      "facets": {"family": "FineMath", "stage": "pretraining", "source": "web"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "open-web-math/open-web-math",
+      "name": "OpenWebMath",
+      "provider": "open-web-math",
+      "aliases": ["OpenWebMath"],
+      "facets": {"stage": "pretraining", "source": "web"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/pes2o",
+      "name": "peS2o",
+      "provider": "allenai",
+      "aliases": ["peS2o", "allenai/peS2o"],
+      "facets": {"stage": "pretraining", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "cais/mmlu",
+      "name": "MMLU (auxiliary train)",
+      "provider": "cais",
+      "aliases": ["MMLU Auxiliary Train", "Hendrycks et al., 2021b", "MMLU"],
+      "facets": {"stage": "pretraining-seed", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "openai/gsm8k",
+      "name": "GSM8K",
+      "provider": "openai",
+      "aliases": ["GSM8K", "openai/grade-school-math", "Cobbe et al., 2021"],
+      "facets": {"stage": "pretraining-seed", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "salesforce/xlam-function-calling-60k",
+      "name": "xLAM Function-Calling 60k",
+      "provider": "salesforce",
+      "aliases": ["xLAM", "APIGen Function-Calling", "Zhang et al., 2024"],
+      "facets": {"stage": "sft-mix", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "glaiveai/glaive-function-calling-v2",
+      "name": "Glaive Function-Calling v2",
+      "provider": "glaiveai",
+      "aliases": ["Glaive-Function-Calling-v2", "Glaive AI 2025"],
+      "facets": {"stage": "sft-mix", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "swe-gym/swe-gym",
+      "name": "SWE-Gym",
+      "provider": "swe-gym",
+      "aliases": ["SWE-Gym", "Pan et al., 2025"],
+      "facets": {"stage": "sft-mix", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "r2e-gym/r2e-gym",
+      "name": "R2E-Gym",
+      "provider": "r2e-gym",
+      "aliases": ["R2E-Gym", "Jain et al., 2025"],
+      "facets": {"stage": "sft-mix", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nebius/swe-rebench",
+      "name": "SWE-rebench",
+      "provider": "nebius",
+      "aliases": ["SWE-rebench", "Badertdinov et al., 2025"],
+      "facets": {"stage": "sft-mix", "source": "mixed"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "gretelai/gretel-safety-alignment-en-v1",
+      "name": "Gretel Safety Alignment v1",
+      "provider": "gretelai",
+      "aliases": ["Gretel Safety Alignment v1", "Gretel, 2024"],
+      "facets": {"stage": "safety-sft", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "lmsys/lmsys-chat-1m",
+      "name": "LMSYS-Chat-1M",
+      "provider": "lmsys",
+      "aliases": ["LMSYS", "LMSYS-Chat-1M", "lmsys/lmsys-chat-1m"],
+      "facets": {"stage": "pretraining-seed", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "lmarena/lmarena-140k",
+      "name": "LMArena 140k Human Preference",
+      "provider": "lmarena",
+      "aliases": ["lmarena-140k", "Chiang et al., 2024", "Chatbot Arena 140k"],
+      "facets": {"stage": "rm-pref", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "stojanovski/reasoning-gym",
+      "name": "Reasoning Gym",
+      "provider": "stojanovski",
+      "aliases": ["Reasoning Gym", "Stojanovski et al., 2025"],
+      "facets": {"stage": "rl-prompts", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "tigerlab/mmlu-pro",
+      "name": "MMLU-Pro",
+      "provider": "tigerlab",
+      "aliases": ["MMLU-Pro", "TIGER-Lab/MMLU-Pro"],
+      "facets": {"stage": "eval", "source": "mixed"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "maa/aime-2025",
+      "name": "AIME 2025",
+      "provider": "maa",
+      "aliases": ["AIME25", "AIME 2025", "AIME 2024"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "hmmt/hmmt-feb-2025",
+      "name": "HMMT February 2025",
+      "provider": "hmmt",
+      "aliases": ["HMMT Feb25", "HMMT Feb 25"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "idavidrein/gpqa",
+      "name": "GPQA",
+      "provider": "idavidrein",
+      "aliases": ["GPQA", "GPQA-Diamond", "Rein et al., 2023"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "livecodebench/livecodebench",
+      "name": "LiveCodeBench",
+      "provider": "livecodebench",
+      "aliases": ["LiveCodeBench", "Jain et al., 2024"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "scicode-bench/scicode",
+      "name": "SciCode",
+      "provider": "scicode-bench",
+      "aliases": ["SciCode", "Tian et al., 2024"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "cais/hle",
+      "name": "Humanity's Last Exam",
+      "provider": "cais",
+      "aliases": ["HLE", "Humanity's Last Exam", "Phan et al., 2025"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "laude-institute/terminal-bench",
+      "name": "Terminal-Bench",
+      "provider": "laude-institute",
+      "aliases": ["Terminal Bench", "Terminal Bench Hard", "Terminal Bench Core 2.0", "Merrill et al., 2026"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "princeton-nlp/swe-bench",
+      "name": "SWE-Bench",
+      "provider": "princeton-nlp",
+      "aliases": ["SWE-Bench", "SWE-bench Verified", "SWE-Bench Multilingual", "Jimenez et al., 2023"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "sierra-research/tau2-bench",
+      "name": "τ²-Bench (TauBench V2)",
+      "provider": "sierra-research",
+      "aliases": ["TauBench V2", "Tau-2 Bench", "tau-2", "Barres et al., 2025"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "openai/browsecomp",
+      "name": "BrowseComp",
+      "provider": "openai",
+      "aliases": ["BrowseComp", "Wei et al., 2025"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "bird-bench/bird",
+      "name": "BIRD-Bench",
+      "provider": "bird-bench",
+      "aliases": ["BIRD Bench", "BIRD", "Li et al., 2023a"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/ifbench",
+      "name": "IFBench",
+      "provider": "allenai",
+      "aliases": ["IFBench"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "scaleai/multi-challenge",
+      "name": "Scale AI Multi-Challenge",
+      "provider": "scaleai",
+      "aliases": ["Scale AI Multi-Challenge", "Multi-Challenge"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "lmsys/arena-hard-v2",
+      "name": "Arena-Hard V2",
+      "provider": "lmsys",
+      "aliases": ["Arena-Hard-V2", "Arena-Hard V2", "Li et al., 2024"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/ruler",
+      "name": "RULER",
+      "provider": "nvidia",
+      "aliases": ["RULER", "Hsieh et al., 2024"],
+      "facets": {"stage": "eval", "source": "synthetic"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "artificialanalysis/aa-lcr",
+      "name": "AA-LCR (Artificial Analysis Long-Context Reasoning)",
+      "provider": "artificialanalysis",
+      "aliases": ["AA-LCR", "Artificial Analysis LCR"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "li-lab/mmlu-prox",
+      "name": "MMLU-ProX",
+      "provider": "li-lab",
+      "aliases": ["MMLU-ProX", "Xuan et al., 2025"],
+      "facets": {"stage": "eval", "source": "mixed"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "google/wmt24pp",
+      "name": "WMT24++",
+      "provider": "google",
+      "aliases": ["WMT24++", "Deutsch et al., 2025"],
+      "facets": {"stage": "eval", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "meta-pytorch/backendbench",
+      "name": "BackendBench",
+      "provider": "meta-pytorch",
+      "aliases": ["BackendBench", "Saroufim et al., 2025"],
+      "facets": {"stage": "sft-seed", "source": "human-curated"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "wikimedia/wikidata",
+      "name": "Wikidata",
+      "provider": "wikimedia",
+      "aliases": ["Wikidata", "Vrandečić & Krötzsch, 2014"],
+      "facets": {"stage": "sft-seed", "source": "human-curated"}
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "e_subject_trained_from_base",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "relation_type": "trained_from",
+      "dependency_kind": "direct",
+      "description": "The post-trained BF16 model is initialized from the Nemotron 3 Super 120B-A12B Base BF16 checkpoint (pretrained on 25T tokens with NVFP4) and then sequentially SFT'd, RLVR'd, SWE-RL'd, RLHF'd, and MTP-healed.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 1, page 2 (Checkpoints list)",
+          "excerpt": "Nemotron 3 Super 120B-A12B BF16 : post-trained model • Nemotron 3 Super 120B-A12B Base BF16 : base model",
+          "explanation": "The technical report enumerates both checkpoints in the open release; the BF16 post-trained checkpoint is explicitly distinguished from the Base BF16 it was post-trained on."
+        },
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
+          "location": "Model card, Base Model section",
+          "excerpt": "NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16 (pre-trained checkpoint)",
+          "explanation": "The HF card lists the base BF16 checkpoint as the initialization for this post-trained model."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_trained_on_post_training_data",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/nemotron-super-post-training-data",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Aggregator-level edge: the post-trained model used the Nemotron-Super-Post-Training-Data collection (an SFT + RL aggregator mix) for the SFT, RLVR, SWE-RL and RLHF stages described in §3 of the tech report.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 1, page 2 (Data list)",
+          "excerpt": "Nemotron-Super-Post-Training-Data : a collection of RL environments and SFT datasets targeting a broad range of agentic capabilities",
+          "explanation": "Authoritatively names the post-training aggregator mix released alongside the model."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_trained_on_specialized",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/nemotron-pretraining-specialized-v1.1",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Nemotron-Pretraining-Specialized-v1.1 (synthetic code-concepts, unconditional algorithmic, economics, formal logic, and MCQ corpora) was added to pretraining for Nemotron 3 Super and propagates through the post-trained checkpoint via the base initialization.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.1, page 11",
+          "excerpt": "We are releasing these datasets on HuggingFace as Nemotron-Pretraining-Specialized-v1.1.",
+          "explanation": "The tech report names the specialized pretraining release added for Nemotron 3 Super."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_trained_on_nemotron_cc",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "nvidia/nemotron-cc",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The base model was pretrained on Nemotron-CC v2 and v2.1 (≈9.13T tokens of English Common Crawl partitioned into the five quality-based groups crawl-medium, crawl-medium-high, crawl-high and their synthetic counterparts).",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.7, page 13",
+          "excerpt": "we partition into five quality-based groups following the Nemotron-CC taxonomy (Su et al., 2025): crawl-medium, crawl-medium-high, and crawl-high",
+          "explanation": "Names Nemotron-CC as the source of the largest pretraining component."
+        },
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Model card, Pre-Training Base Corpus table",
+          "excerpt": "Nemotron-CC-v2 & v2.1 | 9.13T | English web data from Common Crawl",
+          "explanation": "HF card quantifies the Nemotron-CC contribution."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_trained_on_nemotron_cc_math",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "nvidia/nemotron-cc-math-v1",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Nemotron-CC-Math-v1 (133.3B-token math corpus that preserves LaTeX) is part of the pretraining mixture's math component (cited as Mahabadi et al., 2025).",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.7, page 13",
+          "excerpt": "the mixture includes math (Mahabadi et al., 2025; Akter et al., 2024)",
+          "explanation": "Mahabadi et al. 2025 is the Nemotron-CC-Math paper; the citation places it in the math slice of the pretraining mixture."
+        },
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Pre-Training Base Corpus table",
+          "excerpt": "Nemotron-CC-Math-v1 | 133.3B | Math with LaTeX preservation",
+          "explanation": "HF card lists Nemotron-CC-Math-v1 as a base pretraining ingredient."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_trained_on_nemotron_cc_code",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "nvidia/nemotron-cc-code-v1",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Nemotron-CC-Code-v1 (≈428B tokens of high-quality code from Common Crawl, extracted via Lynx + LLM pipeline) is in the pretraining code slice.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Pre-Training Base Corpus table",
+          "excerpt": "Nemotron-CC-Code-v1 | 427.9B | High-quality code from Common Crawl using Lynx + LLM pipeline",
+          "explanation": "HF card lists Nemotron-CC-Code-v1 in the base pretraining corpus."
+        },
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.7, page 13",
+          "excerpt": "Wikipedia, code, Nemotron-CC-Code, academic text",
+          "explanation": "Tech report enumerates Nemotron-CC-Code as one of the named pretraining components."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_trained_on_pretraining_code",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "nvidia/nemotron-pretraining-code-v1",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Nemotron-Pretraining-Code-v1 (curated GitHub code with multi-stage filtering and synthetic code data) is part of the base pretraining mix's code slice (~1.09T tokens combined with v2).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Pre-Training Base Corpus table",
+          "excerpt": "Nemotron-Pretraining-Code-v1 & v2 | 1.09T | Curated GitHub code with multi-stage filtering and synthetic code data",
+          "explanation": "HF card enumerates Nemotron-Pretraining-Code-v1/v2 as base pretraining ingredients."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_trained_on_specialized",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "nvidia/nemotron-pretraining-specialized-v1.1",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Leaf-level edge: the base model trained on Nemotron-Pretraining-Specialized-v1.1 — a synthetic STEM/code-concepts/economics/formal-logic/MCQ corpus newly added for Nemotron 3 Super.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.1, page 11",
+          "excerpt": "We describe here several new datasets that we added to pretraining since Nemotron 3 Nano (NVIDIA, 2025a). We are releasing these datasets on HuggingFace as Nemotron-Pretraining-Specialized-v1.1.",
+          "explanation": "Authoritative naming of the specialized release as a base pretraining ingredient."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_trained_on_finepdfs",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "huggingfacefw/finepdfs",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "FinePDFs (Kydlíček et al., 2025) is one of the named non-NVIDIA pretraining ingredients in the base mixture (~6.1% of Phase 1 and 14.3% of Phase 2 contains finepdfs/finepdfs-high).",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.7, page 13 + Figure 10 (page 13)",
+          "excerpt": "multilingual data, finepdfs (Kydlíček et al., 2025) and synthetic SFT-style datasets",
+          "explanation": "Tech report names finepdfs in the pretraining blend; Figure 10 shows its phase weights."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_trained_on_fineweb2",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "huggingfacefw/fineweb-2",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "FineWeb-2 is listed as one of the non-NVIDIA public pretraining datasets used in the base corpus (multilingual web).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Model card, Public Datasets list",
+          "excerpt": "datasets/HuggingFaceFW/fineweb-2 (FineWeb-2)",
+          "explanation": "HF card explicitly enumerates HuggingFaceFW/fineweb-2 as a public dataset used in pretraining."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_trained_on_finemath",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "huggingfacetb/finemath",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "FineMath is one of the named external math corpora in the base pretraining mix.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Public Datasets list",
+          "excerpt": "datasets/HuggingFaceTB/finemath (FineMath)",
+          "explanation": "HF card explicitly enumerates HuggingFaceTB/finemath as a public dataset used in pretraining."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_trained_on_openwebmath",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "open-web-math/open-web-math",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "OpenWebMath is enumerated as a named public ingredient of the base pretraining corpus.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Public Datasets list",
+          "excerpt": "datasets/open-web-math/open-web-math (OpenWebMath)",
+          "explanation": "HF card explicitly lists open-web-math/open-web-math under the public pretraining datasets."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_trained_on_pes2o",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "allenai/pes2o",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "AllenAI peS2o (academic / scientific text) is enumerated in the base pretraining public-datasets list.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Public Datasets list",
+          "excerpt": "datasets/allenai/peS2o",
+          "explanation": "HF card explicitly enumerates allenai/peS2o as a public pretraining dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_trained_on_mmlu_aux",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "cais/mmlu",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The MMLU auxiliary training split is used as the seed for the synthetic multiple-choice (MMLU-aux-train-SDG) corpus that contributed ~1.6B tokens to base pretraining.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.6, page 12",
+          "excerpt": "We construct a multiple-choice question (MCQ) dataset by bootstrapping from the MMLU auxiliary training set (Hendrycks et al., 2021b)",
+          "explanation": "MMLU auxiliary train is the explicit seed source for an in-mix synthetic pretraining dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_trained_on_gsm8k",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "openai/gsm8k",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "GSM8K is enumerated in the public pretraining datasets and is used as a seed for synthetic STEM/math content during base pretraining.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Public Datasets list",
+          "excerpt": "datasets/openai/grade-school-math (GSM8K)",
+          "explanation": "HF card explicitly enumerates openai/grade-school-math (GSM8K) as a public pretraining dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_trained_on_prismmath",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "nvidia/nemotron-prismmath",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Nemotron-PrismMath (4.6B tokens) was added to the base pretraining math/synthetic component (sourced from Big-Math-RL-Verified and OpenR1-Math-220k seeds).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Synthetic Data Generation table",
+          "excerpt": "Nemotron-PrismMath | 4.6B | Big-Math-RL-Verified, OpenR1-Math-220k | Qwen2.5-0.5B, Qwen2.5-72B, DeepSeek-R1-Distill-Qwen-32B",
+          "explanation": "HF card lists Nemotron-PrismMath as part of the synthetic pretraining datasets."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_trained_on_mind",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "nvidia/nemotron-mind",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Nemotron-MIND (Math-Informed syNthetic Dialogues, Akter et al., 2024) is part of the math slice of the pretraining mixture.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.7, page 13 (citation for math)",
+          "excerpt": "the mixture includes math (Mahabadi et al., 2025; Akter et al., 2024)",
+          "explanation": "Akter et al. 2024 is the MIND paper; the citation places MIND in the pretraining math slice."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_generated_by_gptoss120b",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "openai/gpt-oss-120b",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "GPT-OSS-120B generated five candidate Python solutions per problem for the Synthetic Code Concepts pretraining dataset (~23M problem–solution pairs), generated rewrites/scoring for the Synthetic Unconditional Algorithmic data, and was a generator for the Synthetic Multiple-Choice and other pretraining datasets.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.2, pages 11-12",
+          "excerpt": "we then used GPT-OSS 120B to generate five self-contained solutions for each generated problem",
+          "explanation": "Names GPT-OSS-120B as the solution generator for the Synthetic Code Concepts pretraining dataset."
+        },
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.3, page 12",
+          "excerpt": "We further used gpt-oss-120b to score the correctness of the solution and, if incorrect, to correct it",
+          "explanation": "GPT-OSS-120B also scored/corrected algorithmic Python problems for the unconditional algorithmic dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_generated_by_gptoss20b",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "openai/gpt-oss-20b",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "GPT-OSS-20B generated ≈14M Python programming problems (with descriptive function names and docstrings) for the Synthetic Code Concepts pretraining dataset.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.2, page 11",
+          "excerpt": "we performed open-ended generation using GPT-OSS 20B to generate Python programming problems",
+          "explanation": "Names GPT-OSS-20B as the problem generator for Synthetic Code Concepts."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_generated_by_qwen3_235b_thinking",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "qwen/qwen3-235b-a22b-thinking-2507",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Qwen3-235B-A22B-Thinking-2507 generated and verified the Synthetic Economics MCQ dataset and the Synthetic Formal Logic dataset that fed pretraining.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.4, page 12",
+          "excerpt": "we used Qwen3-235B-A22B-Thinking-2507 to generate multiple questions, each accompanied by a detailed, step-by-step, and well-formatted solution",
+          "explanation": "Names Qwen3-235B-A22B-Thinking-2507 as the generator for Synthetic Economics."
+        },
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.5, page 12",
+          "excerpt": "We generated and evaluated the problems and solutions using Qwen3-235B-A22B-Thinking-2507",
+          "explanation": "Same model also generated the Synthetic Formal Logic pretraining dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_generated_by_qwen3_235b",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "qwen/qwen3-235b-a22b",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Qwen3-235B-A22B (the base/non-thinking model) generated MMLU-style MCQ candidate questions for the Synthetic Multiple Choice pretraining dataset and authored algorithmic Python problems for the Synthetic Unconditional Algorithmic pretraining dataset.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.6, page 12",
+          "excerpt": "we generate multiple similar questions ... by prompting Qwen3-235B-A22B (Yang et al., 2025)",
+          "explanation": "Names Qwen3-235B-A22B as the MCQ generator for the synthetic MMLU-style pretraining dataset."
+        },
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.3, page 12",
+          "excerpt": "we generated algorithmic Python problems using Qwen3-235B-A22B (the base model) and gpt-oss-120b",
+          "explanation": "Qwen3-235B-A22B is named as a generator for the Synthetic Unconditional Algorithmic pretraining set."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_filtered_by_deepseek_v3",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "deepseek-ai/deepseek-v3",
+      "relation_type": "filtered_by",
+      "dependency_kind": "direct",
+      "description": "DeepSeek-V3 was used in the second stage of the Synthetic Multiple Choice pretraining pipeline to solve and majority-vote candidate MCQs, deciding which question/answer pairs were retained for training.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.6, page 12",
+          "excerpt": "we prompt the DeepSeek-V3 (DeepSeek-AI, 2025c) model to solve each generated question by selecting an answer",
+          "explanation": "DeepSeek-V3 is the inclusion judge (majority-voting solver) for the Synthetic MCQ pretraining dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_filtered_by_qwen3_embedding",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "qwen/qwen3-embedding-0.6b",
+      "relation_type": "filtered_by",
+      "dependency_kind": "direct",
+      "description": "Qwen3-Embedding-0.6 was used to embed Synthetic Unconditional Algorithmic problems/solutions and remove any with >0.8 cosine similarity to HumanEval/MBPP/CRUXEval/LiveCodeBench (decontamination filter).",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.3, page 12",
+          "excerpt": "we used Qwen3-Embedding-0.6 to encode Problem and Solution and filtered any data with >0.8 similarity with any of the benchmarks",
+          "explanation": "Documents Qwen3-Embedding-0.6B as the decontamination filter on a pretraining synthetic code dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_generated_by_deepseek_v32",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "deepseek-ai/deepseek-v3.2-exp",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "DeepSeek-V3.2 acted as a teacher when refreshing SFT datasets (Competition Math, Competition Code, Conversational Tool Use, Multilingual, Science), as the primary engine generating step-by-step Terminal-Use solution traces in dockerized environments, and as one of the generators in the Conversational Tool Use and General-Purpose Tool Use SFT pipelines.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1, page 19",
+          "excerpt": "We refresh the following datasets with new teacher models (DeepSeek v3.2, Kimi K2): Competition Math, Competition Code, Conversational Tool Use, Multilingual, Science.",
+          "explanation": "Names DeepSeek-V3.2 as a refreshed-SFT teacher across five subject areas."
+        },
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Terminal Use), page 23",
+          "excerpt": "we use DeepSeek-V3.2 (DeepSeek-AI, 2025a) as the primary engine to generate step-by-step solution traces within isolated, Dockerized environments",
+          "explanation": "Names DeepSeek-V3.2 as the primary trajectory generator for the Terminal-Use SFT dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_generated_by_kimi_k2",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "moonshotai/kimi-k2-instruct",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Kimi K2 was used as a refreshed teacher model when regenerating the Competition Math, Competition Code, Conversational Tool Use, Multilingual, and Science SFT datasets.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1, page 19",
+          "excerpt": "We refresh the following datasets with new teacher models (DeepSeek v3.2, Kimi K2)",
+          "explanation": "Names Kimi K2 as a co-teacher for the refreshed SFT datasets."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_generated_by_qwen3_coder_480b",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "qwen/qwen3-coder-480b-a35b-instruct",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Qwen3-Coder-480B-A35B-Instruct was the SFT teacher for the Software Engineering dataset: it regenerated R2E-Gym problem statements and produced distillation trajectories from the OpenHands harness, and also acted as one of the agentic-LLM trajectory sources for Agentic-CLI SFT.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Software Engineering), page 19",
+          "excerpt": "We distill trajectories from the OpenHands agent harness using Qwen3-Coder-480B-A35B-Instruct as the teacher model",
+          "explanation": "Names Qwen3-Coder-480B as the SWE-SFT teacher distilled from."
+        },
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Agentic Programming), page 20",
+          "excerpt": "we distill from high-performance, open-source agentic LLMs such as Qwen-3-Coder-480B (Qwen, 2025) and Minimax M2.5",
+          "explanation": "Qwen3-Coder-480B is also a CLI agentic-trajectory teacher."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_generated_by_minimax_m2",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "minimaxai/minimax-m2",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "MiniMax-M2 generated CLI interaction trajectories (alongside Qwen3-Coder-480B) for the Agentic-Programming SFT dataset and solved the obfuscated multi-hop search queries (via Tavily MCP) that produced the Search-agent SFT trajectories.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Agentic Programming), page 20",
+          "excerpt": "we distill from high-performance, open-source agentic LLMs such as Qwen-3-Coder-480B (Qwen, 2025) and Minimax M2.5 (MiniMax AI, 2025) by recording their interactions",
+          "explanation": "Names MiniMax-M2 as a teacher source for Agentic-CLI SFT trajectories."
+        },
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Search), page 22",
+          "excerpt": "MiniMax-M2 (MiniMax AI, 2025) solves the obfuscated question by issuing web searches via the Tavily ... MCP search tool",
+          "explanation": "MiniMax-M2 also generates search trajectories used as Search SFT data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_generated_by_qwen3_235b_think",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "qwen/qwen3-235b-a22b-thinking-2507",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Qwen3-235B-A22B-Thinking-2507 generated long-context reasoning snippets used to fabricate long-input SFT samples and is one of the post-training conversational tool-use trajectory sources.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Long Context), page 21",
+          "excerpt": "synthetic snippets (generated using Qwen3-235B-A22B-Thinking-2507) are concatenated together to form long input context",
+          "explanation": "Long-context SFT samples are partly generated by Qwen3-235B-A22B-Thinking-2507."
+        },
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Conversational Tool Use), page 24",
+          "excerpt": "We utilize Qwen3-235B-A22B-Thinking-2507, Qwen3-32B, Qwen3-235B-A22B-Instruct-2507 (Yang et al., 2025), deepseek-r1-0528 ... DeepSeek-V3.2 ... and gpt-oss-120b",
+          "explanation": "Qwen3-235B-A22B-Thinking-2507 is one of six models that generated the 279k-conversation Conversational Tool Use SFT mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_generated_by_qwen3_235b_instruct",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "qwen/qwen3-235b-a22b-instruct-2507",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Qwen3-235B-A22B-Instruct-2507 was used to generate Conversational Tool Use SFT trajectories.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Conversational Tool Use), page 24",
+          "excerpt": "We utilize Qwen3-235B-A22B-Thinking-2507, Qwen3-32B, Qwen3-235B-A22B-Instruct-2507 (Yang et al., 2025) ... on various parts of the above pipeline",
+          "explanation": "Qwen3-235B-A22B-Instruct-2507 named as a Conversational Tool Use SFT trajectory generator."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_generated_by_qwen3_32b",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "qwen/qwen3-32b",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Qwen3-32B was one of the generators in the six-stage Conversational Tool Use synthetic SFT pipeline.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Conversational Tool Use), page 24",
+          "excerpt": "We utilize Qwen3-235B-A22B-Thinking-2507, Qwen3-32B, Qwen3-235B-A22B-Instruct-2507",
+          "explanation": "Names Qwen3-32B as a Conversational Tool Use SFT generator."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_generated_by_qwen3_30b_a3b",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "qwen/qwen3-30b-a3b",
+      "relation_type": "filtered_by",
+      "dependency_kind": "direct",
+      "description": "Qwen3-30B-A3B was the small classifier that labelled each financial-reasoning question/answer pair ANSWERABLE/UNANSWERABLE, gating which records entered the financial-reasoning SFT dataset.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Financial Reasoning), page 22",
+          "excerpt": "A smaller model (Qwen3-30B-A3B) then classifies each pair as ANSWERABLE or UNANSWERABLE, retaining only those containing a complete, substantive response",
+          "explanation": "Qwen3-30B-A3B decides inclusion of financial-reasoning SFT samples — a filtering role."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_generated_by_qwen3_4b_thinking",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "qwen/qwen3-4b-thinking-2507",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "Qwen3-4B-Thinking-2507 performs a lightweight post-editing step on the multilingual SFT translations to restore prompt/answer format compliance after Qwen2.5-14B translation.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Multilingual), page 23",
+          "excerpt": "we introduced a lightweight post-editing step with Qwen3-4B-Thinking-2507 to automatically restore format compliance",
+          "explanation": "Names Qwen3-4B-Thinking-2507 as a rewriter/post-editor for the multilingual SFT corpus."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_transformed_by_qwen25_14b",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "qwen/qwen2.5-14b-instruct",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "Qwen2.5-Instruct-14B translated English SFT examples into German, Spanish, French, Italian, Japanese, and Chinese for the Multilingual SFT dataset (line-by-line translation pipeline reused from Nemotron 3 Nano).",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Multilingual), page 23",
+          "excerpt": "translating into six languages (German, Spanish, French, Italian, Japanese, and Chinese) using Qwen2.5-Instruct-14b",
+          "explanation": "Qwen2.5-14B-Instruct rewrites English SFT content into translations that became multilingual SFT data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_generated_by_deepseek_r1",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "deepseek-ai/deepseek-r1",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "DeepSeek-R1 was a generator (along with GPT-OSS-120B) for the synthetic CUDA-kernel SFT dataset (~100k samples covering kernel generation, repair, and optimization).",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (CUDA), page 22",
+          "excerpt": "synthetic data generation pipeline based on DeepSeek-R1 and GPT-OSS-120B",
+          "explanation": "DeepSeek-R1 is named as a co-generator for the CUDA SFT dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_generated_by_deepseek_r1_0528",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "deepseek-ai/deepseek-r1-0528",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "DeepSeek-R1-0528 generated trajectories that became part of the Conversational Tool Use SFT mix (six-stage pipeline producing 279k conversations across 838 domains).",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Conversational Tool Use), page 24",
+          "excerpt": "deepseek-r1-0528 (DeepSeek-AI, 2025b), DeepSeek-V3.2 (DeepSeek-AI, 2025a), and gpt-oss-120b (OpenAI, 2025) on various parts of the above pipeline",
+          "explanation": "DeepSeek-R1-0528 is named as a generator across stages of the Conversational Tool Use pipeline."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_generated_by_gptoss120b_post",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "openai/gpt-oss-120b",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Beyond pretraining, GPT-OSS-120B was a SFT-stage data generator: it paraphrased SecQue-derived financial templates and sampled the five candidate answers per question (judged by Qwen3-235B-A22B); was a generator in the Conversational Tool Use and CUDA pipelines; and produced low-effort-mode samples added to the SFT mix.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Financial Reasoning), page 22",
+          "excerpt": "GPT-OSS-120B paraphrases each template instantiation ... five candidate answers are sampled per question using GPT-OSS-120B",
+          "explanation": "GPT-OSS-120B paraphrases and answer-samples for financial-reasoning SFT data."
+        },
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.3, page 26",
+          "excerpt": "by adding training samples generated by GPT-OSS-120B in its low-effort mode (Du et al., 2025)",
+          "explanation": "GPT-OSS-120B's low-effort generations are added to the SFT data for the new low-effort reasoning mode."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_filtered_by_gptoss120b",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "openai/gpt-oss-120b",
+      "relation_type": "filtered_by",
+      "dependency_kind": "direct",
+      "description": "GPT-OSS-120B served as the LLM-as-a-Judge in the Agentic CLI dataset construction, filtering out tasks that referenced pre-existing codebases or required modifications to extant files (~5k filtered out of 20k seed queries).",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Agentic Programming), page 19",
+          "excerpt": "we employed GPT-OSS 120B (OpenAI, 2025) in an LLM-as-a-Judge framework to filter out tasks",
+          "explanation": "Documents GPT-OSS-120B as the inclusion judge for the agentic-CLI SFT dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_filtered_by_qwen3_235b_instruct_judge",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "qwen/qwen3-235b-a22b-instruct-2507",
+      "relation_type": "filtered_by",
+      "dependency_kind": "direct",
+      "description": "Qwen3-235B-A22B served as the larger judge model in the GenSelect strategy used for financial-reasoning SFT data: from five GPT-OSS-120B candidate answers per question, Qwen3-235B-A22B selected the best response by numerical accuracy, methodology, and logical soundness.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Financial Reasoning), page 22",
+          "excerpt": "a larger judge model (Qwen3-235B-A22B) selects the best response based on numerical accuracy, financial methodology, and logical soundness",
+          "explanation": "Qwen3-235B-A22B's selection determines which financial-reasoning samples were retained for SFT."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_generated_by_glm47",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "zai-org/glm-4.7",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "GLM-4.7 (alongside DeepSeek-V3.2) was used to scale the General-Purpose Tool-Calling SFT pipeline, producing 1.5M diverse tool-calling trajectories.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (General-Purpose Tool Use), page 24",
+          "excerpt": "We scale this pipeline with DeepSeek-v3.2 (DeepSeek-AI et al., 2025) and GLM-4.7 (Z.ai / zai-org, 2025) to create a dataset of 1.5M diverse tool-calling trajectories",
+          "explanation": "Names GLM-4.7 as a co-generator for the 1.5M-trajectory general-purpose tool-calling SFT dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_filtered_by_qwen_genrm",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/qwen3-nemotron-235b-a22b-genrm-2603",
+      "relation_type": "filtered_by",
+      "dependency_kind": "direct",
+      "description": "Qwen3-Nemotron-235B-A22B-GenRM-2603 is the principle-following GenRM (initialized from Qwen3-235B-A22B-Thinking-2507) used to provide reward supervision throughout the multi-environment RLVR stage and the dedicated RLHF stage; it filters which rollouts receive positive reward across both the joint multi-env and final RLHF training.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.2.3, page 28",
+          "excerpt": "we train using our GenRM throughout our multi environment RL stage and also perform a separate RLHF-only stage at the end of post training",
+          "explanation": "GenRM-2603 supplies reward signal across both the joint RLVR and the final RLHF stage."
+        },
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 1, page 2 (Checkpoints list)",
+          "excerpt": "Qwen3-Nemotron-235B-A22B-GenRM-2603 : GenRM used for RLHF",
+          "explanation": "Authoritative naming of the released GenRM as the reward model used for RLHF."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_genrm_trained_from_qwen3_thinking",
+      "subject": "nvidia/qwen3-nemotron-235b-a22b-genrm-2603",
+      "object": "qwen/qwen3-235b-a22b-thinking-2507",
+      "relation_type": "trained_from",
+      "dependency_kind": "direct",
+      "description": "The Nemotron 3 Super GenRM is initialized from Qwen3-235B-A22B-Thinking-2507 before being trained as a principle-following GenRM on HelpSteer 3 and lmarena-140k preference data.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.2.3, page 28",
+          "excerpt": "we use Qwen3-235B-A22B-Thinking-2507 as the initialization for training the GenRM",
+          "explanation": "Names Qwen3-235B-A22B-Thinking-2507 as the GenRM initialization checkpoint."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_genrm_trained_on_helpsteer3",
+      "subject": "nvidia/qwen3-nemotron-235b-a22b-genrm-2603",
+      "object": "nvidia/helpsteer3",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The GenRM was trained on the HelpSteer 3 preference dataset.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.2.3, page 28",
+          "excerpt": "To train the GenRM we use the Helpsteer 3 dataset (Wang et al., 2025c)",
+          "explanation": "HelpSteer 3 is the named GenRM training dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_genrm_trained_on_lmarena",
+      "subject": "nvidia/qwen3-nemotron-235b-a22b-genrm-2603",
+      "object": "lmarena/lmarena-140k",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The GenRM was trained on the commercially-friendly subsets of the lmarena-140k human preference dataset (Chiang et al., 2024).",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.2.3, page 28",
+          "excerpt": "commercially friendly subsets of the lmarena-140k dataset (Chiang et al., 2024), and some more recently collected human preference data",
+          "explanation": "Names lmarena-140k subsets as GenRM training data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_trained_on_swegym",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "swe-gym/swe-gym",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Issues and containerized execution environments from SWE-Gym (Pan et al., 2025) seed the Software-Engineering SFT dataset; SWE-Gym-style tasks are also reused in the SWE-RL stage.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Software Engineering), page 19",
+          "excerpt": "We use the issues and containerized execution environments from the SWE-Gym (Pan et al., 2025), R2E-Gym (Jain et al., 2025) and SWE-rebench",
+          "explanation": "Names SWE-Gym as a SWE-SFT data source."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_trained_on_r2egym",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "r2e-gym/r2e-gym",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "R2E-Gym tasks (with problem statements regenerated by Qwen3-Coder-480B) are part of the Software-Engineering SFT dataset.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Software Engineering), page 19",
+          "excerpt": "For R2E-Gym, we regenerate problem statements with Qwen3-Coder-480B-A35B-Instruct",
+          "explanation": "R2E-Gym is named as a SWE-SFT source whose problem statements are rewritten by Qwen3-Coder-480B."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_trained_on_swerebench",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nebius/swe-rebench",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "SWE-rebench is one of the three datasets that supply containerized GitHub-issue tasks to the Software-Engineering SFT mix.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Software Engineering), page 19",
+          "excerpt": "SWE-Gym (Pan et al., 2025), R2E-Gym (Jain et al., 2025) and SWE-rebench (Badertdinov et al., 2025)",
+          "explanation": "SWE-rebench is named as a SWE-SFT source dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_trained_on_glaive",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "glaiveai/glaive-function-calling-v2",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Glaive-Function-Calling-v2 is one of the named tool sets seeding the General-Purpose Tool-Use SFT pipeline (1.5M trajectories).",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (General-Purpose Tool Use), page 24",
+          "excerpt": "Glaive-Function-Calling-v2 (Glaive AI, 2025), Toucan-1.5M (Xu et al., 2025), as well as custom written tools",
+          "explanation": "Glaive-Function-Calling-v2 named as a foundation tool set for general-purpose tool-use SFT."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_trained_on_xlam",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "salesforce/xlam-function-calling-60k",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "xLAM (Salesforce APIGen Function-Calling 60k) is named as a foundation tool set for the General-Purpose Tool-Use synthetic SFT pipeline.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (General-Purpose Tool Use), page 24",
+          "excerpt": "AutoTools (Shi et al., 2025), xLAM (Zhang et al., 2024), Glaive-Function-Calling-v2",
+          "explanation": "xLAM is named alongside other tool-set foundations for general-purpose tool-use SFT."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_trained_on_personas",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/nemotron-personas-usa",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Nemotron-Personas-USA seeds the User-LLM persona in the General-Purpose Tool-Calling pipeline and is used to expand the long-context SFT samples by concatenating records (Meyer & Corneil, 2025).",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (General-Purpose Tool Use), page 24 + Long-Context, page 21",
+          "excerpt": "a persona sampled from Nemotron-Personas-USA (Meyer & Corneil, 2025)",
+          "explanation": "Names Nemotron-Personas-USA as the persona seed source for tool-use and long-context SFT."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_trained_on_safety_aegis",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/aegis-ai-content-safety-dataset-2.0",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Core safety prompts come from Nemotron Content Safety v2 (AEGIS 2.0, Ghosh et al., 2025), retained in the Safety SFT subset.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Safety), page 21",
+          "excerpt": "retaining the core prompts from Nemotron Content Safety v2 (Ghosh et al., 2025)",
+          "explanation": "Nemotron Content Safety v2 prompts feed the Safety SFT mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_trained_on_gretel",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "gretelai/gretel-safety-alignment-en-v1",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Gretel Safety Alignment v1 is one of the retained core prompt sources for the Safety SFT subset.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Safety), page 21",
+          "excerpt": "Gretel Safety Alignment v1 (Gretel, 2024), Harmful Tasks (Hasan et al., 2024) and Red-Team-2K (Luo et al., 2024)",
+          "explanation": "Gretel Safety Alignment v1 named as a Safety SFT prompt source."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_trained_on_lmsys",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "lmsys/lmsys-chat-1m",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "LMSYS-Chat-1M is named as a seed for the Synthetic Chat SFT dataset (alongside ShareGPT and GSM8K).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
+          "location": "Post-Training Datasets table, Synthetic Chat row",
+          "excerpt": "Synthetic Chat | Undisclosed | LMSYS, ShareGPT, GSM8K | gpt-oss-120b, Mixtral, Qwen3",
+          "explanation": "HF card lists LMSYS as a seed for the Synthetic Chat SFT dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_trained_on_reasoning_gym",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "stojanovski/reasoning-gym",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Reasoning Gym is one of the 21 RLVR environments used to train the model (covers a diverse suite of reasoning tasks with verifiable rewards).",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.2.1, page 27",
+          "excerpt": "We train with Reasoning Gym (Stojanovski et al., 2025), enabling learning over a diverse suite of reasoning tasks",
+          "explanation": "Reasoning Gym is named as a RLVR environment/dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_trained_on_secque_seeds",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "wikimedia/wikidata",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Wikidata is the knowledge graph that seeds multi-hop search-agent SFT prompts: SPARQL queries over ~25 entity classes feed random walks that become search-riddle queries solved by MiniMax-M2 via Tavily MCP.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Search), page 21-22",
+          "excerpt": "constructing seed prompts grounded in the Wikidata knowledge graph (Vrandečić & Krötzsch, 2014): we query SPARQL",
+          "explanation": "Wikidata is the named seed source for Search-agent SFT data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_trained_on_backendbench",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "meta-pytorch/backendbench",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "BackendBench (along with NVIDIA library API surfaces and popular open-source library docs) seeds the synthetic CUDA SFT dataset's seed questions.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (CUDA), page 22",
+          "excerpt": "Seed questions were sourced from popular open-source libraries, NVIDIA library API surfaces, and BackendBench (Saroufim et al., 2025)",
+          "explanation": "BackendBench is named as a seed source for CUDA SFT data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_mmlu_pro",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "tigerlab/mmlu-pro",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "MMLU-Pro is reported as the General Knowledge benchmark (5-shot CoT EM = 75.65 base; 83.73 post-trained) in the official Table 5 evaluation suite.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5, page 31",
+          "excerpt": "General Knowledge MMLU-Pro 83.73",
+          "explanation": "MMLU-Pro appears in the official post-trained evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_aime25",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "maa/aime-2025",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "AIME 25 is one of the reasoning benchmarks reported (no-tools 90.21) for the post-trained model.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5, page 31",
+          "excerpt": "AIME25 (no tools) 90.21",
+          "explanation": "AIME25 in the official Table 5 evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_hmmt",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "hmmt/hmmt-feb-2025",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "HMMT Feb 2025 is reported (with-tools 94.73 / no-tools 93.67) in the post-trained evaluation suite.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5, page 31",
+          "excerpt": "HMMT Feb25 (no tools) 93.67",
+          "explanation": "HMMT Feb 2025 in the official post-trained evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_gpqa",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "idavidrein/gpqa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "GPQA (Diamond) is reported (no-tools 79.23 / with-tools 82.70) for the post-trained model.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5 + Reasoning Capabilities text, page 31",
+          "excerpt": "We report results on AIME 25, HMMT Feb 25, GPQA (Rein et al., 2023), LiveCodeBench v5, SciCode, and HLE",
+          "explanation": "GPQA in the official reasoning evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_livecodebench",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "livecodebench/livecodebench",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "LiveCodeBench (v5 2024-07↔2024-12 = 81.19; v6 reported in quantization Table 8) is part of the reasoning evaluation suite.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5, page 31",
+          "excerpt": "LiveCodeBench (v5 2024-07↔2024-12) 81.19",
+          "explanation": "LiveCodeBench in the post-trained evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_scicode",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "scicode-bench/scicode",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "SciCode (subtask = 42.05) is a reasoning evaluation benchmark for the post-trained model.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5, page 31",
+          "excerpt": "SciCode (subtask) 42.05",
+          "explanation": "SciCode in the post-trained evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_hle",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "cais/hle",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Humanity's Last Exam (HLE) is reported (no-tools 18.26 / with-tools 22.82) in the reasoning evaluation suite.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5, page 31",
+          "excerpt": "HLE (no tools) 18.26",
+          "explanation": "HLE in the post-trained evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_terminal_bench",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "laude-institute/terminal-bench",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Terminal-Bench Hard (25.78) and Terminal-Bench Core 2.0 (31.00) are agentic evaluation benchmarks reported for the post-trained model.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5, page 31",
+          "excerpt": "Terminal Bench (hard subset) 25.78 ... Terminal Bench Core 2.0 31.00",
+          "explanation": "Terminal-Bench in the post-trained evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_swebench",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "princeton-nlp/swe-bench",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "SWE-Bench (OpenHands 60.47, OpenCode 59.20, Codex 53.73, Multilingual 45.78) is the agentic-coding evaluation benchmark suite for the post-trained model.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5, page 31",
+          "excerpt": "SWE-Bench (OpenHands) 60.47 ... SWE-Bench Multilingual (OpenHands) 45.78",
+          "explanation": "SWE-Bench is reported in the agentic evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_taubench",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "sierra-research/tau2-bench",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "τ²-Bench / TauBench V2 (Airline/Retail/Telecom average 61.15) is in the agentic evaluation suite.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5, page 31",
+          "excerpt": "TauBench V2 ... Average 61.15",
+          "explanation": "TauBench V2 in the post-trained agentic evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_browsecomp",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "openai/browsecomp",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "BrowseComp with Search (31.28) is reported as an agentic web-browsing evaluation; the harness takes inspiration from the GPT-OSS browser tool.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Agentic capabilities text + Table 5, page 31",
+          "excerpt": "BrowseComp with Search 31.28 ... BrowseComp (Wei et al., 2025)",
+          "explanation": "BrowseComp in the agentic eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_bird",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "bird-bench/bird",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "BIRD-Bench (dev set, 1534 samples, SQLite execution accuracy 41.80) is reported as the SQL evaluation benchmark.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Agentic capabilities text + Table 5, page 31",
+          "excerpt": "we evaluate on the BIRD benchmark Li et al. (2023a) dev set (1,534 samples, SQLite, execution accuracy)",
+          "explanation": "BIRD-Bench in the agentic SQL evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_ifbench",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "allenai/ifbench",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "IFBench (prompt-level 72.56) is reported as the instruction-following evaluation.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5, page 31",
+          "excerpt": "IFBench (prompt) 72.56",
+          "explanation": "IFBench in the chat & instruction-following eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_multichallenge",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "scaleai/multi-challenge",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Scale AI Multi-Challenge (multi-turn instruction following, 55.23) is reported in the chat & instruction-following evaluation.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5, page 31",
+          "excerpt": "Scale AI Multi-Challenge 55.23",
+          "explanation": "Scale AI Multi-Challenge in the chat eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_arena_hard",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "lmsys/arena-hard-v2",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Arena-Hard V2 (73.88) is part of the chat & instruction-following eval suite.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5, page 31",
+          "excerpt": "Arena-Hard-V2 73.88",
+          "explanation": "Arena-Hard-V2 in the post-trained chat eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_ruler",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/ruler",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "RULER at 256k/512k/1M context lengths is the long-context evaluation benchmark (96.83 / 95.22 / 91.64), used with 100 samples per task.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3 Long Context + Table 5, page 31",
+          "excerpt": "We report results on Ruler (Hsieh et al., 2024) using 100 samples per task ... RULER 256k 96.83",
+          "explanation": "RULER in the long-context evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_aalcr",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "artificialanalysis/aa-lcr",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "AA-LCR (Artificial Analysis Long-Context Reasoning, 58.31) is the long-context evaluation benchmark.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5, page 31",
+          "excerpt": "AA-LCR 58.31",
+          "explanation": "AA-LCR in the long-context evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_mmluprox",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "li-lab/mmlu-prox",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "MMLU-ProX (avg over languages = 79.36) is the multilingual general-knowledge evaluation benchmark.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5, page 31",
+          "excerpt": "MMLU-ProX (avg over langs) 79.36",
+          "explanation": "MMLU-ProX in the multilingual evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_used_for_eval_wmt24",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "google/wmt24pp",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "WMT24++ (en→xx, 86.67) is the multilingual machine-translation evaluation benchmark.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.3, Table 5, page 31",
+          "excerpt": "WMT24++ (en→xx) 86.67",
+          "explanation": "WMT24++ in the multilingual evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_inspired_by_nano",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/nvidia-nemotron-nano-3-30b-a3b",
+      "relation_type": "inspired_by",
+      "dependency_kind": "indirect",
+      "description": "The Nemotron 3 Super recipe is explicitly built on top of the Nemotron 3 Nano recipe: same pretraining data mixture, two-phase curriculum, long-context phase, RLVR scaffolding (with environments expanded), RLHF flow (with GenRM), and reused SFT subsets (Chat, Infinibyte, Formal Proofs).",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.7 + 3.1.1 + 3.2.1 + 3.2.3, pages 13/19/27/28",
+          "excerpt": "We adopt the Nemotron 3 Nano data mixture as described in (NVIDIA, 2025a) ... We reuse the following datasets from the Nemotron 3 Nano SFT datasets: Chat, Infinibyte, and Formal Proofs ... We employ a unified RLVR strategy similar to Nemotron 3 Nano ... We follow a similar approach to Nemotron 3 Nano for RLHF",
+          "explanation": "Multiple sections explicitly borrow Nemotron 3 Nano's data mixture, SFT subsets, RLVR strategy, and RLHF approach."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_inspired_by_deliberative",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "openai/gpt-oss-120b",
+      "relation_type": "inspired_by",
+      "dependency_kind": "indirect",
+      "description": "Methodology borrowing: the Safety SFT pipeline adopts the deliberative alignment framework (Guan et al., 2025) — a two-stage reasoning-trace + final-response generation procedure introduced by OpenAI for o-series safety training. (Cited as OpenAI methodology rather than via a model handle.)",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.1.1 (Safety), page 21",
+          "excerpt": "Following the deliberative alignment framework (Guan et al., 2025), we adopt a two-stage generation process",
+          "explanation": "Safety SFT explicitly borrows OpenAI's deliberative-alignment methodology."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_subject_inspired_by_pair",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "relation_type": "inspired_by",
+      "dependency_kind": "indirect",
+      "description": "RLVR safety environment uses the iterative attack methodology PAIR (Chao et al., 2024) to surface harder jailbreak attacks against an early SFT-only checkpoint, harvesting modified prompts that became RL training data. NOTE: PAIR is a methodology, not an artifact node — this self-edge is a placeholder for the inspired_by relation, with the real claim in the description.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 3.2.1, page 27",
+          "excerpt": "we apply an iterative attack pipeline following PAIR (Chao et al., 2024), attacking an early SFT-only checkpoint and collecting modified prompts with high attack success rates",
+          "explanation": "PAIR-style iterative attack pipeline borrowed for safety RL prompt construction."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_base_inspired_by_nemotron_cc",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-base-bf16",
+      "object": "nvidia/nemotron-cc",
+      "relation_type": "inspired_by",
+      "dependency_kind": "indirect",
+      "description": "Methodology borrowing: the base partitions web crawl into five quality groups following the Nemotron-CC taxonomy (Su et al., 2025), and adopts the two-phase pretraining curriculum (Feng et al., 2024) where Phase 2 starts at 80% of training and emphasises high-quality sources.",
+      "evidence": [
+        {
+          "source": "https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3-Super-Technical-Report.pdf",
+          "location": "Section 2.3.7, page 13",
+          "excerpt": "we partition into five quality-based groups following the Nemotron-CC taxonomy (Su et al., 2025) ... We adopt the two-phase curriculum proposed in (Feng et al., 2024) work",
+          "explanation": "Two named methodologies (Nemotron-CC taxonomy + two-phase pretraining) borrowed by the base mixture design."
+        }
+      ]
+    }
+  ]
+}

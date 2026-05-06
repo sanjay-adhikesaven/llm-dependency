@@ -1,0 +1,1029 @@
+{
+  "subject": "rl-research/dr-tulu-8b",
+  "nodes": [
+    {
+      "node_type": "model",
+      "canonical_id": "rl-research/dr-tulu-8b",
+      "name": "DR Tulu 8B",
+      "provider": "rl-research",
+      "aliases": ["rl-research/DR-Tulu-8B", "DR Tulu-8B", "DR-Tulu-8B (RL)", "Deep Research Tulu 8B", "Shao et al. (2025)"],
+      "facets": {"family": "DR-Tulu", "size": "8B", "stage": "rl", "date": "2025-11-27", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "rl-research/dr-tulu-sft-8b",
+      "name": "DR Tulu SFT 8B",
+      "provider": "rl-research",
+      "aliases": ["rl-research/DR-Tulu-SFT-8B", "DR Tulu (SFT)", "DR-Tulu-8B (SFT)", "DR Tulu SFT cold-start"],
+      "facets": {"family": "DR-Tulu", "size": "8B", "stage": "sft", "date": "2025-11-27", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "rl-research/dr-tulu-no-rler-8b",
+      "name": "DR Tulu No-RLER 8B",
+      "provider": "rl-research",
+      "aliases": ["rl-research/DR-Tulu-No-RLER-8B", "DR Tulu without RLER", "RL w/ Closed-book rubrics ablation"],
+      "facets": {"family": "DR-Tulu", "size": "8B", "stage": "rl", "date": "2025-11-27", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-8b",
+      "name": "Qwen3-8B",
+      "provider": "qwen",
+      "aliases": ["Qwen/Qwen3-8B", "Qwen3 8B", "Yang et al. (2025)"],
+      "facets": {"family": "Qwen3", "size": "8B", "stage": "instruct", "date": "2025-04", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-8b-base",
+      "name": "Qwen3-8B-Base",
+      "provider": "qwen",
+      "aliases": ["Qwen/Qwen3-8B-Base", "Qwen3 8B Base"],
+      "facets": {"family": "Qwen3", "size": "8B", "stage": "base", "date": "2025-04", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "openai/gpt-5",
+      "name": "GPT-5",
+      "provider": "openai",
+      "aliases": ["GPT-5", "gpt-5", "GPT5"],
+      "facets": {"family": "GPT-5", "stage": "instruct", "date": "2025-08", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "openai/gpt-4.1",
+      "name": "GPT-4.1",
+      "provider": "openai",
+      "aliases": ["GPT-4.1", "gpt-4.1", "gpt-4-1", "GPT4.1"],
+      "facets": {"family": "GPT-4.1", "stage": "instruct", "date": "2025-04", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "openai/gpt-4.1-mini",
+      "name": "GPT-4.1 mini",
+      "provider": "openai",
+      "aliases": ["GPT-4.1-mini", "gpt-4.1-mini", "gpt-4-1-mini", "gpt-4.1-mini-2025-04-14"],
+      "facets": {"family": "GPT-4.1", "size": "mini", "stage": "instruct", "date": "2025-04-14", "modality": "text"}
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "google/gemini-2.5-flash",
+      "name": "Gemini 2.5 Flash",
+      "provider": "google",
+      "aliases": ["gemini-2.5-flash", "gemini-2-5-flash", "Gemini 2.5 Flash"],
+      "facets": {"family": "Gemini-2.5", "size": "flash", "stage": "instruct", "modality": "text"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "rl-research/dr-tulu-sft-data",
+      "name": "DR Tulu SFT Data",
+      "provider": "rl-research",
+      "aliases": ["rl-research/dr-tulu-sft-data", "DR Tulu SFT mix"],
+      "facets": {"family": "DR-Tulu", "stage": "sft-mix", "source": "mixed", "date": "2025-11"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "rl-research/dr-tulu-rl-data",
+      "name": "DR Tulu RL Data",
+      "provider": "rl-research",
+      "aliases": ["rl-research/dr-tulu-rl-data", "DR Tulu RL prompts (OpenScholar+SearchArena subset)"],
+      "facets": {"family": "DR-Tulu", "stage": "rl-prompts", "source": "mixed", "date": "2025-11"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "lmarena-ai/search-arena-24k",
+      "name": "Search Arena 24K",
+      "provider": "lmarena-ai",
+      "aliases": ["lmarena-ai/search-arena-24k", "SearchArena", "Search Arena", "Miroyan et al. (2025)"],
+      "facets": {"family": "Search-Arena", "stage": "sft-mix", "source": "human-curated", "date": "2025-06"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/openscilm_queries",
+      "name": "OpenScholar Queries",
+      "provider": "allenai",
+      "aliases": ["allenai/openscilm_queries", "OpenScholar", "OpenScholar queries", "Asai et al. (2024)", "OpenSciLM queries"],
+      "facets": {"family": "OpenScholar", "source": "human-curated", "date": "2024-11"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/asta-bench",
+      "name": "Asta-Bench (Ai2 ScholarQA)",
+      "provider": "allenai",
+      "aliases": ["allenai/asta-bench", "AstaBench", "Asta-Bench-ScholarQA-CS2", "SQAv2", "ScholarQA-CS2", "Ai2 ScholarQA", "ScholarQA", "Bragg et al. (2025)", "Singh et al. (2025)"],
+      "facets": {"family": "AstaBench", "source": "human-curated", "date": "2025-10"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "hotpotqa/hotpot_qa",
+      "name": "HotpotQA",
+      "provider": "hotpotqa",
+      "aliases": ["hotpotqa/hotpot_qa", "HotpotQA", "Yang et al. (2018)"],
+      "facets": {"source": "human-curated", "date": "2018"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "megascience/megascience",
+      "name": "MegaScience",
+      "provider": "megascience",
+      "aliases": ["MegaScience/MegaScience", "MegaScience", "Fan et al. (2025)"],
+      "facets": {"family": "MegaScience", "stage": "sft-mix", "source": "mixed", "date": "2025-07"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "personalailab/taskcraft",
+      "name": "TaskCraft",
+      "provider": "personalailab",
+      "aliases": ["PersonalAILab/TaskCraft", "OPPO-PersonalAI/TaskCraft", "TaskCraft", "Shi et al. (2025)"],
+      "facets": {"family": "TaskCraft", "source": "synthetic", "date": "2025-06"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "callanwu/webwalkerqa",
+      "name": "WebWalkerQA",
+      "provider": "alibaba-nlp",
+      "aliases": ["callanwu/WebWalkerQA", "WebWalker", "WebWalkerQA", "WebWalker-Silver", "Alibaba-NLP/WebWalker", "Wu et al. (2025a)"],
+      "facets": {"family": "WebWalker", "source": "mixed", "date": "2025-01"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "akariasai/popqa",
+      "name": "PopQA",
+      "provider": "akariasai",
+      "aliases": ["akariasai/PopQA", "PopQA", "Mallen et al. (2023)"],
+      "facets": {"source": "mixed", "date": "2023"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "google-research-datasets/tydiqa",
+      "name": "TyDi QA",
+      "provider": "google-research-datasets",
+      "aliases": ["google-research-datasets/tydiqa", "TyDiQA", "TyDi QA", "Clark et al. (2020)"],
+      "facets": {"source": "human-curated", "date": "2020"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "openai/browsecomp",
+      "name": "BrowseComp",
+      "provider": "openai",
+      "aliases": ["BrowseComp", "openai/simple-evals (BrowseComp)", "Wei et al. (2025)"],
+      "facets": {"source": "human-curated", "date": "2025-04"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "anisha2102/rar-science-20k-o3-mini",
+      "name": "RaR-Science-20k-o3-mini",
+      "provider": "anisha2102",
+      "aliases": ["anisha2102/RaR-Science-20k-o3-mini", "RaR Science", "Rubrics-as-Rewards Science", "Gunjal et al. (2025) science split"],
+      "facets": {"family": "RaR", "stage": "rl-prompts", "source": "mixed", "date": "2025-07"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "anisha2102/rar-medicine-20k-o3-mini",
+      "name": "RaR-Medicine-20k-o3-mini",
+      "provider": "anisha2102",
+      "aliases": ["anisha2102/RaR-Medicine-20k-o3-mini", "RaR Medicine", "Rubrics-as-Rewards Medicine", "Gunjal et al. (2025) medicine split"],
+      "facets": {"family": "RaR", "stage": "rl-prompts", "source": "mixed", "date": "2025-07"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "openai/healthbench",
+      "name": "HealthBench",
+      "provider": "openai",
+      "aliases": ["HealthBench", "openai/simple-evals (HealthBench)", "Arora et al. (2025)"],
+      "facets": {"source": "human-curated", "date": "2025-05"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "realliyifei/researchqa",
+      "name": "ResearchQA",
+      "provider": "realliyifei",
+      "aliases": ["realliyifei/ResearchQA", "ResearchQA", "Yifei et al. (2025)"],
+      "facets": {"source": "human-curated", "date": "2025-09"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "ayanami0730/deepresearch-bench",
+      "name": "DeepResearch Bench",
+      "provider": "ayanami0730",
+      "aliases": ["Ayanami0730/deep_research_bench", "DeepResearch Bench", "DRB", "muset-ai/DeepResearch-Bench-Dataset", "Du et al. (2025)"],
+      "facets": {"source": "human-curated", "date": "2025-06"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "openai/simpleqa",
+      "name": "SimpleQA",
+      "provider": "openai",
+      "aliases": ["SimpleQA", "openai/simple-evals (SimpleQA)", "Wei et al. (2024)"],
+      "facets": {"source": "human-curated", "date": "2024-11"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "alab-nii/2wikimultihopqa",
+      "name": "2WikiMultiHopQA",
+      "provider": "alab-nii",
+      "aliases": ["2Wiki", "2WikiMultiHopQA", "Alab-NII/2wikimultihop", "Ho et al. (2020)"],
+      "facets": {"source": "mixed", "date": "2020"}
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "rl-research/genetic-diseases-qa",
+      "name": "GeneticDiseasesQA",
+      "provider": "rl-research",
+      "aliases": ["GeneticDiseasesQA", "Genetic Diseases QA", "DR Tulu pathogenic gene variants benchmark"],
+      "facets": {"source": "human-curated", "stage": "evaluation", "date": "2025-11"}
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "e_drtulu_rl_from_sft",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "rl-research/dr-tulu-sft-8b",
+      "relation_type": "trained_from",
+      "dependency_kind": "direct",
+      "description": "DR Tulu 8B (RL) is initialized from the DR Tulu SFT 8B cold-start checkpoint. RLER (online GRPO with evolving rubrics) is then applied for 1900 steps (~25 days, ~9700 GPU hours on 16 H100 GPUs) on top of the SFT model.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/rl-research/DR-Tulu-8B",
+          "location": "Model card, Base/Finetuned-from section",
+          "excerpt": "Finetuned from: rl-research/DR-Tulu-SFT-8B",
+          "explanation": "HF model card explicitly lists DR-Tulu-SFT-8B as the parent checkpoint for DR Tulu 8B (RL)."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 4, page 7 (and Section 4.2, page 7-8)",
+          "excerpt": "We then further train DR Tulu (SFT) using RLER to allow it to explore and improve both its tool-use and answer capabilities",
+          "explanation": "Paper confirms RL training begins from the DR Tulu SFT checkpoint."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_rl_on_rl_data",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "rl-research/dr-tulu-rl-data",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "DR Tulu 8B's RL stage trains on rl-research/dr-tulu-rl-data, which contains OpenScholar+SearchArena prompts paired with initial search-based rubrics generated by GPT-4.1. This aggregator covers ~5K prompts each from OpenScholar and SearchArena (the dataset card lists 4881 rows total). The full RL mix additionally pulls from the RaR-Science and RaR-Medicine datasets (separate trained_on edges).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/rl-research/dr-tulu-rl-data",
+          "location": "Dataset card, description",
+          "excerpt": "This dataset contains the RL training data for DR Tulu, containing prompts and search-based rubrics generated from OpenScholar and SearchArena prompts, with rubrics generated using GPT-4.1.",
+          "explanation": "Authoritative dataset card identifies this as the RL training data for DR Tulu 8B."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 4.2, page 8, Prompt curation paragraph",
+          "excerpt": "we collect approximately 5K new prompts from SearchArena (Miroyan et al., 2025) and OpenScholar (Asai et al., 2024). Additionally, we sample 4K prompts from RaR (Gunjal et al., 2025) to enhance training data diversity.",
+          "explanation": "Paper enumerates the RL prompt mix exactly matching the rl-data dataset composition (with RaR added separately)."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_rl_on_searcharena",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "lmarena-ai/search-arena-24k",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Approximately 5K SearchArena prompts (filtered via an LM-judge prompt-quality scoring step) are used as queries during RL training; the policy generates rollouts on these prompts and is scored against per-prompt evolving search-based rubrics (with rewards via GRPO).",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 4.2, page 8, Prompt curation paragraph",
+          "excerpt": "we collect approximately 5K new prompts from SearchArena (Miroyan et al., 2025) and OpenScholar (Asai et al., 2024).",
+          "explanation": "Paper names SearchArena as one of two main RL prompt sources."
+        },
+        {
+          "source": "https://huggingface.co/datasets/rl-research/dr-tulu-rl-data",
+          "location": "Dataset card, description",
+          "excerpt": "containing prompts and search-based rubrics generated from OpenScholar and SearchArena prompts",
+          "explanation": "Confirms SearchArena prompts are present at the leaf-level inside the RL training mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_rl_on_openscholar",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "allenai/openscilm_queries",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Approximately 5K OpenScholar queries are used as RL training prompts. For OpenScholar prompts the team uses Semantic Scholar paper search (S2 snippet search) to retrieve documents that condition initial rubric generation by GPT-4.1.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 4.2, page 8, Prompt curation paragraph",
+          "excerpt": "we collect approximately 5K new prompts from SearchArena (Miroyan et al., 2025) and OpenScholar (Asai et al., 2024).",
+          "explanation": "Paper names OpenScholar as the second main RL prompt source."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix C.2, page 34",
+          "excerpt": "for OpenScholar queries, we use paper search (S2 snippet search) and for SearchArena queries, we use google search (serper search) and web browsing (serper browse) to retrieve top 10 search results.",
+          "explanation": "Confirms OpenScholar queries' role in RL data construction."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_rl_on_rar_science",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "anisha2102/rar-science-20k-o3-mini",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "First 3000 prompts of the RaR-Science-20k-o3-mini dataset are sampled into the RL training mix. RaR ships per-prompt o3-mini-generated rubrics that DR Tulu uses as the persistent (non-evolving) rubric set for these prompts; only evolving rubrics are added on top.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/rl-research/dr-tulu-rl-data",
+          "location": "Dataset card, additional sources / sampling note",
+          "excerpt": "We sample the first 3000 samples from RaR-Science, and the first 1000 samples from RaR-Medicine.",
+          "explanation": "Authoritative dataset card spells out the exact RaR-Science sampling used in the RL training mix."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 4.2, page 8, footnote 1",
+          "excerpt": "For RaR prompts, we use the original rubrics provided by the dataset as the initial set of persistent rubrics, instead of generating new search-based rubrics before training.",
+          "explanation": "Paper confirms RaR prompts are used in RL training and ship with their own rubrics."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_rl_on_rar_medicine",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "anisha2102/rar-medicine-20k-o3-mini",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "First 1000 prompts of the RaR-Medicine-20k-o3-mini dataset are sampled into the RL training mix, completing the 4K-prompt RaR contribution to the RL stage.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/rl-research/dr-tulu-rl-data",
+          "location": "Dataset card, additional sources / sampling note",
+          "excerpt": "We sample the first 3000 samples from RaR-Science, and the first 1000 samples from RaR-Medicine.",
+          "explanation": "Authoritative dataset card spells out the exact RaR-Medicine sampling used in the RL training mix."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 4.2, page 8, Prompt curation",
+          "excerpt": "we sample 4K prompts from RaR (Gunjal et al., 2025) to enhance training data diversity.",
+          "explanation": "Paper confirms 4K RaR prompts; the dataset card breaks them down as 3K Science + 1K Medicine."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_rl_genby_gpt41",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "openai/gpt-4.1",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "GPT-4.1 is the rubric generator used during RL training for both initial search-based rubrics (one-time, per-prompt) and evolving rubrics (regenerated each training step by contrasting current-policy rollouts). The generated rubrics are the core reward signal for DR Tulu's RLER training, so GPT-4.1's outputs directly shape weight updates.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 5.1, page 9, Training details",
+          "excerpt": "we use GPT-4.1 as an rubric generator for both initial and evolving rubrics.",
+          "explanation": "Paper explicitly names GPT-4.1 as the rubric generator throughout RL training."
+        },
+        {
+          "source": "https://huggingface.co/datasets/rl-research/dr-tulu-rl-data",
+          "location": "Dataset card, description",
+          "excerpt": "with rubrics generated using GPT-4.1.",
+          "explanation": "RL data card confirms GPT-4.1 produced the persistent rubrics shipped with the RL training prompts."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_rl_filteredby_gpt41mini",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "openai/gpt-4.1-mini",
+      "relation_type": "filtered_by",
+      "dependency_kind": "direct",
+      "description": "GPT-4.1-mini (snapshot gpt-4.1-mini-2025-04-14) is the LM-judge that scores each rollout against each rubric (returning 0 / 0.5 / 1) during RLER GRPO training. Its judgments produce the per-rubric reward signal that drives policy updates, so it acts as a weight-shaping training filter — distinct from any post-hoc evaluation use.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 5.1, page 9, Training details",
+          "excerpt": "For rubric and citation scoring, we use GPT-4.1-mini (gpt-4.1-mini-2025-04-14) as an LM judge",
+          "explanation": "Paper explicitly names GPT-4.1-mini as the rubric-scoring LM judge during RL training."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 3.1, page 4 (and Algorithm 1, page 5)",
+          "excerpt": "for each rubric r_x,k, we use a separate judge LM that returns 0, 0.5, or 1 depending on the extent to which r_x,k is satisfied by the final answer",
+          "explanation": "Confirms the judge LM (filled by GPT-4.1-mini) produces the per-rubric reward signal that drives GRPO updates."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_eval_healthbench",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "openai/healthbench",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "HealthBench is one of the four headline long-form deep-research evaluation benchmarks (1000-case subset, healthcare domain). DR Tulu 8B (RL) reports 50.2 on HealthBench in Table 2. The team adapts the OpenAI simple-evals suite for HealthBench scoring.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 5.1, page 9, Evaluations paragraph",
+          "excerpt": "We evaluated deep research agents on four long-form, open-ended benchmarks spanning general-domain, scientific, and medical applications: HealthBench (Arora et al., 2025), ResearchQA, ...",
+          "explanation": "Paper enumerates HealthBench as one of the four primary evaluation benchmarks for DR Tulu 8B."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix E.3, page 42",
+          "excerpt": "We use an adapted version of the OpenAI simple-evals suite for the evaluation. ... we randomly sample a subset of 1000 cases for evaluation.",
+          "explanation": "Confirms the HealthBench evaluation protocol used to score DR Tulu 8B."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_eval_researchqa",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "realliyifei/researchqa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "ResearchQA is one of the four headline long-form benchmarks; DR Tulu 8B is evaluated on the official 776-question subset using GPT-4.1-mini as the rubric judge, scoring 74.3 per Table 2.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 5.1, page 9, Evaluations paragraph",
+          "excerpt": "We evaluated deep research agents on four long-form, open-ended benchmarks spanning general-domain, scientific, and medical applications: HealthBench (Arora et al., 2025), ResearchQA (Yifei et al., 2025), AstaBench-ScholarQA-CS2 (SQAv2; Asai et al. 2024 Bragg et al. 2025), and DeepResearchBench (DRB; Du et al. 2025).",
+          "explanation": "ResearchQA listed among the four primary evaluation benchmarks."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix E.3, page 42",
+          "excerpt": "We compute the averaged rubric scores with GPT-4.1-mini as the judge on the 776 official subset of questions used to evaluate deep research systems, following Yifei et al. (2025).",
+          "explanation": "Documents ResearchQA scoring protocol for DR Tulu 8B."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_eval_astabench",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "allenai/asta-bench",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "AstaBench-ScholarQA-CS2 (a.k.a. SQAv2) is one of the four headline long-form benchmarks for DR Tulu 8B. DR Tulu reports rubric/answer/citation-precision/citation-recall scores via the official allenai/asta-bench codebase, with gemini-2.5-flash as the LLM judge on a 100-test-set-question subset.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 5.1, page 9",
+          "excerpt": "AstaBench-ScholarQA-CS2 (SQAv2; Asai et al. 2024 Bragg et al. 2025)",
+          "explanation": "Paper names AstaBench-ScholarQA-CS2 (SQAv2) as one of the four primary long-form benchmarks for DR Tulu."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix E.3, page 42",
+          "excerpt": "We use the official code [github.com/allenai/asta-bench] to evaluate our method and the baselines on Asta-ScholarQA-CS2. We compute rubric score, answer precision, citation precision and citation recall on the 100 test set questions using gemini-2.5-flash as the judge",
+          "explanation": "Spells out the evaluation protocol on AstaBench-ScholarQA-CS2."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_eval_deepresearchbench",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "ayanami0730/deepresearch-bench",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "DeepResearchBench (DRB) is the fourth headline long-form benchmark, covering 50 English + 50 Chinese open-ended deep research questions. DR Tulu 8B is graded on Comprehensiveness / Insight-Depth / Instruction-Following / Readability with gemini-2.5-flash as the judge, using the official Ayanami0730/deep_research_bench code.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 5.1, page 9 (and Appendix E.3, page 42)",
+          "excerpt": "DeepResearchBench (DRB; Du et al., 2025)",
+          "explanation": "Paper names DeepResearchBench as the fourth long-form evaluation benchmark for DR Tulu."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix E.3, page 42",
+          "excerpt": "We use the official code [github.com/Ayanami0730/deep_research_bench] to evaluate our method and the baselines on DeepResearchBench. We compute the Comprehensiveness, Insight/Depth, Instruction-Following, and Readability of articles answering 50 English and 50 Chinese open-ended deep research questions.",
+          "explanation": "Confirms DRB scope, judge, and reference to the official benchmark code."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_eval_simpleqa",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "openai/simpleqa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "SimpleQA is one of the three short-form QA benchmarks used to verify that DR Tulu's deep-research training generalizes to factoid QA. DR Tulu 8B (RL) scores 80.1 on a randomly sampled 1000-question subset, judged by GPT-4.1.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 6.1, page 14, Datasets paragraph",
+          "excerpt": "Our short-form evaluation suite comprises SimpleQA (Wei et al., 2024), WebWalkerQA (Wu et al., 2025a), and 2Wiki (Ho et al., 2020).",
+          "explanation": "Paper enumerates SimpleQA as a short-form evaluation benchmark."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Table 5 caption, page 14",
+          "excerpt": "All scores are computed from top-1 predictions and evaluated with GPT-4.1 as the LLM judge under a unified evaluation pipeline",
+          "explanation": "Documents the evaluation protocol used for SimpleQA scoring on DR Tulu 8B."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_eval_webwalkerqa",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "callanwu/webwalkerqa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "The 'main' split of callanwu/WebWalkerQA (the human-verified evaluation split, 680 web-traversal QA pairs) is used as a short-form benchmark; DR Tulu 8B (RL) scores 39.1 / WebWalker per Table 5. The same release's 'silver' split was used as SFT training data (separate edge from DR Tulu SFT 8B).",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 6.1, page 14",
+          "excerpt": "Our short-form evaluation suite comprises SimpleQA (Wei et al., 2024), WebWalkerQA (Wu et al., 2025a), and 2Wiki (Ho et al., 2020).",
+          "explanation": "Paper enumerates WebWalkerQA as a short-form evaluation benchmark for DR Tulu 8B."
+        },
+        {
+          "source": "https://huggingface.co/datasets/callanwu/WebWalkerQA",
+          "location": "Dataset card, splits description",
+          "excerpt": "A collection of 15k silver dataset is also released, which although not yet carefully human-verified, can serve as supplementary training data ... You can load the silver dataset by changing the split to silver.",
+          "explanation": "Confirms the same callanwu/WebWalkerQA release contains both the eval ('main') split and the silver (training) split."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_eval_2wiki",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "alab-nii/2wikimultihopqa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "2WikiMultiHopQA is the third short-form benchmark; DR Tulu 8B (RL) scores 68.0 on a randomly sampled 1000-question subset, judged by GPT-4.1.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 6.1, page 14",
+          "excerpt": "Our short-form evaluation suite comprises SimpleQA (Wei et al., 2024), WebWalkerQA (Wu et al., 2025a), and 2Wiki (Ho et al., 2020).",
+          "explanation": "Paper enumerates 2Wiki as a short-form benchmark for DR Tulu 8B."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Table 5, page 14",
+          "excerpt": "DR Tulu-8B (RL) | 80.1 | 68.0 | 39.1 | 62.4",
+          "explanation": "Reports DR Tulu 8B (RL)'s 2Wiki score of 68.0."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_eval_geneticdiseasesqa",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "rl-research/genetic-diseases-qa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "GeneticDiseasesQA is a 47-question OOD medical-genetics benchmark constructed by the team (derived from Cheerie et al. 2025 expert-curated variant data) to assess generalization beyond training data. DR Tulu 8B is scored on Final Answer / Evidence Quality / Evidence Support / Evidence Synthesis / Overall via GPT-4.1.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 5.3, page 13",
+          "excerpt": "We create a new evaluation dataset, GeneticDiseasesQA, consisting of 47 questions derived from expert-curated information about 24 disease-causing genetic variants.",
+          "explanation": "Paper introduces GeneticDiseasesQA as an evaluation benchmark for DR Tulu 8B."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 5.3, page 13 and Appendix E.4, page 42",
+          "excerpt": "Similar to our prior experiments, we defined specific LLM judge instructions for each evaluation criteria per question and used GPT-4.1 to score each response.",
+          "explanation": "Confirms GeneticDiseasesQA is part of the evaluation suite for DR Tulu 8B."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_eval_judge_gpt41",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "openai/gpt-4.1",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "GPT-4.1 serves as the LLM judge for DR Tulu 8B's short-form QA evaluations (SimpleQA, 2Wiki, WebWalkerQA — Table 5) and for GeneticDiseasesQA scoring across Final Answer / Evidence Quality / Evidence Support / Evidence Synthesis criteria. This use is post-release and does not shape weights, hence indirect — distinct from GPT-4.1's direct training role as RL rubric generator.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Table 5 caption, page 14",
+          "excerpt": "All scores are computed from top-1 predictions and evaluated with GPT-4.1 as the LLM judge under a unified evaluation pipeline",
+          "explanation": "Identifies GPT-4.1 as the short-form evaluation judge."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix E.4, page 43",
+          "excerpt": "we defined specific LLM judge instructions for each evaluation criteria per question and used GPT-4.1 to score each response.",
+          "explanation": "Confirms GPT-4.1 is the GeneticDiseasesQA evaluation judge."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_eval_judge_gpt41mini",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "openai/gpt-4.1-mini",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "GPT-4.1-mini is also used as the LLM rubric judge for DR Tulu 8B's ResearchQA evaluation, on the 776-question official subset. This indirect role is distinct from its direct role as the RL rubric-scoring judge during training.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix E.3, page 42, ResearchQA paragraph",
+          "excerpt": "We compute the averaged rubric scores with GPT-4.1-mini as the judge on the 776 official subset of questions used to evaluate deep research systems, following Yifei et al. (2025).",
+          "explanation": "Documents GPT-4.1-mini as the ResearchQA evaluation judge."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_eval_judge_geminiflash",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "google/gemini-2.5-flash",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Gemini 2.5 Flash is the LLM judge for two of the four headline long-form benchmarks: AstaBench-ScholarQA-CS2 (SQAv2) — scoring rubric/answer/cite-P/cite-R on 100 test-set questions — and DeepResearchBench — scoring Comprehensiveness/Insight-Depth/Instruction-Following/Readability on 100 questions.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix E.3, page 42, Asta-ScholarQA-CS2 paragraph",
+          "excerpt": "We compute rubric score, answer precision, citation precision and citation recall on the 100 test set questions using gemini-2.5-flash as the judge as detailed in Bragg et al. (2025).",
+          "explanation": "Documents gemini-2.5-flash as the SQAv2 evaluation judge."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix E.3, page 42, DeepResearchBench paragraph",
+          "excerpt": "We use gemini-2.5-flash as the judge and Jina API to scrape the URL to acquire the evidence snippets when needed, as detailed in Du et al. (2025).",
+          "explanation": "Documents gemini-2.5-flash as the DRB evaluation judge."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_ablation_norler",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "rl-research/dr-tulu-no-rler-8b",
+      "relation_type": "used_for_ablation",
+      "dependency_kind": "indirect",
+      "description": "DR-Tulu-No-RLER-8B is the team's own ablation variant — RL trained without the evolving-rubric component (e.g. with general or closed-book static rubrics, per Table 6). It exists to isolate the contribution of RLER vs. plain rubric-RL, informing the release decision to ship the full RLER model.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/collections/rl-research/dr-tulu",
+          "location": "DR Tulu collection, models section",
+          "excerpt": "DR-Tulu-No-RLER-8B ... Ablation model, trained with RL without RLER",
+          "explanation": "Authoritative collection page identifies DR-Tulu-No-RLER-8B as a sibling ablation release used to evaluate the impact of RLER on top of vanilla rubric RL."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 6.2, page 16-17 (Table 6)",
+          "excerpt": "We ablate the rubrics used during RL training, and the effect of adding evolving rubrics. ... using simple rubrics can actually hurt performance, while search-based rubrics perform best.",
+          "explanation": "Paper documents the No-RLER-style rubric ablations whose corresponding model release is DR-Tulu-No-RLER-8B."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_drtulu_inspired_rar",
+      "subject": "rl-research/dr-tulu-8b",
+      "object": "anisha2102/rar-science-20k-o3-mini",
+      "relation_type": "inspired_by",
+      "dependency_kind": "indirect",
+      "description": "RLER's core 'rubrics-as-rewards' formulation is borrowed from Gunjal et al.'s RaR (the artifact released as anisha2102/RaR-* on HF), with stated modification: where RaR uses static, closed-book rubrics generated from o3 reference answers, RLER replaces these with search-grounded, on-policy evolving rubrics that co-evolve with the policy model. The RaR datasets themselves are also used directly as RL prompts (separate trained_on edges).",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 7, page 19, Rubric design for long-form generation tasks paragraph",
+          "excerpt": "RaR (Gunjal et al., 2025) proposed to use rubrics as rewards and generate instance-wise rubrics based on reference answers from an advanced model (OpenAI o3). However, these rubrics are static and usually generated by the same model, which can only slow down reward hacking but does not resolve the issue. ... Our evolving rubrics are generated based on retrieved knowledge",
+          "explanation": "Paper explicitly identifies RaR as the prior methodology that RLER builds on, with the stated modification (search-grounded, evolving)."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft_from_qwen3",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "qwen/qwen3-8b",
+      "relation_type": "trained_from",
+      "dependency_kind": "direct",
+      "description": "DR Tulu SFT 8B initializes from Qwen3-8B and is fine-tuned for 5 epochs on the dr-tulu-sft-data mix (16K teacher-generated trajectories), taking ~136 GPU hours on 8 H100 GPUs. Note: the DR Tulu 8B HF card lists 'base_model: Qwen3-8B-Base'; the SFT model card and paper text both reference Qwen3-8B (the post-trained checkpoint), so we use that as canonical and keep -Base as alias.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/rl-research/DR-Tulu-SFT-8B",
+          "location": "Model card, header & model tree",
+          "excerpt": "an open deep research agent trained on top of Qwen3-8B",
+          "explanation": "SFT model card explicitly identifies Qwen3-8B as the parent checkpoint."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 5.1, page 9, Training details",
+          "excerpt": "We initialize our checkpoint with Qwen3-8B (Yang et al., 2025).",
+          "explanation": "Paper text confirms Qwen3-8B as the SFT initialization."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft_on_sftdata",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "rl-research/dr-tulu-sft-data",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "DR Tulu SFT 8B is fine-tuned on the rl-research/dr-tulu-sft-data aggregator: 16K SFT trajectories (long-form + short-form mix) generated by teacher models (mostly GPT-5; some GPT-4.1) and rejection-sampled. Composition per Appendix Table 8: OpenScholar 5704 + SearchArena 3547 + ScholarQA 1000 + HotpotQA 1176 + MegaScience 814 + TaskCraft 583 + WebWalkerSilver 1438 + BrowseComp 916 + PopQA&TyDiQA 874.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/rl-research/DR-Tulu-SFT-8B",
+          "location": "Model card, training data section",
+          "excerpt": "This model has undergone SFT training on this dataset [rl-research/dr-tulu-sft-data].",
+          "explanation": "SFT card identifies dr-tulu-sft-data as the aggregator training dataset."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 4.1, page 7 and Appendix Table 8, page 34",
+          "excerpt": "we curated 16K SFT data points, including both short-form and long-form tasks. Appendix Table 8 shows statistics of our SFT data.",
+          "explanation": "Paper documents the 16K-point SFT mix and references Table 8's per-source breakdown."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft_on_searcharena",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "lmarena-ai/search-arena-24k",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "SearchArena (24K real-world search-augmented user conversations) is a long-form prompt source for SFT. After LM-judge filtering (~10% retention) the team kept 3547 long-form trajectories from SearchArena prompts (Appendix Table 8).",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 4.1, page 7, Prompt curation paragraph",
+          "excerpt": "we derive prompts from publicly available user-assistant interaction data: SearchArena (Miroyan et al., 2025), which contains 24K real-world conversations between users and search-augmented LMs across diverse domains",
+          "explanation": "Paper names SearchArena as a primary long-form SFT prompt source."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix Table 8, page 34",
+          "excerpt": "Search Arena | Long-form | 3547 | 3.1 | 2745.9",
+          "explanation": "Reports the exact SearchArena slice contributing to the SFT mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft_on_openscholar",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "allenai/openscilm_queries",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "OpenScholar provides 55K scientific research-oriented queries; after LM-judge filtering (~20% retention) the team kept 5704 long-form trajectories — the largest single source in the SFT mix per Appendix Table 8.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 4.1, page 7, Prompt curation paragraph",
+          "excerpt": "OpenScholar (Asai et al., 2024), which provides 55K scientific research-oriented queries collected from a deep research assistant demo.",
+          "explanation": "Paper documents OpenScholar as a primary long-form SFT prompt source."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix Table 8, page 34",
+          "excerpt": "OpenScholar | Long-form | 5704 | 3.5 | 3878.7",
+          "explanation": "Reports the OpenScholar slice in the SFT mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft_on_astabench",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "allenai/asta-bench",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Ai2 ScholarQA (released within the AstaBench suite) provided 1000 long-form trajectories for SFT. The original ScholarQA traces (which collect search results before generation, no iterative search) were converted by GPT-4.1 (issuing per-section sub-queries) into iterative-search SFT trajectories — see separate transformed_by edge to GPT-4.1.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix C.1.2, page 34, Trajectory generations using Ai2 ScholarQA",
+          "excerpt": "We used the trajectory data from Ai2 ScholarQA to create SFT data. Ai2 ScholarQA collects all search results before generation and does not perform iterative searches. To create synthetic data with iterative searches, we transformed the data provided in the Ai2 ScholarQA traces. Each trace consists of retrieved results, CoT planning steps, and an answer with citations. We used GPT-4.1 to create a sub-query for each section in the Ai2 ScholarQA.",
+          "explanation": "Paper documents Ai2 ScholarQA traces as a direct SFT data source (transformed by GPT-4.1)."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix Table 8, page 34",
+          "excerpt": "ScholarQA | Long-form | 1000 | 5.4 | 5400.5",
+          "explanation": "Reports the ScholarQA slice contributing 1000 long-form trajectories to SFT."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft_on_hotpotqa",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "hotpotqa/hotpot_qa",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "HotpotQA contributes 1176 short-form trajectories to the SFT mix (multi-hop QA prompts, with answers verified by F1-overlap or LM-equivalence rejection sampling).",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 4.1, page 7, Prompt curation paragraph",
+          "excerpt": "For SFT, we mix in a moderate amount of short-form, verifiable QA so the model learns to adapt its style rather than overfit to a single task: we sample from HotpotQA (Yang et al., 2018), TaskCraft (Shi et al., 2025), WebWalker-Silver (Wu et al., 2025a), and MegaScience (Fan et al., 2025)",
+          "explanation": "Paper names HotpotQA as a short-form SFT data source."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix Table 8, page 34",
+          "excerpt": "HotpotQA | Short-form | 1176 | 2.4 | 1488.8",
+          "explanation": "Reports the HotpotQA slice contributing 1176 short-form trajectories."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft_on_megascience",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "megascience/megascience",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "MegaScience contributes 814 short-form science-reasoning trajectories to the SFT mix.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 4.1, page 7",
+          "excerpt": "we sample from HotpotQA (Yang et al., 2018), TaskCraft (Shi et al., 2025), WebWalker-Silver (Wu et al., 2025a), and MegaScience (Fan et al., 2025)",
+          "explanation": "Paper names MegaScience as a short-form SFT source."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix Table 8, page 34",
+          "excerpt": "MegaScience | Short-form | 814 | 2.3 | 1494.8",
+          "explanation": "Reports the MegaScience slice in the SFT mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft_on_taskcraft",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "personalailab/taskcraft",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "TaskCraft (multi-tool agentic task generation dataset by OPPO Personal AI Lab) contributes 583 short-form trajectories to the SFT mix.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 4.1, page 7",
+          "excerpt": "we sample from HotpotQA (Yang et al., 2018), TaskCraft (Shi et al., 2025), WebWalker-Silver (Wu et al., 2025a), and MegaScience (Fan et al., 2025)",
+          "explanation": "Paper names TaskCraft as a short-form SFT source."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix Table 8, page 34",
+          "excerpt": "TaskCraft | Short-form | 583 | 2.8 | 1518.1",
+          "explanation": "Reports the TaskCraft slice contributing 583 short-form trajectories."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft_on_webwalker",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "callanwu/webwalkerqa",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The 'silver' split of callanwu/WebWalkerQA — a 15K weakly-supervised web-traversal training set released alongside the human-verified eval split — contributes 1438 short-form trajectories to the SFT mix.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 4.1, page 7",
+          "excerpt": "we sample from HotpotQA (Yang et al., 2018), TaskCraft (Shi et al., 2025), WebWalker-Silver (Wu et al., 2025a), and MegaScience (Fan et al., 2025)",
+          "explanation": "Paper explicitly names WebWalker-Silver as a short-form SFT data source."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix Table 8, page 34",
+          "excerpt": "WebWalkerSilver | Short-form | 1438 | 2.5 | 1540.2",
+          "explanation": "Reports the WebWalker-Silver slice contributing 1438 trajectories to SFT."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft_on_popqa",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "akariasai/popqa",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "PopQA contributes (jointly with TyDi QA) 874 short-form trajectories to the SFT mix per Appendix Table 8. The paper also notes additional synthetic short-form prompts were generated 'inspired by PopQA' but these synthetic prompts feed into the same PopQA bucket in the data stats.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 4.1, page 7",
+          "excerpt": "we generate additional challenging synthetic prompts inspired by PopQA (Mallen et al., 2023).",
+          "explanation": "Paper names PopQA as the inspiration / seed for synthetic short-form prompts in SFT."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix C.1.1, page 30 (and Table 8, page 34)",
+          "excerpt": "For short-form, we derive initial questions from widely open-sourced data including MegaScience (Fan et al., 2025), HotpotQA (Yang et al., 2018), TaskCraft (Shi et al., 2025), WebWalkerSilver (Wu et al., 2025a), PopQA (Mallen et al., 2022), and TyDi QA (Clark et al., 2020).",
+          "explanation": "Confirms PopQA as a leaf prompt source for the SFT mix."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft_on_tydiqa",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "google-research-datasets/tydiqa",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "TyDi QA contributes (jointly with PopQA) 874 short-form trajectories to the SFT mix per Appendix Table 8 — a multilingual factoid-style source.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix C.1.1, page 30",
+          "excerpt": "For short-form, we derive initial questions from widely open-sourced data including MegaScience (Fan et al., 2025), HotpotQA (Yang et al., 2018), TaskCraft (Shi et al., 2025), WebWalkerSilver (Wu et al., 2025a), PopQA (Mallen et al., 2022), and TyDi QA (Clark et al., 2020).",
+          "explanation": "Paper names TyDi QA as a short-form SFT prompt source."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix Table 8, page 34",
+          "excerpt": "PopQA & TyDi QA | Short-form | 874 | 3.7 | 1514.3",
+          "explanation": "Reports the joint PopQA+TyDi QA slice contributing 874 trajectories."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft_on_browsecomp",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "openai/browsecomp",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "BrowseComp contributes 916 short-form trajectories to the SFT mix per Appendix Table 8. The actual prompts are GPT-4.1-generated 'BrowseComp-style' synthetic questions following the BrowseComp format/style template — captured in a separate generated_by edge from this SFT model to GPT-4.1.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix C.1.1, page 30",
+          "excerpt": "We also used GPT-4.1 to generate 916 BrowseComp (Wei et al., 2025) style questions.",
+          "explanation": "Paper records BrowseComp as the style template for 916 GPT-4.1-generated synthetic SFT prompts."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix Table 8, page 34",
+          "excerpt": "BrowseComp | Short-form | 916 | 8.6 | 4083.5",
+          "explanation": "Reports the BrowseComp-bucket 916-trajectory slice in the SFT data stats."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft_genby_gpt5",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "openai/gpt-5",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "GPT-5 (with the team's three-tool inference pipeline: google_search, web_browse, paper_search) is the primary teacher model that produces full end-to-end agentic SFT trajectories — including reasoning traces, tool calls, tool outputs, and final cited answers. Because GPT-5 hides native chain-of-thought, the team prompts it to emit explicit mock <think> tokens before each tool call/answer; light rejection sampling on format and gold-answer match is then applied.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Section 4.1, page 7, Trajectory generation paragraph",
+          "excerpt": "We provide GPT-5 with a detailed system prompt that defines the deep research workflow and exposes a general web search tool, a paper search tool, and a web browsing tool, and ask it to produce the entire trajectory.",
+          "explanation": "Paper identifies GPT-5 as the SFT trajectory generator."
+        },
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix C.1.2, page 30",
+          "excerpt": "We generated trajectories using GPT-5 and our search inference pipeline, using google_search, web_browse, and paper_search.",
+          "explanation": "Confirms GPT-5's role as the main SFT trajectory teacher."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft_genby_gpt41",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "openai/gpt-4.1",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "GPT-4.1 generated 916 BrowseComp-style synthetic short-form SFT prompts from scratch (the BrowseComp slice in Appendix Table 8). This is GPT-4.1's question-generator role, distinct from its sub-query/transformer role on Ai2 ScholarQA traces (separate transformed_by edge).",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix C.1.1, page 30",
+          "excerpt": "We also used GPT-4.1 to generate 916 BrowseComp (Wei et al., 2025) style questions.",
+          "explanation": "Paper documents GPT-4.1 as the synthetic-question generator for the BrowseComp slice of SFT data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_sft_transformedby_gpt41",
+      "subject": "rl-research/dr-tulu-sft-8b",
+      "object": "openai/gpt-4.1",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "GPT-4.1 transformed Ai2 ScholarQA's traces (which collect all search results upfront before generating) into iterative-search SFT trajectories by issuing per-section sub-queries conditioned on section text and cited papers. The transformed traces became the 1000 long-form ScholarQA trajectories in the SFT mix.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/pdf/2511.19399",
+          "location": "Appendix C.1.2, page 34, Trajectory generations using Ai2 ScholarQA",
+          "excerpt": "We used GPT-4.1 to create a sub-query for each section in the Ai2 ScholarQA. The sub-query was generated conditioned on the section text and retrieved papers cited in the section. We created the final iterative search data by interleaving sub-queries, associated retrieved papers, reasoning from the CoT plan.",
+          "explanation": "Paper documents GPT-4.1 as the transformer that converted ScholarQA's flat-search traces into iterative-search SFT trajectories."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_qwen3_from_qwen3base",
+      "subject": "qwen/qwen3-8b",
+      "object": "qwen/qwen3-8b-base",
+      "relation_type": "trained_from",
+      "dependency_kind": "direct",
+      "description": "Qwen3-8B (the joint think + non-think post-trained chat model) is initialized from Qwen3-8B-Base, the pretraining-only checkpoint, and post-trained via the Qwen3 SFT/DPO/RL pipeline described in the Qwen3 technical report (Yang et al., 2025).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/Qwen/Qwen3-8B",
+          "location": "Model card, model tree / base model",
+          "excerpt": "Qwen3-8B is post-trained on the Qwen3-8B-Base checkpoint",
+          "explanation": "HF model card for Qwen3-8B identifies Qwen3-8B-Base as the parent pretraining checkpoint."
+        },
+        {
+          "source": "https://arxiv.org/abs/2505.09388",
+          "location": "Qwen3 technical report, Section 3 (post-training)",
+          "excerpt": "We perform post-training on the Qwen3 base models to obtain the Qwen3 chat models",
+          "explanation": "Qwen3 technical report (Yang et al., 2025) cited by the DR Tulu paper documents that the Qwen3 chat/instruct models are post-trained from the corresponding base checkpoints."
+        }
+      ]
+    }
+  ]
+}

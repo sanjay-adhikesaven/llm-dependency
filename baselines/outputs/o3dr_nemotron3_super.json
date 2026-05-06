@@ -1,0 +1,2263 @@
+{
+  "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+  "nodes": [
+    {
+      "node_type": "model",
+      "canonical_id": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "name": "NVIDIA Nemotron 3 Super 120B (A12B BF16)",
+      "provider": "nvidia",
+      "facets": {
+        "family": "Nemotron-3",
+        "size": "120B",
+        "stage": "base",
+        "date": "2026-03-04",
+        "modality": "text"
+      },
+      "aliases": [
+        "NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+        "Nemotron 3 Super 120B",
+        "Nemotron-3 Super 120B A12B Base"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-3-nano-corpus",
+      "name": "Nemotron-3 Nano Pretraining Corpus",
+      "provider": "nvidia",
+      "facets": {
+        "stage": "pretraining",
+        "source": "mixed"
+      },
+      "aliases": [
+        "Nemotron 3 Foundation corpus",
+        "Nemotron-3-Nano corpus"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-cc-v2",
+      "name": "Nemotron-CC v2 (Filtered Common Crawl English web)",
+      "provider": "nvidia",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": [
+        "Nemotron-CC-v2.1"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-cc-code-v1",
+      "name": "Nemotron-CC-Code v1 (Common Crawl code subset)",
+      "provider": "nvidia",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": [
+        "Nemotron-CC-Code-v1"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-pretraining-code-v2",
+      "name": "Nemotron Pretraining Code v2 (Curated GitHub code)",
+      "provider": "nvidia",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": [
+        "Nemotron-Pretraining-Code-v1",
+        "Nemotron-Pretraining-Code-v2"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-cc-math-v1",
+      "name": "Nemotron-CC-Math v1 (Math web data from CC)",
+      "provider": "nvidia",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": [
+        "Nemotron-CC-Math-v1"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/nemotron-pretraining-specialized-v1",
+      "name": "Nemotron Pretraining Specialized v1 (Synthetic specialty corpora)",
+      "provider": "nvidia",
+      "facets": {
+        "stage": "pretraining",
+        "source": "synthetic"
+      },
+      "aliases": [
+        "Nemotron-Pretraining-Specialized-v1"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "openai/gsm8k",
+      "name": "GSM8K",
+      "provider": "openai",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": [
+        "GSM8K",
+        "Grade School Math 8K"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "commoncrawl/cc-news",
+      "name": "Common Crawl News (CC-NEWS)",
+      "provider": "commoncrawl",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": [
+        "CC-NEWS"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "wikimedia/wikipedia",
+      "name": "Wikipedia Dump (Wikimedia, Apr 2025)",
+      "provider": "wikimedia",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": [
+        "Wikimedia Dumps (2025)"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/bespoke-stratos-17k",
+      "name": "Bespoke-Stratos-17k",
+      "provider": "nvidia",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "tigerbot/tigerbot-kaggle-leetcodesolutions-en-2k",
+      "name": "TigerBot Kaggle LeetCode Solutions (EN) 2k",
+      "provider": "tigerbot",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "glaiveai/glaive-function-calling-v2",
+      "name": "Glaive Function-Calling v2",
+      "provider": "glaiveai",
+      "facets": {
+        "stage": "pretraining",
+        "source": "synthetic"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "apigen/apigen-function-calling",
+      "name": "APIGen Function-Calling",
+      "provider": "apigen",
+      "facets": {
+        "stage": "pretraining",
+        "source": "synthetic"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "lmsys/lmsys-chat-1m",
+      "name": "LMSYS-Chat-1M",
+      "provider": "lmsys",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": [
+        "LMSYS Chat 1M"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "open-textbook-library/cc-by-sa-gnu-subset",
+      "name": "Open Textbook Library (CC BY-SA & GNU subset)",
+      "provider": "open-textbook-library",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "openstax/cc-by-sa-subset",
+      "name": "OpenStax (CC BY-SA subset)",
+      "provider": "openstax",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/advanced-reasoning-benchmark",
+      "name": "Advanced Reasoning Benchmark",
+      "provider": "allenai",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": [
+        "ARB"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/prm800k",
+      "name": "PRM800K",
+      "provider": "nvidia",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "xw27/scibench",
+      "name": "SciBench",
+      "provider": "xw27",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacefw/fineweb-2",
+      "name": "FineWeb-2",
+      "provider": "huggingfacefw",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "courtlistener/courtlistener",
+      "name": "CourtListener Legal Opinions",
+      "provider": "courtlistener",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": [
+        "Court Listener"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/pes2o",
+      "name": "peS2o (Scientific publications subset)",
+      "provider": "allenai",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "open-web-math/open-web-math",
+      "name": "OpenWebMath",
+      "provider": "open-web-math",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "biorxiv/biorxiv",
+      "name": "BioRxiv Preprints",
+      "provider": "biorxiv",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nih/pmc-openaccess",
+      "name": "PMC Open Access Subset",
+      "provider": "nih",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": [
+        "PMC OA"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "eleutherai/openwebtext2",
+      "name": "OpenWebText2",
+      "provider": "eleutherai",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "stackexchange/stackexchange-data-dump-2023",
+      "name": "Stack Exchange Data Dump (2023)",
+      "provider": "stackexchange",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "pubmed/pubmed-abstracts",
+      "name": "PubMed Abstracts",
+      "provider": "pubmed",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nih/exporter",
+      "name": "NIH ExPorter Project Data",
+      "provider": "nih",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "arxiv/arxiv-2025",
+      "name": "ArXiv Papers (through 2025)",
+      "provider": "arxiv",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": [
+        "arXiv"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "pushshift/reddit",
+      "name": "Reddit Dataset (Pushshift archive)",
+      "provider": "pushshift",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "sec/edgar",
+      "name": "SEC EDGAR Filings",
+      "provider": "sec",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/advanced-math-problem-solving",
+      "name": "Advanced Mathematical Problem Solving",
+      "provider": "allenai",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "gair/mathpile",
+      "name": "MathPile",
+      "provider": "gair",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "project-numina/numinamath-cot",
+      "name": "NuminaMath CoT",
+      "provider": "project-numina",
+      "facets": {
+        "stage": "pretraining",
+        "source": "synthetic"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "google/flan",
+      "name": "FLAN Instruction Corpus",
+      "provider": "google",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "stanfordnlp/wikitablequestions",
+      "name": "WikiTableQuestions",
+      "provider": "stanfordnlp",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "finqa/finqa",
+      "name": "FinQA",
+      "provider": "finqa",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/riddles",
+      "name": "Riddles Dataset",
+      "provider": "allenai",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "archive/problems-elementary-math",
+      "name": "Problems in Elementary Mathematics (Home Study)",
+      "provider": "archive",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "medmcqa/medmcqa",
+      "name": "MedMCQA",
+      "provider": "medmcqa",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/cosmosqa",
+      "name": "Cosmos QA",
+      "provider": "allenai",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "microsoft/mctest",
+      "name": "MCTest",
+      "provider": "microsoft",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/arc",
+      "name": "AI2 Reasoning Challenge (ARC)",
+      "provider": "allenai",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": [
+        "AI2's Reasoning Challenge"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/openbookqa",
+      "name": "OpenBookQA",
+      "provider": "allenai",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "hendrycks/mmlu-auxiliary-train",
+      "name": "MMLU Auxiliary Train",
+      "provider": "hendrycks",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/social-chemistry-101",
+      "name": "Social Chemistry 101",
+      "provider": "allenai",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/moral-stories",
+      "name": "Moral Stories",
+      "provider": "allenai",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "bigscience/the-common-pile-v0.1",
+      "name": "The Common Pile v0.1",
+      "provider": "bigscience",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacetb/finemath",
+      "name": "FineMath",
+      "provider": "huggingfacetb",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "llm360/megamath",
+      "name": "MegaMath",
+      "provider": "llm360",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/multiversemathhard",
+      "name": "MultiverseMathHard",
+      "provider": "nvidia",
+      "facets": {
+        "stage": "pretraining",
+        "source": "synthetic"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "opus/news-commentary",
+      "name": "News Commentary",
+      "provider": "opus",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "essential-ai/essential-web-v1.0",
+      "name": "Essential-Web v1.0",
+      "provider": "essential-ai",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/finepdfs",
+      "name": "FinePDFs",
+      "provider": "nvidia",
+      "facets": {
+        "stage": "pretraining",
+        "source": "web"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "hotpotqa/hotpotqa",
+      "name": "HotpotQA",
+      "provider": "hotpotqa",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "rajpurkar/squad2.0",
+      "name": "SQuAD2.0",
+      "provider": "rajpurkar",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": [
+        "SQuAD 2.0"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nltk/word-lists",
+      "name": "NLTK Word Lists",
+      "provider": "nltk",
+      "facets": {
+        "stage": "pretraining",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-235b-a22b",
+      "name": "Qwen3-235B-A22B (base model)",
+      "provider": "qwen",
+      "facets": {
+        "family": "Qwen3",
+        "size": "235B",
+        "stage": "base"
+      },
+      "aliases": [
+        "Qwen3 235B A22B"
+      ]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-235b-a22b-instruct-2507",
+      "name": "Qwen3-235B-A22B Instruct (2507)",
+      "provider": "qwen",
+      "facets": {
+        "family": "Qwen3",
+        "size": "235B",
+        "stage": "instruct"
+      },
+      "aliases": [
+        "Qwen3-235B-A22B-Thinking-2507"
+      ]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-30b-a3b",
+      "name": "Qwen3-30B-A3B (base model)",
+      "provider": "qwen",
+      "facets": {
+        "family": "Qwen3",
+        "size": "30B",
+        "stage": "base"
+      },
+      "aliases": [
+        "Qwen3 30B A3B"
+      ]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen2.5-72b",
+      "name": "Qwen2.5-72B (base model)",
+      "provider": "qwen",
+      "facets": {
+        "family": "Qwen2.5",
+        "size": "72B",
+        "stage": "base"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen2.5-72b-instruct",
+      "name": "Qwen2.5-72B Instruct",
+      "provider": "qwen",
+      "facets": {
+        "family": "Qwen2.5",
+        "size": "72B",
+        "stage": "instruct"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen2.5-0.5b-instruct",
+      "name": "Qwen2.5-0.5B Instruct",
+      "provider": "qwen",
+      "facets": {
+        "family": "Qwen2.5",
+        "size": "0.5B",
+        "stage": "instruct"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "deepseek-ai/deepseek-r1",
+      "name": "DeepSeek R1",
+      "provider": "deepseek-ai",
+      "facets": {
+        "family": "DeepSeek",
+        "stage": "base"
+      },
+      "aliases": [
+        "DeepSeek-R1"
+      ]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "deepseek-ai/deepseek-r1-0528-qwen3-8b",
+      "name": "DeepSeek-R1-0528-Qwen3-8B",
+      "provider": "deepseek-ai",
+      "facets": {
+        "family": "DeepSeek-R1",
+        "size": "8B",
+        "stage": "posttrained"
+      },
+      "aliases": [
+        "DeepSeek-R1-0528"
+      ]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "deepseek-ai/deepseek-v3",
+      "name": "DeepSeek V3",
+      "provider": "deepseek-ai",
+      "facets": {
+        "family": "DeepSeek",
+        "stage": "base"
+      },
+      "aliases": [
+        "DeepSeek-V3"
+      ]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "deepseek-ai/deepseek-v3-0324",
+      "name": "DeepSeek V3 (snapshot 0324)",
+      "provider": "deepseek-ai",
+      "facets": {
+        "family": "DeepSeek",
+        "stage": "base"
+      },
+      "aliases": [
+        "DeepSeek-V3-0324"
+      ]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "deepseek-ai/deepseek-r1-distill-qwen-32b",
+      "name": "DeepSeek-R1-Distill-Qwen-32B",
+      "provider": "deepseek-ai",
+      "facets": {
+        "family": "DeepSeek-R1",
+        "size": "32B",
+        "stage": "distilled"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "mixtral/mixtral-8x22b-v0.1",
+      "name": "Mixtral-8x22B v0.1",
+      "provider": "mixtral",
+      "facets": {
+        "size": "8x22B",
+        "stage": "base"
+      },
+      "aliases": [
+        "Mixtral 8x22B"
+      ]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "microsoft/phi-4",
+      "name": "Phi-4",
+      "provider": "microsoft",
+      "facets": {
+        "family": "Phi",
+        "size": "4B",
+        "stage": "base"
+      },
+      "aliases": [
+        "Phi-4 Technical Report"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "hendrycks/mmlu",
+      "name": "MMLU Benchmark",
+      "provider": "hendrycks",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": [
+        "MMLU"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "hendrycks/mmlu-pro",
+      "name": "MMLU-Pro (CoT version)",
+      "provider": "hendrycks",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "agieval/agieval-en",
+      "name": "AGIEval-En",
+      "provider": "agieval",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/gpqa-diamond",
+      "name": "GPQA-Diamond",
+      "provider": "nvidia",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "hendrycks/math",
+      "name": "MATH Benchmark",
+      "provider": "hendrycks",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/math-level-5",
+      "name": "MATH Level 5",
+      "provider": "nvidia",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "maa/aime-2024",
+      "name": "AIME 2024 problems",
+      "provider": "maa",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": [
+        "AIME 2024 contest"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "openai/humaneval",
+      "name": "HumanEval (code eval)",
+      "provider": "openai",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": [
+        "HumanEval"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "google/mbpp-sanitized",
+      "name": "MBPP-Sanitized",
+      "provider": "google",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": [
+        "MBPP"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/hellaswag",
+      "name": "HellaSwag",
+      "provider": "allenai",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/piqa",
+      "name": "PIQA",
+      "provider": "allenai",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/winogrande",
+      "name": "WinoGrande",
+      "provider": "allenai",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "race/race",
+      "name": "RACE",
+      "provider": "race",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/mmlu-global-lite",
+      "name": "MMLU Global Lite",
+      "provider": "nvidia",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/mgsm",
+      "name": "MGSM (Multilingual GSM8K)",
+      "provider": "nvidia",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": []
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "nvidia/ruler-lctx",
+      "name": "RULER Long-Context Benchmark",
+      "provider": "nvidia",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": [
+        "RULER 64K-1M"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "openclaw/pinchbench",
+      "name": "PinchBench",
+      "provider": "openclaw",
+      "facets": {
+        "stage": "evaluation",
+        "source": "human-curated"
+      },
+      "aliases": []
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "e_nemo120b_trainedon_nano",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/nemotron-3-nano-corpus",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The base Nemotron 3 Super 120B model was pre-trained on the Nemotron-3-Nano corpus (the \"foundation\" corpus) comprising the curated web and synthetic data collections listed in its documentation.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 279-287",
+          "excerpt": "Base Pre-Training Corpus (Nemotron 3 Foundation)\nThe foundation of the model is trained on the Nemotron-3-Nano corpus, comprising the following collections:",
+          "explanation": "Confirms that the model’s foundation pretraining corpus is the Nemotron-3-Nano corpus."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_ccv2",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/nemotron-cc-v2",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Nemotron 3 Super was trained on filtered Common Crawl English web data (Nemotron-CC v2, v2.1) totaling over 9 trillion tokens.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 284-288",
+          "excerpt": "Nemotron-CC-v2 & v2.1  | 9.13T  | A massive collection of English web data filtered from Common Crawl",
+          "explanation": "Lists Nemotron-CC-v2 & v2.1 as part of the training corpus."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_cccode",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/nemotron-cc-code-v1",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The model’s pretraining corpus included Nemotron-CC-Code-v1, a 427.9B-token dataset of high-quality code extracted from Common Crawl (using an LLM-assisted pipeline to preserve structure).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 287-290",
+          "excerpt": "Nemotron-CC-Code-v1  | 427.9B  | High-quality code tokens extracted from Common Crawl using the Lynx + LLM pipeline to preserve structure and equations.",
+          "explanation": "Shows that Nemotron-CC-Code-v1 (427.9B tokens of code from CC) was part of the training data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_precode",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/nemotron-pretraining-code-v2",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Nemotron 3 Super pretraining included the curated GitHub code reference datasets (Nemotron-Pretraining-Code v1 & v2) totaling ~1.09 trillion tokens, filtered, deduplicated, and augmented with synthetic code data.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 290-293",
+          "excerpt": "Nemotron-Pretraining-Code-v1 & v2  | 1.09T  | Curated GitHub code references with multi-stage filtering, deduplication, and large-scale synthetic code data.",
+          "explanation": "Indicates that curated GitHub code (Pretraining-Code v1 & v2, 1.09T tokens) was used in the model’s training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_ccmath",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/nemotron-cc-math-v1",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The pretraining mix included Nemotron-CC-Math-v1 (133.3B tokens of math data from web sources, preserving LaTeX and structure).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 292-294",
+          "excerpt": "Nemotron-CC-Math-v1  | 133.3B  | High-quality math pre-training dataset preserving LaTeX formatting and mathematical structures.",
+          "explanation": "Shows that a math-specific dataset (Nemotron-CC-Math-v1, 133.3B tokens) was part of the training corpus."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_special",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/nemotron-pretraining-specialized-v1",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Nemotron 3 Super’s training data included specialized synthetic datasets (Nemotron-Pretraining-Specialized-v1, ~336.4B tokens) targeting domains like STEM reasoning and scientific coding.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 294-297",
+          "excerpt": "Nemotron-Pretraining-Specialized-v1  | 336.4B  | Synthetic datasets targeting specialized domains such as STEM reasoning and scientific coding.",
+          "explanation": "Confirms a synthetic specialized dataset collection (336.4B tokens) was used in training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_gsm8k",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "openai/gsm8k",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The GSM8K math word problem dataset (collection date April 23, 2025) was included as part of the model’s training data (likely its training split).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 302",
+          "excerpt": "GSM8K  | 4/23/2025",
+          "explanation": "Lists GSM8K among the public datasets (dated 4/23/2025) used for training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_ccnews",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "commoncrawl/cc-news",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The Common Crawl News dataset (CC-News) was part of Nemotron 3 Super’s training mix (with data as of 4/23/2025).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 303",
+          "excerpt": "CC-NEWS  | 4/23/2025",
+          "explanation": "CC-NEWS is listed as a dataset used for training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_wikipedia",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "wikimedia/wikipedia",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The model’s training data included Wikipedia (Wikimedia dumps collected up to April 23, 2025).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 304",
+          "excerpt": "Common Crawl  | 4/23/2025\nWikimedia  | 4/23/2025",
+          "explanation": "Indicates that Wikimedia (Wikipedia) dumps dated 4/23/2025 were included in training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_bespoke",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/bespoke-stratos-17k",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "A dataset named \"Bespoke-Stratos-17k\" (17k presumably high-quality examples) was among the public datasets used to train Nemotron 3 Super.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 306",
+          "excerpt": "Bespoke-Stratos-17k  | 4/23/2025",
+          "explanation": "Shows that Bespoke-Stratos-17k was included in the training set."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_tigerbot",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "tigerbot/tigerbot-kaggle-leetcodesolutions-en-2k",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The TigerBot Kaggle LeetCode Solutions (English, 2k problems) dataset was used in the training of Nemotron 3 Super (collected by 4/23/2025).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 307",
+          "excerpt": "tigerbot-kaggle-leetcodesolutions-en-2k  | 4/23/2025",
+          "explanation": "TigerBot’s LeetCode solutions dataset (2k entries) appears in the list of training datasets."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_glaivefc",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "glaiveai/glaive-function-calling-v2",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Nemotron 3 Super’s training mix included the Glaive function-calling v2 dataset (date 4/23/2025), likely for tool-use examples.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 308",
+          "excerpt": "glaive-function-calling-v2  | 4/23/2025",
+          "explanation": "Confirms that the Glaive function-calling v2 dataset was used in training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_apigen",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "apigen/apigen-function-calling",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The APIGen Function-Calling dataset was part of the training data (collected by April 2025).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 309",
+          "excerpt": "APIGen Function-Calling  | 4/23/2025",
+          "explanation": "Lists the APIGen Function-Calling data among training datasets."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_lmsyschat",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "lmsys/lmsys-chat-1m",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The LMSYS-Chat-1M dataset (a million real-world conversation samples) was included to provide conversational alignment data in the base model’s training.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 310",
+          "excerpt": "LMSYS-Chat-1M  | 4/23/2025",
+          "explanation": "Shows that LMSYS-Chat-1M was part of the training dataset collection."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_textbooks",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "open-textbook-library/cc-by-sa-gnu-subset",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Open educational textbook content was included: specifically, CC BY-SA/GNU-licensed texts from the Open Textbook Library (as of 4/23/2025).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 311-312",
+          "excerpt": "Open Textbook Library - CC BY-SA & GNU subset …  | 4/23/2025",
+          "explanation": "Indicates that the CC BY-SA & GNU-licensed subset of Open Textbook Library was used (as listed in training datasets)."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_openstax",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "openstax/cc-by-sa-subset",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Likewise, OpenStax educational materials (with CC BY-SA license) were part of the training data (collected by 4/23/2025).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 311-312",
+          "excerpt": "… and OpenStax - CC BY-SA subset  | 4/23/2025",
+          "explanation": "Same line shows OpenStax CC BY-SA subset included in training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_arb",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "allenai/advanced-reasoning-benchmark",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The Advanced Reasoning Benchmark (ARB) dataset was used during development (appearing in the training data list under legacy sources).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 327",
+          "excerpt": "Advanced Reasoning Benchmark  | Legacy Download",
+          "explanation": "Shows ARB listed (as a legacy download) indicating it was among the datasets ingested."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_prm800k",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/prm800k",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "A dataset named PRM800K (likely a math or reasoning dataset of ~800k examples) was among the training inputs (listed under legacy downloads).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 328",
+          "excerpt": "…  PRM800K…, and SciBench  | Legacy Download",
+          "explanation": "Shows PRM800K in the list of legacy downloadable training data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_scibench",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "xw27/scibench",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The SciBench dataset (college-level scientific problem-solving benchmark) was included as part of training data (noted in legacy data list).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 328",
+          "excerpt": "..., PRM800K, and SciBench  | Legacy Download",
+          "explanation": "SciBench is listed among the training inputs."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_fineweb2",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "huggingfacefw/fineweb-2",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "FineWeb-2 (open web dataset) was part of the training set (present in the legacy data list).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 315",
+          "excerpt": "FineWeb-2  | 4/23/2025",
+          "explanation": "FineWeb-2 appears with a collection date, confirming its use in training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_courtlistener",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "courtlistener/courtlistener",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Legal text from Court Listener (open law opinions) was included as part of the pretraining data (marked as a legacy download).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 365-367",
+          "excerpt": "The English Common Crawl data... The data was subsequently deduplicated and filtered... Deduplication was done in the same way as for Nemotron-CC.",
+          "explanation": "General context for crawling/collecting web data and filtering (Court Listener is mentioned in dataset list at line 317 ([huggingface.co](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16#:~:text=Court%20Listener%20%20,Legacy%20Download)), confirming usage)."
+        },
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 317",
+          "excerpt": "Court Listener  | Legacy Download",
+          "explanation": "Explicitly lists Court Listener content as part of training data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_pes2o",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "allenai/pes2o",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "A dataset named peS2o (likely a scientific publications subset) was included in training (listed as a legacy download).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 318",
+          "excerpt": "peS2o  | Legacy Download",
+          "explanation": "Shows peS2o listed among training data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_openwebmath",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "open-web-math/open-web-math",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "High-quality mathematical web text from OpenWebMath was part of the training set (present in the legacy downloads list).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 319",
+          "excerpt": "OpenWebMath  | Legacy Download",
+          "explanation": "Lists OpenWebMath as one of the datasets used."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_biorxiv",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "biorxiv/biorxiv",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Scientific preprints from BioRxiv were included as training data (legacy download).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 320",
+          "excerpt": "BioRxiv  | Legacy Download",
+          "explanation": "Shows BioRxiv listed in training dataset list."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_pmc",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nih/pmc-openaccess",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Open Access scientific articles from PubMed Central (PMC Open Access subset) were part of the training corpora (legacy data).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 321",
+          "excerpt": "PMC Open Access Subset  | Legacy Download",
+          "explanation": "Confirms use of the PMC Open Access subset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_openwebtext2",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "eleutherai/openwebtext2",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The OpenWebText2 dataset (an open reproduction of Reddit web text) was used in training (legacy source).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 322",
+          "excerpt": "OpenWebText2  | Legacy Download",
+          "explanation": "Indicates OpenWebText2 was included."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_stackex",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "stackexchange/stackexchange-data-dump-2023",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "A Stack Exchange data dump was part of the training corpus (noted as legacy download).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 323",
+          "excerpt": "Stack Exchange Data Dump  | Legacy Download",
+          "explanation": "Shows that a Stack Exchange dump was used."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_pubmedabs",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "pubmed/pubmed-abstracts",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "PubMed Abstracts were included in the training dataset (legacy download).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 324",
+          "excerpt": "PubMed Abstracts  | Legacy Download",
+          "explanation": "PubMed Abstracts are listed among training data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_nihexporter",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nih/exporter",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "NIH ExPorter data (grant/project information) was used in training (legacy).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 325",
+          "excerpt": "NIH ExPorter  | Legacy Download",
+          "explanation": "Shows NIH ExPorter in the training data list."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_arxiv",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "arxiv/arxiv-2025",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "ArXiv papers (through late 2025) were part of the pretraining data (legacy content).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 326",
+          "excerpt": "arXiv  | Legacy Download",
+          "explanation": "ArXiv is listed as a source used."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_bigscience",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "bigscience/the-common-pile-v0.1",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Various BigScience workshop datasets were consumed, including The Common Pile v0.1 (noted in legacy data list).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 325",
+          "excerpt": "BigScience Workshop Datasets  | Legacy Download",
+          "explanation": "Indicates BigScience datasets were used (the Common Pile v0.1 is separately listed at line 351-352 ([huggingface.co](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16#:~:text=The%20Common%20Pile%20v0,10%2F2%2F2025)))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_reddit",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "pushshift/reddit",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "A Reddit comment dataset (Pushshift Reddit) was part of training (legacy data).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 328",
+          "excerpt": "Reddit Dataset  | Legacy Download",
+          "explanation": "Shows Reddit dataset included."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_edgar",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "sec/edgar",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "SEC EDGAR financial filings were included in training data (legacy download).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 329-330",
+          "excerpt": "SEC's Electronic Data Gathering, Analysis, and Retrieval (EDGAR)  | Legacy Download",
+          "explanation": "Shows EDGAR listed among the datasets."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_advmath",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "allenai/advanced-math-problem-solving",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "An advanced math problem-solving dataset is listed as part of training (legacy).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 330",
+          "excerpt": "Advanced Mathematical Problem Solving  | Legacy Download",
+          "explanation": "Confirms use of an advanced math problem dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_finemath",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "huggingfacetb/finemath",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The FineMath dataset of high-quality math text was included (legacy).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 352",
+          "excerpt": "FineMath  | Legacy Download",
+          "explanation": "Shows FineMath included."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_megamath",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "llm360/megamath",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The MegaMath corpus was used in training (legacy list, likely for extensive math content).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 353-354",
+          "excerpt": "MegaMath  | Legacy Download\nMegaMath  | Legacy Download",
+          "explanation": "Shows MegaMath (mentioned twice due to formatting) was used."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_multiversehard",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/multiversemathhard",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "A dataset referred to as MultiverseMathHard (likely difficult math problems) was part of training (collected by 10/2/2025).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 355",
+          "excerpt": "MultiverseMathHard  | 10/2/2025",
+          "explanation": "Shows MultiverseMathHard with collection date, indicating its use."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_newscommentary",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "opus/news-commentary",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The News Commentary parallel corpus was included (collection date 10/2/2025, likely for multilingual content).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 356",
+          "excerpt": "News Commentary  | 10/2/2025",
+          "explanation": "News Commentary appears in the training data list with date."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_essentialweb",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "essential-ai/essential-web-v1.0",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The Essential-Web v1.0 corpus (24T tokens annotated web data) was part of training (collected by 10/2/2025).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 357",
+          "excerpt": "Essential-Web  | 10/2/2025",
+          "explanation": "Confirms Essential-Web used."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_finepdfs",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/finepdfs",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "A collection referred to as \"finepdfs\" (likely curated PDFs) was part of training (collected by 10/2/2025).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 358",
+          "excerpt": "finepdfs  | 10/2/2025",
+          "explanation": "Finepdfs listed as dataset used."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_hotpotqa",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "hotpotqa/hotpotqa",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The HotpotQA dataset (multi-hop QA) was used (collection 10/2/2025).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 359",
+          "excerpt": "HotpotQA  | 10/2/2025",
+          "explanation": "HotpotQA is shown with date, confirming inclusion."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_squad2",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "rajpurkar/squad2.0",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The SQuAD2.0 reading comprehension dataset was part of training (collection 10/2/2025).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 360",
+          "excerpt": "SQuAD2.0  | 10/2/2025",
+          "explanation": "Shows SQuAD2.0 (with date) as included."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_trainedon_nltkwords",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nltk/word-lists",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "NLTK word lists were used during training (collection date 10/2/2025).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 361",
+          "excerpt": "NLTK Words Lists  | 10/2/2025",
+          "explanation": "Confirms NLTK word lists included."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_generatedby_qwen235b",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "qwen/qwen3-235b-a22b",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "The 235B-parameter Qwen3 model served as a data generator for Nemotron 3 Super’s training data: it was used to create multiple synthetic datasets (formal logic, economics, multiple-choice QA, algorithmic problems, and various reasoning tasks) that were then used to train Nemotron.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 432-433",
+          "excerpt": "Nemotron-Pretraining-Multiple-Choice ...  | DeepSeek-V3; Qwen3-235B-A22B",
+          "explanation": "Shows Qwen3-235B-A22B listed as a model used to generate the multiple-choice QA dataset."
+        },
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 438-446",
+          "excerpt": "Synthetic Tasks from DeepSeek-V3 and Qwen3-235B-A22B ... | ... DeepSeek v3; Qwen3-235B-A22B",
+          "explanation": "Indicates Qwen3-235B-A22B was one of the generators for a broad set of synthetic tasks (covering ARC, BLiMP, CommonSenseQA, MMLU-Pro, etc.) used in training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_generatedby_qwen30b",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "qwen/qwen3-30b-a3b",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "The Qwen3-30B-A3B model was used to generate certain portions of the training data. For example, Qwen3-30B helped produce synthetic “Essential-Web” content for Nemotron’s training.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 428-429",
+          "excerpt": "Nemotron-Pretraining-Formal-Logic  ...  | Qwen3-235B-A22B-Thinking-2507",
+          "explanation": "In synthetic data generation, Qwen3-30B is cited alongside Qwen3-235B for at least one dataset (see essential-web and textbook math entries below, which include Qwen3-30B)."
+        },
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 449-455",
+          "excerpt": "Synthetic Essential-Web from Qwen3-30B-A3B and Qwen3-235B-A22B-Thinking-2507 ...  | Qwen3-30B-A3B; Qwen3-235B-A22B-Thinking-2507",
+          "explanation": "Explicitly shows Qwen3-30B-A3B was used (with Qwen3-235B) to generate the Synthetic Essential-Web training data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_generatedby_qwen235b_instr",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "qwen/qwen3-235b-a22b-instruct-2507",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "The instruction-tuned variant of Qwen3-235B (often referred to as Qwen3-235B \"Thinking\" mode) was used to generate certain specialized training data for Nemotron 3 Super. Notably, Qwen3-235B-Instruct-2507 produced synthetic long-context data and other alignment-focused data.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 459-463",
+          "excerpt": "Synthetic Health Sciences ... DeepSeek-V3, Mixtral-8x22B-v0.1, and Qwen2.5-72B ...  | DeepSeek-V3; Mixtral-8x22B-v0.1; Qwen2.5-72B",
+          "explanation": "This entry confirms the pattern of using instruct models to generate domain-specific training data (though this particular excerpt shows Qwen2.5-72B-Instruct usage ([huggingface.co](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16#:~:text=Synthetic%20Question%20Answering%20Data%20from,Instruct)), the next evidence highlights Qwen3-235B-Instruct)."
+        },
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 473-480",
+          "excerpt": "Synthetic Question Answering Data ... from Qwen2.5-72B-Instruct ...  | Qwen2.5-72B-Instruct",
+          "explanation": "Similar method: an instruction-tuned Qwen (here 2.5-72B) is used for QA data. Specifically for Qwen3-235B-Instruct, the synthetic long-context dataset (RULER tasks) was generated by Qwen3-235B-Instruct ([huggingface.co](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16#:~:text=match%20at%20L534%20Synthetic%20Long,2507))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_generatedby_deepseekv3",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "deepseek-ai/deepseek-v3",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "The DeepSeek V3 model was used to help generate training data for Nemotron 3 Super (for instance, it co-generated synthetic reasoning tasks and domain-specific corpora like social sciences content).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 456-459",
+          "excerpt": "Synthetic Social Sciences ... from DeepSeek-V3, Mixtral-8x22B-v0.1, and Qwen2.5-72B ...  | DeepSeek-V3; Mixtral-8x22B-v0.1; Qwen2.5-72B",
+          "explanation": "Shows DeepSeek-V3 as one of the models used to generate synthetic Social Sciences training data."
+        },
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 438-446",
+          "excerpt": "Synthetic Tasks from DeepSeek-V3 and Qwen3-235B-A22B ... | DeepSeek v3; Qwen3-235B-A22B",
+          "explanation": "Shows DeepSeek-V3 collaborated with Qwen3 to generate a broad range of synthetic tasks for training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_generatedby_deepseekv3_0324",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "deepseek-ai/deepseek-v3-0324",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "The DeepSeek-V3 model (snapshot as of March 24) was also employed in synthetic data generation, for example in creating STEM and other reasoning datasets for Nemotron’s training.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 464-468",
+          "excerpt": "Synthetic STEM ... from DeepSeek-R1, DeepSeek-V3, DeepSeek-V3-0324, and Qwen2.5-72B ... | DeepSeek-R1, DeepSeek-V3; DeepSeek-V3-0324; Qwen2.5-72B",
+          "explanation": "Shows DeepSeek-V3-0324 was one of the models used to generate synthetic STEM training data."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_generatedby_deepseekr1",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "deepseek-ai/deepseek-r1",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "The DeepSeek-R1 reasoning model was used to generate part of Nemotron’s training data. For instance, it was used to synthetically expand the Art of Problem Solving (math contest) content for Nemotron’s pretraining.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 449-452",
+          "excerpt": "Synthetic Art of Problem Solving from DeepSeek-R1 ...  | DeepSeek-R1",
+          "explanation": "Indicates DeepSeek-R1 was the model used to generate the synthetic Art of Problem Solving dataset for training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_generatedby_deepseekr1_0528",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "deepseek-ai/deepseek-r1-0528-qwen3-8b",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "The smaller DeepSeek-R1-0528-Qwen3-8B model was utilized to generate certain specialized data for training (for example, synthetic offline search QA tasks).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 543-547",
+          "excerpt": "Synthetic Offline Search MCQA GPQA from Qwen3-235B-A22B and DeepSeek-R1-0528  ...  | Qwen3-235B-A22B; DeepSeek-R1-0528",
+          "explanation": "Indicates that DeepSeek-R1-0528 (with Qwen3) was used to generate synthetic MCQA/GPQA data for training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_generatedby_deepseekr1_distill",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "deepseek-ai/deepseek-r1-distill-qwen-32b",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "The DeepSeek-R1-Distill-Qwen-32B model was employed to generate at least one dataset (PrismMath) in Nemotron 3 Super’s training pipeline, providing distilled reasoning traces.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 469-471",
+          "excerpt": "Nemotron-PrismMath ...  | Qwen2.5-0.5B-instruct, Qwen2.5-72B-Instruct; DeepSeek-R1-Distill-Qwen-32B",
+          "explanation": "Shows that DeepSeek-R1-Distill-Qwen-32B was one of the models used to generate the PrismMath dataset for training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_generatedby_mixtral",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "mixtral/mixtral-8x22b-v0.1",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "The Mixtral-8x22B-v0.1 model was used to create some synthetic data: e.g., it generated synthetic moral stories and social chemistry data which Nemotron 3 Super was trained on.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 453-455",
+          "excerpt": "Synthetic Moral Stories and Social Chemistry from Mixtral-8x22B-v0.1 ...  | Mixtral-8x22B-v0.1",
+          "explanation": "Indicates that Mixtral-8x22B was used to generate synthetic Moral Stories & Social Chem data for training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_transformedby_phi4",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "microsoft/phi-4",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "The Phi-4 model was used to rephrase and enhance certain data that went into training. For instance, Phi-4 rewrote math data from Common Crawl into higher quality text (preserving formulas), which was then included in Nemotron’s training set.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 479-482",
+          "excerpt": "Synthetic Rephrased Math Data from Common Crawl from phi-4  ...  | Common Crawl  | phi-4",
+          "explanation": "Shows that Phi-4 was used to rephrase math data from Common Crawl (improving it) for training."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_mmlu",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "hendrycks/mmlu",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Nemotron 3 Super was evaluated on MMLU (Massive Multitask Language Understanding) benchmark (5-shot accuracy reported).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 116",
+          "excerpt": "MMLU  | 5-shot, acc  | 86.01",
+          "explanation": "Confirms MMLU was used as an evaluation (Nemotron’s 5-shot accuracy 86.01%)."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_mmlu_pro",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "hendrycks/mmlu-pro",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "The model’s chain-of-thought performance on MMLU (MMLU-Pro, requiring reasoning steps) was evaluated (Nemotron’s CoT exact match ~75.65%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 117",
+          "excerpt": "MMLU-Pro  | 5-shot, CoT EM  | 75.65",
+          "explanation": "Shows Nemotron 3 Super’s result on MMLU-Pro, confirming it was an eval benchmark."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_agieval",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "agieval/agieval-en",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "AGIEval (English subset) was used in evaluation (Nemotron Super’s 3/5-shot CoT exact match ~77.92%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 118",
+          "excerpt": "AGIEval-En  | 3/5-shot, CoT EM  | 77.92",
+          "explanation": "Nemotron Super’s score on AGIEval-En indicates it was evaluated on this benchmark."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_gpqa",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/gpqa-diamond",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Nemotron 3 Super was evaluated on a General Physics/Person QA “Diamond” set (GPQA-Diamond), achieving ~60.0% (perhaps a specialized internal metric).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 119",
+          "excerpt": "GPQA-Diamond  | 5-shot, CoT EM  | 60.00",
+          "explanation": "Shows GPQA-Diamond as an evaluation task with Nemotron Super’s performance, confirming its use."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_gsm8k",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "openai/gsm8k",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "The model’s math reasoning was evaluated on GSM8K (8-shot exact match ~90.67%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 121",
+          "excerpt": "GSM8K  | 8-shot, EM  | 90.67",
+          "explanation": "Records Nemotron’s GSM8K performance, evidencing that GSM8K was in the evaluation suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_math",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "hendrycks/math",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Hendrycks’ MATH benchmark was used as an eval (4-shot EM ~84.84%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 122",
+          "excerpt": "MATH  | 4-shot, EM  | 84.84",
+          "explanation": "Nemotron’s result on MATH (84.84% EM) confirms it was evaluated on this math benchmark."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_mathlevel5",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/math-level-5",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "A subset of MATH (Level 5) questions was evaluated (Nemotron’s 4-shot EM ~70.00%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 123",
+          "excerpt": "MATH Level 5  | 4-shot, EM  | 70.00",
+          "explanation": "Shows a \"MATH Level 5\" evaluation result (70.00 EM), indicating that category was evaluated."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_aime2024",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "maa/aime-2024",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "The model was tested on AIME 2024 problems (pass@32 ≈53.33%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 124",
+          "excerpt": "AIME 2024  | pass@32  | 53.33",
+          "explanation": "Nemotron’s performance on AIME 2024 (pass@32 = 53.33) confirms it as an eval task."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_humaneval",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "openai/humaneval",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "The model’s coding ability was measured on HumanEval (0-shot pass@1 ~79.40%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 126",
+          "excerpt": "HumanEval  | 0-shot, pass@1 n=32  | 79.40",
+          "explanation": "Shows Nemotron 3 Super’s HumanEval score, confirming HumanEval was in the eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_mbpp",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "google/mbpp-sanitized",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "The MBPP (sanitized) coding benchmark was used in evaluation (Nemotron’s 3-shot pass@1 ~78.38%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 127",
+          "excerpt": "MBPP-Sanitized  | 3-shot, pass@1 n=32  | 78.38",
+          "explanation": "Records Nemotron’s MBPP result, indicating MBPP-Sanitized was an eval dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_arc",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "allenai/arc",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "The ARC-Challenge set was used to evaluate commonsense and science QA (25-shot acc_norm ~96.08%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 129",
+          "excerpt": "ARC-Challenge  | 25-shot, acc_norm  | 96.08",
+          "explanation": "Shows Nemotron’s score on ARC-Challenge, confirming it was evaluated on it."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_hellaswag",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "allenai/hellaswag",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "HellaSwag (common-sense event completion) was in the evaluation battery (10-shot acc_norm ~88.97%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 130",
+          "excerpt": "HellaSwag  | 10-shot, acc_norm  | 88.97",
+          "explanation": "Confirms HellaSwag was used to evaluate Nemotron (with 88.97% accuracy)."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_openbookqa",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "allenai/openbookqa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "OpenBookQA served as an evaluation dataset for Nemotron (0-shot acc_norm ~50.20%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 131",
+          "excerpt": "OpenBookQA  | 0-shot, acc_norm  | 50.20",
+          "explanation": "Shows Nemotron’s 0-shot score on OpenBookQA (50.20%)."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_piqa",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "allenai/piqa",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Physical commonsense reasoning was evaluated via PIQA (0-shot acc_norm ~85.47%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 132",
+          "excerpt": "PIQA  | 0-shot, acc_norm  | 85.47",
+          "explanation": "Records Nemotron’s PIQA accuracy, confirming PIQA was used for evaluation."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_winogrande",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "allenai/winogrande",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "WinoGrande (commonsense coreference task) was an evaluation target (5-shot accuracy ~78.93%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 133",
+          "excerpt": "WinoGrande  | 5-shot, acc  | 78.93",
+          "explanation": "Shows WinoGrande’s evaluation result for Nemotron (5-shot acc 78.93%)."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_race",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "race/race",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "The RACE reading comprehension benchmark was used (Nemotron’s 0-shot accuracy ~91.00%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 135",
+          "excerpt": "RACE  | 0-shot, acc  | 91.00",
+          "explanation": "Shows Nemotron 3 Super’s RACE score, confirming evaluation on RACE."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_mmlu_global",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/mmlu-global-lite",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "A multilingual variant of MMLU (MMLU Global Lite, covering non-English) was used for evaluation (5-shot average ~85.72%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 137",
+          "excerpt": "MMLU Global Lite  | 5-shot, avg  | 85.72",
+          "explanation": "Indicates Nemotron was evaluated on the MMLU Global Lite (multilingual) subset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_mgsm",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/mgsm",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "The MGSM (Multilingual GSM8K) benchmark was used in evaluation (8-shot average ~87.47%).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Line 138",
+          "excerpt": "MGSM  | 8-shot, avg  | 87.47",
+          "explanation": "Records Nemotron’s MGSM result, confirming MGSM was an eval dataset."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_ruler",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "nvidia/ruler-lctx",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "Nemotron 3 Super’s long-context capabilities were measured via the RULER benchmark (0-shot accuracy recorded at 64K, 128K, 256K, 512K, and 1M tokens contexts, e.g., 93.17% at 64K).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-Base-BF16",
+          "location": "Lines 140-144",
+          "excerpt": "RULER 64K  | 0-shot  | 93.17  | —  | 81.58\nRULER 128K  | 0-shot  | 89.00  | 57.56  | 63.62\nRULER 256K  | 0-shot  | 86.18  | —  | —\nRULER 512K  | 0-shot  | 82.16  | —  | —\nRULER 1M  | 0-shot  | 74.39",
+          "explanation": "Shows Nemotron’s performance across various RULER context lengths, confirming RULER was an eval suite."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_nemo120b_used_for_evaluation_pinchbench",
+      "subject": "nvidia/nvidia-nemotron-3-super-120b-a12b-bf16",
+      "object": "openclaw/pinchbench",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "The PinchBench benchmark (for multi-agent autonomy) was used to evaluate Nemotron 3 Super’s agentic reasoning; Nemotron Super scored ~85.6%, making it the best open model on that test suite.",
+      "evidence": [
+        {
+          "source": "https://developer.nvidia.com/blog/introducing-nemotron-3-super-an-open-hybrid-mamba-transformer-moe-for-agentic-reasoning/",
+          "location": "“On PinchBench—a new benchmark for determining how well LLM models perform as the brain of an OpenClaw agent—Nemotron 3 Super scores 85.6% across the full test suite, making it the best open model in its class.”",
+          "excerpt": "On PinchBench—a new benchmark for determining how well LLM models perform as the brain of an OpenClaw agent—Nemotron 3 Super scores 85.6% across the full test suite, making it the best open model in its class.",
+          "explanation": "Confirms that PinchBench was used to evaluate Nemotron 3 Super (which achieved 85.6%)."
+        }
+      ]
+    }
+  ]
+}

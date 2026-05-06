@@ -1,0 +1,1309 @@
+{
+  "subject": "allenai/olmo-3-1125-32b",
+  "nodes": [
+    {
+      "node_type": "model",
+      "canonical_id": "allenai/olmo-3-1125-32b",
+      "name": "OLMo 3 32B (base)",
+      "provider": "allenai",
+      "facets": {
+        "family": "OLMo-3",
+        "size": "32B",
+        "stage": "base",
+        "date": "2025-11-25",
+        "modality": "text"
+      },
+      "aliases": [
+        "OLMo-3-1125-32B",
+        "OLMo3-32B",
+        "OLMo 3 32B Base"
+      ]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "qwen/qwen3-32b",
+      "name": "Qwen3-32B",
+      "provider": "qwen",
+      "facets": {
+        "family": "Qwen3",
+        "size": "32B",
+        "stage": "base",
+        "date": "2025"
+      },
+      "aliases": [
+        "Qwen-3 32B",
+        "Yang et al. (2025a) Qwen3-32B"
+      ]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "openai/gpt-4.1",
+      "name": "GPT-4.1",
+      "provider": "openai",
+      "facets": {
+        "family": "GPT-4",
+        "version": "4.1",
+        "date": "2025"
+      },
+      "aliases": [
+        "GPT-4 2025-04",
+        "GPT-4 v1.0"
+      ]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "openai/gpt-4o-mini",
+      "name": "GPT-4o Mini",
+      "provider": "openai",
+      "facets": {
+        "family": "GPT-4o",
+        "version": "mini",
+        "date": "2025"
+      },
+      "aliases": [
+        "GPT-4o-mini",
+        "OpenAI O4-mini"
+      ]
+    },
+    {
+      "node_type": "model",
+      "canonical_id": "google/gemini-2.0",
+      "name": "Gemini 2.0",
+      "provider": "google",
+      "facets": {
+        "family": "Gemini",
+        "version": "2.0",
+        "date": "2025"
+      },
+      "aliases": [
+        "Gemini-2.0",
+        "Google Gemini (2025)"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3_mix-6t",
+      "name": "Dolma 3 Mix (6T)",
+      "provider": "allenai",
+      "facets": {
+        "stage": "pretraining",
+        "tokens": "6T",
+        "modality": "text",
+        "source": "mixed",
+        "date": "2025-11"
+      },
+      "aliases": [
+        "Dolma3 Mix",
+        "Dolma 3 pretraining mix",
+        "Dolma 3 dataset"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "commoncrawl/cc-main-2024-30",
+      "name": "Common Crawl (2024-30)",
+      "provider": "commoncrawl",
+      "facets": {
+        "source": "web",
+        "modality": "text",
+        "date": "2024"
+      },
+      "aliases": [
+        "Common Crawl",
+        "CommonCrawl 2024 main",
+        "Common Crawl (High Quality subset)"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3_dolmino_mix-100b-1125",
+      "name": "Dolma 3 Dolmino Mix (100B)",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "tokens": "100B",
+        "modality": "text",
+        "source": "mixed",
+        "date": "2025-11"
+      },
+      "aliases": [
+        "Dolma3 Dolmino Mix",
+        "Dolmino mid-training mix",
+        "Dolma 3 midtrain 1125"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolma3_longmino_mix-100b-1125",
+      "name": "Dolma 3 Longmino Mix (100B)",
+      "provider": "allenai",
+      "facets": {
+        "stage": "long_context",
+        "tokens": "100B",
+        "modality": "text",
+        "source": "mixed",
+        "date": "2025-11"
+      },
+      "aliases": [
+        "Dolma3 Longmino Mix",
+        "Long context mix"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "huggingfacetb/finemath",
+      "name": "FineMath-4+",
+      "provider": "huggingfacetb",
+      "facets": {
+        "domain": "math",
+        "source": "web",
+        "tokens": "10B",
+        "modality": "text",
+        "date": "2024"
+      },
+      "aliases": [
+        "FineMath4+",
+        "FineMath dataset"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/cranemath",
+      "name": "CraneMath",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "math",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "CraneMath (synth math)",
+        "CraneMath dataset"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/cranecode",
+      "name": "CraneCode",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "code",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "CraneCode (Python synth)",
+        "Crane Code"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/megamatt",
+      "name": "MegaMatt",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "math",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "MegaMatt (math synth)"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/tinymath-mind",
+      "name": "TinyMATH Mind",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "math",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "TinyMATH Mind (synth math)"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/tinymath-pot",
+      "name": "TinyMATH PoT",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "math",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "TinyMATH PoT (Proof-of-Thought)"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolmino1-math",
+      "name": "Dolmino Math",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "math",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "Dolmino1 Math (synth math)"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/stackedu-fim",
+      "name": "StackEdu (FIM)",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "code",
+        "source": "web",
+        "modality": "text"
+      },
+      "aliases": [
+        "StackEdu-FIM code data",
+        "StackEdu fill-in-middle"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/reddit-to-flashcards",
+      "name": "Reddit to Flashcards",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "QA",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "Reddit→Flashcards QA"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/wiki-to-rcqa",
+      "name": "Wiki to RCQA",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "QA",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "Wiki→RC QA"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/nemotron-synth-qa",
+      "name": "Nemotron Synth QA",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "QA",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "Nemotron Synthetic QA"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/program-verifiable",
+      "name": "Program-Verifiable",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "reasoning",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "Program-verifiable reasoning"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/omr-rewrite-fullthoughts",
+      "name": "OMR Rewrite FullThoughts",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "reasoning",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "OMR FullThoughts (synth reasoning)"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/qwq-reasoning-traces",
+      "name": "QWQ Reasoning Traces",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "reasoning",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "QWQ reasoning traces"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/general-reasoning-mix",
+      "name": "General Reasoning Mix",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "reasoning",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "General reasoning traces"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/gemini-reasoning-traces",
+      "name": "Gemini Reasoning Traces",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "reasoning",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "Gemini CoT traces"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/llamanemotron-traces",
+      "name": "Llama Nemotron Traces",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "reasoning",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "Llama-Nemotron reasoning traces"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/openthoughts2-traces",
+      "name": "OpenThoughts2 Traces",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "reasoning",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "OpenThoughts 2 traces"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/tulu-3-sft-mixture",
+      "name": "Tülu 3 SFT Mixture",
+      "provider": "allenai",
+      "facets": {
+        "stage": "sft-mix",
+        "domain": "instruction",
+        "source": "mixed",
+        "modality": "text",
+        "date": "2024-11"
+      },
+      "aliases": [
+        "Tulu 3 SFT",
+        "Tülu-3 Instruct dataset"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/dolmino1-flan",
+      "name": "Dolmino1 Flan",
+      "provider": "allenai",
+      "facets": {
+        "stage": "sft-mix",
+        "domain": "instruction",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "Dolmino Flan tasks"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/math-meta-reasoning",
+      "name": "Math Meta-Reasoning",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "reasoning",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "Math meta reasoning"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/code-meta-reasoning",
+      "name": "Code Meta-Reasoning",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "reasoning",
+        "source": "synthetic",
+        "modality": "text"
+      },
+      "aliases": [
+        "Code meta reasoning"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/olmocr-science-pdfs-hq",
+      "name": "OLMOCR Science PDFs (High Q.)",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "scientific",
+        "source": "web",
+        "modality": "text"
+      },
+      "aliases": [
+        "OLMOCR PDFs",
+        "Science PDFs (OCR high-quality)"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/stem-heavy-crawl",
+      "name": "STEM-Heavy Crawl",
+      "provider": "allenai",
+      "facets": {
+        "stage": "midtraining",
+        "domain": "web",
+        "source": "web",
+        "modality": "text"
+      },
+      "aliases": [
+        "STEM heavy web subset"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "hendrycks/mmlu",
+      "name": "MMLU",
+      "provider": "hendrycks",
+      "facets": {
+        "source": "benchmark",
+        "domain": "exam",
+        "modality": "text"
+      },
+      "aliases": [
+        "Massive Multi-Task Language Understanding",
+        "MMLU Benchmark"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/hellaswag",
+      "name": "HellaSwag",
+      "provider": "allenai",
+      "facets": {
+        "source": "benchmark",
+        "domain": "commonsense",
+        "modality": "text"
+      },
+      "aliases": [
+        "HellaSwag Benchmark"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "google/bbh",
+      "name": "Big-Bench Hard (BBH)",
+      "provider": "google",
+      "facets": {
+        "source": "benchmark",
+        "domain": "reasoning",
+        "modality": "text"
+      },
+      "aliases": [
+        "BBH benchmark",
+        "BigBench Hard tasks"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "allenai/arc-challenge",
+      "name": "ARC Challenge",
+      "provider": "allenai",
+      "facets": {
+        "source": "benchmark",
+        "domain": "science",
+        "modality": "text"
+      },
+      "aliases": [
+        "AI2 ARC-Challenge"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "openai/humaneval",
+      "name": "HumanEval",
+      "provider": "openai",
+      "facets": {
+        "source": "benchmark",
+        "domain": "code",
+        "modality": "text"
+      },
+      "aliases": [
+        "OpenAI HumanEval"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "google/mbpp",
+      "name": "MBPP",
+      "provider": "google",
+      "facets": {
+        "source": "benchmark",
+        "domain": "code",
+        "modality": "text"
+      },
+      "aliases": [
+        "MBPP (Code benchmark)",
+        "Mostly Basic Python Problems"
+      ]
+    },
+    {
+      "node_type": "dataset",
+      "canonical_id": "hendrycks/math",
+      "name": "MATH",
+      "provider": "hendrycks",
+      "facets": {
+        "source": "benchmark",
+        "domain": "math",
+        "modality": "text"
+      },
+      "aliases": [
+        "DeepMind Math",
+        "Hendrycks MATH"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "e_olmo3_32b_trained_dolma3mix",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3_mix-6t",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Used for Stage 1 initial pretraining of OLMo 3 32B, providing ~5.5 trillion tokens from a diverse mix of web pages, academic publications, code, and more (the core pretraining corpus).",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/allenai/Olmo-3-1125-32B",
+          "location": "Model Card – Stage 1 Pretraining",
+          "excerpt": "Stage 1: Initial Pretraining\n* Dataset: dolma3_mix-5.5T-1125\n* 5.50T tokens\n* Coverage: 94.83%+ of total pretraining budget",
+          "explanation": "Identifies the Dolma 3 Mix as the dataset used for initial pretraining (5.5T tokens). ([huggingface.co](https://huggingface.co/allenai/Olmo-3-1125-32B#:~:text=)) ([huggingface.co](https://huggingface.co/allenai/Olmo-3-1125-32B#:~:text=%2A%20Dataset%3A%20dolma3_mix,of%20total%20pretraining%20budget))"
+        },
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_mix-6T",
+          "location": "Dataset Card – Dolma 3 Mix",
+          "excerpt": "Dolma 3 Mix (6T) is the collection of data used during the pretraining stage to train the Olmo-3-1125-32B model. This dataset is made up of ~6 trillion tokens from a diverse mix of web content, academic publications, code, and more. The majority of this dataset comes from Common Crawl.",
+          "explanation": "Confirms that ~6T tokens of diverse web, academic, and code content (mostly Common Crawl) were used to pretrain OLMo 3 32B. ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_mix-6T#:~:text=Dolma%203%20Mix%20))"
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_commoncrawl",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "commoncrawl/cc-main-2024-30",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Common Crawl web text was the single largest component of OLMo-3-32B’s pretraining corpus and was later reused as a filtered high-quality subset (~22.5%) in the mid-training mix. The majority of tokens in Stage 1 came from Common Crawl dumps.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_mix-6T",
+          "location": "Dataset Card – Dolma 3 Mix (pretraining)",
+          "excerpt": "The majority of this dataset comes from Common Crawl.",
+          "explanation": "States that Common Crawl contributed the majority of tokens in the pretraining dataset. ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_mix-6T#:~:text=The%20Dolma%203%20Mix%20,dataset%20comes%20from%20Common%20Crawl))"
+        },
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "Common Crawl (High Q.) | Web pages | 22.4B (22.5%) | 18.3M",
+          "explanation": "Shows that a High Quality subset of Common Crawl content made up 22.5% (22.4B tokens) of the Dolmino mid-training mix. ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=STEM,%7C%2018.3M))"
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_dolminomix",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3_dolmino_mix-100b-1125",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Used for Stage 2 mid-training (100B tokens) to improve OLMo 3 32B’s capabilities in math, code, QA, chain-of-thought reasoning, and instruction-following. The Dolmino mix added carefully curated synthetic data in each of these areas.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/allenai/Olmo-3-1125-32B",
+          "location": "Model Card – Stage 2 Mid-training",
+          "excerpt": "Stage 2: Mid-training\n* Dataset: dolma3-dolmino-mix-1125\n* 100B tokens\n* Mix composition: web pages, code, math/QA/thinking/instruction/PDFs",
+          "explanation": "Identifies the 100B-token Dolma 3 Dolmino Mix (with web, code, math, QA, thinking, instruction, PDF content) as the dataset used for mid-training. ([huggingface.co](https://huggingface.co/allenai/Olmo-3-1125-32B#:~:text=%23%20Stage%202%3A%20Mid))"
+        },
+        {
+          "source": "https://github.com/allenai/dolma3",
+          "location": "README.md",
+          "excerpt": "Dolma 3 Dolmino Mix, a 100B-token mid-training dataset targeting performance improvements in math, code, QA, instruction and thinking",
+          "explanation": "Describes the purpose of the Dolma 3 Dolmino Mix: 100B mid-training data focusing on math, code, QA, instruction, and reasoning. ([github.com](https://github.com/allenai/dolma3#:~:text=Dolma%203%20consists%20of%20three,reconstructing%20the%20Dolma%203%20datasets))"
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_longmix",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolma3_longmino_mix-100b-1125",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Used for Stage 3 long-context training (~100B tokens) to extend context length. The long-context mix combined prior mid-training data (majority) with high-quality scientific PDF text to train OLMo 3 32B on 65k token sequence lengths.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/allenai/Olmo-3-1125-32B",
+          "location": "Model Card – Stage 3 Long Context",
+          "excerpt": "* Dataset: dolma3-longmino-mix-1125\n* 100B tokens\n* Mix composition: midtraining data and PDFs",
+          "explanation": "Documents that Stage 3 long-context training used the Dolma3 Longmino Mix (100B tokens) composed of midtraining data plus PDFs. ([huggingface.co](https://huggingface.co/allenai/Olmo-3-1125-32B#:~:text=%2A%20Dataset%3A%20dolma3,composition%3A%20midtraining%20data%20and%20PDFs))"
+        },
+        {
+          "source": "https://github.com/allenai/dolma3",
+          "location": "README.md",
+          "excerpt": "Dolma 3 Longmino Mix, 50B tokens of long context data.",
+          "explanation": "Notes that the Longmino mix provides long-context training data (the repository README references 50B, which was the 7B usage; the 32B model used ~100B tokens). ([github.com](https://github.com/allenai/dolma3#:~:text=Dolma%203%20consists%20of%20three,reconstructing%20the%20Dolma%203%20datasets))"
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_transformed_finemath4",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "huggingfacetb/finemath",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "FineMath-4+ was the source dataset of high-quality math problems that were transformed (step-by-step solved) into the CraneMath training subset by a teacher LLM. This provided OLMo 3 32B with curated mathematical reasoning content during mid-training.",
+      "evidence": [
+        {
+          "source": "https://www.emergentmind.com/topics/finemath-dataset",
+          "location": "FineMath Dataset – Motivation",
+          "excerpt": "FineMath was motivated by ... the scarcity of high-quality step-by-step solution data in existing web math corpora.",
+          "explanation": "Introduces FineMath as a dataset specifically addressing the need for high-quality step-by-step math solutions ([www.emergentmind.com](https://www.emergentmind.com/topics/finemath-dataset#:~:text=1))."
+        },
+        {
+          "source": "https://www.emergentmind.com/topics/finemath-dataset",
+          "location": "FineMath Released Variants",
+          "excerpt": "Released variants include FineMath3+ (34B tokens, 21.4M documents...) and FineMath4+ (10B tokens, 6.7M documents, average 1,490 tokens/doc), reflecting the ... thresholds. FineMath4+ is a subset ... with higher quality, containing detailed explanations.",
+          "explanation": "Describes FineMath-4+ as a high-quality subset (~10B tokens across ~6.7M documents) emphasizing detailed step-by-step explanations ([www.emergentmind.com](https://www.emergentmind.com/topics/finemath-dataset#:~:text=Released%20variants%20include%20FineMath3%2B%20,short%20proofs%20and%20extended%20worked))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_cranemath",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/cranemath",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "CraneMath is a synthetic math reasoning dataset (5.63% of the mid-training mix) created by converting FineMath-4+ problems into step-by-step solutions via an LLM. It provided the model with detailed worked examples of math problem solving during mid-training.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "CraneMath | Math (synth) | 5.62B (5.63%) | 7.24M",
+          "explanation": "Shows that CraneMath (a synthetic math set) contributed ~5.62B tokens (5.63%) in the mid-training data mix ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=TinyMATH%20Mind%20%20,%7C%203.23M))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_cranecode",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/cranecode",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "CraneCode is a synthetic Python code dataset (10.0% of mid-training) generated by an LLM to augment programming knowledge. It provided large language model-generated code tasks for OLMo 3 32B’s training.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "CraneCode | Python (synth) | 10.0B (10.0%) | 11.7M",
+          "explanation": "Indicates that CraneCode (synthetic Python data) made up 10.0B tokens (10%) of the mid-training corpus ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Dolmino%20Math%20%20,%7C%20101M))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_megamatt",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/megamatt",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "MegaMatt is a synthetic math dataset (1.73% of mid-training) used to provide additional arithmetic or problem-solving examples. It contributed 1.73B tokens of math-focused content to OLMo 3’s mid-training.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "MegaMatt | Math (synth) | 1.73B (1.73%) | 3.23M",
+          "explanation": "Shows MegaMatt as a math synthetic subset contributing ~1.73B tokens (1.73%) to the mid-training mix ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=TinyMATH%20Mind%20%20,%7C%203.23M))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_tinymath_mind",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/tinymath-mind",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "TinyMATH Mind is a small synthetic math dataset (~0.9% of mid-training) focusing on step-by-step solutions or mental math. It contributed high-quality solved examples of math problems in the mid-training data.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "TinyMATH Mind | Math (synth) | 898M (0.9%) | 1.52M",
+          "explanation": "Shows TinyMATH Mind as a synthetic math subset (0.9% of mid-training, ~0.898B tokens) included in OLMo 3’s mid-training data ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=TinyMATH%20Mind%20%20,%7C%203.23M))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_tinymath_pot",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/tinymath-pot",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "TinyMATH PoT (Proof-of-Thought) is another small synthetic math subset (~0.24% of mid-training). It provided a handful of extra math reasoning examples in the training mix, likely focusing on proofs or chain-of-thought steps.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "TinyMATH PoT | Math (synth) | 241M (0.24%) | 758K",
+          "explanation": "Indicates that TinyMATH PoT was a very small synthetic math component (~0.24% of tokens) in the mid-training mix ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=TinyMATH%20Mind%20%20,%7C%203.23M))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_dolmino_math",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolmino1-math",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Dolmino Math is the main math-focused synthetic set in the mid-training mix (about 10.7%). It combined numerous math problems and solutions, serving as a primary math training resource for OLMo 3 32B during Stage 2.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "Dolmino Math | Math (synth) | 10.7B (10.7%) | 22.3M",
+          "explanation": "Dolmino Math appears as a math synthetic component contributing ~10.7B tokens (10.7%) of the mid-training data ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Dolmino%20Math%20%20,%7C%20101M))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_stackedu_fim",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/stackedu-fim",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "StackEdu (FIM) is a dataset of code examples from educational resources (e.g. programming Q&A) converted into fill-in-the-middle format for training. It made up 10% of the mid-training mix, providing code completion and synthesis tasks drawn from real code content.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "StackEdu (FIM) | Code | 10.0B (10.0%) | 16.2M",
+          "explanation": "Shows that StackEdu (FIM) contributed 10.0B tokens (10%) of code data in the mid-training mix ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Dolmino%20Math%20%20,%7C%20101M))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_reddit_flashcards",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/reddit-to-flashcards",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The Reddit to Flashcards dataset (5.9% of mid-training) is a synthetic QA resource created by converting information from Reddit posts into question-answer \"flashcard\" style pairs. It enriched the training mix with assorted Q&A covering facts and common knowledge derived from Reddit content.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "Reddit To Flashcards | QA (synth) | 5.90B (5.9%) | 101M",
+          "explanation": "Indicates that the Reddit-to-Flashcards synthetic QA dataset contributed ~5.90B tokens (5.9%) to the mid-training mix ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=CraneCode%20%20,%7C%20101M))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_wiki_rcqa",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/wiki-to-rcqa",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The Wiki to RCQA dataset (3.0% of mid-training) consists of reading-comprehension Q&A pairs synthesized from Wikipedia passages. It provided OLMo 3 with question-answer examples based on encyclopedic content, helping to improve its comprehension and retrieval abilities.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "Wiki To RCQA | QA (synth) | 3.0B (3.0%) | 16.3M",
+          "explanation": "Shows that the Wiki-to-RCQA synthetic reading comprehension dataset made up ~3.0B tokens (3.0%) of the mid-training mix ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Wiki%20To%20RCQA%20%20,%7C%20398K))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_nemotron_qa",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/nemotron-synth-qa",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Nemotron Synth QA (5.0% of mid-training) is a synthetic question-answer dataset generated by an external model nicknamed \"Nemotron.\" It provided additional QA training signals (likely in specialized domains) to OLMo 3 32B.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "Nemotron Synth QA | QA (synth) | 5.0B (5.0%) | 10.6M",
+          "explanation": "Shows Nemotron Synth QA as a component comprising ~5.0B tokens (5.0%) of the mid-training mix ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Wiki%20To%20RCQA%20%20,%7C%20398K))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_program_verif",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/program-verifiable",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The Program-Verifiable dataset (0.16% of mid-training) is a small set of model-generated reasoning tasks where answers are checked via program execution. It was created with assistance from GPT-4.1 and GPT-4o-mini, giving OLMo 3 32B exposure to reasoning that can be verified by code.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "Program-Verifiable | Thinking (synth) | 159M (0.16%) | 158K",
+          "explanation": "Shows Program-Verifiable as a tiny synthetic reasoning subset (~0.159B tokens, 0.16% of mid-training) ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Program,%7C%20732K))."
+        },
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md",
+          "location": "Config List",
+          "excerpt": "config_name: verifiable_gpt41 ... path: data/verifiable-gpt41/**/*\nconfig_name: verifiable_o4mini ... path: data/verifiable-o4mini/**/*",
+          "explanation": "The mid-training dataset config includes components 'verifiable_gpt41' and 'verifiable_o4mini', indicating that data verified by GPT-4.1 and GPT-4o-mini was used to construct the Program-Verifiable subset ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=,gpt41))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_omr_fullthoughts",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/omr-rewrite-fullthoughts",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The OMR Rewrite FullThoughts dataset (0.85% of mid-training) is a synthetic set of reasoning examples where incomplete or partial solutions were rewritten into \"full thought\" step-by-step solutions. It gave OLMo 3 32B additional fully elaborated reasoning cases in its training data.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "OMR Rewrite FullThoughts | Thinking (synth) | 850M (0.85%) | 394K",
+          "explanation": "Shows the OMR Rewrite FullThoughts synthetic reasoning set at ~0.85% of the mid-training mix (850M tokens) ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Program,%7C%20732K))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_qwq_traces",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/qwq-reasoning-traces",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The QWQ Reasoning Traces dataset (1.87% of mid-training) contains chain-of-thought traces generated by an external model (likely a Qwen variant). These traces provided OLMo 3 with additional step-by-step reasoning examples from a different model’s perspective.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "QWQ Reasoning Traces | Thinking (synth) | 1.87B (1.87%) | 401K",
+          "explanation": "Shows QWQ Reasoning Traces as a synthetic reasoning component (~1.87B tokens, 1.87% of mid-training) ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=QWQ%20Reasoning%20Traces%20%20,%7C%20732K))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_general_reas",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/general-reasoning-mix",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "General Reasoning Mix (1.87% of mid-training) is a composite dataset of various smaller reasoning trace sources. It included a variety of chain-of-thought examples (possibly including traces from DeepSeek’s R1 model and others) to broadly enhance open-ended reasoning skills.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "General Reasoning Mix | Thinking (synth) | 1.87B (1.87%) | 732K",
+          "explanation": "Shows a General Reasoning Mix of synthetic traces, contributing ~1.87B tokens (1.87%) to the mid-training data ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=QWQ%20Reasoning%20Traces%20%20,%7C%20732K))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_gemini_traces",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/gemini-reasoning-traces",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Gemini Reasoning Traces (0.25% of mid-training) is a very small set of chain-of-thought traces produced by Google’s Gemini model. These traces (only 0.246B tokens) exposed OLMo 3 32B to examples of reasoning generated by a cutting-edge external model.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "Gemini Reasoning Traces | Thinking (synth) | 246M (0.25%) | 85.1K",
+          "explanation": "Indicates that Gemini Reasoning Traces contributed ~246M tokens (0.25%) of the mid-training data ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Gemini%20Reasoning%20Traces%20%20,%7C%201.45M))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_llamanemo_traces",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/llamanemotron-traces",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Llama Nemotron Traces (1.25% of mid-training) is a dataset of reasoning traces generated by a combined approach involving Meta’s Llama and the \"Nemotron\" model. It contributed 1.25B tokens of hybrid-model reasoning examples to OLMo 3’s training.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "Llama Nemotron Reasoning Traces | Thinking (synth) | 1.25B (1.25%) | 368K",
+          "explanation": "Shows that Llama-Nemotron reasoning traces made up ~1.25B tokens (1.25%) of the mid-training data ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Gemini%20Reasoning%20Traces%20%20,%7C%201.45M))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_openthoughts2_traces",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/openthoughts2-traces",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "OpenThoughts2 Traces (1.25% of mid-training) is a dataset of open-source chain-of-thought reasoning examples (second iteration). It added around 1.25B tokens of diverse reasoning demonstrations from an open dataset into OLMo 3 32B’s mid-training.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "OpenThoughts2 Reasoning Traces | Thinking (synth) | 1.25B (1.25%) | 402K",
+          "explanation": "Indicates that OpenThoughts2 reasoning traces comprised ~1.25B tokens (1.25%) of the mid-training mix ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Gemini%20Reasoning%20Traces%20%20,%7C%201.45M))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_tulu3_sft",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/tulu-3-sft-mixture",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The Tülu 3 SFT Mixture (1.1% of mid-training) is a supervised fine-tuning dataset from AI2’s Tülu 3 project containing high-quality instruction-following examples. Including this data in OLMo 3 32B’s training pipeline helped the base model gain some instruction-following and conversational skills.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "Tulu 3 SFT | Instruction (synth) | 1.1B (1.1%) | 1.45M",
+          "explanation": "Shows that Tülu 3 SFT data made up ~1.1B tokens (1.1%) of the mid-training mix ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Gemini%20Reasoning%20Traces%20%20,%7C%201.45M))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_dolmino1_flan",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/dolmino1-flan",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Dolmino1 Flan (5.0% of mid-training) is an instruction/QA dataset (likely derived from the FLAN collection or earlier Dolmino experiments). It contributed general language instruction-following and QA examples, making up 5B tokens of OLMo 3’s mid-training data.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "Dolmino 1 Flan | Instruction (synth) | 5.0B (5.0%) | 14.8M",
+          "explanation": "Shows Dolmino1 Flan as an instruction dataset contributing ~5.0B tokens (5.0%) in the mid-training mix ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Dolmino%201%20Flan%20%20,%7C%2018.3M))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_math_meta",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/math-meta-reasoning",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Math Meta-Reasoning (0.38% of mid-training) is a small synthetic dataset focusing on meta-cognitive or reflective reasoning about math problems. It provided a minor set of instances where a model reflects on the problem-solving process itself.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "Math Meta-Reasoning | Thinking (synth) | 381M (0.38%) | 401K",
+          "explanation": "Indicates a Math Meta-Reasoning subset (~0.381B tokens, 0.38%) included in the mid-training data ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Wiki%20To%20RCQA%20%20,%7C%20398K))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_code_meta",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/code-meta-reasoning",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "Code Meta-Reasoning (0.46% of mid-training) is a small synthetic dataset containing reasoning or commentary about code. It offered OLMo 3 32B a few examples where a model explains or reasons about code behavior, which was a tiny portion of training.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "Code Meta-Reasoning | Thinking (synth) | 459M (0.46%) | 398K",
+          "explanation": "Shows a Code Meta-Reasoning component (~0.459B tokens, 0.46%) in the mid-training data ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Wiki%20To%20RCQA%20%20,%7C%20398K))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_olmocr_pdfs",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/olmocr-science-pdfs-hq",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The OLMOCR Science PDFs dataset (5.0% of mid-training; larger portion in long-context) contains text extracted from high-quality scientific PDF documents via OCR. It supplied OLMo 3 32B with long-form, technical content to improve handling of scientific and formal text, and was especially important in the long-context training stage.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "OLMOCR Science PDFs (High Q.) | PDFs | 4.99B (5.0%) | 1.20M",
+          "explanation": "Shows that high-quality scientific PDFs (OLMOCR) made up ~4.99B tokens (5.0%) of the mid-training data ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Dolmino%201%20Flan%20%20,%7C%2018.3M))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_trained_stem_crawl",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/stem-heavy-crawl",
+      "relation_type": "trained_on",
+      "dependency_kind": "direct",
+      "description": "The STEM-Heavy Crawl subset (5.0% of mid-training) is a selection of web pages with dense science, technology, engineering, or math content. By including this filtered crawl data, OLMo 3 32B was exposed to high-quality technical text from the web during mid-training.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mid-Training Mix Composition",
+          "excerpt": "STEM-Heavy Crawl | Web pages | 4.99B (5.0%) | 5.53M",
+          "explanation": "Shows that a STEM-Heavy Crawl subset provided ~4.99B tokens (5.0%) of specialized web content for mid-training ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Dolmino%201%20Flan%20%20,%7C%2018.3M))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_transformed_qwen32b",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "qwen/qwen3-32b",
+      "relation_type": "transformed_by",
+      "dependency_kind": "direct",
+      "description": "Qwen3-32B (Alibaba’s 32B model) acted as a teacher LLM to generate training data for OLMo 3. Specifically, Qwen3-32B was used to convert raw math problems (the FineMath4+ dataset) into step-by-step worked solutions (CraneMath) and likely also assisted in producing synthetic code data. This provided OLMo 3 32B with model-generated high-quality content for math and coding during training.",
+      "evidence": [
+        {
+          "source": "https://arxiv.org/abs/2512.13961",
+          "location": "Section 3.5.2 (Data Generation)",
+          "excerpt": "we use Qwen3 32B (Yang et al., 2025a) for generation",
+          "explanation": "The technical report states that Qwen3-32B was used to generate data for OLMo 3 (specifically indicating Qwen3-32B served as a data generator)."
+        },
+        {
+          "source": "https://github.com/allenai/dolma3/blob/main/datasets/dolma3_dolmino_mix/cranemath/README.md",
+          "location": "README (CraneMath Generation)",
+          "excerpt": "for CraneMath we used Qwen3-32B for all data generation",
+          "explanation": "The CraneMath dataset documentation confirms that Qwen3-32B was the model used to generate 100% of the CraneMath training data, emphasizing Qwen3-32B’s role as the sole generator."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_generated_gpt4_1",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "openai/gpt-4.1",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "OpenAI’s GPT-4.1 model was used to generate a small subset of OLMo 3 32B’s training data requiring programmatic verification. In particular, GPT-4.1 was prompted to produce reasoning problems and solutions which were then verified via execution (forming the Program-Verifiable dataset). This ensured some of OLMo’s training data included GPT-4-level reasoning examples with correctness checks.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md",
+          "location": "Dataset Configs",
+          "excerpt": "config_name: verifiable_gpt41",
+          "explanation": "The mid-training data configs explicitly include a component named \"verifiable_gpt41\", indicating that content generated by GPT-4.1 was included in OLMo’s training data ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=,gpt41))."
+        },
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mix Composition Table",
+          "excerpt": "Program-Verifiable | Thinking (synth) | 159M (0.16%) | 158K",
+          "explanation": "This entry corresponds to the data generated by GPT-4.1 (and GPT-4o-mini), showing it constitutes only 0.16% of the training mix. These are the problems whose solutions were verified by code (originating from GPT-4.1). ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Program,%7C%20732K))"
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_generated_gpt4o_mini",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "openai/gpt-4o-mini",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "OpenAI’s GPT-4o-mini model (a smaller variant aligned with GPT-4 outputs) was also used to generate part of the Program-Verifiable dataset in OLMo 3’s training. Alongside GPT-4.1, GPT-4o-mini produced and verified reasoning examples (with code) that were included to provide the model with cross-checked high-quality reasoning data.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md",
+          "location": "Dataset Configs",
+          "excerpt": "config_name: verifiable_o4mini",
+          "explanation": "The mid-training data config includes \"verifiable_o4mini\", indicating that content from OpenAI’s GPT-4o-mini model contributed to OLMo’s training data ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=match%20at%20L98%20,o4mini))."
+        },
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mix Composition Table",
+          "excerpt": "Program-Verifiable | Thinking (synth) | 159M (0.16%) | 158K",
+          "explanation": "The Program-Verifiable dataset (0.16% of training), which includes GPT-4o-mini’s contributions, is shown here. GPT-4o-mini’s outputs were combined with GPT-4.1’s to form this small verified reasoning set. ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Program,%7C%20732K))"
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_generated_gemini2",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "google/gemini-2.0",
+      "relation_type": "generated_by",
+      "dependency_kind": "direct",
+      "description": "Google’s Gemini 2.0 model was used to generate some chain-of-thought reasoning data (\"Gemini Reasoning Traces\") that fed into OLMo 3 32B’s training. Although the amount is small (0.25% of mid-training), it injected examples of reasoning from a state-of-the-art external model into OLMo’s training mix, diversifying the style of reasoning the model saw.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md",
+          "location": "Dataset Configs",
+          "excerpt": "config_name: gemini_reasoning_traces",
+          "explanation": "The mid-training data configs list an entry \"gemini_reasoning_traces\", indicating that traces generated by the Gemini 2.0 model were included in OLMo 3’s training data ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=match%20at%20L82%20,split%3A%20train%20path%3A%20data%2Fgemini_reasoning_traces))."
+        },
+        {
+          "source": "https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025",
+          "location": "Mix Composition Table",
+          "excerpt": "Gemini Reasoning Traces | Thinking (synth) | 246M (0.25%) | 85.1K",
+          "explanation": "Confirms that Gemini-sourced reasoning traces made up only ~0.25% of the mid-training tokens. These were the chain-of-thought outputs from Gemini included in OLMo’s training data. ([huggingface.co](https://huggingface.co/datasets/allenai/dolma3_dolmino_mix-100B-1025/blob/main/README.md#:~:text=Gemini%20Reasoning%20Traces%20%20,%7C%201.45M))"
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_used_eval_mmlu",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "hendrycks/mmlu",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "OLMo 3 32B was evaluated on MMLU (Massive Multi-Task Language Understanding), a standard benchmark covering a broad range of subjects at the college level. This benchmark was used to measure the model’s knowledge and reasoning across STEM, humanities, social science, and other domains.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/allenai/Olmo-3-1125-32B",
+          "location": "Evaluation Results Table (partial)",
+          "excerpt": "MMLU STEM ... MMLU Humanities ... MMLU Social Sci. ... MMLU Other",
+          "explanation": "The model card’s results table includes multiple MMLU categories (STEM, Humanities, Social Sciences, Other), indicating that MMLU was a key evaluation benchmark for OLMo 3 32B ([huggingface.co](https://huggingface.co/allenai/Olmo-3-1125-32B#:~:text=Model%20%20%7C%20Olmo%203,PIQA%20MC))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_used_eval_hellaswag",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/hellaswag",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "OLMo 3 32B was evaluated on the HellaSwag benchmark, which tests commonsense reasoning via multiple-choice sentence completion tasks. Using HellaSwag in evaluation assessed the model’s ability to predict the most plausible continuation of a scenario, an indicator of its commonsense understanding.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/allenai/Olmo-3-1125-32B",
+          "location": "Evaluation Results Table (partial)",
+          "excerpt": "Olmo 3-Eval MC_Non-STEM  | HellaSwag",
+          "explanation": "The model’s evaluation results include a column for HellaSwag (under Non-STEM multiple-choice), confirming that HellaSwag was used as an evaluation metric ([huggingface.co](https://huggingface.co/allenai/Olmo-3-1125-32B#:~:text=MC%20%20,STEM%20%20%7C%20HellaSwag))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_used_eval_bbh",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "google/bbh",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "OLMo 3 32B’s capabilities were evaluated on the Big-Bench Hard (BBH) benchmark suite, which consists of challenging tasks designed to test advanced reasoning and problem-solving. Including BBH in the evaluation allowed the team to gauge the model’s performance on out-of-distribution and difficult reasoning problems.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/allenai/Olmo-3-1125-32B",
+          "location": "Evaluation Results Table (partial)",
+          "excerpt": "BBH  | MMLU Pro MC  | Deepmind Math",
+          "explanation": "The evaluation table shows a column for \"BBH\" (Big-Bench Hard), indicating that BBH tasks were among the evaluation metrics reported for OLMo 3 32B ([huggingface.co](https://huggingface.co/allenai/Olmo-3-1125-32B#:~:text=,LBPP))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_used_eval_arc",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "allenai/arc-challenge",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "The AI2 Reasoning Challenge (ARC) Challenge Set was used to evaluate OLMo 3 32B on science question answering. This benchmark of grade-school science questions (multiple-choice) tested the model’s knowledge and reasoning in scientific domains.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/allenai/Olmo-3-1125-32B",
+          "location": "Evaluation Results Table (partial)",
+          "excerpt": "ARC MC  | MMLU STEM",
+          "explanation": "The results table for OLMo 3 32B includes \"ARC MC\" (likely referring to ARC-Challenge multiple-choice) among the evaluation tasks, confirming ARC was used as a benchmark ([huggingface.co](https://huggingface.co/allenai/Olmo-3-1125-32B#:~:text=Model%20%20%7C%20Olmo%203,PIQA%20MC))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_used_eval_humaneval",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "openai/humaneval",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "The HumanEval benchmark (OpenAI’s code generation test) was used to assess OLMo 3 32B’s coding ability. In this evaluation, the model was required to generate correct solutions to programming problems (in Python), and its accuracy was measured on these tasks.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/allenai/Olmo-3-1125-32B",
+          "location": "Evaluation Results Table (partial)",
+          "excerpt": "BigCodeBench  | HumanEval  | DeepSeek LeetCode  | DS 1000  | MBPP",
+          "explanation": "The evaluation table shows a column for \"HumanEval\", confirming that HumanEval was one of the code benchmarks on which OLMo 3 32B was evaluated ([huggingface.co](https://huggingface.co/allenai/Olmo-3-1125-32B#:~:text=Model%20%20%7C%20Olmo%203,PIQA%20MC))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_used_eval_mbpp",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "google/mbpp",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "The MBPP (Mostly Basic Python Problems) benchmark was used to evaluate OLMo 3 32B’s basic coding and problem-solving skills. MBPP consists of simple Python programming tasks, and the model’s performance on these tasks provided a measure of its coding competency.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/allenai/Olmo-3-1125-32B",
+          "location": "Evaluation Results Table (partial)",
+          "excerpt": "DS 1000  | MBPP  | MultiPL HumanEval",
+          "explanation": "The results snippet includes \"MBPP\", indicating that the MBPP coding benchmark was among the evaluations run on OLMo 3 32B ([huggingface.co](https://huggingface.co/allenai/Olmo-3-1125-32B#:~:text=Model%20%20%7C%20Olmo%203,PIQA%20MC))."
+        }
+      ]
+    },
+    {
+      "edge_id": "e_olmo3_32b_used_eval_math",
+      "subject": "allenai/olmo-3-1125-32b",
+      "object": "hendrycks/math",
+      "relation_type": "used_for_evaluation",
+      "dependency_kind": "indirect",
+      "description": "The MATH benchmark (a dataset of advanced high school/competition math problems) was used to evaluate OLMo 3 32B’s mathematical problem-solving and reasoning ability. By testing the model on complex math questions (with solutions requiring step-by-step reasoning), the team measured how well OLMo handles math tasks after training.",
+      "evidence": [
+        {
+          "source": "https://huggingface.co/allenai/Olmo-3-1125-32B",
+          "location": "Evaluation Results Table (partial)",
+          "excerpt": "MMLU Pro MC  | Deepmind Math  | LBPP",
+          "explanation": "The evaluation results list a \"Deepmind Math\" score (which corresponds to the MATH benchmark) for OLMo 3 32B, confirming the model was evaluated on the complex math problems of the MATH dataset ([huggingface.co](https://huggingface.co/allenai/Olmo-3-1125-32B#:~:text=,LBPP))."
+        }
+      ]
+    }
+  ]
+}

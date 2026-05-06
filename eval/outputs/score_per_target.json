@@ -1,0 +1,362 @@
+{
+  "olmo3": {
+    "per_system": [
+      {
+        "system": "gpt55pro",
+        "verified": 54,
+        "refuted": 1,
+        "unclear": 2,
+        "error": 0,
+        "precision": 0.9818181818181818
+      },
+      {
+        "system": "gpt54pro",
+        "verified": 83,
+        "refuted": 2,
+        "unclear": 3,
+        "error": 0,
+        "precision": 0.9764705882352941
+      },
+      {
+        "system": "cc",
+        "verified": 90,
+        "refuted": 1,
+        "unclear": 2,
+        "error": 0,
+        "precision": 0.989010989010989
+      },
+      {
+        "system": "o3dr",
+        "verified": 37,
+        "refuted": 0,
+        "unclear": 2,
+        "error": 0,
+        "precision": 1.0
+      },
+      {
+        "system": "prov",
+        "verified": 171,
+        "refuted": 6,
+        "unclear": 3,
+        "error": 0,
+        "precision": 0.9661016949152542
+      },
+      {
+        "system": "prov_unbounded",
+        "verified": 2388,
+        "refuted": 80,
+        "unclear": 57,
+        "error": 2,
+        "precision": 0.9675850891410048
+      }
+    ],
+    "raw_counts": {
+      "gpt55pro": {
+        "verified": 54,
+        "refuted": 1,
+        "unclear": 2,
+        "error": 0
+      },
+      "gpt54pro": {
+        "verified": 83,
+        "refuted": 2,
+        "unclear": 3,
+        "error": 0
+      },
+      "cc": {
+        "verified": 90,
+        "refuted": 1,
+        "unclear": 2,
+        "error": 0
+      },
+      "o3dr": {
+        "verified": 37,
+        "refuted": 0,
+        "unclear": 2,
+        "error": 0
+      },
+      "prov": {
+        "verified": 171,
+        "refuted": 6,
+        "unclear": 3,
+        "error": 0
+      },
+      "prov_unbounded": {
+        "verified": 2388,
+        "refuted": 80,
+        "unclear": 57,
+        "error": 2
+      }
+    }
+  },
+  "nemotron3_super": {
+    "per_system": [
+      {
+        "system": "gpt55pro",
+        "verified": 155,
+        "refuted": 3,
+        "unclear": 4,
+        "error": 1,
+        "precision": 0.9810126582278481
+      },
+      {
+        "system": "gpt54pro",
+        "verified": 74,
+        "refuted": 1,
+        "unclear": 1,
+        "error": 0,
+        "precision": 0.9866666666666667
+      },
+      {
+        "system": "cc",
+        "verified": 74,
+        "refuted": 0,
+        "unclear": 0,
+        "error": 0,
+        "precision": 1.0
+      },
+      {
+        "system": "o3dr",
+        "verified": 69,
+        "refuted": 2,
+        "unclear": 0,
+        "error": 1,
+        "precision": 0.971830985915493
+      },
+      {
+        "system": "prov",
+        "verified": 227,
+        "refuted": 7,
+        "unclear": 26,
+        "error": 0,
+        "precision": 0.9700854700854701
+      },
+      {
+        "system": "prov_unbounded",
+        "verified": 1154,
+        "refuted": 24,
+        "unclear": 45,
+        "error": 0,
+        "precision": 0.9796264855687606
+      }
+    ],
+    "raw_counts": {
+      "gpt55pro": {
+        "verified": 155,
+        "refuted": 3,
+        "unclear": 4,
+        "error": 1
+      },
+      "gpt54pro": {
+        "verified": 74,
+        "refuted": 1,
+        "unclear": 1,
+        "error": 0
+      },
+      "cc": {
+        "verified": 74,
+        "refuted": 0,
+        "unclear": 0,
+        "error": 0
+      },
+      "o3dr": {
+        "verified": 69,
+        "refuted": 2,
+        "unclear": 0,
+        "error": 1
+      },
+      "prov": {
+        "verified": 227,
+        "refuted": 7,
+        "unclear": 26,
+        "error": 0
+      },
+      "prov_unbounded": {
+        "verified": 1154,
+        "refuted": 24,
+        "unclear": 45,
+        "error": 0
+      }
+    }
+  },
+  "dr_tulu": {
+    "per_system": [
+      {
+        "system": "gpt55pro",
+        "verified": 37,
+        "refuted": 0,
+        "unclear": 0,
+        "error": 0,
+        "precision": 1.0
+      },
+      {
+        "system": "gpt54pro",
+        "verified": 37,
+        "refuted": 0,
+        "unclear": 0,
+        "error": 0,
+        "precision": 1.0
+      },
+      {
+        "system": "cc",
+        "verified": 33,
+        "refuted": 0,
+        "unclear": 0,
+        "error": 0,
+        "precision": 1.0
+      },
+      {
+        "system": "o3dr",
+        "verified": 28,
+        "refuted": 1,
+        "unclear": 0,
+        "error": 0,
+        "precision": 0.9655172413793104
+      },
+      {
+        "system": "prov",
+        "verified": 39,
+        "refuted": 0,
+        "unclear": 1,
+        "error": 0,
+        "precision": 1.0
+      },
+      {
+        "system": "prov_unbounded",
+        "verified": 49,
+        "refuted": 0,
+        "unclear": 1,
+        "error": 0,
+        "precision": 1.0
+      }
+    ],
+    "raw_counts": {
+      "gpt55pro": {
+        "verified": 37,
+        "refuted": 0,
+        "unclear": 0,
+        "error": 0
+      },
+      "gpt54pro": {
+        "verified": 37,
+        "refuted": 0,
+        "unclear": 0,
+        "error": 0
+      },
+      "cc": {
+        "verified": 33,
+        "refuted": 0,
+        "unclear": 0,
+        "error": 0
+      },
+      "o3dr": {
+        "verified": 28,
+        "refuted": 1,
+        "unclear": 0,
+        "error": 0
+      },
+      "prov": {
+        "verified": 39,
+        "refuted": 0,
+        "unclear": 1,
+        "error": 0
+      },
+      "prov_unbounded": {
+        "verified": 49,
+        "refuted": 0,
+        "unclear": 1,
+        "error": 0
+      }
+    }
+  },
+  "smollm3": {
+    "per_system": [
+      {
+        "system": "gpt55pro",
+        "verified": 53,
+        "refuted": 0,
+        "unclear": 0,
+        "error": 0,
+        "precision": 1.0
+      },
+      {
+        "system": "gpt54pro",
+        "verified": 69,
+        "refuted": 0,
+        "unclear": 1,
+        "error": 0,
+        "precision": 1.0
+      },
+      {
+        "system": "cc",
+        "verified": 67,
+        "refuted": 0,
+        "unclear": 0,
+        "error": 0,
+        "precision": 1.0
+      },
+      {
+        "system": "o3dr",
+        "verified": 35,
+        "refuted": 0,
+        "unclear": 0,
+        "error": 0,
+        "precision": 1.0
+      },
+      {
+        "system": "prov",
+        "verified": 30,
+        "refuted": 0,
+        "unclear": 1,
+        "error": 0,
+        "precision": 1.0
+      },
+      {
+        "system": "prov_unbounded",
+        "verified": 416,
+        "refuted": 13,
+        "unclear": 7,
+        "error": 0,
+        "precision": 0.9696969696969697
+      }
+    ],
+    "raw_counts": {
+      "gpt55pro": {
+        "verified": 53,
+        "refuted": 0,
+        "unclear": 0,
+        "error": 0
+      },
+      "gpt54pro": {
+        "verified": 69,
+        "refuted": 0,
+        "unclear": 1,
+        "error": 0
+      },
+      "cc": {
+        "verified": 67,
+        "refuted": 0,
+        "unclear": 0,
+        "error": 0
+      },
+      "o3dr": {
+        "verified": 35,
+        "refuted": 0,
+        "unclear": 0,
+        "error": 0
+      },
+      "prov": {
+        "verified": 30,
+        "refuted": 0,
+        "unclear": 1,
+        "error": 0
+      },
+      "prov_unbounded": {
+        "verified": 416,
+        "refuted": 13,
+        "unclear": 7,
+        "error": 0
+      }
+    }
+  }
+}
