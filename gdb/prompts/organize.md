@@ -263,7 +263,11 @@ whichever fits each case:
 
 - **WebSearch** — free-form queries (e.g., `"<name>" hugging face`,
   `"<name>" github`) to find candidates
-- **Bash** — `curl` for HEAD-checks and HF/GitHub API calls
+- **Bash** — `curl` for HEAD-checks and HF/GitHub API calls.
+  If `HF_TOKEN` is set, add `-H "Authorization: Bearer
+  $HF_TOKEN"` on every `huggingface.co` call — raises the
+  rate limit ~30× and unlocks gated repos. Skip the header
+  for non-HF hosts.
 - **WebFetch** — read a candidate page's content to verify it
   matches context
 

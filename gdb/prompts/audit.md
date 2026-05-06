@@ -26,6 +26,13 @@ HF / GitHub URL lookups are permitted; you'll use them more
 than organize did because the recheck pile demands fresh
 investigation.
 
+**HF auth:** if `HF_TOKEN` is set in the environment, add
+`-H "Authorization: Bearer $HF_TOKEN"` to every
+`huggingface.co` curl call (raw, API, everything). Raises the
+unauthenticated rate limit (~30/min) by ~30× and unlocks
+gated repos you have access to. Skip the header for non-HF
+hosts.
+
 ## What runs before you (your input is pre-processed)
 
 A pure-Python pass (`gdb.subsets.populate_then_flag`) runs BEFORE

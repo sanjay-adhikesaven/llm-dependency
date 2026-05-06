@@ -71,6 +71,15 @@ GitHub README only:   curl -sL https://raw.githubusercontent.com/<owner>/<repo>/
 GitHub FULL repo:     git clone --depth 1 https://github.com/<owner>/<repo>
 ```
 
+**HF auth:** if `HF_TOKEN` is set in the environment, add
+`-H "Authorization: Bearer $HF_TOKEN"` to every
+`huggingface.co` curl call (raw, API, everything). Without
+auth, HuggingFace rate-limits unauthenticated traffic at
+~30/min and will start returning rate-limit pages mid-fetch;
+with auth the ceiling jumps ~30× and gated repos you have
+access to start resolving. Skip the header for arXiv / GitHub
+/ other non-HF hosts.
+
 **For the target's own primary code repo, you MUST use
 `git clone --depth 1`, not `curl` of the README.** A
 README-only fetch is a permanent lineage hole: the actual

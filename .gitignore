@@ -1,16 +1,32 @@
-smol*/
-olm*/
+# --- Python ---
 __pycache__/
-old/
 *.pyc
+*.egg-info/
 .venv/
 venv/
+.pytest_cache/
+
+# --- env / secrets ---
 .env
+.claude/
+
+# --- generated artifacts ---
 storage/
-test-*/
+run-logs/
 *.db
 *.db-shm
 *.db-wal
 *.zip
+
+# --- old experiment subdirs ---
+old/
+smol*/
+olm*/
 new-*/
+test-*/
+
+# --- editor / OS ---
 .DS_Store
+*.swp
+.idea/
+.vscode/

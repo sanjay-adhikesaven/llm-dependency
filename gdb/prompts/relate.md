@@ -3,8 +3,11 @@
 > **Goal: read this batch's source files, identify every
 > training / data-construction / evaluation EVENT, and append
 > ONE JSON line per event to `{{artifact_path}}`. Each event
-> wraps its participating edges. Subjects are forced to lattice
-> formal_names — the controllability lever.**
+> wraps its participating edges. Edge subjects are ALWAYS models
+> resolved to lattice formal_names — never datasets, never
+> off-lattice strings. Edge objects are models, datasets, or
+> free-text descriptors. Only `model` and `dataset` are valid
+> node types.**
 
 Read the lattice at `{{lattice_path}}` and the source files
 under `{{batch_dir}}`. Append events as JSON-Lines records to
@@ -66,114 +69,146 @@ one edge in the array. Uniform schema.
 ## Lattice anchoring — preserve source specificity
 
 The lattice is a partial order: every family has a **family
-root** (concept node, identity `{family: X}` only, no production
-link) and zero-or-more **entity leaves** (full identity, with HF
-/ GitHub / vendor docs link). **Vague mentions land on the
-family root or on intermediate concept nodes; precise mentions
-land on leaves.** Match the source's specificity exactly — don't
-upgrade vague mentions to specific leaves, and don't downgrade
-specific mentions to roots.
+root** (concept node, identity `{family: X}` only) and zero-or-
+more **entity leaves** (full identity, with HF / GitHub / vendor
+docs link), plus interior **concept nodes** (partial identity,
+no item-unique URL). Each item also carries a `subsets[]` field
+listing slugs of sub-corpora the dataset contains.
+
+**Use the most specific entity / concept the source pins.** Vague
+mentions land on the family root or on intermediate concept
+nodes; precise mentions land on leaves. Don't upgrade vague
+mentions to specific leaves, and don't downgrade specific
+mentions to roots.
 
 ### Resolving a mention string to a lattice address
 
-For each mention you'd put in `subject` or `object`:
+For each mention you'd put in `subject` or `object`, run:
 
-1. **Try literal alias lookup.** Walk the lattice items. If the
-   normalized mention (lowercase, alphanum-only) equals the
-   normalized form of any item's `formal_name` or `aliases[]`
-   entry, that item is the address. Done.
+```
+python -m gdb.resolve "<mention>" --top 5 --json
+```
 
-2. **Otherwise parse the mention into facet hints.** Common
-   patterns:
-   - size: `\d+(\.\d+)?(B|M)` → `size: "7B"` etc.
-   - stage: `Base|Instruct|Chat|Think|SFT|DPO|RL|RL-Zero|Preview` → `stage: <token>`
-   - variant: `thinking|no-thinking|FP8|AWQ|Distill` → `variant: <token>`
-   - date: `\d{4}` or `\d{4}-\d{2}-\d{2}` → `date: <token>`
+The output is a ranked list of candidates. Each candidate has:
 
-3. **Find the family** — match the family root whose
-   `identity.family` value (or alias of that root) appears as a
-   prefix or token in the mention. This is your family pivot.
+- `formal_name`, `family`, `identity`, `kind`, `score`
+- `address_form` — `"leaf"` | `"concept"` | `"root"` | `"subset"`
+- `match_reasons` — why this candidate scored where it did
+- `subset_of` (only when `address_form == "subset"`) —
+  `{parent_formal_name, slug}`
 
-4. **Build the lattice address.** Combine `{family: X}` with the
-   parsed facets. Find the lattice item whose `identity` exactly
-   equals that address:
-   - If a leaf matches exactly → use the leaf's `formal_name`.
-   - If only the family root matches (your facets are empty
-     beyond `family`) → use the root's `formal_name`.
-   - If your facet set lies between the root and some leaves
-     (e.g., paper says "OLMo 3 Base" → `{family: OLMo 3, stage:
-     Base}` — multiple Base leaves exist but no exact-match item)
-     → emit a **virtual concept address** in this notation:
-     ```
-     <family> [<facet1>=<value1>, <facet2>=<value2>, ...]
-     ```
-     Examples:
-     - `OLMo 3 [stage=Base]`
-     - `Qwen3 [size=4B]`
-     - `olmOCR [version=v1]`
+Pick the candidate whose identity facets are closest to what the
+**surrounding source context** implies. Three rules:
 
-   Reconcile (the next stage) merges edges across specificity
-   levels via dict-subset comparison — any virtual address that
-   subsumes some leaves will be folded into a leaf-anchored edge
-   if other sources provided the missing facets.
+1. **Score < 50 with no `subset` candidate** — treat as
+   off-lattice, emit the literal source mention as a free-text
+   string in `subject` or `object`.
 
-5. **Off-lattice fallback** — if you can't even find a family
-   pivot (e.g., a personal-namespace HF dataset that wasn't
-   extracted; an internal codename; a name audit dropped), emit
-   the literal source mention as a free-text string. The query
-   layer distinguishes "address resolves to lattice item" vs
-   "free text" at read time, no flag needed on the edge.
+2. **`address_form == "subset"`** — the mention is a sub-corpus
+   of a parent dataset (e.g., `MegaMath-Web` is a config of
+   `LLM360/MegaMath`). **Use the parent's `formal_name` as the
+   address**, and note the subset in the edge's `description`
+   field (e.g., `"... trained on MegaMath-Web subset of
+   LLM360/MegaMath ..."`). Do NOT emit a separate sub-corpus
+   address; the lattice stops at the HF-dataset / parent level.
+
+3. **Concept top-1, entity at rank 2, source pins specifics** —
+   if surrounding ±2 sentences provide a date / stage / size that
+   matches the entity but not the concept, prefer the entity.
+   Otherwise the concept address is the right call (vague
+   mention).
+
+If `python -m gdb.resolve` finds no candidate with a family
+pivot (score floor of 0 returned), fall back to free text in
+`subject` or `object`. The query layer distinguishes
+"address resolves to lattice item" vs "free text" at read time;
+no flag needed on the edge.
 
 ### Subject vs object specificity
 
-- **Subjects** are usually leaves (the target's own checkpoints
-  are pinned by `from_pretrained()` calls in configs). Emit
-  leaf-level when the source pins the specific checkpoint.
-- **Subjects can also be virtual concept addresses** when the
-  source describes an event at the family or stage level (e.g.,
-  "for the OLMo 3 Think family we use Qwen3 32B as judge" — the
-  subject is `OLMo 3 [stage=Think]`, not a specific checkpoint).
-  Emit one edge with the concept-level subject, OR emit one
-  per-leaf edge — the global-policy-edges section below
-  describes when to fan out.
-- **Objects** can be leaves, family roots, virtual concept
-  addresses, or free-text. Same matching rules.
+- **Subjects MUST be Models.** No dataset-subject edges, ever.
+  Subject is usually a leaf checkpoint (pinned via
+  `from_pretrained()` in configs). May also be a model concept
+  (family-root or interior concept) when source describes an
+  event at the family / stage level (e.g., "for the OLMo 3
+  Think family we use Qwen3 32B as judge" → subject is the
+  `{family: OLMo 3, stage: Think}` concept node, fan out per-leaf
+  if the global-policy-edges rule applies).
+- **Objects** can be Models, Datasets, family roots, concept
+  nodes, or free-text. Cannot be tokenizers / frameworks /
+  software libraries / codebases (per §2 — those aren't node
+  types).
+
+If a source describes an action whose natural English subject
+is a dataset (e.g., "olmOCR transformed PDFs into Dolma"),
+restate with the consuming model as subject and the producer
+as object: `<model-that-trained-on-Dolma> --transformed_by-->
+allenai/olmOCR-7B-0225`. The dataset's role in this still
+appears via the model's `trained_on` edge to the dataset.
 
 If an artifact is mentioned only as a side-comment with no
 relation to anything in the lattice, drop it; don't invent
 relations.
 
-## Aggregator + leaf rule (load-bearing)
+## Subject is always a Model (load-bearing schema rule)
 
-Modern training pipelines structure data as **aggregator
-mixes** that compose named **leaf sub-corpora**. The lattice
-encodes this via the dataset node's `subsets[]` field:
+Every edge's `subject` MUST resolve to a lattice item with
+`kind == "model"`. No dataset-subject edges. No free-text
+subjects. If the source describes an action whose natural
+subject is a dataset (e.g., "olmOCR transformed PDFs into the
+academic corpus"), restate the edge with the **consuming model**
+as subject:
 
-```json
-{
-  "kind": "dataset",
-  "formal_name": "allenai/dolma3_dolmino_mix-100B-1025",
-  "subsets": ["cranemath", "cranecode", "finemath4plus", ...]
-}
+```
+WRONG:    dolma3_pool --transformed_by--> allenai/olmOCR-7B-0225
+RIGHT:    allenai/Olmo-3-1025-7B --transformed_by--> allenai/olmOCR-7B-0225
+          (with description noting the OCR'd content lives in dolma3_pool)
 ```
 
-When the subject `trained_on` an aggregator that has populated
-`subsets[]`, emit `trained_on` edges at BOTH granularities:
+If multiple consumer models trained on the same dataset, fan
+out: emit ONE `(consumer, action, producer)` edge per consumer.
+Same fact at multiple subjects is exactly what the schema
+expects — graph-level joinability comes from the consumer-as-
+subject framing.
 
-- One aggregator-level edge: `subject → trained_on →
-  <aggregator-formal-name>`
-- One leaf-level edge per subset: `subject → trained_on →
-  <aggregator-formal-name>/<subset-slug>` for each entry in
-  the parent's `subsets[]`
+## Aggregator + leaf rule (load-bearing)
 
-The leaf-level edges look redundant with the aggregator-level
-one but they capture the dependency at the granularity
-reference graphs use. Do NOT drop them.
+When `subject --trained_on--> aggregator` and the aggregator
+has populated `subsets[]` listing named leaf sub-corpora
+(e.g., `cranecode`, `cranemath`, `web`, `web-pro`), emit edges
+at BOTH granularities:
 
-If the source explicitly says only some sub-corpora were used
-(e.g., "Olmo-3-7B-Base used CraneMath and FineMath4+ but not
-the OMR-Rewrite subset of dolmino"), emit leaf edges only for
-the ones the source names.
+- **Aggregator-level**: `subject --trained_on--> <aggregator>`
+- **Leaf-level**: `subject --trained_on--> <leaf>` for EACH slug
+  in the aggregator's `subsets[]`
+
+The leaf address is the lattice item whose `formal_name` matches
+the slug semantically. Common conventions:
+
+- HF-prefixed leaf: `allenai/cranemath` (preferred when the leaf
+  has its own HF release)
+- Slug-only when no separate item exists: `cranemath` or
+  `<aggregator-formal-name>/cranemath`
+
+Pick the form that matches the lattice item if one exists; else
+synthesize `<aggregator-formal-name>/<slug>` so the verifier
+sees the explicit composition.
+
+Per investigator §AGGREGATOR: **leaf edges look redundant with
+the aggregator edge but they capture the dependency at the
+granularity reference graphs use. Do NOT drop them.**
+
+If the source says only some sub-corpora were used (e.g.,
+"Olmo-3-7B-Base used CraneMath and FineMath4+ but not the
+OMR-Rewrite subset"), emit leaf edges only for the named ones.
+
+Sub-corpus mentions in source that match a slug pattern (e.g.,
+`MegaMath-Web` matching `web` in LLM360/MegaMath's `subsets[]`)
+resolve via `python -m gdb.resolve` with `address_form:
+"subset"`. Emit the leaf edge using the resolve output's
+`subset_of.parent_formal_name` + `subset_of.slug`. The
+description should also name the sub-corpus verbatim for
+query-time grep.
 
 ## Global-policy edges
 
@@ -209,9 +244,13 @@ direct dependency that fits one of them lands in exactly one.
 
 **Use a canonical label when one fits.** Only coin a new
 snake_case label when the source describes an event that none
-of the canonical values capture. Examples of legitimate
-coining: `merged_from` (model souping), `deduplicated_by`,
-`embedded_by`, `tokenized_by`, `decontaminated_by`.
+of the canonical values capture, AND the object is a valid
+node (model or dataset). Examples of legitimate coining:
+`merged_from` (model souping — object is a Model),
+`embedded_by` (object is an embedding Model). Do NOT coin
+relation labels whose object would be a tokenizer / dedup tool /
+decontamination tool / framework — those targets aren't valid
+nodes per §2.
 
 **Do NOT coin** when the canonical label fits. The planner
 that emits `cited_as_baseline` instead of skipping the edge
@@ -236,9 +275,9 @@ new label means without re-reading the source.
 
 | relation | typical direction | when to use |
 |---|---|---|
-| `inspired_by` | M → M / M → D | methodology borrowed; recipe explicitly cited; no weight or data inheritance |
+| `inspired_by` | M → M / M → D | methodology / data-recipe borrowed from a SPECIFIC published model or dataset ("based on SwallowMath data recipe — `tokyotech-llm/swallow-math`"; "follows DCLM filtering — `mlfoundations/dclm`"). Object MUST be a model or dataset; NOT a codebase, NOT a software library, NOT a paper standalone. If the recipe lives in a paper that has no released model / dataset artifact, do not emit. No weight or data inheritance. |
 | `used_for_ablation` | M → M / M → D | object was a design-space variant in the subject team's OWN ablation studies (not a baseline they compared against) |
-| `used_for_evaluation` | M → M / M → D | benchmark / eval set OR LLM judge model — used to evaluate the release |
+| `used_for_evaluation` | M → M / M → D | benchmark / eval set OR LLM judge model — used to evaluate the release. **Enumerate every named benchmark individually** when the source lists them in eval tables (MMLU, GSM8K, BBH, HumanEval, DeepMind Math, LBPP, AGIEval, ...) rather than collapsing into an umbrella name like "OlmoBaseEval" or "Held-out Suite". |
 
 ### Out-of-scope — do NOT emit
 
@@ -249,12 +288,25 @@ new label means without re-reading the source.
   team's OWN development pipeline (ablation, eval, methodology
   borrowing), or just a published number to compare against?
   Only the former is in scope.
-- **Generic architecture / algorithm** (Transformer, RoPE,
-  RMSNorm, AdamW, MoE, GQA, SwiGLU). Never edges.
-- **Tokenizers, frameworks, infrastructure** (PyTorch, vLLM,
-  Transformers, datatrove, tiktoken). Never edges.
+- **Generic architecture / algorithm primitives** (Transformer,
+  RoPE, RMSNorm, AdamW, MoE, GQA, SwiGLU). These are math/ML
+  techniques, not artifacts. Never edges.
 - **Vague inspiration** ("inspired by the broader RL
   literature", "following common practice"). Never edges.
+
+- **Tokenizers, frameworks, training software, inference
+  infrastructure** (PyTorch, vLLM, Transformers, datatrove,
+  tiktoken, ray, OLMo-core the codebase, Resiliparse the
+  library, Duplodocus the dedup tool, `allenai/dolma3-tokenizer`
+  the BPE vocab). NOT NODES per investigator §2. They are
+  software / libraries / vocab files, not models or datasets.
+  Skip entirely. Don't emit an edge to them, don't emit them as
+  nodes. Only `model` and `dataset` are valid node types.
+  *Distinction:* a neural OCR MODEL (`allenai/olmOCR-7B-0225-
+  preview`, 7B params) IS a model and IS a valid edge target;
+  the tokenizer it ships with is not. A neural quality
+  classifier (Gemma-3, FastText) IS a model; the framework it
+  runs in is not.
 - **Numeric facts about a node** (size, training_tokens,
   release_date, parameter_count, context_length). These are
   NOT edges. They live in node descriptions. The lattice
@@ -327,7 +379,7 @@ both.
 
 ```json
 {
-  "subject":         "<lattice formal_name, verbatim>",
+  "subject":         "<lattice formal_name, MUST be kind=model>",
   "relation":        "trained_on",
   "dependency_kind": "direct",
   "object":          "<lattice formal_name OR free-text descriptor>",
@@ -336,24 +388,35 @@ both.
     {
       "source":      "<URL or local path>",
       "position":    "<locator within source: section, page, table, line range, YAML field>",
-      "explanation": "<how the cited source supports this edge; verbatim quote inline>"
+      "excerpt":     "<verbatim quote from the cited source, ≤ ~200 chars>",
+      "explanation": "<one sentence on how the excerpt supports the (subject, relation, object) claim>"
     }
   ]
 }
 ```
 
 - `subject`: MUST be one of:
-  - a leaf `formal_name` (full-identity item),
-  - a family-root `formal_name` (item with identity `{family: X}`),
+  - a leaf `formal_name` whose lattice item has `kind == "model"`,
+  - a family-root or interior concept `formal_name` whose item
+    has `kind == "model"`,
   - a virtual concept address `<family> [<k>=<v>, ...]` notation
-    when the source's specificity falls between root and leaf.
+    when the source's specificity falls between root and leaf,
+    AND the family is a model family.
+
+  **Never emit a dataset as subject.** If the source describes
+  an action whose natural subject is a dataset, restate with
+  the consuming model as subject (see "Subject is always a
+  Model" section above).
 - `relation`: canonical from the table above when one fits;
-  otherwise a coined snake_case label.
+  otherwise a coined snake_case label whose object is also a
+  valid model/dataset node.
 - `dependency_kind`: `"direct"` or `"indirect"`. Closed
   vocabulary; mismatch with the relation's bucket is a
   validation error.
-- `object`: same shape as subject (leaf / root / virtual concept
-  address) OR a free-text descriptor when no family pivot exists.
+- `object`: same shape as subject (leaf / root / concept) for
+  model or dataset objects, OR a free-text descriptor when no
+  family pivot exists. Cannot be a tokenizer / framework /
+  software / codebase per §2.
 - `description`: lossless prose. MUST capture every
   structurally relevant fact that the relation, subject,
   object, and event description don't already express:
@@ -362,10 +425,24 @@ both.
   code), quantities (prompt counts, token counts), specific
   subsets / filters, ordering / compositional context,
   caveats. ≤ ~500 chars.
-- `anchor_list`: NON-EMPTY array. Each entry has REQUIRED
-  `source` and `explanation`; RECOMMENDED `position` (the
-  verifier uses position to navigate; absence triggers
-  `external_support_only` downstream).
+- `anchor_list`: NON-EMPTY array. Each entry:
+  - `source` (REQUIRED): URL or local path to the source.
+  - `explanation` (REQUIRED): one sentence on HOW the cited
+    source supports the specific `(subject, relation, object)`
+    claim. Don't restate the source text — use `excerpt` for that
+    and explanation for the connection.
+  - `position` (RECOMMENDED): locator within the source —
+    section, page, table, figure, line range, YAML field path.
+  - `excerpt` (RECOMMENDED): a **verbatim quote** (≤ ~200 chars)
+    from the cited source supporting the claim. For tables,
+    figures, or non-quotable content, set `position` precisely
+    and leave `excerpt` empty (acceptable in those cases).
+
+  Edges with `excerpt` + `position` populated receive
+  `cited_evidence_supports` from the verifier. Missing them
+  forces a fallback to `external_support_only` (the verifier
+  re-derives support from elsewhere, which under-grounds the
+  claim).
 
 ## Event schema (one JSONL line)
 
@@ -402,7 +479,8 @@ both.
     {
       "source": "https://arxiv.org/abs/2512.13961",
       "position": "Section 4.3.1, paragraph beginning 'For Think-DPO'",
-      "explanation": "Paper describes the Think-DPO event with named generators."
+      "excerpt": "For Think-DPO, we use Qwen3 32B in thinking mode to generate chosen completions and Qwen3 0.6B in thinking mode to generate rejected completions, following the Delta-Learning recipe.",
+      "explanation": "Paper paragraph names both generators and the recipe in one place."
     }
   ],
   "edges": [
@@ -416,7 +494,8 @@ both.
         {
           "source": "https://arxiv.org/abs/2512.13961",
           "position": "Section 4.3.1",
-          "explanation": "States that Think-DPO continues from Think-SFT."
+          "excerpt": "Think-DPO continues from the Think-SFT checkpoint with preference optimization.",
+          "explanation": "States the warm-start of Think-DPO from Think-SFT."
         }
       ]
     },
@@ -430,7 +509,8 @@ both.
         {
           "source": "https://arxiv.org/abs/2512.13961",
           "position": "Section 4.3.1, Delta-Learning paragraph",
-          "explanation": "Paper says 'Qwen3 32B thinking generates chosen completions'."
+          "excerpt": "Qwen3 32B in thinking mode generates the chosen completions for the preference pairs.",
+          "explanation": "Documents Qwen3-32B as the chosen-completion generator."
         }
       ]
     },
@@ -444,7 +524,8 @@ both.
         {
           "source": "https://arxiv.org/abs/2512.13961",
           "position": "Section 4.3.1, Delta-Learning paragraph",
-          "explanation": "Paper says 'Qwen3 0.6B thinking generates rejected completions'."
+          "excerpt": "Qwen3 0.6B in thinking mode generates the rejected completions.",
+          "explanation": "Documents Qwen3-0.6B as the rejected-completion generator."
         }
       ]
     }
@@ -464,17 +545,38 @@ qualitative checks:
 - For every training stage the source names (pretraining,
   midtraining, long-context, SFT, DPO, RL, RL-Zero), there
   should be at least one event covering it.
-- For every aggregator mix the subject `trained_on`, you
-  should have leaf-level edges for every entry in the
-  parent's `subsets[]` (per the aggregator+leaf rule).
+- **Aggregator + leaf coverage:** for every aggregator mix
+  the subject `trained_on`, emit ONE `subject --trained_on--> <leaf>`
+  edge per slug in the parent's `subsets[]`, IN ADDITION to the
+  aggregator-level edge. See "Aggregator + leaf rule" section.
 - For every named generator / judge / rewriter / classifier
-  the source mentions, there should be at least one
-  `generated_by` / `filtered_by` / `transformed_by` edge.
-- Every benchmark / eval-judge in the release's eval section
-  becomes a `used_for_evaluation` indirect edge.
+  the source mentions, emit a `generated_by` / `filtered_by`
+  / `transformed_by` edge with the **consumer model as subject**
+  (the model whose training data was generated / filtered /
+  transformed by the producer model). E.g., `OLMo-3-1025-7B
+  --transformed_by--> allenai/olmOCR-7B-0225` (OLMo-3 trained
+  on data that olmOCR transformed), NOT `dolma3_pool
+  --transformed_by--> olmOCR`. Subject is always a model.
+- **Every named benchmark in the release's eval tables** becomes
+  an individual `used_for_evaluation` edge. Do NOT collapse the
+  full benchmark list into a bundle name like `OlmoBaseEval`
+  unless the bundle is the only thing the source mentions.
+  Tables 2 / 12 of the OLMo-3 paper enumerate ~30 specific
+  benchmarks (MMLU, MMLU Pro, BBH, GSM8K, MATH, HumanEval, MBPP,
+  LBPP, DeepMind Math, AGIEval, HellaSwag, WinoGrande, ARC,
+  TriviaQA, NaturalQuestions, ...) — emit one edge per
+  benchmark. Same rule for in-loop dev evals.
 - The team's own ablation tables become `used_for_ablation`
   indirect edges (only their own design-space variants — not
   external baselines they compared against).
+- **Recipe / methodology references:** `inspired_by` edges
+  point at MODELS or DATASETS only — never codebases, never
+  software libraries. `OLMo-core` (codebase), `Resiliparse`
+  (library), `Duplodocus` (dedup tool) are NOT valid objects.
+  But `mlfoundations/dclm` (a released dataset) IS a valid
+  `inspired_by` object when source says "we follow DCLM
+  filtering" — emit `subject --inspired_by-->
+  mlfoundations/dclm-baseline-1.0`.
 
 If you only emit `trained_on` and `trained_from` edges with
 no `generated_by` / `transformed_by` / `filtered_by` / eval
@@ -490,11 +592,16 @@ packet. Each subagent appends its events directly to
 
 When dispatching, transcribe verbatim into each subagent's brief:
 - The "Append-as-you-go" instruction (file path + how to append).
-- The "Lattice anchoring" rule.
-- The "Aggregator + leaf rule".
-- The "Out-of-scope" list (especially baseline comparisons).
-- The relation taxonomy table.
-- The schemas (edge + event).
+- The "Subject is always a Model" rule (load-bearing — subagents
+  default to dataset-subject framing without this).
+- The "Aggregator + leaf rule" section (subject emits one edge
+  per leaf in the aggregator's subsets[]).
+- The "Lattice anchoring — preserve source specificity" section.
+- The "Out-of-scope" list (baseline comparisons, tokenizers,
+  frameworks, codebases — none are nodes).
+- The relation taxonomy tables (DIRECT + INDIRECT).
+- The edge schema (subject MUST be model; anchor_list MUST have
+  excerpt for verifier grounding).
 
 Subagents have none of your context. Without these
 transcriptions they will silently revert to old patterns

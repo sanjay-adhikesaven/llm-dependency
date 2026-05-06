@@ -184,13 +184,46 @@ def spawn_claude(run_id: str, prompt: str, *, model: str = config.CLAUDE_MODEL) 
         "--disallowedTools", "ScheduleWakeup",
     ]
     started = time.monotonic()
+    killed_for_stall = False
+    STREAM_SILENCE_LIMIT_S = 300.0
+    POLL_INTERVAL_S = 30.0
     with stream_path.open("w") as stdout, err_path.open("w") as stderr:
         proc = subprocess.Popen(
             cmd, cwd=config.ROOT, env=runtime_env(run_id),
             stdout=stdout, stderr=stderr, text=True, start_new_session=True,
         )
         try:
-            rc = proc.wait()
+            last_size = 0
+            last_activity = time.monotonic()
+            while True:
+                try:
+                    rc = proc.wait(timeout=POLL_INTERVAL_S)
+                    break
+                except subprocess.TimeoutExpired:
+                    pass
+                try:
+                    cur_size = stream_path.stat().st_size
+                except OSError:
+                    cur_size = last_size
+                if cur_size != last_size:
+                    last_size = cur_size
+                    last_activity = time.monotonic()
+                elif time.monotonic() - last_activity > STREAM_SILENCE_LIMIT_S:
+                    terminate_pgrp(proc.pid)
+                    try:
+                        rc = proc.wait(timeout=10)
+                    except subprocess.TimeoutExpired:
+                        rc = -9
+                    killed_for_stall = True
+                    try:
+                        with err_path.open("a") as ef:
+                            ef.write(
+                                "\n[watchdog] killed subprocess after "
+                                f"{int(STREAM_SILENCE_LIMIT_S)}s of stream silence\n"
+                            )
+                    except OSError:
+                        pass
+                    break
         except (KeyboardInterrupt, SystemExit):
             terminate_pgrp(proc.pid)
             raise
@@ -204,10 +237,15 @@ def spawn_claude(run_id: str, prompt: str, *, model: str = config.CLAUDE_MODEL) 
         "tool_calls_by_name": {name: tool_calls.count(name) for name in set(tool_calls)},
         **stats,
     }
+    if killed_for_stall:
+        attrs["killed_for_stall"] = True
     close_run(run_id, attrs)
     if final_text:
         (run_root / "final.txt").write_text(final_text)
-    return {"run_id": run_id, "exit_code": rc, "elapsed_s": elapsed, "log_dir": str(run_root)}
+    return {
+        "run_id": run_id, "exit_code": rc, "elapsed_s": elapsed,
+        "log_dir": str(run_root), "killed_for_stall": killed_for_stall,
+    }
 
 
 def spawn_codex(run_id: str, prompt: str, *, effort: str) -> dict:
@@ -303,7 +341,8 @@ def dispatch_spawn(
         if attempt >= max_retries:
             break
 
-        # Decide: is this a rate-limit failure worth retrying?
+        # Decide: is this a rate-limit failure or watchdog stall worth retrying?
+        killed_for_stall = result.get("killed_for_stall", False)
         run_root = config.STORAGE / config.RUNS_SUBDIR / attempt_run_id
         rate_limited = False
         if not model.startswith("codex-"):
@@ -322,7 +361,7 @@ def dispatch_spawn(
                     )
                 except OSError:
                     pass
-        if not rate_limited:
+        if not rate_limited and not killed_for_stall:
             break
 
         sleep_s = backoff_schedule[min(attempt, len(backoff_schedule) - 1)]
@@ -566,9 +605,10 @@ def names_packet() -> dict:
 
 
 # Production link kinds — pin a deployable artifact (HF release,
-# GitHub repo, vendor API model). Required on entity leaves.
+# GitHub repo, vendor API model, HF Space demo). Required on entity
+# leaves.
 _PRODUCTION_LINK_KINDS = frozenset({
-    "hf_model", "hf_dataset", "github", "vendor_docs",
+    "hf_model", "hf_dataset", "hf_space", "github", "vendor_docs",
 })
 # Concept link kinds — describe a family / product line concept
 # (paper, blog, family-level HF collection page). Allowed on family
@@ -653,10 +693,11 @@ def _validate_organize_artifact(artifact: dict) -> tuple[int, int]:
             if family_value is None:
                 family_value = family
             elif family_value != family:
-                raise click.ClickException(
-                    f"{where} identity.family={family!r} differs from "
-                    f"sibling family={family_value!r} in same group; "
-                    "every item in a group must share the same family value"
+                click.echo(
+                    f"WARNING: {where} identity.family={family!r} differs "
+                    f"from sibling family={family_value!r} in same group; "
+                    "permitted (synthetic-data lineage permits mixed-family groups)",
+                    err=True,
                 )
 
             # Display + formal_name shape (display_name is the new
@@ -2172,10 +2213,14 @@ def _merge_relations(artifacts: list[dict]) -> tuple[list[dict], list[dict]]:
             for edge in op.get("edges") or []:
                 if not isinstance(edge, dict):
                     continue
+                def _str(v):
+                    if isinstance(v, dict):
+                        return v.get("formal_name") or v.get("name") or ""
+                    return v or ""
                 key = (
-                    edge.get("subject") or "",
-                    edge.get("relation") or "",
-                    edge.get("object") or "",
+                    _str(edge.get("subject")),
+                    _str(edge.get("relation")),
+                    _str(edge.get("object")),
                 )
                 anchors = list(edge.get("anchor_list") or [])
                 if key in by_key:
