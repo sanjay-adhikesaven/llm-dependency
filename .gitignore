@@ -1,8 +1,32 @@
+# --- Python ---
 __pycache__/
 *.pyc
-.DS_Store
-.env
+*.egg-info/
 .venv/
 venv/
-*.egg-info/
 .pytest_cache/
+
+# --- env / secrets ---
+.env
+.claude/
+
+# --- generated artifacts ---
+storage/
+run-logs/
+*.db
+*.db-shm
+*.db-wal
+*.zip
+
+# --- old experiment subdirs ---
+old/
+smol*/
+olm*/
+new-*/
+test-*/
+
+# --- editor / OS ---
+.DS_Store
+*.swp
+.idea/
+.vscode/

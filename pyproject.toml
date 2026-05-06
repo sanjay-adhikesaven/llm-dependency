@@ -1,0 +1,40 @@
+[project]
+name = "gdb-lattice"
+version = "0.1.0"
+description = "discover → extract names → organize lattice"
+requires-python = ">=3.11"
+dependencies = [
+  "click>=8.1",
+  "python-dotenv>=1.0",
+]
+
+[project.scripts]
+gdb = "gdb.cli:main"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["gdb"]
+
+[tool.setuptools.data-files]
+"share/gdb-lattice" = ["schema.sql"]
+"share/gdb-lattice/prompts" = [
+  "gdb/prompts/discover.md",
+  "gdb/prompts/extract.md",
+  "gdb/prompts/organize.md",
+  "gdb/prompts/audit.md",
+  "gdb/prompts/linker.md",
+  "gdb/prompts/relate.md",
+  "gdb/prompts/triage.md",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = [
+  "storage",
+  ".venv",
+  "__pycache__",
+  ".pytest_cache",
+]
