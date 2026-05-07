@@ -315,6 +315,33 @@ def dedup_cmd(source: str, dest: str, stages: str, log_path: str | None):
     raise SystemExit(run_dedup(source, dest, stages, log_path))
 
 
+@main.command("viz-export")
+@click.option("--source", "source_path", required=True,
+              help="Path to a merged or cleaned graph JSON.")
+@click.option("--out", "out_dir", default="docs", show_default=True,
+              help="Output directory. GitHub Pages typically serves from /docs/.")
+@click.option("--depth", type=int, default=3, show_default=True,
+              help="Hops to expand from each target seed.")
+@click.option("--target-size", type=int, default=120, show_default=True,
+              help="Approximate node budget per target (pre main-component prune).")
+def viz_export_cmd(source_path: str, out_dir: str, depth: int, target_size: int):
+    """Build a static, deployable viz with one tab per paper target.
+
+    Generates ``<out>/index.html`` plus ``<out>/data/<slug>.json`` for each of
+    the four paper targets (OLMo 3, Nemotron 3 Super, DR-Tulu, SmolLM3). The
+    HTML reuses the live viz UI verbatim; a target-tab strip switches between
+    the four prebuilt subgraphs via ``?t=<slug>``.
+    """
+    from .export_viz import export_static
+    result = export_static(
+        source=Path(source_path),
+        out_dir=Path(out_dir),
+        depth=depth,
+        target_size=target_size,
+    )
+    emit_json(result)
+
+
 @main.command("viz")
 @click.option("--source", "source_path", required=True,
               help="Path to a merged or cleaned graph JSON to visualize.")
