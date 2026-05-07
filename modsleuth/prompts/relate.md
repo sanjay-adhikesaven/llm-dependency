@@ -86,7 +86,7 @@ mentions to roots.
 For each mention you'd put in `subject` or `object`, run:
 
 ```
-python -m lineage.resolve "<mention>" --top 5 --json
+python -m modsleuth.resolve "<mention>" --top 5 --json
 ```
 
 The output is a ranked list of candidates. Each candidate has:
@@ -118,7 +118,7 @@ Pick the candidate whose identity facets are closest to what the
    Otherwise the concept address is the right call (vague
    mention).
 
-If `python -m lineage.resolve` finds no candidate with a family
+If `python -m modsleuth.resolve` finds no candidate with a family
 pivot (score floor of 0 returned), fall back to free text in
 `subject` or `object`. The query layer distinguishes
 "address resolves to lattice item" vs "free text" at read time;
@@ -204,7 +204,7 @@ OMR-Rewrite subset"), emit leaf edges only for the named ones.
 
 Sub-corpus mentions in source that match a slug pattern (e.g.,
 `MegaMath-Web` matching `web` in LLM360/MegaMath's `subsets[]`)
-resolve via `python -m lineage.resolve` with `address_form:
+resolve via `python -m modsleuth.resolve` with `address_form:
 "subset"`. Emit the leaf edge using the resolve output's
 `subset_of.parent_formal_name` + `subset_of.slug`. The
 description should also name the sub-corpus verbatim for

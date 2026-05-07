@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
-"""Graph visualizer — tuned for 20k-edge graphs.
+"""ModSleuth dependency-graph visualizer (tuned for 20k-edge graphs).
 
-Key features:
-  - Loads merged artifact directly (no SQLite)
-  - Min-degree slider (default 5) so initial view is manageable
-  - Physics OFF by default — user toggles on if they want force layout
-  - Top-hub spotlight: when no filter is active, shows just top-150 nodes by degree
-  - Fast-rebuild path that doesn't recreate the network on every filter change
+Loads a merged or cleaned graph JSON (output of ``modsleuth run merge`` or
+``modsleuth dedup``) and serves an interactive vis-network frontend on
+``http://<host>:<port>/``. Default initial view caps at the top 200 nodes
+by degree (min-degree ≥ 10) with physics off; toggle force layout, ego
+modes (1-hop / 2-hop), or raise the slider to explore further.
 
-Run:  python viz.py [--port 8102] [--source v4|v3|v2|original]
+Run via the CLI:
+
+    modsleuth viz --source path/to/graph.json --port 8102
+
+or directly as a module:
+
+    python -m modsleuth.viz --source path/to/graph.json --port 8102
+
 Open: http://127.0.0.1:8102/
 """
 from __future__ import annotations
@@ -18,8 +24,6 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
-
-# Path to the merged graph JSON is provided via --source.
 
 
 def load_data(path: Path) -> dict:
@@ -536,17 +540,12 @@ def make_handler(graph_payload: dict):
     return Handler
 
 
-def main() -> None:
-    p = argparse.ArgumentParser(description="Visualize a merged dependency-graph JSON.")
-    p.add_argument("--source", required=True, type=Path,
-                   help="Path to the merged graph JSON (e.g. merge_artifact.json or a deduped output).")
-    p.add_argument("--port", type=int, default=8102)
-    p.add_argument("--host", default="127.0.0.1")
-    args = p.parse_args()
-
-    src_path = args.source
+def serve(source: Path, host: str = "127.0.0.1", port: int = 8102) -> None:
+    """Serve the interactive viewer for the merged graph at *source*."""
+    src_path = Path(source)
     if not src_path.exists():
-        print(f"ERROR: source not found: {src_path}", file=sys.stderr); sys.exit(1)
+        print(f"ERROR: source not found: {src_path}", file=sys.stderr)
+        sys.exit(1)
 
     print(f"Loading {src_path}")
     payload = load_data(src_path)
@@ -559,14 +558,24 @@ def main() -> None:
     print()
 
     handler = make_handler(payload)
-    server = HTTPServer((args.host, args.port), handler)
-    print(f"Serving on http://{args.host}:{args.port}/  (Ctrl-C to stop)")
+    server = HTTPServer((host, port), handler)
+    print(f"Serving on http://{host}:{port}/  (Ctrl-C to stop)")
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         print("\nstopping")
     finally:
         server.server_close()
+
+
+def main() -> None:
+    p = argparse.ArgumentParser(description="Visualize a merged dependency-graph JSON.")
+    p.add_argument("--source", required=True, type=Path,
+                   help="Path to the merged graph JSON (e.g. merge_artifact.json or a deduped output).")
+    p.add_argument("--port", type=int, default=8102)
+    p.add_argument("--host", default="127.0.0.1")
+    args = p.parse_args()
+    serve(source=args.source, host=args.host, port=args.port)
 
 
 if __name__ == "__main__":

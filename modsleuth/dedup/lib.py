@@ -1,6 +1,7 @@
 """Shared helpers for the dedup pipeline.
 
-The pipeline runs four stages (see `dedup.py`) over a merged JSON graph:
+The pipeline runs four stages (see ``modsleuth.dedup.__main__``) over a
+merged JSON graph:
   1. heuristic    — signature clustering + fuzzy surface-form merge (no LLM)
   2. hub-audit    — per-hub LLM audit of edges (drops dupes/hallucinations)
   3. node-dedup   — whole-graph LLM-verified node dedup

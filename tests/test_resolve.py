@@ -1,6 +1,6 @@
-"""Tests for lineage.resolve — the lattice resolution / search function."""
+"""Tests for modsleuth.resolve — the lattice resolution / search function."""
 
-from lineage.resolve import resolve
+from modsleuth.resolve import resolve
 
 
 def _lattice(*items_per_group):

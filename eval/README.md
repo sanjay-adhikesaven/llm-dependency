@@ -89,4 +89,4 @@ Each input edge needs at minimum:
 
 `relation_type` is accepted but not graded — the verifier judges the
 underlying relationship, not the bucket label. See
-`prompts/investigator_prompt.md` for the full schema and admission criteria.
+`baselines/prompts/baseline_prompt.md` for the full schema and admission criteria.

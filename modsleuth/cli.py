@@ -22,7 +22,7 @@ from .store import all_rows, db, emit_json, loads, read_json
 
 @click.group()
 def main():
-    """lineage: discover → extract names → organize lattice."""
+    """ModSleuth: agentic recursive dependency tracing for LLM releases."""
 
 
 @main.command()
@@ -88,7 +88,7 @@ def discover_cmd(target: str, artifact_path: str | None, workspace_dir: str | No
 @click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES),
               default=config.CLAUDE_MODEL, show_default=True)
 @click.option("--max-workers", type=int,
-              help="Override LINEAGE_MAX_PARALLEL_BATCHES for this process.")
+              help="Override MODSLEUTH_MAX_PARALLEL_BATCHES for this process.")
 def extract_cmd(batch_id: str | None, artifact_path: str | None,
                 planner_model: str, subagent_model: str, max_workers: int | None):
     if artifact_path and not batch_id:
@@ -149,7 +149,7 @@ def audit_cmd(artifact_path: str | None, source_path: str | None,
 @click.option("--subagent-model", type=click.Choice(config.SUBAGENT_CHOICES),
               default=config.CLAUDE_MODEL, show_default=True)
 @click.option("--max-workers", type=int,
-              help="Override LINEAGE_MAX_PARALLEL_BATCHES for this process.")
+              help="Override MODSLEUTH_MAX_PARALLEL_BATCHES for this process.")
 def relate_cmd(batch_id: str | None, artifact_path: str | None,
                lattice_path: str | None, planner_model: str,
                subagent_model: str, max_workers: int | None):
@@ -254,15 +254,69 @@ def expand_cmd(node: str, planner_model: str, subagent_model: str,
     ))
 
 
+@main.command("recursive")
+@click.option("--seed", "seeds", multiple=True, required=True,
+              help="Target model identifier. Pass multiple times for multiple seeds.")
+@click.option("--depth", type=int, default=3, show_default=True,
+              help="Maximum recursion depth (depth 1 = base pipeline only).")
+@click.option("--top-k", type=int, default=5, show_default=True,
+              help="Per-depth, expand the top-K parents by parent count.")
+@click.option("--storage-root", "storage_root", default=None,
+              help="Root directory for per-seed MODSLEUTH_STORAGE dirs. "
+                   "Defaults to <repo>/storage.")
+def recursive_cmd(seeds: tuple[str, ...], depth: int, top_k: int,
+                  storage_root: str | None):
+    """Reference recursive-expansion driver (paper §3.2 / §A).
+
+    BFS-style multi-hop driver. For each seed, runs the base pipeline,
+    then iteratively expands the top-K newly-discovered upstream artifacts
+    (ranked by parent count) up to ``--depth`` hops. Each seed gets its
+    own MODSLEUTH_STORAGE directory; merge across seeds afterwards by
+    passing all per-seed merge_artifact.json files to ``modsleuth run merge``.
+    """
+    from .recursive import main as recursive_main
+    argv = []
+    for s in seeds:
+        argv += ["--seed", s]
+    argv += ["--depth", str(depth), "--top-k", str(top_k)]
+    if storage_root:
+        argv += ["--storage-root", storage_root]
+    raise SystemExit(recursive_main(argv))
+
+
+@main.command("dedup")
+@click.option("--source", required=True,
+              help="Input merged graph JSON (output of `modsleuth run merge`).")
+@click.option("--dest", required=True,
+              help="Output cleaned graph JSON.")
+@click.option("--stages", default="all", show_default=True,
+              help="Comma-separated stages. Available: heuristic, hub-audit, node-dedup, release. "
+                   "`all` runs them in order.")
+@click.option("--log", "log_path", default=None,
+              help="Optional log file path. Defaults to stderr only.")
+def dedup_cmd(source: str, dest: str, stages: str, log_path: str | None):
+    """Post-merge dedup pipeline (paper §3.2 Reconcile / cleanup).
+
+    Four stages over a merged JSON graph: heuristic clustering (no LLM),
+    LLM hub-audit, LLM-verified node-dedup with conflict-guarded union-find,
+    and a KEEP/DROP release filter that transitively rewires through dropped
+    intermediate checkpoints. See modsleuth/dedup/__main__.py for details.
+    """
+    from .dedup.__main__ import run_dedup
+    raise SystemExit(run_dedup(source, dest, stages, log_path))
+
+
 @main.command("viz")
+@click.option("--source", "source_path", required=True,
+              help="Path to a merged or cleaned graph JSON to visualize.")
 @click.option("--port", type=int, default=8102, show_default=True,
               help="HTTP port to serve on.")
 @click.option("--host", default="127.0.0.1", show_default=True,
               help="Bind address.")
-def viz_cmd(port: int, host: str):
-    """Serve an interactive graph viewer of the current run's lattice + relations."""
+def viz_cmd(source_path: str, port: int, host: str):
+    """Serve an interactive graph viewer for a merged JSON graph."""
     from .viz import serve
-    serve(port=port, host=host)
+    serve(source=Path(source_path), host=host, port=port)
 
 
 @main.group()

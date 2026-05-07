@@ -23,7 +23,7 @@ Scoring is hybrid:
   `subset_match_slug` and the candidate is flagged
   `address_form: "subset"`.
 
-CLI: `python -m lineage.resolve "<mention>" [--top K] [--lattice PATH]`.
+CLI: `python -m modsleuth.resolve "<mention>" [--top K] [--lattice PATH]`.
 
 The function does NOT pick a winner — it ranks. Relate picks based on
 surrounding source context.
@@ -292,7 +292,7 @@ def main(mention: str, top_k: int, lattice_path: str | None, as_json: bool):
     """Resolve a mention against the lattice.
 
     \b
-    Example: python -m lineage.resolve "OLMo 3 7B Base" --top 3
+    Example: python -m modsleuth.resolve "OLMo 3 7B Base" --top 3
     """
     path = Path(lattice_path).resolve() if lattice_path else _latest_lattice_path()
     lattice = json.loads(path.read_text())

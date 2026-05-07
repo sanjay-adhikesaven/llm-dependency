@@ -18,7 +18,7 @@ JSON file per (system, target) pair, located in `--graphs-dir`):
 
 Each file is a `{nodes: [...], edges: [...]}` graph. Each edge needs at
 minimum: `subject`, `object`, `description`, `evidence` (per the schema in
-`prompts/investigator_prompt.md`).
+`baselines/prompts/baseline_prompt.md`).
 
 Usage:
     cd eval
@@ -129,36 +129,8 @@ def pool_target(graphs_dir: Path, target: str, systems: list[str]) -> list[Clust
 
 # ─── Verifier (Anthropic API + web_search) ─────────────────────────────
 
-VERIFIER_PROMPT = """You are an LLM-provenance verifier. You are given one
-candidate dependency relationship between two AI artifacts, drawn from
-auto-generated dependency graphs. You decide whether the relationship is
-TRUE.
-
-Use the `web_search` tool aggressively to confirm. Read the cited evidence
-URLs (mentioned in the input) AND search externally for corroboration. A
-relationship counts as **verified** if the object actually shaped the
-subject in the way described — even loosely. A relationship is **refuted**
-if the cited evidence and your independent searches both fail to support
-the claim, or you find direct contradiction.
-
-Return ONE JSON object, no prose, no markdown fences:
-
-{
-  "verdict": "verified" | "refuted" | "unclear",
-  "confidence": <float 0..1>,
-  "explanation": "<1-3 sentences>"
-}
-
-Guidance:
-- Default to "verified" when the docs cited in evidence (or any docs you
-  find) name the object as having the described role for the subject.
-- Default to "refuted" when the cited evidence does not mention the object
-  AND your independent searches turn up nothing supporting the relationship.
-- Use "unclear" sparingly — only when the docs are ambiguous after
-  honest search.
-- The relation_type bucket is a hint, NOT what you're judging. Judge the
-  underlying relationship, not the bucket label.
-"""
+VERIFIER_PROMPT_PATH = Path(__file__).resolve().parent / "verifier_prompt.md"
+VERIFIER_PROMPT = VERIFIER_PROMPT_PATH.read_text()
 
 
 def _format_edge_for_verifier(target: str, edge: dict, contributors: list[str]) -> str:

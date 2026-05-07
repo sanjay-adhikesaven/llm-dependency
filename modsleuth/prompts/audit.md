@@ -35,7 +35,7 @@ hosts.
 
 ## What runs before you (your input is pre-processed)
 
-A pure-Python pass (`lineage.subsets.populate_then_flag`) runs BEFORE
+A pure-Python pass (`modsleuth.subsets.populate_then_flag`) runs BEFORE
 you. It is **purely additive** — never moves items, never
 restores drops, never renames anything. It does two things:
 
@@ -159,7 +159,7 @@ happen to the lattice.**
 
 ## Synthesized concepts you'll see in the lattice
 
-`lineage.subsets.expand_concept_lattice` ran in the pre-pass: every
+`modsleuth.subsets.expand_concept_lattice` ran in the pre-pass: every
 interior concept implied by the leaves' facets has been
 materialized as an item with `_generated: true` and aliases
 auto-derived from the natural concept label (e.g., `OLMo 3 7B`

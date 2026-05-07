@@ -550,7 +550,7 @@ For dataset items, also include a `subsets` field (emit `[]`):
 - `description`: comprehensive, neutral, target-independent. May
   be `null` if no card / paper could be fetched.
 - `subsets` (datasets only): emit as `[]`. The Python pass
-  (`lineage.subsets`) populates it post-organize from the HF
+  (`modsleuth.subsets`) populates it post-organize from the HF
   README's `configs:` and components / mix tables.
 
 ## Per-family schema

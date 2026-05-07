@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 def test_render_prompts_have_no_unfilled_placeholders(fresh_runtime):
-    from lineage.pipeline import render_prompt
+    from modsleuth.pipeline import render_prompt
 
     common = {
         "run_id": "r", "target": "T",
@@ -30,8 +30,8 @@ def test_render_prompts_have_no_unfilled_placeholders(fresh_runtime):
 
 
 def test_commit_names_accepts_well_formed_artifact(fresh_runtime):
-    from lineage.pipeline import commit_names, new_run
-    from lineage.store import all_rows
+    from modsleuth.pipeline import commit_names, new_run
+    from modsleuth.store import all_rows
 
     run_id = new_run("extract", label="t")
     artifact = {
@@ -63,7 +63,7 @@ def test_commit_names_accepts_well_formed_artifact(fresh_runtime):
 
 
 def test_commit_names_fails_cleanly_on_invalid_artifact(fresh_runtime):
-    from lineage.pipeline import commit_names
+    from modsleuth.pipeline import commit_names
 
     assert commit_names({})["status"] == "failed"
     assert commit_names({"mentions": "not-a-list"})["status"] == "failed"
@@ -74,7 +74,7 @@ def test_names_packet_dedups_kind_and_name_only(fresh_runtime):
     """The packet that organize reads is a deduped (type, name) list.
     Counts are intentionally absent — they don't change organize's
     decision about which surfaces collapse to the same entity."""
-    from lineage.pipeline import commit_names, names_packet, new_run
+    from modsleuth.pipeline import commit_names, names_packet, new_run
 
     run_a = new_run("extract", label="a")
     run_b = new_run("extract", label="b")
@@ -107,8 +107,8 @@ def test_run_organize_ingests_artifact_path(fresh_runtime, tmp_path):
     """An organize run records only the artifact path + counts in the
     run row's attrs. The artifact itself stays on disk, not duplicated
     in the DB. Each group has a family root + entity leaves."""
-    from lineage.pipeline import run_organize
-    from lineage.store import all_rows, loads
+    from modsleuth.pipeline import run_organize
+    from modsleuth.store import all_rows, loads
 
     artifact = {
         "groups": [
@@ -214,7 +214,7 @@ def test_run_organize_rejects_artifact_missing_required_lists(fresh_runtime, tmp
     import click
     import pytest
 
-    from lineage.pipeline import run_organize
+    from modsleuth.pipeline import run_organize
 
     bad_groups = tmp_path / "no_groups.json"
     bad_groups.write_text(json.dumps({"groups": "not-a-list"}))
@@ -246,7 +246,7 @@ def _root_only_group(family="X"):
 def test_run_organize_allows_missing_links_field(fresh_runtime, tmp_path):
     """The `links` field is optional. When absent, treated as empty.
     Audit fills in tentative URLs and verifies them."""
-    from lineage.pipeline import run_organize
+    from modsleuth.pipeline import run_organize
 
     no_links = tmp_path / "no_links.json"
     no_links.write_text(json.dumps({
@@ -267,7 +267,7 @@ def test_run_organize_rejects_invalid_link_kind(fresh_runtime, tmp_path):
     import click
     import pytest
 
-    from lineage.pipeline import run_organize
+    from modsleuth.pipeline import run_organize
 
     bad_kind = tmp_path / "bad_kind.json"
     bad_kind.write_text(json.dumps({
@@ -292,7 +292,7 @@ def test_run_organize_rejects_invalid_link_url(fresh_runtime, tmp_path):
     import click
     import pytest
 
-    from lineage.pipeline import run_organize
+    from modsleuth.pipeline import run_organize
 
     bad_url = tmp_path / "bad_url.json"
     bad_url.write_text(json.dumps({
@@ -319,7 +319,7 @@ def test_run_organize_allows_root_only_family(fresh_runtime, tmp_path):
     """A family with only a root (no leaves) is valid: foundational data
     resources like Common Crawl, AoPS forums often have no specific HF
     release. Root may have empty links or paper/blog/hf_collection link."""
-    from lineage.pipeline import run_organize
+    from modsleuth.pipeline import run_organize
 
     artifact = tmp_path / "root_only.json"
     artifact.write_text(json.dumps({
@@ -340,7 +340,7 @@ def test_run_organize_allows_paper_anchored_leaf(fresh_runtime, tmp_path):
     link kind. This supports paper-anchored leaves, internal-codename
     leaves referenced in source code, and sub-components without a
     standalone HF release."""
-    from lineage.pipeline import run_organize
+    from modsleuth.pipeline import run_organize
 
     ok = tmp_path / "paper_leaf.json"
     ok.write_text(json.dumps({
@@ -374,7 +374,7 @@ def test_run_organize_allows_single_release_family_root_with_production_link(
     exactly one canonical release. The root acts as both top and
     bottom of a single-leaf lattice — useful for one-off models /
     datasets like `tomh/toxigen_roberta` or `openai-community/gpt2`."""
-    from lineage.pipeline import run_organize
+    from modsleuth.pipeline import run_organize
 
     ok = tmp_path / "single_release.json"
     ok.write_text(json.dumps({
@@ -401,7 +401,7 @@ def test_run_organize_rejects_missing_family_facet(fresh_runtime, tmp_path):
     import click
     import pytest
 
-    from lineage.pipeline import run_organize
+    from modsleuth.pipeline import run_organize
 
     bad = tmp_path / "no_family.json"
     bad.write_text(json.dumps({
@@ -425,7 +425,7 @@ def test_run_organize_synthesizes_missing_family_root(fresh_runtime, tmp_path):
     synthesizes one (formal_name=family, identity={family: X}, aliases=[X],
     no links, null description) before validation. The on-disk artifact
     is the post-completion lattice."""
-    from lineage.pipeline import run_organize
+    from modsleuth.pipeline import run_organize
 
     no_root = tmp_path / "no_root.json"
     no_root.write_text(json.dumps({
@@ -451,7 +451,7 @@ def test_run_organize_synthesizes_missing_family_root(fresh_runtime, tmp_path):
 def test_run_organize_warns_on_inconsistent_family_value(fresh_runtime, tmp_path, capsys):
     """Mixed-family groups are permitted (synthetic-data lineage often produces
     them) — they emit a warning to stderr rather than raising."""
-    from lineage.pipeline import run_organize
+    from modsleuth.pipeline import run_organize
 
     bad = tmp_path / "mixed_family.json"
     bad.write_text(json.dumps({
@@ -479,7 +479,7 @@ def test_run_organize_completion_fills_empty_aliases(fresh_runtime, tmp_path):
     """The Python completion pre-pass echoes formal_name into aliases[]
     for any item missing it, so empty aliases doesn't fail validation
     when the formal_name is non-empty (the typical planner mistake)."""
-    from lineage.pipeline import run_organize
+    from modsleuth.pipeline import run_organize
 
     art = tmp_path / "empty_aliases.json"
     art.write_text(json.dumps({
@@ -499,7 +499,7 @@ def test_run_organize_completion_fills_empty_aliases(fresh_runtime, tmp_path):
 def test_cli_run_help_lists_only_active_stages(fresh_runtime):
     from click.testing import CliRunner
 
-    from lineage.cli import main
+    from modsleuth.cli import main
 
     runner = CliRunner()
     result = runner.invoke(main, ["run", "--help"])
@@ -517,8 +517,8 @@ def test_run_audit_ingests_revised_lattice(fresh_runtime, tmp_path):
     """Audit emits a revised groups+items artifact (same shape as
     organize) plus optional notes. The run attrs record group_count,
     item_count, and the notes summary."""
-    from lineage.pipeline import run_audit
-    from lineage.store import all_rows, loads
+    from modsleuth.pipeline import run_audit
+    from modsleuth.store import all_rows, loads
 
     revised = {
         "groups": [
@@ -578,7 +578,7 @@ def test_run_audit_rejects_non_groups_artifact(fresh_runtime, tmp_path):
     import click
     import pytest
 
-    from lineage.pipeline import run_audit
+    from modsleuth.pipeline import run_audit
 
     bad = tmp_path / "bad.json"
     bad.write_text(json.dumps({"issues": "not-a-list"}))  # old shape
@@ -591,7 +591,7 @@ def test_run_audit_without_lattice_run_raises(fresh_runtime):
     import click
     import pytest
 
-    from lineage.pipeline import run_audit
+    from modsleuth.pipeline import run_audit
 
     with pytest.raises(click.ClickException):
         run_audit()
@@ -600,7 +600,7 @@ def test_run_audit_without_lattice_run_raises(fresh_runtime):
 def test_cli_summary_after_init(fresh_runtime):
     from click.testing import CliRunner
 
-    from lineage.cli import main
+    from modsleuth.cli import main
 
     runner = CliRunner()
     init = runner.invoke(main, ["init"])
@@ -661,8 +661,8 @@ def _well_formed_relate_artifact() -> dict:
 def test_run_relate_ingests_edges(fresh_runtime, tmp_path):
     """Standalone-ingest path validates shape and registers a per-batch
     artifact row. No LLM spawn."""
-    from lineage.pipeline import run_relate
-    from lineage.store import all_rows, db, dumps, now
+    from modsleuth.pipeline import run_relate
+    from modsleuth.store import all_rows, db, dumps, now
 
     # Set up a batch row so the per-batch artifact registration succeeds.
     with db() as conn:
@@ -699,7 +699,7 @@ def test_relate_subject_must_be_lattice_formal_name(fresh_runtime):
     import click
     import pytest
 
-    from lineage.pipeline import _validate_relate_artifact
+    from modsleuth.pipeline import _validate_relate_artifact
 
     artifact = _well_formed_relate_artifact()
     with pytest.raises(click.ClickException):
@@ -712,7 +712,7 @@ def test_relate_subject_must_be_lattice_formal_name(fresh_runtime):
 def test_relate_allows_coined_relations_and_tracks_them(fresh_runtime):
     """`relation` is open vocabulary: snake_case labels outside the
     canonical set are allowed and counted as coined."""
-    from lineage.pipeline import _validate_relate_artifact
+    from modsleuth.pipeline import _validate_relate_artifact
 
     artifact = json.loads(json.dumps(_well_formed_relate_artifact()))
     artifact["operations"][0]["edges"][0]["relation"] = "merged_from"
@@ -726,7 +726,7 @@ def test_relate_rejects_malformed_relation_label(fresh_runtime):
     import click
     import pytest
 
-    from lineage.pipeline import _validate_relate_artifact
+    from modsleuth.pipeline import _validate_relate_artifact
 
     artifact = json.loads(json.dumps(_well_formed_relate_artifact()))
     artifact["operations"][0]["edges"][0]["relation"] = ""
@@ -744,7 +744,7 @@ def test_relate_validates_dependency_kind(fresh_runtime):
     import click
     import pytest
 
-    from lineage.pipeline import _validate_relate_artifact
+    from modsleuth.pipeline import _validate_relate_artifact
 
     bad = json.loads(json.dumps(_well_formed_relate_artifact()))
     bad["operations"][0]["edges"][0]["dependency_kind"] = "structural"
@@ -762,7 +762,7 @@ def test_relate_requires_operations_array(fresh_runtime):
     import click
     import pytest
 
-    from lineage.pipeline import _validate_relate_artifact
+    from modsleuth.pipeline import _validate_relate_artifact
 
     bad = json.loads(json.dumps(_well_formed_relate_artifact()))
     del bad["operations"]
@@ -775,7 +775,7 @@ def test_relate_requires_edges_in_each_event(fresh_runtime):
     import click
     import pytest
 
-    from lineage.pipeline import _validate_relate_artifact
+    from modsleuth.pipeline import _validate_relate_artifact
 
     bad = json.loads(json.dumps(_well_formed_relate_artifact()))
     bad["operations"][0]["edges"] = []
@@ -789,7 +789,7 @@ def test_relate_validates_anchor_list_shape(fresh_runtime):
     import click
     import pytest
 
-    from lineage.pipeline import _validate_relate_artifact
+    from modsleuth.pipeline import _validate_relate_artifact
 
     # Edge with empty anchor_list
     bad = json.loads(json.dumps(_well_formed_relate_artifact()))
@@ -818,7 +818,7 @@ def test_relate_validates_anchor_list_shape(fresh_runtime):
 
 def test_parse_virtual_address():
     """Virtual concept address parsing for relate edge endpoints."""
-    from lineage.pipeline import parse_virtual_address
+    from modsleuth.pipeline import parse_virtual_address
 
     assert parse_virtual_address("OLMo 3 [stage=Base]") == (
         "OLMo 3", {"stage": "Base"})
@@ -839,7 +839,7 @@ def test_parse_virtual_address():
 def test_relate_accepts_virtual_concept_address(fresh_runtime):
     """Subjects/objects can be virtual concept addresses when their
     family pivots to a known lattice family."""
-    from lineage.pipeline import _validate_relate_artifact
+    from modsleuth.pipeline import _validate_relate_artifact
 
     artifact = json.loads(json.dumps(_well_formed_relate_artifact()))
     artifact["operations"][0]["edges"][0]["subject"] = "OLMo 3 [stage=Base]"
@@ -857,7 +857,7 @@ def test_relate_rejects_virtual_address_with_unknown_family(fresh_runtime):
     import click
     import pytest
 
-    from lineage.pipeline import _validate_relate_artifact
+    from modsleuth.pipeline import _validate_relate_artifact
 
     artifact = json.loads(json.dumps(_well_formed_relate_artifact()))
     artifact["operations"][0]["edges"][0]["subject"] = "PhantomFamily [size=7B]"
@@ -872,7 +872,7 @@ def test_relate_rejects_virtual_address_with_unknown_family(fresh_runtime):
 def test_relate_off_lattice_object_counts(fresh_runtime):
     """Edges whose object isn't in the lattice formal-names set are
     counted as off-lattice — they're still valid (free-text descriptor)."""
-    from lineage.pipeline import _validate_relate_artifact
+    from modsleuth.pipeline import _validate_relate_artifact
 
     artifact = json.loads(json.dumps(_well_formed_relate_artifact()))
     artifact["operations"][0]["edges"].append({
@@ -897,7 +897,7 @@ def test_relate_off_lattice_object_counts(fresh_runtime):
 
 def test_relate_singleton_event_counts(fresh_runtime):
     """Pair-only facts are valid singleton-edge events."""
-    from lineage.pipeline import _validate_relate_artifact
+    from modsleuth.pipeline import _validate_relate_artifact
 
     artifact = json.loads(json.dumps(_well_formed_relate_artifact()))
     artifact["operations"].append({
@@ -923,7 +923,7 @@ def test_relate_singleton_event_counts(fresh_runtime):
 def test_assemble_relate_artifact_from_jsonl(fresh_runtime, tmp_path):
     """JSONL append target is assembled to a single relate artifact dict
     by the pipeline after the planner exits."""
-    from lineage.pipeline import (assemble_relate_artifact_from_jsonl,
+    from modsleuth.pipeline import (assemble_relate_artifact_from_jsonl,
                               _validate_relate_artifact)
 
     events_path = tmp_path / "events.jsonl"
@@ -969,7 +969,7 @@ def test_reconcile_subsumption_collapses_vague_into_specific():
     """If one source says 'OLMo 3 Base trained_on Dolma 3' and another
     says 'allenai/Olmo-3-1025-7B trained_on allenai/dolma3_mix-6T-1025-7B',
     reconcile marks the vague edge as subsumed by the specific."""
-    from lineage.pipeline import _reconcile_edges
+    from modsleuth.pipeline import _reconcile_edges
 
     lattice = {
         "groups": [
@@ -1017,7 +1017,7 @@ def test_reconcile_subsumption_collapses_vague_into_specific():
 
 def test_reconcile_corroboration_stacks_anchors():
     """Same (subject, relation, object) from two sources stacks evidence."""
-    from lineage.pipeline import _reconcile_edges
+    from modsleuth.pipeline import _reconcile_edges
 
     lattice = {"groups": [{"family": "OLMo 3", "items": [
         {"formal_name": "OLMo 3", "identity": {"family": "OLMo 3"}},
@@ -1046,7 +1046,7 @@ def test_reconcile_corroboration_stacks_anchors():
 def test_reconcile_conflict_flags_sibling_endpoints():
     """Same subject + relation, but objects are different siblings in
     the same family — flag as conflict."""
-    from lineage.pipeline import _reconcile_edges
+    from modsleuth.pipeline import _reconcile_edges
 
     lattice = {
         "groups": [
@@ -1085,7 +1085,7 @@ def test_reconcile_conflict_flags_sibling_endpoints():
 
 def test_run_reconcile_ingests_artifact(fresh_runtime, tmp_path):
     """`--artifact` ingests a pre-computed reconcile artifact."""
-    from lineage.pipeline import run_reconcile
+    from modsleuth.pipeline import run_reconcile
 
     artifact = tmp_path / "reconcile.json"
     artifact.write_text(json.dumps({
@@ -1107,7 +1107,7 @@ def test_run_reconcile_ingests_artifact(fresh_runtime, tmp_path):
 def test_parse_virtual_address_via_reconcile_resolution():
     """The address resolver routes formal_names AND virtual addresses
     to identity dicts; off-lattice strings return None."""
-    from lineage.pipeline import _identity_for_address
+    from modsleuth.pipeline import _identity_for_address
 
     lattice = {"groups": [{"family": "X", "items": [
         {"formal_name": "X", "identity": {"family": "X"}},
@@ -1123,8 +1123,8 @@ def test_parse_virtual_address_via_reconcile_resolution():
 
 
 def test_run_triage_ingests_classification(fresh_runtime, tmp_path):
-    from lineage.pipeline import run_triage
-    from lineage.store import all_rows, loads
+    from modsleuth.pipeline import run_triage
+    from modsleuth.store import all_rows, loads
 
     triage_artifact = {
         "auto_expand": [
@@ -1161,7 +1161,7 @@ def test_triage_rejects_missing_bucket(fresh_runtime, tmp_path):
     import click
     import pytest
 
-    from lineage.pipeline import run_triage
+    from modsleuth.pipeline import run_triage
 
     bad = tmp_path / "triage.json"
     bad.write_text(json.dumps({"auto_expand": [], "decline": []}))  # no manual
@@ -1173,7 +1173,7 @@ def test_run_merge_unifies_items_and_edges(fresh_runtime, tmp_path):
     """Two lattices and two relation files merge by (formal_name,
     primary_link) for items and (subject, relation, object) for
     edges. Aliases and provenance accumulate."""
-    from lineage.pipeline import run_merge
+    from modsleuth.pipeline import run_merge
 
     lattice_a = {
         "groups": [{
@@ -1272,7 +1272,7 @@ def test_run_merge_unifies_items_and_edges(fresh_runtime, tmp_path):
 def test_run_merge_surfaces_identity_conflicts(fresh_runtime, tmp_path):
     """Same item from two runs with conflicting identity values for
     the same key → surfaced in conflicts[]."""
-    from lineage.pipeline import run_merge
+    from modsleuth.pipeline import run_merge
 
     lattice_a = {
         "groups": [{
@@ -1314,7 +1314,7 @@ def test_run_merge_requires_sources(fresh_runtime):
     import click
     import pytest
 
-    from lineage.pipeline import run_merge
+    from modsleuth.pipeline import run_merge
 
     with pytest.raises(click.ClickException):
         run_merge()
@@ -1327,7 +1327,7 @@ def test_run_merge_requires_sources(fresh_runtime):
 
 def test_subsets_parse_yaml_configs():
     """HF YAML frontmatter `configs:` field becomes subsets[]."""
-    from lineage.subsets import parse_subsets
+    from modsleuth.subsets import parse_subsets
 
     readme = """---
 license: cc-by-4.0
@@ -1347,7 +1347,7 @@ configs:
 def test_subsets_parse_components_table():
     """A markdown table under a Components / Composition heading
     contributes its first column as subset slugs."""
-    from lineage.subsets import parse_subsets
+    from modsleuth.subsets import parse_subsets
 
     readme = """---
 license: cc-by-4.0
@@ -1372,7 +1372,7 @@ license: cc-by-4.0
 
 def test_subsets_skip_header_cells():
     """Header rows ('Subset', 'Name', '---') are not treated as data."""
-    from lineage.subsets import parse_subsets
+    from modsleuth.subsets import parse_subsets
 
     readme = """## Sources
 
@@ -1398,7 +1398,7 @@ def test_organize_validates_subsets_shape(fresh_runtime, tmp_path):
     import click
     import pytest
 
-    from lineage.pipeline import run_organize
+    from modsleuth.pipeline import run_organize
 
     bad = tmp_path / "bad.json"
     bad.write_text(json.dumps({
@@ -1424,7 +1424,7 @@ def test_organize_validates_subsets_shape(fresh_runtime, tmp_path):
 def test_organize_family_root_with_concept_link_is_valid(fresh_runtime, tmp_path):
     """Family roots may carry paper / blog / hf_collection links —
     those describe the concept without pinning a specific release."""
-    from lineage.pipeline import run_organize
+    from modsleuth.pipeline import run_organize
 
     ok = tmp_path / "concept_root.json"
     ok.write_text(json.dumps({
@@ -1455,7 +1455,7 @@ def test_flag_audit_issues_purely_additive():
     """The flag pass MUST NOT mutate the lattice — no items moved,
     no drops restored, no renames. It only adds an `audit_hints[]`
     array."""
-    from lineage.subsets import flag_audit_issues
+    from modsleuth.subsets import flag_audit_issues
     import json as _json
 
     lattice = {
@@ -1497,7 +1497,7 @@ def test_flag_audit_issues_purely_additive():
 def test_flag_item_matches_parent_subset_with_role_classification():
     """When an item's slug appears in a parent's subsets[], emit a
     hint with the item's role (canonical / concept / family-root)."""
-    from lineage.subsets import flag_audit_issues
+    from modsleuth.subsets import flag_audit_issues
 
     lattice = {
         "groups": [
@@ -1570,7 +1570,7 @@ def test_flag_item_matches_parent_subset_with_role_classification():
 def test_flag_dropped_matches_parent_subset():
     """A dropped name whose slug appears in some kept item's subsets[]
     gets flagged for restoration (but NOT auto-restored)."""
-    from lineage.subsets import flag_audit_issues
+    from modsleuth.subsets import flag_audit_issues
 
     lattice = {
         "groups": [{
@@ -1609,7 +1609,7 @@ def test_flag_dropped_matches_parent_subset():
 
 def test_flag_cross_org_family_and_sibling_collision():
     """Two more flag types: cross-org families and identity collisions."""
-    from lineage.subsets import flag_audit_issues
+    from modsleuth.subsets import flag_audit_issues
 
     lattice = {
         "groups": [
@@ -1671,7 +1671,7 @@ def test_flag_cross_org_family_and_sibling_collision():
 def test_flag_canonical_url_mismatch():
     """When formal_name doesn't match the canonical path inside the
     primary HF URL, emit a rename hint."""
-    from lineage.subsets import flag_audit_issues
+    from modsleuth.subsets import flag_audit_issues
 
     lattice = {
         "groups": [{
@@ -1702,7 +1702,7 @@ def test_flag_canonical_url_mismatch():
 def test_flag_branch_variant_in_formal_name():
     """`@branch` in formal_name is HF git-revspec syntax. Flag for
     collapse into the canonical repo (part before @)."""
-    from lineage.subsets import flag_audit_issues
+    from modsleuth.subsets import flag_audit_issues
 
     lattice = {
         "groups": [{
@@ -1746,7 +1746,7 @@ def test_flag_branch_variant_in_formal_name():
 
 def test_complete_lattice_structure_echoes_formal_name_into_aliases():
     """Phase 1: every item's formal_name is added to aliases[] if missing."""
-    from lineage.subsets import complete_lattice_structure
+    from modsleuth.subsets import complete_lattice_structure
 
     lattice = {
         "groups": [{
@@ -1774,7 +1774,7 @@ def test_complete_lattice_structure_echoes_formal_name_into_aliases():
 def test_complete_lattice_structure_synthesizes_virtual_root():
     """Phase 2: synthesize a virtual family root for groups that don't
     have one. Idempotent: calling twice doesn't duplicate."""
-    from lineage.subsets import complete_lattice_structure
+    from modsleuth.subsets import complete_lattice_structure
 
     lattice = {
         "groups": [{
@@ -1809,7 +1809,7 @@ def test_complete_lattice_structure_synthesizes_virtual_root():
 
 def test_complete_lattice_structure_skips_when_root_exists():
     """If a root already exists, don't synthesize another."""
-    from lineage.subsets import complete_lattice_structure
+    from modsleuth.subsets import complete_lattice_structure
 
     lattice = {
         "groups": [{
@@ -1835,7 +1835,7 @@ def test_complete_lattice_structure_skips_when_root_exists():
 def test_flag_missing_family_root():
     """When a group has 2+ items but no family root (identity == {family: X}
     only), emit a `missing_family_root` hint so audit synthesizes one."""
-    from lineage.subsets import flag_audit_issues
+    from modsleuth.subsets import flag_audit_issues
 
     lattice = {
         "groups": [{
@@ -1870,7 +1870,7 @@ def test_flag_over_specified_alias():
     """When a leaf carries a bare family-name alias (e.g., 'olmOCR') AND
     its formal_name pins specific facets, emit an `over_specified` hint
     so audit can split — moving the bare alias to the family root."""
-    from lineage.subsets import flag_audit_issues
+    from modsleuth.subsets import flag_audit_issues
 
     lattice = {
         "groups": [{
@@ -1905,7 +1905,7 @@ def test_flag_over_specified_alias():
 def test_flag_concept_subsumed_candidate():
     """A.facets ⊂ B.facets within a family, A has no unique anchor →
     `concept_subsumed_candidate` hint. A is likely a concept."""
-    from lineage.subsets import flag_audit_issues
+    from modsleuth.subsets import flag_audit_issues
 
     lattice = {
         "groups": [{
@@ -1939,7 +1939,7 @@ def test_flag_subset_with_anchor():
     """A.facets ⊂ B.facets (both multi-facet), BOTH have unique anchors →
     `subset_with_anchor` hint (dataset-config / subset-of relationship).
     Single-key family-root cases are filtered out as design noise."""
-    from lineage.subsets import flag_audit_issues
+    from modsleuth.subsets import flag_audit_issues
 
     lattice = {
         "groups": [{
@@ -1979,7 +1979,7 @@ def test_flag_subset_with_anchor():
 def test_flag_same_url_duplicate():
     """Two items in the same family share the same primary URL → dup hint.
     The thinking/no-thinking case."""
-    from lineage.subsets import flag_audit_issues
+    from modsleuth.subsets import flag_audit_issues
 
     lattice = {
         "groups": [{
@@ -2014,7 +2014,7 @@ def test_flag_same_url_duplicate():
 def test_expand_concept_lattice_synthesizes_interior_concepts():
     """expand_concept_lattice projects leaves onto subsets of
     identity_keys; concepts that don't already exist get materialized."""
-    from lineage.subsets import expand_concept_lattice
+    from modsleuth.subsets import expand_concept_lattice
 
     lattice = {
         "groups": [{
@@ -2063,7 +2063,7 @@ def test_expand_concept_lattice_synthesizes_interior_concepts():
 
 def test_expand_concept_lattice_idempotent():
     """Running expand_concept_lattice twice adds nothing the second time."""
-    from lineage.subsets import expand_concept_lattice
+    from modsleuth.subsets import expand_concept_lattice
 
     lattice = {
         "groups": [{
@@ -2093,7 +2093,7 @@ def test_expand_concept_lattice_idempotent():
 
 def test_flag_same_url_cross_family():
     """Same primary URL across DIFFERENT families → cross-family hint."""
-    from lineage.subsets import flag_audit_issues
+    from modsleuth.subsets import flag_audit_issues
 
     lattice = {
         "groups": [
@@ -2127,7 +2127,7 @@ def test_flag_same_url_cross_family():
 
 def test_flag_concept_with_no_entity():
     """Family with 2+ concepts but no entity → concept_with_no_entity."""
-    from lineage.subsets import flag_audit_issues
+    from modsleuth.subsets import flag_audit_issues
 
     lattice = {
         "groups": [{
@@ -2159,7 +2159,7 @@ def test_flag_concept_with_no_entity():
 def test_flag_family_root_invented_alias():
     """Family root with no alias from input pile → invented_alias hint
     (only fires when input_names_set is provided)."""
-    from lineage.subsets import flag_audit_issues
+    from modsleuth.subsets import flag_audit_issues
 
     lattice = {
         "groups": [{
@@ -2199,7 +2199,7 @@ def test_expand_concept_lattice_skips_existing_projection():
     """If a projection's identity already matches an existing item
     (even one organize emitted as a source-mentioned concept),
     expansion skips it — no duplicate."""
-    from lineage.subsets import expand_concept_lattice
+    from modsleuth.subsets import expand_concept_lattice
 
     lattice = {
         "groups": [{

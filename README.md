@@ -1,16 +1,45 @@
-# llm-dependency
+# ModSleuth
 
-Reconstruct recursive, evidence-grounded dependency graphs of LLM releases
-from public artifacts (technical reports, model and dataset cards, code
-repositories, release blogs).
+Reconstructing recursive, evidence-grounded dependency graphs of LLM
+releases from public artifacts (technical reports, model and dataset
+cards, code repositories, release blogs).
 
-The system reads heterogeneous public release artifacts, identifies and
-resolves artifact mentions across sources, builds operation-level dependency
-claims anchored in source excerpts, reconciles overlapping or conflicting
-evidence, and produces a self-contained JSON graph with nodes for models /
-datasets and edges for relationships such as `trained_from`, `trained_on`,
-`generated_by`, `filtered_by`, `transformed_by`, `used_for_evaluation`,
-`inspired_by`, and `decontaminated_against`.
+This repository accompanies the NeurIPS 2026 paper *"Which Models Are
+Our Models Built On? Auditing Invisible Dependencies in Modern LLMs"*
+and provides:
+
+- **The ModSleuth pipeline** (paper §3.2): five stages — Gather → Extract →
+  Resolve → Relate → Reconcile — implemented on top of Claude Code.
+- **A recursive-expansion driver** (paper §3.2 / §A) that BFS-expands
+  the top-K upstream parents per seed up to a chosen depth.
+- **A post-merge dedup + filter pipeline** that produces the audit-ready
+  graph used in our evaluation.
+- **The four LLM-based baselines** evaluated against ModSleuth (paper
+  §3.3), the **pooled LLM-as-judge verifier** (paper §B), and the
+  per-target output JSONs for the run reported in Table 1.
+- **An interactive web visualizer** for browsing the resulting graph.
+
+## How the paper maps to the code
+
+| Paper stage (§3.2) | Code |
+|---|---|
+| Stage 1 — Gather | `modsleuth run discover` |
+| Stage 2 — Extract | `modsleuth run extract` |
+| Stage 3 — Resolve | `modsleuth run organize` then `modsleuth run audit` |
+| Stage 4 — Relate | `modsleuth run relate` |
+| Stage 5 — Reconcile | `modsleuth run reconcile` then `modsleuth run triage`, plus `modsleuth run merge` for cross-batch / cross-run merge |
+| Recursive expansion (§3.2 / §A) | `modsleuth recursive` |
+| Post-merge cleanup (§D) | `modsleuth dedup` (4 sub-stages) |
+| Pooled evaluation (§B) | `eval/pooled_eval.py` |
+| Baseline runs (§3.3, §C) | `baselines/launch_baselines.py` |
+
+| Paper artifact | File |
+|---|---|
+| Stage prompts (§A) | `modsleuth/prompts/*.md` |
+| Baseline prompt (§C) | `baselines/prompts/baseline_prompt.md` |
+| Verifier prompt (§B) | `eval/verifier_prompt.md` |
+| Per-system × per-target baseline outputs | `baselines/outputs/<slug>_<subject>.json` |
+| Pooled verdicts (Table 1, Table 6) | `eval/outputs/{verifications.jsonl, score.json, score_per_target.json}` |
 
 ## Install
 
@@ -20,84 +49,119 @@ cd llm-dependency
 python -m pip install -e .
 ```
 
-The package depends on the `claude` CLI being available in `PATH` (used by
-the LLM-driven dedup stages). Set `ANTHROPIC_API_KEY` before running.
+The pipeline depends on the `claude` CLI being available in `PATH`
+(used by every Claude planner / subagent). Set `ANTHROPIC_API_KEY`
+before running.
 
 ## Quick start
 
-A full run on a target model has two phases: build the graph with `lineage`,
-then clean it with `dedup.py`.
+A full target-model run goes through three layers (Figure 2 in
+the paper):
 
 ```bash
-# 1. Build the raw graph for a target model.
-lineage init
-lineage run discover --target HuggingFaceTB/SmolLM3-3B
-lineage run extract
-lineage run organize
-lineage run audit
-lineage run relate
-lineage run reconcile
-lineage run triage
-lineage run merge          # writes storage/runs/<id>/merge_artifact.json
+# 1. Base pipeline (Stages 1–5 of paper §3.2): single-target, depth-1.
+modsleuth init
+modsleuth run discover --target HuggingFaceTB/SmolLM3-3B   # Gather
+modsleuth run extract                                       # Extract
+modsleuth run organize                                      # Resolve (build lattice)
+modsleuth run audit                                         #   ↳ revise
+modsleuth run relate                                        # Relate
+modsleuth run reconcile                                     # Reconcile
+modsleuth run triage                                        #   ↳ flag for expand
+modsleuth run merge                                         # combine per-batch
+# → writes storage/runs/<id>/merge_artifact.json
 
-# 2. Run the dedup + filter pipeline on the merge artifact.
-python dedup.py \
+# 2. Recursive expansion (paper §3.2 / §A): multi-hop, top-K BFS.
+modsleuth recursive --seed HuggingFaceTB/SmolLM3-3B --depth 3 --top-k 5
+
+# 3. Post-merge cleanup (§D / appendix).
+modsleuth dedup \
     --source storage/runs/<id>/merge_artifact.json \
     --dest   storage/runs/<id>/graph.json \
     --stages all
 
-# 3. Browse the cleaned graph.
-python viz.py --source storage/runs/<id>/graph.json --port 8102
+# 4. Browse the cleaned graph.
+modsleuth viz --source storage/runs/<id>/graph.json --port 8102
 # open http://127.0.0.1:8102/
 ```
 
-Runtime paths are controlled by `LINEAGE_STORAGE` (state and artifacts) and
-`LINEAGE_PATH` (lattice / cache).
+Storage paths are controlled by `MODSLEUTH_STORAGE` (state and
+artifacts) and `MODSLEUTH_PATH` (SQLite database).
 
-## Pipeline
+## The base pipeline
 
-The base `lineage` pipeline has eight stages.
+The base pipeline runs eight stages over the artifacts of a single
+target release. Each stage maps to a stage in the paper's five-stage
+figure (Figure 2):
 
-| Stage | Runtime | Job |
-|---|---|---|
-| `discover` | one Claude planner | fetch the target's official artifacts (paper, model and dataset cards, repo, release blog) into topical batches |
-| `extract` | one Claude planner per batch (parallel) | per source: surface every model/dataset mention with kind, atoms, inline links, and source-side anchors |
-| `organize` | Python | dedup mentions into clusters; detect identity conflicts |
-| `audit` | one Claude planner → fans out subagents | per cluster: identity, aliases, concept_path, confirmed link, conflict resolution |
-| `relate` | one Claude planner per batch | extract operation-level dependency claims (operations + edges + anchors) against the resolved lattice |
-| `reconcile` | Python | merge overlapping claims via refinement, consolidation, and conflict detection |
-| `triage` | Python | flag candidate ghosts for further review |
-| `merge` | Python | merge per-batch artifacts into a single graph JSON |
+| Stage | Paper (§3.2) | Runtime | Job |
+|---|---|---|---|
+| `discover` | **Gather** | Claude planner | Fetch the target's official artifacts (paper, model and dataset cards, repo, release blog) into topical batches |
+| `extract` | **Extract** | Claude planner per batch (parallel) | Per source: surface every model/dataset mention with kind, atoms, inline links, and source-side anchors |
+| `organize` | **Resolve** (build) | Python | Dedup mentions into clusters; detect identity conflicts; build the identity lattice |
+| `audit` | **Resolve** (revise) | Claude planner → fans out subagents | Per cluster: identity, aliases, concept_path, confirmed link, conflict resolution. A pure-Python pre-pass in `modsleuth.subsets` populates HF subset / parent metadata before the LLM step. |
+| `relate` | **Relate** | Claude planner per batch | Extract operation-level dependency claims (operations + edges + anchors) against the resolved lattice |
+| `reconcile` | **Reconcile** (refinement / consolidation / conflict-detection) | Python | Merge overlapping claims into the lattice; surface conflicts |
+| `triage` | **Reconcile** (audit step) | Python | Flag candidate ghosts and upstream-node expansion candidates for further review |
+| `merge` | (cross-batch / cross-run) | Python | Merge per-batch and per-seed artifacts into a single graph JSON |
 
-The CLI lives in `lineage/cli.py`; stage implementations are in `lineage/pipeline.py`.
-Stage prompts (used by the Claude planners) are markdown files in
-`lineage/prompts/`.
+The CLI lives at `modsleuth/cli.py`; stage implementations are in
+`modsleuth/pipeline.py`. Stage prompts (used by the Claude planners)
+are markdown files in `modsleuth/prompts/`.
 
-### Recursive expansion
+### Inspecting state mid-run
 
-The base pipeline produces the immediate (one-hop) dependencies of a single
-target. To recover a multi-hop graph across several seed releases, run the
-pipeline once per seed (re-using `LINEAGE_STORAGE` per seed), then re-run it on
-each upstream artifact `lineage run merge` discovers, until a chosen depth is
-reached. A reference implementation of this beam-search-style expansion is
-not bundled in this repo because its useful parameters (which seeds, which
-high-betweenness bridge artifacts to expand first, per-seed ranking) are
-target-specific. The algorithm we used:
+The `debug` subcommands surface intermediate artifacts:
 
-1. Run the base pipeline against each seed; merge into a per-seed graph.
-2. From each per-seed graph, take the top-K newly-discovered upstream
-   artifacts at depth $d$, ranked by *parent count* (how many edges from the
-   already-expanded subgraph point at them).
-3. Run the base pipeline against each of those upstream artifacts; merge.
-4. Repeat for $d \in \{2, 3, 4\}$.
-5. Optionally pre-seed a small set of high-betweenness bridge artifacts
-   (popular benchmarks, common base models) before any per-seed expansion
-   so the seed families share an upstream backbone.
+```bash
+modsleuth debug names              # extracted mentions
+modsleuth debug names-packet       # what organize will see
+modsleuth debug organize           # lattice JSON
+modsleuth debug audit              # revised lattice JSON
+modsleuth debug lattice -q smollm3 # search the lattice
+modsleuth debug relate             # per-batch relate edges
+modsleuth debug triage             # auto_expand / decline / manual buckets
+modsleuth debug merge              # cross-run merged graph
+```
 
-## Dedup pipeline
+## Recursive expansion
 
-`dedup.py` runs four stages over the merged JSON graph; each stage can also
-be run in isolation.
+The base pipeline produces only the immediate (one-hop) dependencies of
+a single target. The paper's recursive-tracing claim (Figure 1, §3.2,
+§4) requires expanding upstream artifacts as fresh targets and re-merging.
+
+`modsleuth recursive` is a reference BFS driver:
+
+```bash
+modsleuth recursive \
+    --seed allenai/OLMo-3-1125-32B \
+    --seed nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4 \
+    --seed rl-research_DR-Tulu-8B \
+    --seed HuggingFaceTB/SmolLM3-3B \
+    --depth 3 --top-k 5
+```
+
+For each seed it runs the full base pipeline once (in its own per-seed
+`MODSLEUTH_STORAGE` directory), then iteratively expands the top-K
+newly-discovered upstream artifacts at each depth, ranked by parent
+count in the merged graph. After each expansion round it re-runs
+`merge` so the per-seed graph reflects the latest discoveries. Per-node
+expansion uses the existing `modsleuth run expand --node <name>` step,
+which re-runs `discover` → `reconcile` against the named upstream
+artifact within the same storage.
+
+The exact strategy used in the paper is target-specific (seed list,
+per-seed K, optional pre-seeded high-betweenness bridge artifacts so
+seeds share an upstream backbone). `modsleuth/recursive.py` is a
+working reference; tune the strategy in that file to reproduce the
+paper's exact recursion or to match a different audit budget.
+
+To merge across seeds into a single graph, pass each per-seed
+`merge_artifact.json` to `modsleuth run merge --source <path>`.
+
+## Post-merge cleanup (`modsleuth dedup`)
+
+Four stages run over the merged JSON graph. Each can be invoked alone:
 
 | Stage | Mechanism | What it does |
 |---|---|---|
@@ -106,37 +170,38 @@ be run in isolation.
 | `node-dedup` | Opus 4.7 + max thinking | Builds candidate dedup clusters across the whole graph from five high-precision signals (lex-collapse, token-Jaccard ≥ 0.6, substring containment, cross-org bare-lex match, suffix stripping). Verifies each cluster with the LLM. Applies decisions via a conflict-guarded union-find that refuses to merge components with mutually conflicting versions / sizes / stages / dates. |
 | `release` | Opus 4.7 + high effort | Classifies every node as KEEP (officially released artifact / standard benchmark) or DROP (intermediate research checkpoint, internal training-data variant, prose alias). For each dropped node, transitively rewires `A → DROP → B` chains along compatible relation pairs (`trained_from`+`trained_from`, `trained_on`+`trained_on`, etc.) so released-to-released ancestry stays connected. |
 
-Each stage reads JSON, applies its operation, writes JSON. Sanity invariants
-(distinct version numbers, distinct year-stamped releases, all seed targets
-present, conflict-free dates / sizes / stages) are asserted before every
-write.
+Each stage reads JSON, applies its operation, writes JSON. Sanity
+invariants (distinct version numbers, distinct year-stamped releases,
+all seed targets present, conflict-free dates / sizes / stages) are
+asserted before every write.
 
 ```bash
 # Run all four stages end-to-end (default).
-python dedup.py --source merge.json --dest graph.json --stages all
+modsleuth dedup --source merge.json --dest graph.json --stages all
 
 # Or run a single stage.
-python dedup.py --source merge.json    --dest after_heuristic.json --stages heuristic
-python dedup.py --source after_heuristic.json --dest after_hub.json --stages hub-audit
-python dedup.py --source after_hub.json --dest after_node.json     --stages node-dedup
-python dedup.py --source after_node.json --dest graph.json         --stages release
+modsleuth dedup --source merge.json           --dest after_heuristic.json --stages heuristic
+modsleuth dedup --source after_heuristic.json --dest after_hub.json       --stages hub-audit
+modsleuth dedup --source after_hub.json       --dest after_node.json      --stages node-dedup
+modsleuth dedup --source after_node.json      --dest graph.json           --stages release
 ```
 
-The hub-audit and node-dedup stages take ~25 min each on a 15k-edge graph
-with 24 parallel `claude` workers; release-filter takes under 2 min.
+The hub-audit and node-dedup stages take ~25 min each on a 15k-edge
+graph with 24 parallel `claude` workers; release-filter takes under 2 min.
 
 ## Visualizer
 
 ```bash
-python viz.py --source path/to/graph.json --port 8102
+modsleuth viz --source path/to/graph.json --port 8102
 ```
 
-A self-contained HTTP server with a vis-network frontend. Default view caps
-at the top 200 nodes by degree (min-degree ≥ 10) with physics off; raise
-the slider or trigger an ego mode (1-hop or 2-hop) on any selected node to
-explore further. Search auto-pivots to ego mode on the matching node.
+A self-contained HTTP server with a vis-network frontend. Default view
+caps at the top 200 nodes by degree (min-degree ≥ 10) with physics off;
+raise the slider or trigger an ego mode (1-hop or 2-hop) on any selected
+node to explore further. Search auto-pivots to ego mode on the matching
+node.
 
-## Edge audit
+## Edge audit (sanity analyzer)
 
 ```bash
 python edge_audit.py --source path/to/graph.json
@@ -144,56 +209,21 @@ python edge_audit.py --source path/to/graph.json
 
 Static edge-pattern analyzer: top hubs, anchor-coverage distribution,
 near-duplicate object/subject names that survived dedup, weak-evidence
-claims, and (subject, object) pairs with multiple distinct relations. Useful
-as a quick sanity-check on any graph version.
+claims, and (subject, object) pairs with multiple distinct relations.
+Useful as a quick sanity-check on any graph version.
 
-## Tests
+## Baselines and pooled evaluation (paper §3.3, §B, §C)
 
-```bash
-python -m pytest tests/ -q
-```
-
-## Repository layout
-
-```
-.
-├── lineage/        # base pipeline package
-│   ├── cli.py          # `lineage` CLI entry point
-│   ├── config.py
-│   ├── pipeline.py     # stage implementations
-│   ├── prompts/        # stage-level markdown prompts
-│   ├── resolve.py      # identity-lattice resolver
-│   ├── store.py        # SQLite-backed pipeline state
-│   └── subsets.py      # HF metadata subset population
-├── dedup.py            # 4-stage dedup pipeline (CLI)
-├── dedup_lib.py        # shared dedup helpers (signatures, union-find, LLM, …)
-├── viz.py              # HTTP visualizer for a merged JSON graph
-├── edge_audit.py       # static noise-pattern analyzer
-├── tests/
-├── prompts/                # investigator prompt (master + per-subject copies, used by baselines)
-├── baselines/              # baseline runs against the same subjects
-│   ├── launch_baselines.py
-│   └── outputs/            # baseline JSON graphs
-├── eval/                   # pooled LLM-as-judge verifier and verdict outputs
-│   ├── pooled_eval.py
-│   └── outputs/            # verifications.jsonl, score.json, score_per_target.json
-├── pyproject.toml
-├── schema.sql
-└── README.md
-```
-
-## Baselines and evaluation
-
-The `baselines/` and `eval/` directories contain everything needed to
-reproduce the comparative evaluation reported in the paper, and to
-evaluate any new submission against the same pool.
+`baselines/` and `eval/` contain everything needed to reproduce the
+comparative evaluation reported in Table 1 of the paper, and to evaluate
+any new submission against the same pool.
 
 ### Baseline systems
 
-Four single-pass baselines are run against the same four subjects
-(OLMo 3, Nemotron 3 Super, DR-Tulu, SmolLM3). Each gets the same
-investigator prompt as our system; the difference is the absence of
-the multi-stage harness.
+Four single-pass baselines run against the same four targets (OLMo 3,
+Nemotron 3 Super, DR-Tulu, SmolLM3). Each gets the same baseline prompt
+template (paper §C; full text at `baselines/prompts/baseline_prompt.md`);
+the difference is the absence of ModSleuth's multi-stage harness.
 
 | Slug | System | Configuration |
 |---|---|---|
@@ -209,20 +239,23 @@ cd baselines
 OPENAI_API_KEY=sk-... python3 launch_baselines.py
 ```
 
-Each (system, subject) pair writes to `baselines/outputs/<slug>_<subject>.json`.
+Each (system, target) pair writes to `baselines/outputs/<slug>_<subject>.json`.
 The 16 outputs from the run reported in the paper are committed.
 
 ### Pooled evaluation
 
-`eval/pooled_eval.py` is the canonical pooled LLM-as-judge verifier. For
-each target, every emitted edge across all systems is pooled and
-clustered by canonicalized `(subject, object)` pair. Each cluster's
-representative claim (longest description) is sent to a single
-`claude-sonnet-4-6` verifier instance equipped with `web_search`, which
-returns one of `verified` / `refuted` / `unclear`. A single verifier
-verdict cleanly attributes back to every system that proposed an edge in
-that cluster, so per-system Verified / Refuted counts mean: how many
-clusters did this system contribute to, broken down by verdict.
+`eval/pooled_eval.py` is the canonical pooled LLM-as-judge verifier
+described in paper §B. For each target, every emitted edge across all
+systems is pooled and clustered by canonicalized `(subject, object)`
+pair. Each cluster's representative claim (longest description) is sent
+to a single `claude-sonnet-4-6` verifier instance equipped with
+`web_search`, which returns one of `verified` / `refuted` / `unclear`.
+A single verifier verdict cleanly attributes back to every system that
+proposed an edge in that cluster, so per-system Verified / Refuted
+counts mean: how many clusters did this system contribute to, broken
+down by verdict.
+
+The verifier's system prompt is at `eval/verifier_prompt.md`.
 
 Reproduce:
 
@@ -237,7 +270,7 @@ the paper. Verifications append incrementally and resume on kill.
 
 ### Adding a new submission
 
-If your submission follows the same per-subject `{nodes, edges}` JSON
+If your submission follows the same per-target `{nodes, edges}` JSON
 convention as the baselines, drop your files into `baselines/outputs/`
 named `<slug>_<subject>.json`, then re-run `pooled_eval.py` with your
 slug appended:
@@ -250,6 +283,55 @@ ANTHROPIC_API_KEY=sk-ant-... python3 pooled_eval.py \
 
 Only clusters your system contributes that aren't already covered get
 fresh verifier calls. Existing verdicts are preserved.
+
+## Tests
+
+```bash
+python -m pytest tests/ -q
+```
+
+## Repository layout
+
+```
+.
+├── modsleuth/                  # ModSleuth pipeline package
+│   ├── cli.py                  # `modsleuth` CLI entry point
+│   ├── config.py               # storage / model / env defaults
+│   ├── pipeline.py             # all stage implementations
+│   ├── prompts/                # stage-level markdown prompts (paper §A)
+│   │   ├── discover.md         #   Gather (Stage 1)
+│   │   ├── extract.md          #   Extract (Stage 2)
+│   │   ├── organize.md         #   Resolve build (Stage 3)
+│   │   ├── audit.md            #   Resolve revise (Stage 3)
+│   │   ├── relate.md           #   Relate (Stage 4)
+│   │   └── triage.md           #   Reconcile audit step (Stage 5)
+│   ├── resolve.py              # identity-lattice resolver
+│   ├── store.py                # SQLite-backed pipeline state
+│   ├── subsets.py              # HF metadata pre-pass for the audit stage
+│   ├── viz.py                  # interactive HTTP graph viewer
+│   ├── recursive.py            # multi-hop expansion driver (§A)
+│   └── dedup/                  # post-merge dedup pipeline (4 sub-stages)
+│       ├── __main__.py         #   `python -m modsleuth.dedup`
+│       └── lib.py              #   shared helpers (signatures, union-find, …)
+├── baselines/                  # baseline runs (paper §3.3 / §C)
+│   ├── launch_baselines.py     #   fires all 16 (4 × 4) runs in parallel
+│   ├── prompts/                #   template + per-target baseline prompts
+│   │   ├── baseline_prompt.md
+│   │   └── baseline_prompt_<subject>.md
+│   ├── outputs/                #   committed per-system per-target JSON graphs
+│   └── README.md
+├── eval/                       # pooled LLM-as-judge verifier (paper §B)
+│   ├── pooled_eval.py          #   Sonnet 4.6 + web_search per cluster
+│   ├── verifier_prompt.md      #   verifier system prompt
+│   ├── outputs/                #   verifications.jsonl + score{,_per_target}.json
+│   └── README.md
+├── edge_audit.py               # static noise-pattern analyzer
+├── tests/
+├── pyproject.toml
+├── requirements.txt
+├── schema.sql
+└── README.md
+```
 
 ## Concepts
 
@@ -266,6 +348,19 @@ fresh verifier calls. Existing verdicts are preserved.
 - **dependency-kind** — coarse type label (`direct` / `indirect`) on every
   edge, distinguishing artifacts that materially enter weights or training
   data from those that merely influence development decisions.
+
+## Citation
+
+If you use ModSleuth, please cite the NeurIPS 2026 paper:
+
+```bibtex
+@inproceedings{modsleuth2026,
+  title     = {Which Models Are Our Models Built On? Auditing Invisible Dependencies in Modern LLMs},
+  author    = {Anonymous Author(s)},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2026},
+}
+```
 
 ## License
 

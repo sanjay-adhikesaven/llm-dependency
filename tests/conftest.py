@@ -14,23 +14,22 @@ sys.path.insert(0, str(GRAPH_ROOT))
 
 RUNTIME_MODULES = [
     name for name in list(sys.modules)
-    if name == "lineage" or name.startswith("lineage.")
+    if name == "modsleuth" or name.startswith("modsleuth.")
 ]
 
 
-def clear_lineage_modules() -> None:
+def clear_modsleuth_modules() -> None:
     for name in list(sys.modules):
-        if name == "lineage" or name.startswith("lineage."):
+        if name == "modsleuth" or name.startswith("modsleuth."):
             del sys.modules[name]
 
 
 @pytest.fixture
 def fresh_runtime(monkeypatch):
-    tmp = Path(tempfile.mkdtemp(prefix="lineage-test-"))
-    monkeypatch.setenv("LINEAGE_STORAGE", str(tmp / "storage"))
-    monkeypatch.setenv("LINEAGE_PATH", str(tmp / "storage" / "graph.db"))
-    clear_lineage_modules()
+    tmp = Path(tempfile.mkdtemp(prefix="modsleuth-test-"))
+    monkeypatch.setenv("MODSLEUTH_STORAGE", str(tmp / "storage"))
+    monkeypatch.setenv("MODSLEUTH_PATH", str(tmp / "storage" / "graph.db"))
+    clear_modsleuth_modules()
     yield tmp
-    clear_lineage_modules()
+    clear_modsleuth_modules()
     shutil.rmtree(tmp, ignore_errors=True)
-

@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """Dedup pipeline for LLM dependency graphs.
 
-Reads a merged JSON graph (output of `lineage run merge`), runs four stages
-of dedup + filtering, and writes a cleaned JSON graph. Each stage can be
-run in isolation:
+Reads a merged JSON graph (output of ``modsleuth run merge``), runs four
+stages of dedup + filtering, and writes a cleaned JSON graph. Each stage
+can be run in isolation:
 
-    python dedup.py --source merge.json --dest clean.json --stages all
-    python dedup.py --source merge.json --dest clean.json --stages heuristic
-    python dedup.py --source v1.json    --dest v2.json    --stages hub-audit
-    python dedup.py --source v2.json    --dest v3.json    --stages node-dedup
-    python dedup.py --source v3.json    --dest final.json --stages release
+    python -m modsleuth.dedup --source merge.json --dest clean.json --stages all
+    python -m modsleuth.dedup --source merge.json --dest v1.json    --stages heuristic
+    python -m modsleuth.dedup --source v1.json    --dest v2.json    --stages hub-audit
+    python -m modsleuth.dedup --source v2.json    --dest v3.json    --stages node-dedup
+    python -m modsleuth.dedup --source v3.json    --dest final.json --stages release
 
 The four stages are conceptually independent:
 
@@ -18,8 +18,6 @@ The four stages are conceptually independent:
     3. node-dedup  — whole-graph LLM-verified node merges; conflict-guarded union.
     4. release     — LLM classifies KEEP / DROP per node; rewires edges through
                      dropped intermediates along compatible relations.
-
-See README.md for parameter defaults.
 """
 from __future__ import annotations
 
@@ -31,7 +29,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from threading import Lock
 
-from dedup_lib import (
+from .lib import (
     DEFAULT_WORKERS,
     StageLogger,
     assert_invariants,
@@ -736,27 +734,17 @@ STAGES: dict[str, callable] = {
 }
 
 
-def main() -> int:
-    p = argparse.ArgumentParser(description="Dedup pipeline for LLM dependency graphs.")
-    p.add_argument("--source", required=True, help="Path to input JSON (the merged graph).")
-    p.add_argument("--dest", required=True, help="Path to output JSON.")
-    p.add_argument(
-        "--stages",
-        default="all",
-        help=f"Comma-separated stages, or 'all'. Available: {', '.join(STAGES)}",
-    )
-    p.add_argument("--log", default=None, help="Optional log file path; default = stderr only.")
-    args = p.parse_args()
-
-    stage_names = list(STAGES) if args.stages == "all" else [s.strip() for s in args.stages.split(",")]
+def run_dedup(source: str | Path, dest: str | Path,
+              stages: str = "all", log_path: str | Path | None = None) -> int:
+    """Run the dedup pipeline. Returns process exit code (0 on success, 2 on bad stage)."""
+    stage_names = list(STAGES) if stages == "all" else [s.strip() for s in stages.split(",")]
     for s in stage_names:
         if s not in STAGES:
             print(f"Unknown stage: {s!r}; valid stages: {', '.join(STAGES)}", file=sys.stderr)
             return 2
 
-    log_path = Path(args.log) if args.log else None
-    log = StageLogger(log_path)
-    src, dst = Path(args.source), Path(args.dest)
+    log = StageLogger(Path(log_path) if log_path else None)
+    src, dst = Path(source), Path(dest)
     log.log(f"Source: {src}")
     log.log(f"Dest:   {dst}")
     log.log(f"Stages: {' → '.join(stage_names)}\n")
@@ -772,6 +760,20 @@ def main() -> int:
     save_graph(graph, dst)
     log.log(f"\n✓ Wrote {dst} ({dst.stat().st_size:,} bytes) in {(time.time() - t_start) / 60:.1f} min")
     return 0
+
+
+def main() -> int:
+    p = argparse.ArgumentParser(description="Dedup pipeline for LLM dependency graphs.")
+    p.add_argument("--source", required=True, help="Path to input JSON (the merged graph).")
+    p.add_argument("--dest", required=True, help="Path to output JSON.")
+    p.add_argument(
+        "--stages",
+        default="all",
+        help=f"Comma-separated stages, or 'all'. Available: {', '.join(STAGES)}",
+    )
+    p.add_argument("--log", default=None, help="Optional log file path; default = stderr only.")
+    args = p.parse_args()
+    return run_dedup(args.source, args.dest, args.stages, args.log)
 
 
 if __name__ == "__main__":

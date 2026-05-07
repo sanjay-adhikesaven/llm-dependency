@@ -6,9 +6,9 @@ launch_baselines.py — fire all 16 baseline investigator runs in parallel.
   Systems  (4): o3-deep-research, gpt-5.5-pro, gpt-5.4-pro (OpenAI background mode)
                 claude-code (local `claude` CLI in print mode)
 
-Each system gets the same per-subject investigator prompt (see ../prompts/).
+Each system gets the same per-subject baseline prompt (see ./prompts/).
 Outputs land at outputs/<system>_<subject>.json (raw response text). The
-investigator prompt instructs each model to emit pure JSON, so the file is
+baseline prompt instructs each model to emit pure JSON, so the file is
 parseable JSON in the success case; if it isn't (a few Claude Code runs
 have prefaced JSON with one line of preamble), strip the preamble manually.
 
@@ -38,7 +38,7 @@ except ImportError:
     sys.exit("Missing dependency: pip install openai")
 
 REPO_ROOT  = Path(__file__).resolve().parent.parent
-PROMPT_DIR = REPO_ROOT / "prompts"
+PROMPT_DIR = Path(__file__).resolve().parent / "prompts"
 OUTPUT_DIR = Path(__file__).resolve().parent / "outputs"
 
 SUBJECTS = ["olmo3", "nemotron3_super", "dr_tulu", "smollm3"]
@@ -62,7 +62,7 @@ def out_path(slug: str, subject: str) -> Path:
 
 
 def load_prompt(subject: str) -> str:
-    p = PROMPT_DIR / f"investigator_prompt_{subject}.md"
+    p = PROMPT_DIR / f"baseline_prompt_{subject}.md"
     if not p.exists():
         raise FileNotFoundError(f"Prompt not found: {p}")
     return p.read_text()
