@@ -100,14 +100,31 @@ def _pick_dfs(scored: Counter, expanded: set[str], top_k: int) -> list[str]:
     return [scored.most_common(1)[0][0]]
 
 
-def _pick_beam(scored: Counter, expanded: set[str], top_k: int,
+def _connectivity_to_expanded(graph: dict, expanded: set[str],
+                              already: set[str]) -> Counter:
+    """Score un-expanded objects by connectivity to the expanded
+    subgraph: the number of edges whose ``subject`` is already an
+    expanded node. Matches paper §A's beam scoring rule.
+    """
+    counts: Counter = Counter()
+    for edge in graph.get("relations", []):
+        if edge.get("subject") not in expanded:
+            continue
+        obj = edge.get("object")
+        if obj and obj not in already:
+            counts[obj] += 1
+    return counts
+
+
+def _pick_beam(graph: dict, expanded: set[str], top_k: int,
                beam_history: dict[str, int]) -> list[str]:
-    """Beam search: keep the global top-K most-promising parents across
-    all depths, scored by cumulative parent-count seen so far. ``top_k``
-    is the beam width."""
-    for n, s in scored.items():
-        if n not in expanded:
-            beam_history[n] = beam_history.get(n, 0) + s
+    """Beam search (paper §A): keep the global top-K structurally
+    central ancestors across depths, scored by cumulative connectivity
+    to previously-expanded nodes. ``top_k`` is the beam width.
+    """
+    conn = _connectivity_to_expanded(graph, expanded, already=expanded)
+    for n, s in conn.items():
+        beam_history[n] = beam_history.get(n, 0) + s
     ranked = sorted(((n, s) for n, s in beam_history.items() if n not in expanded),
                     key=lambda kv: kv[1], reverse=True)
     return [n for n, _ in ranked[:top_k]]
@@ -152,7 +169,7 @@ def expand_seed(seed: str, depth: int, top_k: int,
         elif strategy == "dfs":
             candidates = _pick_dfs(scored, expanded, top_k)
         elif strategy == "beam":
-            candidates = _pick_beam(scored, expanded, top_k, beam_history)
+            candidates = _pick_beam(graph, expanded, top_k, beam_history)
         else:
             raise ValueError(f"unknown strategy: {strategy!r}")
         if not candidates:

@@ -168,9 +168,10 @@ storage.
 
 The exact strategy used in the paper is target-specific (seed list,
 per-seed K, optional pre-seeded high-betweenness bridge artifacts so
-seeds share an upstream backbone). `modsleuth/recursive.py` is a
-working reference; tune the strategy in that file to reproduce the
-paper's exact recursion or to match a different audit budget.
+seeds share an upstream backbone). Adjust `--seed`, `--top-k`,
+`--depth`, and `--strategy` on the command line to match a particular
+audit budget; `modsleuth/recursive.py` itself only needs editing if
+you want to plug in a custom expansion policy.
 
 To merge across seeds into a single graph, pass each per-seed
 `merge_artifact.json` to `modsleuth run merge --source <path>`.
@@ -457,7 +458,13 @@ python -m pytest tests/ -q
 - **operation** — a structured group of edges that jointly describes one
   pipeline event (e.g., a DPO step). Edges within an operation share an
   anchor list and description, preserving the event structure that a flat
-  pairwise edge list would erase.
+  pairwise edge list would erase. The released merge artifact stores
+  operations in a flattened form: each row in `relations` carries one
+  `(subject, object, relation)` triple together with the full
+  `anchor_list` and `description` of its parent operation, so a single
+  operation that involved *N* objects appears as *N* rows that share
+  those fields. Table 5's "operations" count (14,701) excludes the few
+  rows with empty `anchor_list`.
 - **anchor** — a source-side citation: file path, position, and verbatim
   excerpt grounding a claim to a specific spot in the source corpus.
 - **identity lattice** — partial-order structure for artifact identity with
