@@ -132,6 +132,7 @@ async def run_claude_code(subject: str) -> None:
         proc = await asyncio.create_subprocess_exec(
             "claude",
             "-p",
+            "--model", "claude-opus-4-7[1m]",   # Opus 4.7, 1M context (paper §C)
             "--dangerously-skip-permissions",   # required for headless runs
             cwd=tmpdir,
             stdin=asyncio.subprocess.PIPE,
