@@ -318,14 +318,26 @@ def dedup_cmd(source: str, dest: str, stages: str, log_path: str | None):
 @main.command("viz")
 @click.option("--source", "source_path", required=True,
               help="Path to a merged or cleaned graph JSON to visualize.")
+@click.option("--seed", default=None,
+              help="Pattern to match (case-insensitive substring on formal_name "
+                   "and aliases) for a seeded ego-expansion. Highest-degree match "
+                   "wins. When given, the server pre-prunes the graph to a focused "
+                   "subgraph centered on this node.")
+@click.option("--depth", type=int, default=2, show_default=True,
+              help="Hops to expand from --seed.")
+@click.option("--target-size", type=int, default=80, show_default=True,
+              help="Approximate target node count for --seed expansion. Highest-"
+                   "relevance neighbors fill the budget first.")
 @click.option("--port", type=int, default=8102, show_default=True,
               help="HTTP port to serve on.")
 @click.option("--host", default="127.0.0.1", show_default=True,
               help="Bind address.")
-def viz_cmd(source_path: str, port: int, host: str):
+def viz_cmd(source_path: str, seed: str | None, depth: int, target_size: int,
+            port: int, host: str):
     """Serve an interactive graph viewer for a merged JSON graph."""
     from .viz import serve
-    serve(source=Path(source_path), host=host, port=port)
+    serve(source=Path(source_path), host=host, port=port,
+          seed=seed, depth=depth, target_size=target_size)
 
 
 @main.group()

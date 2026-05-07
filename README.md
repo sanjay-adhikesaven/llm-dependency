@@ -217,11 +217,41 @@ graph with 24 parallel `claude` workers; release-filter takes under 2 min.
 modsleuth viz --source path/to/graph.json --port 8102
 ```
 
-A self-contained HTTP server with a vis-network frontend. Default view
-caps at the top 200 nodes by degree (min-degree ≥ 10) with physics off;
-raise the slider or trigger an ego mode (1-hop or 2-hop) on any selected
-node to explore further. Search auto-pivots to ego mode on the matching
-node.
+A self-contained HTTP server with a vis-network frontend. Without `--seed`,
+the default view caps at the top 200 nodes by degree (min-degree ≥ 10)
+with physics off; raise the slider or trigger an ego mode (1-hop or 2-hop)
+on any selected node to explore further. Search auto-pivots to ego mode
+on the matching node.
+
+For large graphs (≥ a few thousand edges) the all-at-once view is rarely
+insightful. Pass `--seed` to pre-prune the payload to a focused
+ego-expansion centered on a chosen node:
+
+```bash
+modsleuth viz --source path/to/graph.json \
+    --seed "Olmo-3-1025-7B" --depth 2 --target-size 80
+```
+
+The seed pattern is a case-insensitive substring matched against each
+node's `formal_name` and aliases; the highest-degree match wins. From
+there, BFS expands up to `--depth` hops and admits the highest-scored
+neighbors first until ~`--target-size` nodes are captured. Edge scoring
+prefers lineage-bearing relations (`trained_from`, `trained_on`,
+`generated_by`, `transformed_by`, `filtered_by`, `merged_from`,
+`composed_from`) and discounts evaluation/citation clutter
+(`used_for_evaluation`, `cited_as_baseline`, `used_for_ablation`); direct
+dependencies and anchor-grounded edges get small bumps. The result is a
+focused subgraph that shows the actual training/data lineage around the
+seed instead of a dense mass of evaluation edges.
+
+Tunables:
+
+- `--depth N` — hops to expand (default 2). Use 1 for immediate
+  neighbors only, 3 for a wider context.
+- `--target-size N` — approximate node budget (default 80). The BFS
+  stops admitting once it hits this; smaller is more readable.
+- Combine multiple seeds by re-running with different `--seed` values
+  or by changing the depth/budget.
 
 ## Edge audit (sanity analyzer)
 

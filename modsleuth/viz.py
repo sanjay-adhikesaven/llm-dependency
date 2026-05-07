@@ -113,6 +113,126 @@ def load_data(path: Path) -> dict:
     }
 
 
+# Edge-relevance weights for seeded expansion. Higher = more lineage-bearing.
+# Negative scores discount evaluation/citation clutter that would otherwise
+# drown out the actual training graph during BFS.
+_EDGE_RELEVANCE: dict[str, int] = {
+    "trained_from": 8, "trained_on": 7, "generated_by": 6,
+    "transformed_by": 5, "filtered_by": 5, "merged_from": 6,
+    "composed_from": 5, "tokenized_by": 3, "deduplicated_by": 3,
+    "decontaminated_by": 3, "released_with": 2, "inspired_by": 0,
+    "used_for_ablation": -2, "used_for_evaluation": -4,
+    "cited_as_baseline": -4,
+}
+
+
+def _score_edge(edge: dict) -> int:
+    score = _EDGE_RELEVANCE.get(edge.get("relation") or "", 1)
+    if (edge.get("dependency_kind") or "") == "direct":
+        score += 2
+    score += min(3, len(edge.get("anchor_list") or []))
+    return score
+
+
+def _resolve_seed(payload: dict, pattern: str) -> str | None:
+    """Match `pattern` (case-insensitive substring) against each node's id +
+    aliases; return the highest-degree match's id, or None."""
+    needle = pattern.lower()
+    candidates: list[tuple[int, str]] = []
+    for n in payload["nodes"]:
+        hay = (n["id"] + " " + " ".join(n.get("aliases") or [])).lower()
+        if needle in hay:
+            deg = n.get("in_degree", 0) + n.get("out_degree", 0)
+            candidates.append((deg, n["id"]))
+    if not candidates:
+        return None
+    candidates.sort(reverse=True)
+    return candidates[0][1]
+
+
+def _seeded_expand(payload: dict, seed_id: str, *,
+                   depth: int, target_size: int) -> dict:
+    """BFS from `seed_id` up to `depth` hops, greedily admitting the
+    highest-relevance-scored neighbors at each frontier until we hit
+    `target_size` nodes. Edges between admitted nodes are kept."""
+    nodes_by_id = {n["id"]: n for n in payload["nodes"]}
+    if seed_id not in nodes_by_id:
+        return payload
+
+    incident: dict[str, list[dict]] = defaultdict(list)
+    for e in payload["edges"]:
+        incident[e["subject"]].append(e)
+        incident[e["object_id"]].append(e)
+
+    keep: set[str] = {seed_id}
+    frontier: set[str] = {seed_id}
+    for _ in range(max(1, depth)):
+        if len(keep) >= target_size:
+            break
+        candidates: dict[str, int] = {}
+        for src in frontier:
+            for e in incident.get(src, []):
+                other = e["object_id"] if e["subject"] == src else e["subject"]
+                if not other or other in keep:
+                    continue
+                s = _score_edge(e)
+                if s > candidates.get(other, -10**9):
+                    candidates[other] = s
+        if not candidates:
+            break
+        ranked = sorted(
+            candidates.items(),
+            key=lambda kv: (-kv[1],
+                            -(nodes_by_id[kv[0]]["in_degree"]
+                              + nodes_by_id[kv[0]]["out_degree"])),
+        )
+        next_frontier: set[str] = set()
+        for other_id, _score in ranked:
+            if len(keep) >= target_size:
+                break
+            keep.add(other_id)
+            next_frontier.add(other_id)
+        frontier = next_frontier
+
+    pruned_nodes = [n for n in payload["nodes"] if n["id"] in keep]
+    pruned_edges = [e for e in payload["edges"]
+                    if e["subject"] in keep and e["object_id"] in keep]
+
+    for n in pruned_nodes:
+        n["in_degree"] = 0
+        n["out_degree"] = 0
+    by_id = {n["id"]: n for n in pruned_nodes}
+    for e in pruned_edges:
+        by_id[e["subject"]]["out_degree"] += 1
+        by_id[e["object_id"]]["in_degree"] += 1
+
+    rel_counts: dict[str, int] = defaultdict(int)
+    dep_kind_counts: dict[str, int] = defaultdict(int)
+    for e in pruned_edges:
+        rel_counts[e["relation"]] += 1
+        dep_kind_counts[e.get("dependency_kind") or "unknown"] += 1
+    family_counts: dict[str, int] = defaultdict(int)
+    for n in pruned_nodes:
+        family_counts[n.get("family") or ""] += 1
+
+    new_stats = dict(payload["stats"])
+    new_stats.update({
+        "node_count": len(pruned_nodes),
+        "lattice_node_count": sum(1 for n in pruned_nodes
+                                   if n.get("kind") in ("model", "dataset")),
+        "off_lattice_node_count": sum(1 for n in pruned_nodes
+                                       if n.get("kind") == "off_lattice"),
+        "edge_count": len(pruned_edges),
+        "family_count": len(family_counts),
+        "families": sorted(family_counts.items(), key=lambda kv: -kv[1])[:50],
+        "relations": sorted(rel_counts.items(), key=lambda kv: -kv[1]),
+        "dependency_kinds": sorted(dep_kind_counts.items(), key=lambda kv: -kv[1]),
+        "seed": seed_id,
+    })
+    return {**payload, "nodes": pruned_nodes, "edges": pruned_edges,
+            "stats": new_stats}
+
+
 PAGE_HTML = r"""<!doctype html>
 <html lang="en">
 <head>
@@ -540,8 +660,16 @@ def make_handler(graph_payload: dict):
     return Handler
 
 
-def serve(source: Path, host: str = "127.0.0.1", port: int = 8102) -> None:
-    """Serve the interactive viewer for the merged graph at *source*."""
+def serve(source: Path, host: str = "127.0.0.1", port: int = 8102,
+          seed: str | None = None, depth: int = 2,
+          target_size: int = 80) -> None:
+    """Serve the interactive viewer for the merged graph at *source*.
+
+    When *seed* is given, the payload is pre-pruned to a focused subgraph
+    centered on the matching node (BFS up to *depth* hops, capped at
+    *target_size* nodes, neighbors ranked by lineage-bearing edge score).
+    Otherwise the full graph is served and the client's degree-slider
+    handles size."""
     src_path = Path(source)
     if not src_path.exists():
         print(f"ERROR: source not found: {src_path}", file=sys.stderr)
@@ -552,9 +680,27 @@ def serve(source: Path, host: str = "127.0.0.1", port: int = 8102) -> None:
     s = payload["stats"]
     print(f"  → {s['node_count']:,} nodes  ({s['lattice_node_count']:,} lattice + {s['off_lattice_node_count']:,} off-lattice)")
     print(f"  → {s['edge_count']:,} edges, {len(s['relations'])} distinct relations")
+
+    if seed:
+        seed_id = _resolve_seed(payload, seed)
+        if not seed_id:
+            print(f"ERROR: seed pattern {seed!r} matched no node.", file=sys.stderr)
+            sys.exit(1)
+        before = (s["node_count"], s["edge_count"])
+        payload = _seeded_expand(payload, seed_id,
+                                  depth=depth, target_size=target_size)
+        s = payload["stats"]
+        print(f"  → seeded on {seed_id!r}: {before[0]:,}→{s['node_count']:,} nodes, "
+              f"{before[1]:,}→{s['edge_count']:,} edges "
+              f"(depth={depth}, target_size={target_size})")
+
     print()
-    print("Default initial view: top 200 nodes by degree (≥10), physics OFF.")
-    print("Use the search box to focus on a specific model — it'll pivot to ego mode automatically.")
+    if seed:
+        print(f"Centered on {payload['stats'].get('seed')!r}. "
+              f"Use the search box or ego mode to refocus.")
+    else:
+        print("Default initial view: top 200 nodes by degree (≥10), physics OFF.")
+        print("Use the search box to focus on a specific model — it'll pivot to ego mode automatically.")
     print()
 
     handler = make_handler(payload)
@@ -572,10 +718,18 @@ def main() -> None:
     p = argparse.ArgumentParser(description="Visualize a merged dependency-graph JSON.")
     p.add_argument("--source", required=True, type=Path,
                    help="Path to the merged graph JSON (e.g. merge_artifact.json or a deduped output).")
+    p.add_argument("--seed", default=None,
+                   help="Pattern to match (case-insensitive substring on formal_name "
+                        "and aliases) for a seeded ego-expansion. Highest-degree match wins.")
+    p.add_argument("--depth", type=int, default=2,
+                   help="Hops to expand from --seed (default: 2).")
+    p.add_argument("--target-size", type=int, default=80,
+                   help="Approximate target node count for --seed expansion (default: 80).")
     p.add_argument("--port", type=int, default=8102)
     p.add_argument("--host", default="127.0.0.1")
     args = p.parse_args()
-    serve(source=args.source, host=args.host, port=args.port)
+    serve(source=args.source, host=args.host, port=args.port,
+          seed=args.seed, depth=args.depth, target_size=args.target_size)
 
 
 if __name__ == "__main__":
