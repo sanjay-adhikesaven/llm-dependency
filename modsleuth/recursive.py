@@ -34,6 +34,11 @@ Environment-managed state: a fresh ``storage/<seed_slug>/`` directory
 is created for each seed (override with ``--storage-root``). Each
 seed's final per-seed merged graph is written to
 ``storage/<seed_slug>/runs/<run>/merge_artifact.json``.
+
+To abort cleanly, send ``SIGINT`` (Ctrl-C) to *this* Python process —
+the recursive driver. Killing only the inner ``claude`` subprocess
+will trigger the pipeline's automatic retry path, since the parent
+process stays alive.
 """
 from __future__ import annotations
 

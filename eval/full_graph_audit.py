@@ -153,10 +153,11 @@ async def main() -> int:
                    help="Cap edges audited (0 = no cap; useful for smoke tests).")
     args = p.parse_args()
 
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        sys.exit("ANTHROPIC_API_KEY not set")
     if not args.merge_artifact.exists():
         sys.exit(f"merge artifact not found: {args.merge_artifact}")
+    # ANTHROPIC_API_KEY check is deferred until we actually need to call
+    # the API (see below), so a re-aggregation against a complete
+    # outputs/full_graph_verifications.jsonl runs without a key.
 
     G = json.loads(args.merge_artifact.read_text())
     relations = G.get("relations") or G.get("edges") or []
@@ -179,6 +180,8 @@ async def main() -> int:
     print(f"to do:    {len(pending)} new verifications", flush=True)
 
     if pending:
+        if not os.environ.get("ANTHROPIC_API_KEY"):
+            sys.exit("ANTHROPIC_API_KEY not set")
         client = AsyncAnthropic()
         sem = asyncio.Semaphore(args.concurrency)
         out_f = open(args.out, "a")

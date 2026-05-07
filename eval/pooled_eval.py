@@ -289,8 +289,10 @@ async def main() -> None:
                     help="cap clusters per target (0 = no cap; useful for smoke tests)")
     args = ap.parse_args()
 
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        sys.exit("ANTHROPIC_API_KEY not set")
+    # We don't require ANTHROPIC_API_KEY up-front: if every cluster has
+    # already been verified, this run is just an aggregation pass and
+    # makes no API calls. The check is deferred to right before we
+    # actually instantiate the Anthropic client.
 
     graphs_dir = Path(args.graphs_dir)
     out_dir = Path(args.out_dir)
@@ -325,6 +327,8 @@ async def main() -> None:
     print(f"  to do:    {len(pending)} new verifications", flush=True)
 
     if pending:
+        if not os.environ.get("ANTHROPIC_API_KEY"):
+            sys.exit("ANTHROPIC_API_KEY not set")
         client = AsyncAnthropic()
         sem = asyncio.Semaphore(args.concurrency)
         out_f = open(verifications_path, "a")

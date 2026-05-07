@@ -176,6 +176,11 @@ you want to plug in a custom expansion policy.
 To merge across seeds into a single graph, pass each per-seed
 `merge_artifact.json` to `modsleuth run merge --source <path>`.
 
+> **Aborting a run.** Send `SIGINT` (Ctrl-C) to the top-level
+> `modsleuth` Python process to abort cleanly. Killing only the inner
+> `claude` subprocess will trigger the pipeline's automatic retry —
+> the parent stays alive and respawns the subprocess.
+
 ## Post-merge cleanup (`modsleuth dedup`)
 
 Four stages run over the merged JSON graph. Each can be invoked alone:
