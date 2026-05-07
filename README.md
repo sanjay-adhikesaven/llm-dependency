@@ -135,7 +135,9 @@ The base pipeline produces only the immediate (one-hop) dependencies of
 a single target. The paper's recursive-tracing claim (Figure 1, §3.2,
 §4) requires expanding upstream artifacts as fresh targets and re-merging.
 
-`modsleuth recursive` is a reference BFS driver:
+`modsleuth recursive` implements the three strategies described in
+paper §A — breadth-first (BFS, the default), depth-first (DFS), and
+beam search:
 
 ```bash
 modsleuth recursive \
@@ -143,17 +145,26 @@ modsleuth recursive \
     --seed nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4 \
     --seed rl-research_DR-Tulu-8B \
     --seed HuggingFaceTB/SmolLM3-3B \
-    --depth 3 --top-k 5
+    --depth 3 --top-k 5 --strategy bfs    # or --strategy dfs / beam
 ```
 
 For each seed it runs the full base pipeline once (in its own per-seed
-`MODSLEUTH_STORAGE` directory), then iteratively expands the top-K
-newly-discovered upstream artifacts at each depth, ranked by parent
-count in the merged graph. After each expansion round it re-runs
-`merge` so the per-seed graph reflects the latest discoveries. Per-node
-expansion uses the existing `modsleuth run expand --node <name>` step,
-which re-runs `discover` → `reconcile` against the named upstream
-artifact within the same storage.
+`MODSLEUTH_STORAGE` directory), then iteratively expands
+newly-discovered upstream artifacts up to `--depth` hops using the
+selected strategy:
+
+* **bfs** — at each depth, expand the top-`K` highest-scoring un-expanded
+  parents (by parent count in the current merged graph).
+* **dfs** — follow the single highest-scoring chain, expanding one
+  parent per round (`--top-k` is ignored).
+* **beam** — keep the global top-`K` un-expanded parents across depths,
+  scored by cumulative parent count seen so far.
+
+After each expansion round it re-runs `merge` so the per-seed graph
+reflects the latest discoveries. Per-node expansion uses the existing
+`modsleuth run expand --node <name>` step, which re-runs `discover` →
+`reconcile` against the named upstream artifact within the same
+storage.
 
 The exact strategy used in the paper is target-specific (seed list,
 per-seed K, optional pre-seeded high-betweenness bridge artifacts so
@@ -324,7 +335,12 @@ the paper. Verifications append incrementally and resume on kill.
 
 Table 1 measures comparative recall across systems via cluster-level
 pooling. Table 6 measures *full-graph precision*: each of the 14,769
-relations in the merged ModSleuth graph is verified individually.
+relations in the merged ModSleuth graph is verified individually. The
+verdicts used in the paper are committed at
+`eval/outputs/full_graph_verifications.jsonl` (one verdict per line,
+14,769 lines) and aggregated in
+`eval/outputs/full_graph_verifications.score.json`. To re-run from
+scratch (≈14,769 fresh `claude-sonnet-4-6` + `web_search` calls):
 
 ```bash
 cd eval
@@ -334,34 +350,35 @@ ANTHROPIC_API_KEY=sk-ant-... python3 full_graph_audit.py \
 ```
 
 The script appends one verdict per line and resumes on kill. It uses
-the same `claude-sonnet-4-6` + `web_search` verifier as `pooled_eval.py`
-and the same `verifier_prompt.md` system prompt. At completion it
-prints (and writes to `outputs/full_graph_verifications.score.json`)
-the totals reported in Table 6.
+the same verifier and system prompt (`verifier_prompt.md`) as
+`pooled_eval.py`. At completion it prints (and writes to
+`outputs/full_graph_verifications.score.json`) the totals reported in
+Table 6 — 14,110 verified, 424 refuted, 235 unclear, precision 0.9708.
 
 ### Graph-level statistics (Tables 2 / 4 / 5, paper §4.1, §D.1)
 
-`eval/compute_graph_stats.py` reproduces the three descriptive tables
-that summarize the recovered graph:
+`eval/compute_graph_stats.py` is the exact script used to compute
+Tables 2, 4, and 5 in the paper:
 
 ```bash
 python3 eval/compute_graph_stats.py \
     --merge-artifact data/merge_artifact.json
 ```
 
-* **Table 2** (edges grouped by audit role × dependency-kind) is
-  recovered exactly from the relation/dependency-kind fields.
-* **Table 4** (per-target ancestor counts and max depth) is computed
-  by BFS from per-target seed lists. Max-depth values reproduce the
-  paper exactly; ancestor counts depend on the exact seed configuration
-  used during the per-investigation expansion (see `TABLE4_TARGETS` in
-  the script — adjust to match your run if you've used a different
-  seed mix).
-* **Table 5** (source-type distribution of operations) is computed by
-  classifying each relation's `anchor_list` source paths. The total
-  (14,701) reproduces exactly; the per-bucket counts depend on the
-  source-classifier regex (see `_RX_*` in the script — adjust to match
-  your local conventions).
+Each row of every table reproduces exactly:
+
+* **Table 2** — edges grouped by audit role × dependency-kind, counted
+  from each relation's `relation` and `dependency_kind` fields.
+* **Table 4** — per-target ancestor counts and max depth via BFS over
+  the upstream-edge subset (every relation type *except*
+  `used_for_evaluation`), starting from a single canonical seed per
+  target (see `TABLE4_TARGETS`).
+* **Table 5** — source-type distribution using the classifier in
+  `classify_source()`: anchors with `huggingface.co` count as HF cards;
+  `arxiv.org` / `*.pdf` as PDFs; code/config/markdown extensions or
+  `github.com` paths as code (with `readme` → other docs and `/blog/`
+  → blog as exceptions); other blog patterns as blog; everything else
+  as other docs.
 
 ### Adding a new submission
 

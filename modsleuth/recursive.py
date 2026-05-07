@@ -86,10 +86,38 @@ def _new_upstreams(graph: dict, already: set[str]) -> Counter:
     return counts
 
 
+def _pick_bfs(scored: Counter, expanded: set[str], top_k: int) -> list[str]:
+    """Breadth-first: take the top-K by parent count at this depth."""
+    return [n for n, _ in scored.most_common(top_k)]
+
+
+def _pick_dfs(scored: Counter, expanded: set[str], top_k: int) -> list[str]:
+    """Depth-first: pick the single highest-scoring un-expanded node and
+    follow that chain. ``top_k`` is ignored — DFS expands one node per
+    round, deepening one chain at a time."""
+    if not scored:
+        return []
+    return [scored.most_common(1)[0][0]]
+
+
+def _pick_beam(scored: Counter, expanded: set[str], top_k: int,
+               beam_history: dict[str, int]) -> list[str]:
+    """Beam search: keep the global top-K most-promising parents across
+    all depths, scored by cumulative parent-count seen so far. ``top_k``
+    is the beam width."""
+    for n, s in scored.items():
+        if n not in expanded:
+            beam_history[n] = beam_history.get(n, 0) + s
+    ranked = sorted(((n, s) for n, s in beam_history.items() if n not in expanded),
+                    key=lambda kv: kv[1], reverse=True)
+    return [n for n, _ in ranked[:top_k]]
+
+
 def expand_seed(seed: str, depth: int, top_k: int,
-                storage_root: Path) -> Path:
-    """Run the base pipeline for ``seed``, then BFS-expand top-K parents
-    up to ``depth`` hops. Returns the path to the final merged graph.
+                storage_root: Path, strategy: str = "bfs") -> Path:
+    """Run the base pipeline for ``seed``, then expand top-K parents up
+    to ``depth`` hops using ``strategy`` ∈ {bfs, dfs, beam}. Returns the
+    path to the final merged graph.
     """
     seed_storage = (storage_root / _slug(seed)).resolve()
     seed_storage.mkdir(parents=True, exist_ok=True)
@@ -98,7 +126,7 @@ def expand_seed(seed: str, depth: int, top_k: int,
     env["MODSLEUTH_STORAGE"] = str(seed_storage)
     env["MODSLEUTH_PATH"] = str(seed_storage / "graph.db")
 
-    print(f"\n=== seed={seed}  storage={seed_storage} ===", flush=True)
+    print(f"\n=== seed={seed}  storage={seed_storage}  strategy={strategy} ===", flush=True)
 
     # Depth-1: full base pipeline against the seed.
     _run(env, "init")
@@ -108,8 +136,9 @@ def expand_seed(seed: str, depth: int, top_k: int,
         _run(env, "run", stage)
 
     expanded: set[str] = {seed}
+    beam_history: dict[str, int] = {}  # only used by beam
 
-    # Depth d ∈ [2..depth]: pick top-K parents in the current merged graph,
+    # Depth d ∈ [2..depth]: pick parents per the chosen strategy,
     # call run_expand on each, then re-merge.
     for d in range(2, depth + 1):
         merge_path = _latest_merge_path(seed_storage)
@@ -118,8 +147,18 @@ def expand_seed(seed: str, depth: int, top_k: int,
         if not scored:
             print(f"[depth {d}] no new upstreams to expand; stopping early", flush=True)
             break
-        candidates = [n for n, _ in scored.most_common(top_k)]
-        print(f"[depth {d}] expanding {len(candidates)} parents: {candidates}", flush=True)
+        if strategy == "bfs":
+            candidates = _pick_bfs(scored, expanded, top_k)
+        elif strategy == "dfs":
+            candidates = _pick_dfs(scored, expanded, top_k)
+        elif strategy == "beam":
+            candidates = _pick_beam(scored, expanded, top_k, beam_history)
+        else:
+            raise ValueError(f"unknown strategy: {strategy!r}")
+        if not candidates:
+            print(f"[depth {d}] no candidates returned by {strategy}; stopping", flush=True)
+            break
+        print(f"[depth {d}] {strategy}: expanding {len(candidates)} parent(s): {candidates}", flush=True)
         for node in candidates:
             _run(env, "run", "expand", "--node", node)
             expanded.add(node)
@@ -138,7 +177,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--depth", type=int, default=3,
                    help="Maximum recursion depth (depth 1 = base pipeline only).")
     p.add_argument("--top-k", type=int, default=5,
-                   help="Per-depth, expand the top-K parents by parent count.")
+                   help="Top-K parents per round (beam width for --strategy beam; "
+                        "branching factor for --strategy bfs; ignored for --strategy dfs).")
+    p.add_argument("--strategy", choices=("bfs", "dfs", "beam"), default="bfs",
+                   help="Per-round expansion policy. bfs = level-by-level top-K; "
+                        "dfs = follow the single highest-scoring chain; "
+                        "beam = global top-K across depths by cumulative score.")
     p.add_argument("--storage-root", type=Path,
                    default=REPO_ROOT / "storage",
                    help="Root directory for per-seed MODSLEUTH_STORAGE dirs.")
@@ -147,7 +191,8 @@ def main(argv: list[str] | None = None) -> int:
     args.storage_root.mkdir(parents=True, exist_ok=True)
     finals: list[Path] = []
     for seed in args.seed:
-        finals.append(expand_seed(seed, args.depth, args.top_k, args.storage_root))
+        finals.append(expand_seed(seed, args.depth, args.top_k,
+                                  args.storage_root, args.strategy))
 
     print("\n=== finished ===")
     for path in finals:

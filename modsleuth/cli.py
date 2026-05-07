@@ -260,25 +260,34 @@ def expand_cmd(node: str, planner_model: str, subagent_model: str,
 @click.option("--depth", type=int, default=3, show_default=True,
               help="Maximum recursion depth (depth 1 = base pipeline only).")
 @click.option("--top-k", type=int, default=5, show_default=True,
-              help="Per-depth, expand the top-K parents by parent count.")
+              help="Top-K parents per round (beam width for --strategy beam; "
+                   "branching factor for --strategy bfs; ignored for --strategy dfs).")
+@click.option("--strategy",
+              type=click.Choice(["bfs", "dfs", "beam"], case_sensitive=False),
+              default="bfs", show_default=True,
+              help="Per-round expansion policy: bfs (level-by-level top-K), "
+                   "dfs (single highest-scoring chain), or beam (global top-K "
+                   "across depths by cumulative score).")
 @click.option("--storage-root", "storage_root", default=None,
               help="Root directory for per-seed MODSLEUTH_STORAGE dirs. "
                    "Defaults to <repo>/storage.")
 def recursive_cmd(seeds: tuple[str, ...], depth: int, top_k: int,
-                  storage_root: str | None):
+                  strategy: str, storage_root: str | None):
     """Reference recursive-expansion driver (paper §3.2 / §A).
 
-    BFS-style multi-hop driver. For each seed, runs the base pipeline,
-    then iteratively expands the top-K newly-discovered upstream artifacts
-    (ranked by parent count) up to ``--depth`` hops. Each seed gets its
-    own MODSLEUTH_STORAGE directory; merge across seeds afterwards by
-    passing all per-seed merge_artifact.json files to ``modsleuth run merge``.
+    Multi-hop driver. For each seed, runs the base pipeline, then
+    iteratively expands newly-discovered upstream artifacts up to
+    ``--depth`` hops using the selected ``--strategy`` (BFS / DFS /
+    beam). Each seed gets its own MODSLEUTH_STORAGE directory; merge
+    across seeds afterwards by passing all per-seed merge_artifact.json
+    files to ``modsleuth run merge``.
     """
     from .recursive import main as recursive_main
     argv = []
     for s in seeds:
         argv += ["--seed", s]
-    argv += ["--depth", str(depth), "--top-k", str(top_k)]
+    argv += ["--depth", str(depth), "--top-k", str(top_k),
+             "--strategy", strategy]
     if storage_root:
         argv += ["--storage-root", storage_root]
     raise SystemExit(recursive_main(argv))
