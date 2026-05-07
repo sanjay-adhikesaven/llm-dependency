@@ -328,16 +328,22 @@ def dedup_cmd(source: str, dest: str, stages: str, log_path: str | None):
 @click.option("--target-size", type=int, default=80, show_default=True,
               help="Approximate target node count for --seed expansion. Highest-"
                    "relevance neighbors fill the budget first.")
+@click.option("--top-k", type=int, default=None,
+              help="Cap to top-K nodes by total degree (used only when --seed is "
+                   "not given).")
+@click.option("--min-degree", type=int, default=0, show_default=True,
+              help="Drop nodes with total degree < this value before serving.")
 @click.option("--port", type=int, default=8102, show_default=True,
               help="HTTP port to serve on.")
 @click.option("--host", default="127.0.0.1", show_default=True,
               help="Bind address.")
 def viz_cmd(source_path: str, seed: str | None, depth: int, target_size: int,
-            port: int, host: str):
+            top_k: int | None, min_degree: int, port: int, host: str):
     """Serve an interactive graph viewer for a merged JSON graph."""
     from .viz import serve
     serve(source=Path(source_path), host=host, port=port,
-          seed=seed, depth=depth, target_size=target_size)
+          seed=seed, depth=depth, target_size=target_size,
+          top_k=top_k, min_degree=min_degree)
 
 
 @main.group()

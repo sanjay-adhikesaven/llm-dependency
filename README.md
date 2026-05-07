@@ -217,14 +217,18 @@ graph with 24 parallel `claude` workers; release-filter takes under 2 min.
 modsleuth viz --source path/to/graph.json --port 8102
 ```
 
-A self-contained HTTP server with a vis-network frontend. Without `--seed`,
-the default view caps at the top 200 nodes by degree (min-degree ≥ 10)
-with physics off; raise the slider or trigger an ego mode (1-hop or 2-hop)
-on any selected node to explore further. Search auto-pivots to ego mode
-on the matching node.
+A self-contained HTTP server with a Cytoscape + dagre frontend. The UI
+has two tabs — **Graph** (force / dagre layout, lattice subsumption
+edges, family chips, dep/relation filters) and **Operations** (each
+training event grouped with its participating edges, descriptions, and
+anchor citations) — plus a slide-out detail panel on the right that
+surfaces aliases, link badges (HF model / dataset / collection, paper,
+GitHub, blog, vendor docs), per-edge anchor blockquotes (verbatim
+excerpts and explanations grounded to a source path), and outgoing /
+incoming edge lists for any selected node.
 
-For large graphs (≥ a few thousand edges) the all-at-once view is rarely
-insightful. Pass `--seed` to pre-prune the payload to a focused
+For graphs above a few thousand edges, the all-at-once view is rarely
+insightful — pass `--seed` to pre-prune the payload to a focused
 ego-expansion centered on a chosen node:
 
 ```bash
@@ -246,12 +250,17 @@ seed instead of a dense mass of evaluation edges.
 
 Tunables:
 
-- `--depth N` — hops to expand (default 2). Use 1 for immediate
-  neighbors only, 3 for a wider context.
-- `--target-size N` — approximate node budget (default 80). The BFS
-  stops admitting once it hits this; smaller is more readable.
-- Combine multiple seeds by re-running with different `--seed` values
-  or by changing the depth/budget.
+- `--depth N` — hops to expand from the seed (default 2). Use 1 for
+  immediate neighbors only, 3 for wider context.
+- `--target-size N` — approximate node budget for the seeded expansion
+  (default 80). The BFS stops admitting once it hits this; smaller is
+  more readable.
+- `--top-k N` / `--min-degree N` — server-side prune by degree (used
+  only when `--seed` is not given). Useful for a degree-filtered global
+  view of a large graph without picking a center.
+
+Combine multiple framings by re-running with different `--seed` values
+or different `--depth` / `--target-size` budgets.
 
 ## Edge audit (sanity analyzer)
 
