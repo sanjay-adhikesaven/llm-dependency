@@ -474,20 +474,3 @@ python -m pytest tests/ -q
 - **dependency-kind** — coarse type label (`direct` / `indirect`) on every
   edge, distinguishing artifacts that materially enter weights or training
   data from those that merely influence development decisions.
-
-## Citation
-
-If you use ModSleuth, please cite the NeurIPS 2026 paper:
-
-```bibtex
-@inproceedings{modsleuth2026,
-  title     = {Which Models Are Our Models Built On? Auditing Invisible Dependencies in Modern LLMs},
-  author    = {Anonymous Author(s)},
-  booktitle = {Advances in Neural Information Processing Systems},
-  year      = {2026},
-}
-```
-
-## License
-
-TBD (add `LICENSE` before public release).
