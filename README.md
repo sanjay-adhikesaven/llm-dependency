@@ -4,7 +4,7 @@ Reconstructing recursive, evidence-grounded dependency graphs of LLM
 releases from public artifacts (technical reports, model and dataset
 cards, code repositories, release blogs).
 
-This repository accompanies the NeurIPS 2026 paper *"Which Models Are
+This repository accompanies the NeurIPS 2026 submission *"Which Models Are
 Our Models Built On? Auditing Invisible Dependencies in Modern LLMs"*
 and provides:
 
