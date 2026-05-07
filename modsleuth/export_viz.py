@@ -42,7 +42,7 @@ TARGETS: list[dict[str, str]] = [
 
 
 def export_static(source: Path, out_dir: Path, *,
-                  depth: int = 3, target_size: int = 120,
+                  depth: int = 3, target_size: int = 60,
                   targets: list[dict[str, str]] | None = None) -> dict[str, Any]:
     """Build a self-contained static viz at `out_dir` with one tab per target."""
     targets = targets or TARGETS

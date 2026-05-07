@@ -33,7 +33,7 @@
      "explanation": "The dataset field specifies the HF dataset id used for SFT, and the span-masking flags document how tool outputs are excluded from the loss."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
      "location": "",
      "excerpt": "datasets: - rl-research/dr-tulu-sft-data ... This model has undergone SFT training on [this dataset](https://huggingface.co/datasets/rl-research/dr-tulu-sft-data).",
      "explanation": "Frontmatter datasets field and body sentence both name dr-tulu-sft-data as the SFT training corpus."
@@ -60,7 +60,7 @@
      "explanation": "model_name_or_path identifies the base checkpoint that DR-Tulu-SFT-8B initializes from."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
      "location": "",
      "excerpt": "base_model: Qwen/Qwen3-8B ... This is the SFT checkpoint of DR Tulu, an open deep research agent trained on top of [Qwen3-8B](https://huggingface.co/Qwen/Qwen3-8B).",
      "explanation": "Frontmatter base_model field and body text both pin Qwen3-8B as the SFT warm-start checkpoint."
@@ -87,7 +87,7 @@
      "explanation": "The model_name variable is the SFT checkpoint and is passed as --model_name_or_path to grpo_fast.py, identifying the warm-start of the RL run."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
      "location": "",
      "excerpt": "base_model: - rl-research/DR-Tulu-SFT-8B ... This is the RL checkpoint of DR Tulu, an open deep research agent trained on top of [rl-research/DR-Tulu-SFT-8B].",
      "explanation": "Frontmatter base_model and body text both pin DR-Tulu-SFT-8B as the RL warm-start checkpoint."
@@ -120,13 +120,13 @@
      "explanation": "The RL training script's only training dataset is the dr-tulu-rl-data HF dataset, mixed at weight 1.0."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
      "location": "",
      "excerpt": "datasets: - rl-research/dr-tulu-rl-data ... This model has undergone RL training on [this dataset](https://huggingface.co/datasets/rl-research/dr-tulu-rl-data).",
      "explanation": "Frontmatter datasets field and body sentence both name dr-tulu-rl-data as the RL training corpus."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/53a02564-76a5-4be5-aa94-aa35e8b7ff8b/batch/dr-tulu-rl-data.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/53a02564-76a5-4be5-aa94-aa35e8b7ff8b/batch/dr-tulu-rl-data.md",
      "location": "",
      "excerpt": "This dataset contains the RL training data for DR Tulu, containing prompts and search-based rubrics generated from OpenScholar and SearchArena prompts, with rubrics generated using GPT-4.1.",
      "explanation": "Identifies the dataset (the file's own card) as RL training data for DR Tulu, establishing trained_on."
@@ -159,7 +159,7 @@
      "explanation": "Lattice description names SearchArena prompts as a source; the canonical SearchArena release on HF is lmarena-ai/search-arena-24k."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/53a02564-76a5-4be5-aa94-aa35e8b7ff8b/batch/dr-tulu-rl-data.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/53a02564-76a5-4be5-aa94-aa35e8b7ff8b/batch/dr-tulu-rl-data.md",
      "location": "",
      "excerpt": "containing prompts and search-based rubrics generated from OpenScholar and SearchArena prompts",
      "explanation": "Names SearchArena as a prompt source for the RL data DR-Tulu-8B was trained on."
@@ -207,7 +207,7 @@
      "explanation": "The lattice description identifies GPT-4.1 as the model that generated the rubric content embedded in the rl-data dataset."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/53a02564-76a5-4be5-aa94-aa35e8b7ff8b/batch/dr-tulu-rl-data.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/53a02564-76a5-4be5-aa94-aa35e8b7ff8b/batch/dr-tulu-rl-data.md",
      "location": "",
      "excerpt": "with rubrics generated using GPT-4.1",
      "explanation": "Names GPT-4.1 as the model that generated the search-based rubrics included in the RL training data."
@@ -255,7 +255,7 @@
      "explanation": "OpenAI's healthbench oss_eval/hard/consensus URLs are the eval source."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
      "location": "",
      "excerpt": "| Benchmark | SQAv2 | HealthBench | ... | DR-Tulu-8B (this model) | 88.3 | 52.8 |",
      "explanation": "Eval table column HealthBench with score 52.8 documents this benchmark for DR-Tulu-8B."
@@ -282,7 +282,7 @@
      "explanation": "Identifies realliyifei/ResearchQA as the eval source."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
      "location": "",
      "excerpt": "| Benchmark | SQAv2 | HealthBench | ResearchQA | ... | DR-Tulu-8B (this model) | 88.3 | 52.8 | 75.7 |",
      "explanation": "Eval table column ResearchQA with score 75.7 documents this benchmark for DR-Tulu-8B."
@@ -303,7 +303,7 @@
      "explanation": "Tables 2 and 3 report DR Tulu-8B (RL) per-aspect scores on DeepResearchBench."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
      "location": "",
      "excerpt": "| ... | DeepResearch Bench | ... | DR-Tulu-8B (this model) | ... | 45.4 |",
      "explanation": "Eval table column DeepResearch Bench with score 45.4 documents this benchmark for DR-Tulu-8B."
@@ -330,7 +330,7 @@
      "explanation": "The eval script targets the SimpleQA test set."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
      "location": "",
      "excerpt": "| ... | SimpleQA | 2Wiki | WebWalker | ... | DR-Tulu-8B (this model) | ... | 75.9 |",
      "explanation": "Eval table column SimpleQA with score 75.9 documents this benchmark for DR-Tulu-8B."
@@ -351,7 +351,7 @@
      "explanation": "Section 6.1 names 2Wiki and Table 5 reports the score."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
      "location": "",
      "excerpt": "| ... | 2Wiki | WebWalker | ... | DR-Tulu-8B (this model) | ... | 68.9 | 39.0 |",
      "explanation": "Eval table column 2Wiki with score 68.9 documents this benchmark for DR-Tulu-8B."
@@ -372,7 +372,7 @@
      "explanation": "Section 6.1 names WebWalkerQA and Table 5 reports the score."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
      "location": "",
      "excerpt": "| ... | WebWalker | Average | ... | DR-Tulu-8B (this model) | ... | 39.0 | 63.7 |",
      "explanation": "Eval table column WebWalker with score 39.0 documents this benchmark for DR-Tulu-8B."
@@ -444,7 +444,7 @@
      "explanation": "Table 2 reports the SFT score on HealthBench."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
      "location": "",
      "excerpt": "| ... | HealthBench | ... | DR-Tulu-SFT-8B (this model) | 72.3 | 38.1 |",
      "explanation": "Eval table column HealthBench with score 38.1 documents this benchmark for DR-Tulu-SFT-8B."
@@ -465,7 +465,7 @@
      "explanation": "Table 2 reports the SFT score on ResearchQA."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
      "location": "",
      "excerpt": "| ... | ResearchQA | ... | DR-Tulu-SFT-8B (this model) | 72.3 | 38.1 | 68.5 |",
      "explanation": "Eval table column ResearchQA with score 68.5 documents this benchmark for DR-Tulu-SFT-8B."
@@ -486,7 +486,7 @@
      "explanation": "Tables 2 and 3 report the SFT scores on DeepResearchBench."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
      "location": "",
      "excerpt": "| ... | DeepResearch Bench | ... | DR-Tulu-SFT-8B (this model) | ... | 39.0 |",
      "explanation": "Eval table column DeepResearch Bench with score 39.0 documents this benchmark for DR-Tulu-SFT-8B."
@@ -507,7 +507,7 @@
      "explanation": "Table 5 reports SFT short-form scores."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
      "location": "",
      "excerpt": "| ... | SimpleQA | 2Wiki | WebWalker | ... | DR-Tulu-SFT-8B (this model) | ... | 75.5 |",
      "explanation": "Eval table column SimpleQA with score 75.5 documents this benchmark for DR-Tulu-SFT-8B."
@@ -528,7 +528,7 @@
      "explanation": "Table 5 reports SFT short-form scores."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
      "location": "",
      "excerpt": "| ... | 2Wiki | WebWalker | ... | DR-Tulu-SFT-8B (this model) | ... | 66.5 |",
      "explanation": "Eval table column 2Wiki with score 66.5 documents this benchmark for DR-Tulu-SFT-8B."
@@ -549,7 +549,7 @@
      "explanation": "Table 5 reports SFT short-form scores."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
      "location": "",
      "excerpt": "| ... | WebWalker | Average | ... | DR-Tulu-SFT-8B (this model) | ... | 31.9 | 56.0 |",
      "explanation": "Eval table column WebWalker with score 31.9 documents this benchmark for DR-Tulu-SFT-8B."
@@ -621,7 +621,7 @@
      "explanation": "The conversion script identifies anisha2102/RaR-Medicine-20k-o3-mini as the upstream source of the RaR-Medicine mix used in the Ai2 production RL run."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/53a02564-76a5-4be5-aa94-aa35e8b7ff8b/batch/dr-tulu-rl-data.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/53a02564-76a5-4be5-aa94-aa35e8b7ff8b/batch/dr-tulu-rl-data.md",
      "location": "",
      "excerpt": "2. anisha2102/RaR-Medicine-20k-o3-mini ... the first 1000 samples from RaR-Medicine",
      "explanation": "Source explicitly names anisha2102/RaR-Medicine-20k-o3-mini as an RL training data source for DR Tulu and gives the 1000-sample slice."
@@ -642,7 +642,7 @@
      "explanation": "The conversion script identifies anisha2102/RaR-Science-20k-o3-mini as the upstream source of the RaR-Science mix used in the Ai2 production RL run."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/53a02564-76a5-4be5-aa94-aa35e8b7ff8b/batch/dr-tulu-rl-data.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/53a02564-76a5-4be5-aa94-aa35e8b7ff8b/batch/dr-tulu-rl-data.md",
      "location": "",
      "excerpt": "For the RaR data, we use data from: 1. anisha2102/RaR-Science-20k-o3-mini ... We sample the first 3000 samples from RaR-Science",
      "explanation": "Source explicitly names anisha2102/RaR-Science-20k-o3-mini as an RL training data source for DR Tulu and gives the 3000-sample slice."
@@ -1050,7 +1050,7 @@
    "description": "DR-Tulu-No-RLER-8B is RL-trained warm-starting from rl-research/DR-Tulu-SFT-8B as declared in the model card base_model frontmatter; only RLER is removed from the otherwise identical recipe.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-no-rler-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-no-rler-8b.md",
      "location": "",
      "excerpt": "base_model: - rl-research/DR-Tulu-SFT-8B ... This is the RL checkpoint of DR Tulu, an open deep research agent trained on top of [rl-research/DR-Tulu-SFT-8B].",
      "explanation": "Frontmatter base_model and body text both pin DR-Tulu-SFT-8B as the warm-start for this ablation."
@@ -1065,7 +1065,7 @@
    "description": "DR-Tulu-No-RLER-8B was RL-trained on rl-research/dr-tulu-rl-data, the same RL corpus as the main DR-Tulu-8B; only the RLER reward component is removed for this ablation.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-no-rler-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-no-rler-8b.md",
      "location": "",
      "excerpt": "datasets: - rl-research/dr-tulu-rl-data ... This model has undergone RL training on this dataset. This model is trained without RLER, and is an ablation model for analysing the effect of RLER.",
      "explanation": "Frontmatter datasets field and body text confirm dr-tulu-rl-data as the RL training corpus for this ablation."
@@ -1080,7 +1080,7 @@
    "description": "DR Tulu-No-RLER-8B is the team's own design-space ablation companion to DR-Tulu-8B (same SFT base, same RL data, RLER removed) used to measure the contribution of the evolving-rubrics reward component.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-no-rler-8b.md",
+     "source": "storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-no-rler-8b.md",
      "location": "",
      "excerpt": "This is an ablation model! ... Our real model is rl-research/DR-Tulu-8B. ... This model is trained without RLER, and is an ablation model for analysing the effect of RLER.",
      "explanation": "Card explicitly designates this checkpoint as the ablation companion to DR-Tulu-8B for studying RLER's contribution."

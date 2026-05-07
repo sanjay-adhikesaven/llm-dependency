@@ -75,7 +75,7 @@
      "explanation": "README maps stage-2 32B to dolma3-dolmino with two ingredient mixes."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "we use 100B high-quality tokens sampled from a brand new data pool we introduce in this work, Dolma 3 Dolmino Mix",
      "explanation": "32B uses the 1125 dated 100B Dolmino mix variant."
@@ -156,7 +156,7 @@
      "explanation": "Table 5 enumerates each named source in the 100B Dolmino Mix, including TinyMATH Mind/PoT, CraneMath, MegaMatt, Dolmino Math, Stack-Edu (FIM), CraneCode, Reddit-to-Flashcards, Wiki-to-RCQA, Nemotron Synth QA, Math/Code Meta-Reasoning, Program-Verifiable, OMR Rewrite Full-Thoughts, QwQ Reasoning Traces, General Reasoning Mix, Gemini Reasoning Traces, Llama Nemotron Reasoning Traces, OpenThoughts2 Reasoning Traces, Tulu 3 SFT, Dolmino 1 Flan, olmOCR science PDFs (HQ subset), STEM-Heavy Crawl, and Common Crawl (HQ subset)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Reddit-to-Flashcards ... use GPT 4o-mini to rewrite submission-comment pairs from those subreddits into multiple-choice QA pairs.",
      "explanation": "Sub-corpus of Dolma 3 Dolmino Mix consumed by Olmo 3 Base 32B midtraining."
@@ -183,13 +183,13 @@
      "explanation": "Mid-training mix is the lattice item allenai/dolma3_dolmino_mix-100B-1125, whose subsets[] enumerates 'math-meta-reasoning' as a sub-corpus."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Math Meta-Reasoning** ... 381M (0.38%)",
      "explanation": "Table 5 lists Math Meta-Reasoning as a midtraining leaf."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "math-meta-reasoning",
      "explanation": "Mix-0925-ingredient1 lists math-meta-reasoning."
@@ -255,7 +255,7 @@
      "explanation": "Math Meta-Reasoning labeled."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Meta-reasoning ... synthetically augmented existing math ... and code problems with detailed annotations ... prompt GPT-4.1 and o4-mini to generate thinking traces",
      "explanation": "Sub-corpus of Dolma 3 Dolmino Mix consumed by Olmo 3 Base 32B midtraining."
@@ -321,13 +321,13 @@
      "explanation": "Ingredient-2 mix manifest enumerates leaf source groups (same families as ingredient-1)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Tulu 3 SFT^^ ... 1.1B (1.1%)",
      "explanation": "Table 5 lists Tulu 3 SFT as a midtraining leaf."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "tulu-3-sft",
      "explanation": "Mix-0925-ingredient1 lists tulu-3-sft."
@@ -405,7 +405,7 @@
      "explanation": "Sources Tulu 3 SFT from allenai/tulu-3-sft-mixture."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "We sample instruction data from the SFT set from T\u00fclu 3.",
      "explanation": "Sub-corpus of Dolma 3 Dolmino Mix consumed by Olmo 3 Base 32B midtraining."
@@ -462,7 +462,7 @@
      "explanation": "README maps OLMo 3 32B stage-3 to dolma3-longmino."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "100B tokens for Olmo 3 32B... The 100B mix for Olmo 3 32B maintains the same proportions as the 50B mix.",
      "explanation": "Direct statement that Olmo 3 32B trains on the 100B Longmino Mix during Stage 3."
@@ -510,7 +510,7 @@
      "explanation": "Long-context mix is the lattice item allenai/dolma3_longmino_mix-100B-1125, whose subsets[] enumerates 'midtraining-data' as a sub-corpus."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "The 100B mix for Olmo 3 32B maintains the same proportions as the 50B mix.",
      "explanation": "Names the 100B Longmino Mix used by the 32B."
@@ -525,7 +525,7 @@
    "description": "Aggregator-level pretraining edge: Olmo-3-1125-32B was pretrained on the full ~6T-token Dolma 3 Mix (6T) \u2014 the primary mix licensed ODC-BY, drawing from web content, academic publications, and code. This is the complete (non-redacted) variant of the mix; the same upsampling strategy is mirrored in dolma3_mix-6T-1025-7B for 7B reproduction.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/OLMo_3/runs/530e3387-b4e7-476c-a9f6-0a349454c754/batch/dolma3_mix-6t.md",
+     "source": "storage/seeds/OLMo_3/runs/530e3387-b4e7-476c-a9f6-0a349454c754/batch/dolma3_mix-6t.md",
      "location": "",
      "excerpt": "The Dolma 3 Mix (6T) is the collection of data used during the pretraining stage to train the Olmo-3-1125-32B model.",
      "explanation": "Direct statement in the card establishing dolma3_mix-6T as the pretraining mix for Olmo-3-1125-32B."
@@ -561,7 +561,7 @@
      "explanation": "README documents OLMo 3 32B stage-1 trains on dolma3 via OLMo-mix-0925-official mix."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "We first train Olmo 3 Base on Dolma 3 Mix, our 6T token pretraining data mix.",
      "explanation": "Identifies Dolma 3 Mix as the pretraining corpus for Olmo 3 Base, which includes the 32B variant."
@@ -585,13 +585,13 @@
      "explanation": "Documents Dolma 3 Mix as the pretraining dataset for Olmo 3 Base."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "We first train Olmo 3 Base on Dolma 3 Mix, our 6T token pretraining data mix.",
      "explanation": "Section 3.4 describes pretraining of Olmo 3 Base (which encompasses both 7B and 32B variants) on the 6T Dolma 3 Mix."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "We first train Olmo 3 Base on Dolma 3 Mix, our 6T token pretraining data mix.",
      "explanation": "States that Olmo 3 Base (32B) trains on the Dolma 3 Mix 6T pretraining aggregator."
@@ -666,13 +666,13 @@
    "description": "olmOCR transformed scientific PDFs into the academic-documents portion of dolma3_mix-6T (complete with olmOCR science PDFs, unlike the 7B-repro mix which has redactions). Content originated as PDFs; olmOCR rewrote them as text. The dolma3_pool card hosts these PDFs in the same repository as the source-of-record.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/OLMo_3/runs/530e3387-b4e7-476c-a9f6-0a349454c754/batch/dolma3_mix-6t-1025-7b.md",
+     "source": "storage/seeds/OLMo_3/runs/530e3387-b4e7-476c-a9f6-0a349454c754/batch/dolma3_mix-6t-1025-7b.md",
      "location": "",
      "excerpt": "please use our 32B training mix, which utilizes the same sampling strategy and is complete with olmOCR science pdfs",
      "explanation": "Confirms the 32B mix incorporates olmOCR-produced science PDFs."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/OLMo_3/runs/530e3387-b4e7-476c-a9f6-0a349454c754/batch/dolma3_pool.md",
+     "source": "storage/seeds/OLMo_3/runs/530e3387-b4e7-476c-a9f6-0a349454c754/batch/dolma3_pool.md",
      "location": "",
      "excerpt": "olmOCR Science PDFs: Current repository",
      "explanation": "Pool card pins olmOCR Science PDFs as a stream sourced from olmOCR."
@@ -684,7 +684,7 @@
      "explanation": "olmOCR science PDFs are linearized and filtered PDF text used as the olmocr-science-pdfs midtraining subset of the Dolmino Mix."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "olmocr_science_pdfs-high_quality_length_2e12_<topic>,olmocr_science_pdfs-high_quality_length_2e13_<topic>",
      "explanation": "Mix-0925-ingredient1 lists olmocr_science_pdfs sub-corpora across topics and length buckets."
@@ -831,7 +831,7 @@
      "explanation": "The qwq-reasoning-traces midtraining subset consists of QwQ-32B-generated reasoning traces from OpenMathReasoning."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "qwq-reasoning-traces",
      "explanation": "Mix-0925-ingredient1 lists qwq-reasoning-traces; the qwq label corresponds to QwQ-32B-generated traces (cf. yaml path 'qwq-redo-reformatted')."
@@ -951,7 +951,7 @@
      "explanation": "The benchmark 'ARC MC' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "ARC MC 94.7",
      "explanation": "Table 2 lists ARC MC as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -1023,7 +1023,7 @@
      "explanation": "ARC MC score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "ARC MC 94.7 ... 89.2",
      "explanation": "Benchmark allenai/ai2_arc appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -1086,7 +1086,7 @@
      "explanation": "The benchmark 'HellaSwag RC' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "HellaSwag RC 84.8",
      "explanation": "Table 2 lists HellaSwag RC as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -1170,7 +1170,7 @@
      "explanation": "HellaSwag score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "HellaSwag RC 84.8 ... 77.7",
      "explanation": "Benchmark Rowan/hellaswag appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -1188,7 +1188,7 @@
      "explanation": "Benchmark name appears in the OLMo-3-32B pretraining fast-eval task list."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
      "location": "",
      "excerpt": "'hellaswag_bpb_5shot'",
      "explanation": "32B script lists hellaswag eval task."
@@ -1212,7 +1212,7 @@
      "explanation": "DownstreamEvaluatorCallbackConfig in this pretrain script enumerates HellaSwag task slugs."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "HellaSwag RC appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the HellaSwag RC row reports the score for Olmo 3 Base 32B."
@@ -1257,25 +1257,25 @@
      "explanation": "Tasks list includes MMLU stem subgroup."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "MMLU STEM 70.8",
      "explanation": "Table 2 lists MMLU STEM as a benchmark used to evaluate Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "MMLU Humanities 78.3",
      "explanation": "Table 2 lists MMLU Humanities as a benchmark used to evaluate Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "MMLU Social Sci 84.0",
      "explanation": "Table 2 lists MMLU Social Sci as a benchmark used to evaluate Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "MMLU Other 75.1",
      "explanation": "Table 2 lists MMLU Other as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -1335,7 +1335,7 @@
      "explanation": "MMLU Other score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MMLU STEM ... MMLU Humanities ... MMLU Social Sci. ... MMLU Other",
      "explanation": "Benchmark cais/mmlu appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -1359,7 +1359,7 @@
      "explanation": "Benchmark used in Olmo 3 Base evaluation suite per OlmoBaseEval tables."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
      "location": "",
      "excerpt": "'mmlu_humanities_test_bpb_5shot','mmlu_humanities_test_mc_5shot_fast', 'mmlu_other_test_bpb_5shot', 'mmlu_other_test_mc_5shot_fast', 'mmlu_social_sciences_test_bpb_5shot', ...",
      "explanation": "32B script lists MMLU subject-split variants."
@@ -1425,7 +1425,7 @@
      "explanation": "Shared."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MMLU STEM MC appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the MMLU STEM MC row reports the score for Olmo 3 Base 32B."
@@ -1482,7 +1482,7 @@
      "explanation": "The benchmark 'Basic Skills' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
      "location": "",
      "excerpt": "# Subset of OLMES",
      "explanation": "32B script tags OLMES subset like the 7B."
@@ -1545,7 +1545,7 @@
      "explanation": "Reports HumanEval score for Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval Code cluster scores for Olmo 3 32B Base."
@@ -1593,7 +1593,7 @@
      "explanation": "HumEval FIM Multi in Table 46."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "HumanEval 65.8 ... 49.1",
      "explanation": "Benchmark openai/openai_humaneval appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -1635,13 +1635,13 @@
      "explanation": "Benchmark name appears in the OLMo-3-32B pretraining fast-eval task list."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "HumanEval 61.2",
      "explanation": "Table 2 lists HumanEval as a benchmark used to evaluate Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
      "location": "",
      "excerpt": "'codex_humaneval_gold_bpb_3shot'",
      "explanation": "32B script lists codex_humaneval."
@@ -1689,7 +1689,7 @@
      "explanation": "Shared base eval."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "HumanEval appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the HumanEval row reports the score for Olmo 3 Base 32B."
@@ -1746,7 +1746,7 @@
      "explanation": "Table 2 (Olmo 3 Base 32B OlmoBaseEval Main suite, page 9) reports a MBPP score of 56.2 for allenai/Olmo-3-1125-32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval Code cluster scores for Olmo 3 32B Base."
@@ -1776,7 +1776,7 @@
      "explanation": "MBPP listed in Base Easy suite Table 45 (applied to all base models)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MBPP 59.6 ... 43.6",
      "explanation": "Benchmark google-research-datasets/mbpp appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -1818,13 +1818,13 @@
      "explanation": "Benchmark name appears in the OLMo-3-32B pretraining fast-eval task list."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "MBPP 52.1",
      "explanation": "Table 2 lists MBPP as a benchmark used to evaluate Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
      "location": "",
      "excerpt": "'codex_mbpp_gold_bpb_3shot','mt_mbpp_cpp_gold_bpb_3shot','mt_mbpp_java_gold_bpb_3shot','mt_mbpp_rust_gold_bpb_3shot'",
      "explanation": "32B script lists Codex-MBPP and multilingual variants."
@@ -1878,7 +1878,7 @@
      "explanation": "Shared eval."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MBPP appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the MBPP row reports the score for Olmo 3 Base 32B."
@@ -1959,7 +1959,7 @@
      "explanation": "Listed in OlmoBaseEval."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Minerva ... reported alongside MATH",
      "explanation": "Benchmark Minerva appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -2004,13 +2004,13 @@
      "explanation": "The benchmark 'MultiPL MBPPP' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "MultiPL HumanEval 38.0",
      "explanation": "Table 2 lists MultiPL HumanEval as a benchmark used to evaluate Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "MultiPL MBPP 41.5",
      "explanation": "Table 2 lists MultiPL MBPP as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -2070,7 +2070,7 @@
      "explanation": "Shared."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MultiPL-E HumanEval appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the MultiPL-E HumanEval row reports the score for Olmo 3 Base 32B."
@@ -2103,19 +2103,19 @@
      "explanation": "The paper directly states Qwen3 32B was used to generate the CraneMath and MegaMatt rewrite subsets included in the Olmo 3 Dolmino Mix midtraining data."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "we generate an independent reproduction of SwallowMath by rewriting FineMath4+ with the SwallowMath prompt, using Qwen3",
      "explanation": "Names Qwen3 as the generator of CraneMath."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "we collect the Megamath-Web-Pro data ... and rewrite it using Qwen3",
      "explanation": "Names Qwen3 as the generator of MegaMatt."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "we apply the SwallowCode two-stage rewriting pipeline ... using the prompts from the original SwallowCode paper and Qwen/Qwen2.5-Coder-32B-Instruct",
      "explanation": "CraneCode produced by Qwen3 rewrites of Stack-v2-Smol."
@@ -2250,7 +2250,7 @@
      "explanation": "Qwen2.5-32B-Instruct is the Wiki-to-RCQA generator."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "We collect Wikipedia passages and prompted Qwen2.5 32B Instruct to generate QA pairs based on these passages",
      "explanation": "Qwen2.5 32B Instruct generates Wiki-to-RCQA consumed by Olmo 3 Base 32B midtraining."
@@ -2346,13 +2346,13 @@
      "explanation": "Yaml names a verifiable shard generated by GPT-4.1."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "we prompt GPT-4.1 and o4-mini to generate thinking traces ... distill thinking traces from GPT-4.1 and o4-mini models",
      "explanation": "Names GPT-4.1 as a generator of meta-reasoning and program-verifiable traces."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "verifiable-gpt41",
      "explanation": "Mix-0925-ingredient1 lists verifiable-gpt41 (GPT-4.1-generated verifiable answers)."
@@ -2472,7 +2472,7 @@
      "explanation": "GPT-4.1 is one of the Program-Verifiable generators."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we prompt GPT-4.1 and o4-mini to generate thinking traces ... distill thinking traces from GPT-4.1 and o4-mini ... instructing GPT-4.1 to edit items for clarity",
      "explanation": "GPT-4.1 generates meta-reasoning/program-verifiable/OMR thinking traces consumed by Olmo 3 Base 32B midtraining."
@@ -2517,13 +2517,13 @@
      "explanation": "Yaml names a verifiable shard generated by OpenAI o4-mini-high."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "we prompt GPT-4.1 and o4-mini to generate thinking traces ... distill thinking traces from GPT-4.1 and o4-mini models, and finally filter those for correctness",
      "explanation": "Names o4-mini as a generator of meta-reasoning and program-verifiable traces."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "verifiable-o4mini",
      "explanation": "Mix-0925-ingredient1 lists verifiable-o4mini (o4-mini-generated verifiable answers)."
@@ -2631,7 +2631,7 @@
      "explanation": "o4-mini is one of the Program-Verifiable generators."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we prompt GPT-4.1 and o4-mini to generate thinking traces ... distill thinking traces from GPT-4.1 and o4-mini models",
      "explanation": "o4-mini generates meta-reasoning/program-verifiable thinking traces consumed by Olmo 3 Base 32B midtraining."
@@ -2706,7 +2706,7 @@
      "explanation": "GPT-4o-mini is the generator for Reddit-to-Flashcards."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "use GPT 4o-mini to rewrite submission-comment pairs from those subreddits into multiple-choice QA pairs.",
      "explanation": "GPT-4o-mini generates Reddit-to-Flashcards consumed by Olmo 3 Base 32B midtraining."
@@ -2817,7 +2817,7 @@
      "explanation": "Sources OpenThoughts2 traces from open-thoughts/OpenThoughts2-1M."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "OpenThoughts2 Reasoning Traces ... 5.6B 1.11M 1.25B (1.25%) 402K",
      "explanation": "Sub-corpus of Dolma 3 Dolmino Mix consumed by Olmo 3 Base 32B midtraining."
@@ -2862,7 +2862,7 @@
      "explanation": "Dolma 3 quality classifier (allenai/dolma3-fasttext-quality-classifier) gates the STEM-Heavy Crawl subset and selects top quality buckets for web data feeding midtraining."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "we also train and apply a fastText-based quality classifier to assign each document a quality score",
      "explanation": "This classifier filters/scores documents that decide what enters Olmo 3 32B's pretraining pool."
@@ -2916,13 +2916,13 @@
      "explanation": "Documents in the Dolma 3 web pool are scored by this classifier; quality-aware upsampling/filtering uses these scores when constructing the final pretraining mix."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "We also train and apply a fastText-based quality classifier to assign each document a quality score.",
      "explanation": "States a fastText quality classifier scores documents in the pretraining pool consumed by Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we choose to filter this set using the quality classifier introduced in Section \u00a73.4.1; in detail, we use a threshold score of 0.6",
      "explanation": "dolma3 quality classifier filters STEM-Heavy Crawl consumed by Olmo 3 Base 32B midtraining."
@@ -2961,7 +2961,7 @@
      "explanation": "The Dolma 3 weborganizer topic classifier (a sibling Dolma 3 classifier) is part of the same Section 3.4.1 filtering toolkit applied to the web subsets fed into the Dolmino Mix."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "we distill the transformer-based models by Wettig et al. 2025 into a simpler fastText model",
      "explanation": "Topic classifier governs which documents enter each topic-balanced mix subset."
@@ -2991,7 +2991,7 @@
      "explanation": "The fastText topic classifier is used to partition the deduplicated corpus into topic buckets, producing the topical reweighting and filtering applied to the pretraining mix."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we distill the transformer-based models by Wettig et al. 2025 into a simpler fastText model. We only partition by topic, not format.",
      "explanation": "States the fastText topic classifier partitions the web pool by topic for Olmo 3 Base 32B."
@@ -3054,7 +3054,7 @@
      "explanation": "CraneMath methodology is an open-licensed reproduction of the SwallowMath recipe."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "we generate an independent reproduction of SwallowMath by rewriting FineMath4+ with the SwallowMath prompt",
      "explanation": "Methodology of CraneMath borrowed from SwallowMath."
@@ -3102,7 +3102,7 @@
      "explanation": "Recipe-level inspiration from SwallowMath."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we generate an independent reproduction of SwallowMath by rewriting FineMath4+ with the SwallowMath prompt",
      "explanation": "SwallowMath recipe inspires CraneMath consumed by Olmo 3 Base 32B."
@@ -3159,7 +3159,7 @@
      "explanation": "Recipe-level inspiration from MegaMath-Web-Pro-Max."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Megamath-Web-Pro-Max ... in order to use this dataset, we re-generate it using open source models.",
      "explanation": "MegaMath-Web-Pro-Max recipe inspires MegaMatt consumed by Olmo 3 Base 32B."
@@ -3180,7 +3180,7 @@
      "explanation": "CraneCode methodology is a permissively-licensed reproduction of the SwallowCode recipe."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "we ... generate a permissively-licensed recreation [of SwallowCode] for use in our midtraining",
      "explanation": "CraneCode methodology is borrowed from SwallowCode."
@@ -3228,7 +3228,7 @@
      "explanation": "SwallowCode is the recipe being mirrored."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we apply the SwallowCode two-stage rewriting pipeline, with one stage to augment style, and another to optimize the code itself.",
      "explanation": "SwallowCode recipe inspires CraneCode consumed by Olmo 3 Base 32B."
@@ -3324,7 +3324,7 @@
      "explanation": "Table 5 enumerates each named source in the 100B Dolmino Mix, including TinyMATH Mind/PoT, CraneMath, MegaMatt, Dolmino Math, Stack-Edu (FIM), CraneCode, Reddit-to-Flashcards, Wiki-to-RCQA, Nemotron Synth QA, Math/Code Meta-Reasoning, Program-Verifiable, OMR Rewrite Full-Thoughts, QwQ Reasoning Traces, General Reasoning Mix, Gemini Reasoning Traces, Llama Nemotron Reasoning Traces, OpenThoughts2 Reasoning Traces, Tulu 3 SFT, Dolmino 1 Flan, olmOCR science PDFs (HQ subset), STEM-Heavy Crawl, and Common Crawl (HQ subset)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Stack-Edu (FIM) We include a modified version of Stack-Edu, in which 50% of documents reflect fill-in-the-middle (FIM) transformation via the infilling procedure from StarCoder2",
      "explanation": "Sub-corpus of Dolma 3 Dolmino Mix consumed by Olmo 3 Base 32B midtraining."
@@ -3348,7 +3348,7 @@
      "explanation": "Ingredient-2 mix manifest enumerates leaf source groups (same families as ingredient-1)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-mix-0925-official.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-mix-0925-official.txt",
      "location": "",
      "excerpt": "stack-edu_C,stack-edu_CSharp,...,stack-edu_TypeScript",
      "explanation": "Mix file lists 15 stack-edu_<lang> components."
@@ -3414,7 +3414,7 @@
      "explanation": "Stack-Edu FIM data flows into both Olmo 3 Base midtraining runs."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Stack-Edu (Rebalanced) GitHub code 137B 167M 409B (6.89%)",
      "explanation": "Table 4 lists Stack-Edu as 6.89% of Dolma 3 Mix; Section 3.4.3 names Stack-Edu as the code source."
@@ -3456,7 +3456,7 @@
      "explanation": "Sources Stack-Edu (FIM) from HuggingFaceTB/stack-edu."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Stack-Edu (Rebalanced) GitHub code 137B 167M 409B (6.89%) 526M",
      "explanation": "Table 4 lists Stack-Edu (Rebalanced) as a Dolma 3 Mix sub-corpus consumed by Olmo 3 Base 32B; resolved to HuggingFaceTB/stack-edu (root)."
@@ -3480,7 +3480,7 @@
      "explanation": "Stack-Edu FIM leaf for 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Stack-Edu (Rebalanced) GitHub code 409B (6.89%)",
      "explanation": "Stack-Edu (Rebalanced) is enumerated as a leaf source in the 6T Mix."
@@ -3522,7 +3522,7 @@
      "explanation": "Ingredient-2 mix manifest enumerates leaf source groups (same families as ingredient-1)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "StackEdu (FIM) ... 10.0B (10.0%)",
      "explanation": "Table 5 lists StackEdu (FIM) as a midtraining leaf."
@@ -3570,7 +3570,7 @@
      "explanation": "OMR Rewrite Full-Thoughts is a light GPT-4.1 transformation of OpenMathReasoning."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "a light rewrite of the OpenMathReasoning dataset, instructing GPT-4.1 to edit items for clarity, flow, and formatting",
      "explanation": "Names GPT-4.1 as the transformer for OMR Rewrite FullThoughts."
@@ -3651,7 +3651,7 @@
      "explanation": "Ingredient-2 mix manifest enumerates leaf source groups (same families as ingredient-1)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "omr-rewrite-fullthoughts",
      "explanation": "Mix-0925-ingredient1 lists omr-rewrite-fullthoughts."
@@ -3735,7 +3735,7 @@
      "explanation": "Sources QwQ Reasoning Traces from nvidia/OpenMathReasoning."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "OMR rewrite full-thoughts ... light rewrite of the OpenMathReasoning dataset, instructing GPT-4.1 to edit items for clarity, flow, and formatting",
      "explanation": "Sub-corpus of Dolma 3 Dolmino Mix consumed by Olmo 3 Base 32B midtraining."
@@ -3786,7 +3786,7 @@
      "explanation": "Ingredient-2 mix manifest enumerates leaf source groups (same families as ingredient-1)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "We include the 'diverse QA pairs' synth subset of the Nemotron CC dataset",
      "explanation": "Maps the Nemotron Synth QA leaf to Nemotron-CC source."
@@ -3816,7 +3816,7 @@
      "explanation": "Identifies Nemotron Synth QA as the Nemotron-CC diverse QA pairs subset."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "nemotron-synth-qa",
      "explanation": "Mix-0925-ingredient1 lists Nemotron-CC synthetic QA."
@@ -3867,7 +3867,7 @@
      "explanation": "Ingredient-2 mix manifest enumerates leaf source groups (same families as ingredient-1)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "dolmino_1-flan",
      "explanation": "Mix-0925-ingredient1 lists dolmino_1-flan."
@@ -3939,7 +3939,7 @@
      "explanation": "The benchmark 'BigCodeBench' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "BigCodeBench 43.7",
      "explanation": "Table 2 lists BigCodeBench as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -3981,7 +3981,7 @@
      "explanation": "Shared."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval Code cluster scores for Olmo 3 32B Base."
@@ -3999,7 +3999,7 @@
      "explanation": "BigCodeBench score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "BigCodeBench 43.7 ... 34.1",
      "explanation": "Benchmark bigcode/bigcodebench appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -4041,7 +4041,7 @@
      "explanation": "BigCodeBench is reported under OlmoBaseEval Code for Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "BigCodeBench appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the BigCodeBench row reports the score for Olmo 3 Base 32B."
@@ -4074,7 +4074,7 @@
      "explanation": "Listed as a benchmark in OlmoBaseEval / long-context tables for allenai/Olmo-3-1125-32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval Code cluster scores for Olmo 3 32B Base."
@@ -4086,7 +4086,7 @@
      "explanation": "DeepSeek LeetCode score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "DeepSeek LeetCode 2.0 ... 1.4",
      "explanation": "Benchmark davidheineman/deepseek-leetcode appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -4110,7 +4110,7 @@
      "explanation": "Blog explicitly cites RULER as the long-context benchmark used to evaluate Olmo 3-Base."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "DeepSeek LeetCode 2.0",
      "explanation": "Table 2 lists DeepSeek LeetCode as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -4140,7 +4140,7 @@
      "explanation": "Table 2 (Olmo 3 Base 32B OlmoBaseEval Main suite, page 9) reports a DeepSeek LeetCode score of 2.0 for allenai/Olmo-3-1125-32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "DeepSeek LeetCode appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the DeepSeek LeetCode row reports the score for Olmo 3 Base 32B."
@@ -4173,7 +4173,7 @@
      "explanation": "The benchmark 'DS 1000' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "DS 1000 29.4",
      "explanation": "Table 2 lists DS 1000 as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -4221,13 +4221,13 @@
      "explanation": "Shared."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "DS 1000 appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the DS 1000 row reports the score for Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval Code cluster scores for Olmo 3 32B Base."
@@ -4245,7 +4245,7 @@
      "explanation": "DS-1000 score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "DS 1000 29.4 ... 20.2",
      "explanation": "Benchmark xlangai/DS-1000 appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -4314,7 +4314,7 @@
      "explanation": "Table 2 (Olmo 3 Base 32B OlmoBaseEval Main suite, page 9) reports a MMLU STEM score of 70.8 for allenai/Olmo-3-1125-32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval MC STEM scores for Olmo 3 32B Base on ARC, MMLU STEM, MedMCQA, MedQA, SciQ."
@@ -4332,7 +4332,7 @@
      "explanation": "MMLU STEM in 32B stage-1 evals."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MMLU STEM 70.8 ... 59.7",
      "explanation": "Benchmark MMLU STEM appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -4377,7 +4377,7 @@
      "explanation": "The benchmark 'MedMCQA MC' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "MedMCQA MC 57.6",
      "explanation": "Table 2 lists MedMCQA MC as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -4413,7 +4413,7 @@
      "explanation": "MedMCQA MC score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MedMCQA MC 57.6 ... 48.3",
      "explanation": "Benchmark openlifescienceai/medmcqa appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -4443,7 +4443,7 @@
      "explanation": "Shared."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MedMCQA MC appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the MedMCQA MC row reports the score for Olmo 3 Base 32B."
@@ -4470,7 +4470,7 @@
      "explanation": "The benchmark 'MedQA MC' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "MedQA MC 53.8",
      "explanation": "Table 2 lists MedQA MC as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -4500,7 +4500,7 @@
      "explanation": "MedQA MC score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MedQA MC 53.8 ... 41.8",
      "explanation": "Benchmark bigbio/med_qa appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -4530,7 +4530,7 @@
      "explanation": "Shared."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MedQA MC appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the MedQA MC row reports the score for Olmo 3 Base 32B."
@@ -4557,7 +4557,7 @@
      "explanation": "The benchmark 'SciQ MC' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "SciQ MC 95.5",
      "explanation": "Table 2 lists SciQ MC as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -4605,7 +4605,7 @@
      "explanation": "SciQ MC score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "SciQ MC 95.5 ... 92.8",
      "explanation": "Benchmark allenai/sciq appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -4623,7 +4623,7 @@
      "explanation": "SciQ reported under OlmoBaseEval MC STEM for Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "SciQ MC appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the SciQ MC row reports the score for Olmo 3 Base 32B."
@@ -4668,7 +4668,7 @@
      "explanation": "Table 2 (Olmo 3 Base 32B OlmoBaseEval Main suite, page 9) reports a MMLU Humanities score of 78.3 for allenai/Olmo-3-1125-32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval MC Non-STEM scores for Olmo 3 32B Base."
@@ -4686,7 +4686,7 @@
      "explanation": "MMLU Humanities in 32B stage-1 evals."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MMLU Humanities 78.3 ... 68.9",
      "explanation": "Benchmark MMLU Humanities appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -4749,7 +4749,7 @@
      "explanation": "Table 2 (Olmo 3 Base 32B OlmoBaseEval Main suite, page 9) reports a MMLU Other score of 75.1 for allenai/Olmo-3-1125-32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval MC Non-STEM scores for Olmo 3 32B Base."
@@ -4767,7 +4767,7 @@
      "explanation": "MMLU Other in 32B stage-1 evals."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MMLU Other 75.1 ... 66.9",
      "explanation": "Benchmark MMLU Other appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -4848,7 +4848,7 @@
      "explanation": "CSQA MC score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "CSQA MC 82.3 ... 75.3",
      "explanation": "Benchmark tau/commonsense_qa appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -4860,7 +4860,7 @@
      "explanation": "CSQA in OlmoBaseEval."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "CSQA MC appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the CSQA MC row reports the score for Olmo 3 Base 32B."
@@ -4887,7 +4887,7 @@
      "explanation": "The benchmark 'PIQA MC' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "PiQA MC 85.6",
      "explanation": "Table 2 lists PiQA MC as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -4935,7 +4935,7 @@
      "explanation": "PiQA MC score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "PiQA MC 85.6 ... 80.2",
      "explanation": "Benchmark ybisk/piqa appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -4974,7 +4974,7 @@
      "explanation": "The benchmark 'SocialIQA MC' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "SocialIQA MC 83.9",
      "explanation": "Table 2 lists SocialIQA MC as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -5022,7 +5022,7 @@
      "explanation": "SocialIQA MC score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "SocialIQA MC 83.9 ... 80.3",
      "explanation": "Benchmark allenai/social_i_qa appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -5040,7 +5040,7 @@
      "explanation": "SocialIQA reported under OlmoBaseEval MC Non-STEM for Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "SocialIQA MC appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the SocialIQA MC row reports the score for Olmo 3 Base 32B."
@@ -5073,13 +5073,13 @@
      "explanation": "The benchmark 'CoQA' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "CoQA Gen2MC MC 96.4",
      "explanation": "Table 2 lists CoQA Gen2MC MC as a benchmark used to evaluate Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "CoQA 74.1",
      "explanation": "Table 2 lists CoQA as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -5121,7 +5121,7 @@
      "explanation": "Shared."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval GenQA scores for Olmo 3 32B Base."
@@ -5151,7 +5151,7 @@
      "explanation": "CoQA GenQA score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "CoQA Gen2MC MC 96.4 ... 92.5; CoQA 74.1 ... 72.8",
      "explanation": "Benchmark stanfordnlp/coqa appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -5187,7 +5187,7 @@
      "explanation": "CoQA appears in both Gen2MC MC and GenQA F1 variants of OlmoBaseEval for Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "CoQA Gen2MC MC appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the CoQA Gen2MC MC row reports the score for Olmo 3 Base 32B."
@@ -5226,13 +5226,13 @@
      "explanation": "The benchmark 'DROP' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "DROP Gen2MC MC 87.2",
      "explanation": "Table 2 lists DROP Gen2MC MC as a benchmark used to evaluate Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "DROP 80.9",
      "explanation": "Table 2 lists DROP as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -5256,7 +5256,7 @@
      "explanation": "Table 2 (Olmo 3 Base 32B OlmoBaseEval Main suite, page 9) reports a DROP score of 80.9 for allenai/Olmo-3-1125-32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval GenQA scores for Olmo 3 32B Base."
@@ -5286,7 +5286,7 @@
      "explanation": "DROP GenQA F1 for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "DROP Gen2MC MC 87.2 ... 67.3; DROP 80.9 ... 71.5",
      "explanation": "Benchmark ucinlp/drop appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -5340,7 +5340,7 @@
      "explanation": "Shared."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "DROP Gen2MC MC appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the DROP Gen2MC MC row reports the score for Olmo 3 Base 32B."
@@ -5385,13 +5385,13 @@
      "explanation": "Benchmark used in Olmo 3 Base evaluation suite per OlmoBaseEval tables."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Jeopardy Gen2MC MC 92.3",
      "explanation": "Table 2 lists Jeopardy Gen2MC MC as a benchmark used to evaluate Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Jeopardy 75.3",
      "explanation": "Table 2 lists Jeopardy as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -5415,7 +5415,7 @@
      "explanation": "Shared."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Jeopardy Gen2MC MC appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the Jeopardy Gen2MC MC row reports the score for Olmo 3 Base 32B."
@@ -5445,13 +5445,13 @@
      "explanation": "Olmo 3 paper Table 2 reports the score for this benchmark."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval GenQA scores for Olmo 3 32B Base."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Jeopardy Gen2MC MC 92.3 ... 86.9; Jeopardy 75.3 ... 60.4",
      "explanation": "Benchmark jeopardy appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -5532,13 +5532,13 @@
      "explanation": "The benchmark 'NaturalQs' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "NaturalQs Gen2MC MC 78.0",
      "explanation": "Table 2 lists NaturalQs Gen2MC MC as a benchmark used to evaluate Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "NaturalQs 49.0",
      "explanation": "Table 2 lists NaturalQs as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -5568,7 +5568,7 @@
      "explanation": "Reports NaturalQs score for 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval GenQA scores for Olmo 3 32B Base."
@@ -5586,7 +5586,7 @@
      "explanation": "NaturalQs GenQA score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "NaturalQs Gen2MC MC 78.0 ... 69.4; NaturalQs 49.0 ... 32.6",
      "explanation": "Benchmark google-research-datasets/natural_questions appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -5622,7 +5622,7 @@
      "explanation": "Shared."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "NaturalQs Gen2MC MC appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the NaturalQs Gen2MC MC row reports the score for Olmo 3 Base 32B."
@@ -5709,13 +5709,13 @@
      "explanation": "Olmo 3 paper Table 2 reports the score for this benchmark."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "SQuAD Gen2MC MC 98.2",
      "explanation": "Table 2 lists SQuAD Gen2MC MC as a benchmark used to evaluate Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "SQuAD 94.5",
      "explanation": "Table 2 lists SQuAD as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -5745,7 +5745,7 @@
      "explanation": "Reports SQuAD score for 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval GenQA scores for Olmo 3 32B Base."
@@ -5775,7 +5775,7 @@
      "explanation": "SQuAD GenQA score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "SQuAD Gen2MC MC 98.2 ... 96.9; SQuAD 94.5 ... 93.5",
      "explanation": "Benchmark rajpurkar/squad appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -5814,7 +5814,7 @@
      "explanation": "The benchmark 'Winogrande RC' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Winogrande RC 90.3",
      "explanation": "Table 2 lists Winogrande RC as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -5868,7 +5868,7 @@
      "explanation": "WinoGrande score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Winogrande RC 90.3 ... 85.7",
      "explanation": "Benchmark allenai/winogrande appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -5886,7 +5886,7 @@
      "explanation": "WinoGrande reported under OlmoBaseEval GenQA for Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Winogrande RC appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the Winogrande RC row reports the score for Olmo 3 Base 32B."
@@ -5913,7 +5913,7 @@
      "explanation": "The benchmark 'Lambada' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Lambada 75.7",
      "explanation": "Table 2 lists Lambada as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -5949,7 +5949,7 @@
      "explanation": "Reports Lambada score for 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval GenQA scores for Olmo 3 32B Base."
@@ -5967,7 +5967,7 @@
      "explanation": "Lambada score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Lambada 75.7 ... 68.9",
      "explanation": "Benchmark EleutherAI/lambada_openai appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -6006,7 +6006,7 @@
      "explanation": "The benchmark 'BBH' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "BBH 77.6",
      "explanation": "Table 2 lists BBH as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -6030,7 +6030,7 @@
      "explanation": "Table 2 (Olmo 3 Base 32B OlmoBaseEval Main suite, page 9) reports a BBH score of 77.6 for allenai/Olmo-3-1125-32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports held-out scores: BBH and MMLU Pro MC."
@@ -6048,7 +6048,7 @@
      "explanation": "BBH Held-Out score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "BBH 77.6 ... 63.5",
      "explanation": "Benchmark lukaemon/bbh appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -6117,7 +6117,7 @@
      "explanation": "The benchmark 'MMLU Pro MC' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "MMLU Pro MC 49.7",
      "explanation": "Table 2 lists MMLU Pro MC as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -6153,7 +6153,7 @@
      "explanation": "Table 2 (Olmo 3 Base 32B OlmoBaseEval Main suite, page 9) reports a MMLU Pro MC score of 49.7 for allenai/Olmo-3-1125-32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports held-out scores: BBH and MMLU Pro MC."
@@ -6171,7 +6171,7 @@
      "explanation": "MMLU Pro MC Held-Out score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MMLU Pro MC 49.7 ... 37.3",
      "explanation": "Benchmark TIGER-Lab/MMLU-Pro appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -6201,7 +6201,7 @@
      "explanation": "Olmo 3 paper Table 2 (Held-out) reports the score for this benchmark."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MMLU Pro MC appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the MMLU Pro MC row reports the score for Olmo 3 Base 32B."
@@ -6222,7 +6222,7 @@
      "explanation": "The benchmark 'Deepmind Math' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Deepmind Math 29.6",
      "explanation": "Table 2 lists Deepmind Math as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -6270,13 +6270,13 @@
      "explanation": "Shared."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Deepmind Math appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the Deepmind Math row reports the score for Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval Math cluster scores for Olmo 3 32B Base on GSM8k, GSM Symbolic, and MATH (Minerva)."
@@ -6294,7 +6294,7 @@
      "explanation": "DeepMind Math Held-Out score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Deepmind Math 29.6 ... 23.7",
      "explanation": "Benchmark deepmind/math_dataset appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -6339,7 +6339,7 @@
      "explanation": "The benchmark 'LBPP' appears as a column in the core eval table and a metric entry in the model-index, scoring the Olmo-3-32B base model."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "LBPP 21.8",
      "explanation": "Table 2 lists LBPP as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -6387,7 +6387,7 @@
      "explanation": "Shared."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval Code cluster scores for Olmo 3 32B Base."
@@ -6399,7 +6399,7 @@
      "explanation": "LBPP applies to 32B Base."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "LBPP 21.8 ... 17.1",
      "explanation": "Benchmark CohereLabs/lbpp appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -6501,7 +6501,7 @@
      "explanation": "0925-official mix shares leaf composition with 0625-official; only the olmocr_science_pdfs paths differ."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-mix-0925-official.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-mix-0925-official.txt",
      "location": "",
      "excerpt": "arxiv",
      "explanation": "Mix file lists arxiv."
@@ -6531,7 +6531,7 @@
      "explanation": "Manifest enumerates arxiv paths."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "arXiv Papers with LaTeX 21.4B 3.95M 50.8B (0.86%)",
      "explanation": "Table 4 names arXiv as a 50.8B-token leaf source in Dolma 3 Mix used for Olmo 3 pretraining."
@@ -6600,13 +6600,13 @@
      "explanation": "Ingredient-2 mix manifest enumerates leaf source groups (same families as ingredient-1)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Common Crawl Web pages 4.51T (76.1%)",
      "explanation": "Table 4 shows CommonCrawl as the largest leaf in the 6T Mix used for the 32B Base."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-mix-0925-official.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-mix-0925-official.txt",
      "location": "",
      "excerpt": "common_crawl_adult_content,common_crawl_art_and_design,...common_crawl_travel_and_tourism",
      "explanation": "Mix file lists 24 common_crawl_<topic> source labels."
@@ -6660,7 +6660,7 @@
      "explanation": "Common Crawl is shared between 7B and 32B base pretraining."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Common Crawl Web pages 8.14T 9.67B 4.51T (76.1%)",
      "explanation": "Table 4 lists Common Crawl as the largest leaf source within Dolma 3 Mix used for pretraining the Olmo 3 family."
@@ -6708,7 +6708,7 @@
      "explanation": "Identifies the high-quality Common Crawl midtraining web subset."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Common Crawl Web pages 8.14T 9.67B 4.51T (76.1%) 3.15B",
      "explanation": "Table 4 lists Common Crawl as a Dolma 3 Mix sub-corpus consumed by Olmo 3 Base 32B."
@@ -6720,7 +6720,7 @@
      "explanation": "Same Common Crawl source for 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Common Crawl (HQ subset)^ ... 22.4B (22.5%)",
      "explanation": "Table 5 lists Common Crawl (HQ subset) as a midtraining leaf."
@@ -6762,7 +6762,7 @@
      "explanation": "Table 5 enumerates each named source in the 100B Dolmino Mix, including TinyMATH Mind/PoT, CraneMath, MegaMatt, Dolmino Math, Stack-Edu (FIM), CraneCode, Reddit-to-Flashcards, Wiki-to-RCQA, Nemotron Synth QA, Math/Code Meta-Reasoning, Program-Verifiable, OMR Rewrite Full-Thoughts, QwQ Reasoning Traces, General Reasoning Mix, Gemini Reasoning Traces, Llama Nemotron Reasoning Traces, OpenThoughts2 Reasoning Traces, Tulu 3 SFT, Dolmino 1 Flan, olmOCR science PDFs (HQ subset), STEM-Heavy Crawl, and Common Crawl (HQ subset)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Stage 1 web data We sample documents from the top two quality buckets (top 10% quality).",
      "explanation": "Sub-corpus of Dolma 3 Dolmino Mix consumed by Olmo 3 Base 32B midtraining."
@@ -6789,13 +6789,13 @@
      "explanation": "0925-official mix shares leaf composition with 0625-official; only the olmocr_science_pdfs paths differ."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "we replace our previous use of OpenWebMath ... with FineMath",
      "explanation": "FineMath is identified as the math leaf source for the 6T Mix."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-mix-0925-official.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-mix-0925-official.txt",
      "location": "",
      "excerpt": "finemath-3plus",
      "explanation": "Mix file lists finemath-3plus."
@@ -6843,7 +6843,7 @@
      "explanation": "32B Base also trains on Dolma 3 Dolmino Mix containing CraneMath rewritten from FineMath."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "FineMath 3+ Math web pages 34.1B 21.4M 152B (2.56%)",
      "explanation": "Table 4 names FineMath 3+ as a 152B-token leaf source within Dolma 3 Mix for Olmo 3 pretraining."
@@ -6867,7 +6867,7 @@
      "explanation": "FineMath subset in 0925 manifest."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we replace our previous use of OpenWebMath with FineMath ... We include all documents that have a quality score of at least 3 (out of 4)",
      "explanation": "States FineMath 3+ (subset finemath-3plus) is included; consumed by Olmo 3 Base 32B."
@@ -6912,7 +6912,7 @@
      "explanation": "Ingredient-2 mix manifest enumerates leaf source groups (same families as ingredient-1)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-mix-0925-official.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-mix-0925-official.txt",
      "location": "",
      "excerpt": "s2pdf_adult_content,s2pdf_art_and_design,...s2pdf_travel_and_tourism",
      "explanation": "Mix file lists s2pdf_<topic> labels for academic PDF data."
@@ -6939,13 +6939,13 @@
      "explanation": "0925-official mix shares leaf composition with 0625-official; only the olmocr_science_pdfs paths differ."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "we include the Wikipedia and Wikibooks sources from Dolma",
      "explanation": "Wikipedia is named as a leaf in the encyclopedic bucket of Dolma 3 Mix."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-mix-0925-official.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-mix-0925-official.txt",
      "location": "",
      "excerpt": "wikipedia",
      "explanation": "Mix file lists wikipedia."
@@ -7035,7 +7035,7 @@
      "explanation": "Ingredient-2 mix manifest enumerates leaf source groups (same families as ingredient-1)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we include the Wikipedia and Wikibooks sources from Dolma (Soldaini et al., 2024) as base sources of encyclopedic knowledge.",
      "explanation": "Section 3.4.3 names Wikipedia as encyclopedic leaf source bundled in the 0.04% slice of Dolma 3 Mix."
@@ -7047,7 +7047,7 @@
      "explanation": "Mix file labels wikipedia source."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we include the Wikipedia and Wikibooks sources from Dolma (Soldaini et al., 2024) as base sources of encyclopedic knowledge.",
      "explanation": "States Wikipedia from Dolma is included; consumed by Olmo 3 Base 32B."
@@ -7080,19 +7080,19 @@
      "explanation": "Ingredient-2 mix manifest enumerates leaf source groups (same families as ingredient-1)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "olmOCR science PDFs Academic documents ... 805B (13.6%)",
      "explanation": "Table 4 names the olmOCR PDF leaf in the 6T Mix used for both base sizes."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "The backbone of our long-context data pool is scientific PDFs scraped from the web and processed by olmOCR.",
      "explanation": "olmOCR PDFs are the dominant long-context leaf source feeding the 32B context-extension training."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "olmOCR science PDFs (HQ subset)^ ... 4.99B (5.0%)",
      "explanation": "Table 5 lists olmOCR science PDFs HQ subset as a midtraining leaf."
@@ -7113,7 +7113,7 @@
      "explanation": "Benchmark name appears in the OLMo-3-32B pretraining fast-eval task list."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Basic Skills 93.5",
      "explanation": "Table 2 lists Basic Skills as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -7137,7 +7137,7 @@
      "explanation": "Script enumerates six Basic Skills sub-tasks."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Basic Skills appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the Basic Skills row reports the score for Olmo 3 Base 32B."
@@ -7167,7 +7167,7 @@
      "explanation": "Benchmark used in Olmo 3 Base evaluation suite per OlmoBaseEval tables."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
      "location": "",
      "excerpt": "'basic_skills_arithmetic_rc_5shot','basic_skills_coding_rc_5shot','basic_skills_common_knowledge_rc_5shot','basic_skills_logical_reasoning_rc_5shot','basic_skills_pattern_rc_5shot','basic_skills_string_operations_rc_5shot'",
      "explanation": "32B script lists six Basic Skills subtasks."
@@ -7227,13 +7227,13 @@
      "explanation": "BasicSkills used by 32B Base."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval GenQA scores for Olmo 3 32B Base."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Basic Skills 93.5 ... 89.5",
      "explanation": "Benchmark BasicSkills appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -7308,7 +7308,7 @@
      "explanation": "Base Main suite shared."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MATH appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the MATH row reports the score for Olmo 3 Base 32B."
@@ -7368,7 +7368,7 @@
      "explanation": "Ingredient-2 mix manifest enumerates leaf source groups (same families as ingredient-1)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "megamatt_CC-MAIN-2023-23,...,megamatt_CC-MAIN-2024-46",
      "explanation": "Mix-0925-ingredient1 lists megamatt rewrites partitioned by Common Crawl snapshot."
@@ -7476,13 +7476,13 @@
      "explanation": "Ingredient-2 mix manifest enumerates leaf source groups (same families as ingredient-1)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Llama Nemotron Reasoning Traces^ ... 1.25B (1.25%)",
      "explanation": "Table 5 lists Llama Nemotron Reasoning Traces as a midtraining leaf."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "llama_nemotron-reasoning-traces",
      "explanation": "Mix-0925-ingredient1 lists llama_nemotron-reasoning-traces."
@@ -7518,7 +7518,7 @@
      "explanation": "Table 5 enumerates each named source in the 100B Dolmino Mix, including TinyMATH Mind/PoT, CraneMath, MegaMatt, Dolmino Math, Stack-Edu (FIM), CraneCode, Reddit-to-Flashcards, Wiki-to-RCQA, Nemotron Synth QA, Math/Code Meta-Reasoning, Program-Verifiable, OMR Rewrite Full-Thoughts, QwQ Reasoning Traces, General Reasoning Mix, Gemini Reasoning Traces, Llama Nemotron Reasoning Traces, OpenThoughts2 Reasoning Traces, Tulu 3 SFT, Dolmino 1 Flan, olmOCR science PDFs (HQ subset), STEM-Heavy Crawl, and Common Crawl (HQ subset)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Llama Nemotron Reasoning Traces ... 20.9B 3.91M 1.25B (1.25%) 368K",
      "explanation": "Sub-corpus of Dolma 3 Dolmino Mix consumed by Olmo 3 Base 32B midtraining."
@@ -7584,7 +7584,7 @@
      "explanation": "Ingredient-2 mix manifest enumerates leaf source groups (same families as ingredient-1)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "r1-reasoning-traces",
      "explanation": "Mix-0925-ingredient1 lists r1-reasoning-traces; R1 denotes DeepSeek-R1."
@@ -7635,19 +7635,19 @@
      "explanation": "README maps OLMo 3 32B stage-3 to dolma3-longmino."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "The 100B mix for Olmo 3 32B maintains the same proportions as the 50B mix.",
      "explanation": "Caption confirms the 32B Stage 3 mix is Dolma 3 Longmino Mix scaled to 100B tokens."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Composition of Dolma 3 Longmino Mix. The 100B mix for Olmo 3 32B maintains the same proportions as the 50B mix.",
      "explanation": "Longmino family aggregator consumed by Olmo 3 Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/README.md",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/README.md",
      "location": "",
      "excerpt": "Olmo 3 32B | stage 3 (long-context) | dolma3-longmino -> OLMo-longmino-mix-0925.txt",
      "explanation": "README maps the Stage-3 mix file to the Dolma 3 Longmino dataset."
@@ -7716,7 +7716,7 @@
    "description": "arXiv LaTeX papers from Proof-Pile-2 (50.8B tokens, 0.86%) are the math/papers leaf in Dolma 3 Mix for Olmo 3 32B.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "we include arXiv documents from the Proof-Pile-2 dataset",
      "explanation": "Proof-Pile-2 supplies the arXiv leaf in Dolma 3 Mix."
@@ -7758,7 +7758,7 @@
      "explanation": "Proof-Pile-2 is the arXiv source."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we include arXiv documents from the Proof-Pile-2 dataset (Azerbayev et al., 2023)",
      "explanation": "States arXiv source comes from Proof-Pile-2; consumed by Olmo 3 Base 32B as a Dolma 3 Mix sub-corpus."
@@ -7785,7 +7785,7 @@
    "description": "Wikibooks is the second encyclopedic leaf source contributing to the Wikipedia & Wikibooks bucket (2.51B tokens) of Dolma 3 Mix.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Wikipedia & Wikibooks Encyclopedic 2.51B (0.04%)",
      "explanation": "Wikibooks is enumerated alongside Wikipedia as an encyclopedic leaf in Dolma 3 Mix."
@@ -7803,7 +7803,7 @@
      "explanation": "Wikibooks is shared across both pretraining runs."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we include the Wikipedia and Wikibooks sources from Dolma",
      "explanation": "Section 3.4.3 names Wikibooks as encyclopedic leaf source for Olmo 3 pretraining."
@@ -7821,7 +7821,7 @@
      "explanation": "Table 4 enumerates the constituent leaf sources of the Dolma 3 6T training mix consumed by both base models."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we include the Wikipedia and Wikibooks sources from Dolma (Soldaini et al., 2024) as base sources of encyclopedic knowledge.",
      "explanation": "States Wikibooks from Dolma is included; consumed by Olmo 3 Base 32B."
@@ -7848,7 +7848,7 @@
    "description": "The fastText lid.176 language-identification classifier filters the Common Crawl pool to English documents prior to training Olmo 3 32B.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "We then use a fastText classifier to identify the language of each document, keeping only those that contain English text.",
      "explanation": "lid.176 is the fastText LID classifier serving as the English inclusion filter for CC."
@@ -7875,7 +7875,7 @@
    "description": "Gemma 3 12B is the first stage of the multi-stage PII filter applied to the olmOCR PDF pool included in Olmo 3 32B's Dolma 3 Mix.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "First we classify documents using a prompt to Gemma 3 12B",
      "explanation": "Gemma 3 12B is the document-level PII filter that gates PDF inclusion."
@@ -7905,7 +7905,7 @@
      "explanation": "Same PII filtering applies to 32B's pretraining data."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "First we classify documents using a prompt to Gemma 3 12B (Gemma 3 Team, 2025) on the first page of each document",
      "explanation": "Section 3.4.2 names Gemma 3 12B as the PII detection model whose output gates inclusion in Olmo 3 pretraining data."
@@ -7917,7 +7917,7 @@
      "explanation": "Two-stage Gemma-based PII classification was applied to the olmOCR PDF pool, removing 4.9% of documents before they were mixed into Dolma 3 Mix."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "First we classify documents using a prompt to Gemma 3 12B (Gemma 3 Team, 2025) on the first page of each document",
      "explanation": "States Gemma 3 12B classifies first page for PII; data fed into Olmo 3 Base 32B pretraining."
@@ -7932,7 +7932,7 @@
    "description": "Gemma 3 4B is the second stage of the PDF PII filter, classifying document type from the first 5,000 characters before final inclusion rules are applied.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Next, we use Gemma 3 4B on the first 5,000 characters of each document",
      "explanation": "Gemma 3 4B is the second filter stage in the PII pipeline gating PDF pool inclusion."
@@ -7974,7 +7974,7 @@
      "explanation": "Documents Gemma 3 4B's role in long-context data filter analysis."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we use Gemma 3 4B on the first 5,000 characters of each document to arrive at a set of flags describing the type of document.",
      "explanation": "Section 3.4.2 names Gemma 3 4B as a document-type classifier whose flags drive PII filtering of pretraining PDFs."
@@ -7986,7 +7986,7 @@
      "explanation": "Two-stage Gemma-based PII classification was applied to the olmOCR PDF pool, removing 4.9% of documents before they were mixed into Dolma 3 Mix."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Next, we use Gemma 3 4B on the first 5,000 characters of each document to arrive at a set of flags describing the type of document.",
      "explanation": "States Gemma 3 4B classifies first 5K chars for PII filtering; data fed into Olmo 3 Base 32B."
@@ -8001,7 +8001,7 @@
    "description": "The Olmo 3 web pipeline 'closely follows that of DCLM' (heuristic filtering, Resiliparse extraction, DCLM-Baseline initial mix, fastText quality classifier with DCLM-style positives) without making DCLM data the corpus itself.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Our process closely follows that of DCLM (Li et al., 2024a) with minor modifications",
      "explanation": "Indirect borrowing of DCLM-baseline methodology shapes 32B Base pretraining data without entering training."
@@ -8031,7 +8031,7 @@
      "explanation": "DCLM methodology applies to both 7B and 32B Base."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we perform this first round of mixing on DCLM-Baseline, expecting that learned preferences would transfer to our final web data.",
      "explanation": "Section 3.4.4 names DCLM-Baseline as the dataset that seeded mixture optimization for Olmo 3 pretraining (both sizes)."
@@ -8055,7 +8055,7 @@
      "explanation": "Multiple text-extraction, heuristic-filtering, and classifier-training steps in Dolma 3 Mix are explicitly modeled on DCLM (mlfoundations/dclm-baseline-1.0)."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Our process closely follows that of DCLM (Li et al., 2024a) ... Following DCLM (Li et al., 2024a), we use OpenHermes-2.5 ... and ELI5 ... as positive training examples",
      "explanation": "States DCLM filtering recipe inspires Olmo 3 Base 32B's web-data pipeline."
@@ -8076,7 +8076,7 @@
    "description": "FineWeb's URL blocklists are reused as the URL-based filter at the start of the Dolma 3 web pipeline used for Olmo 3 32B pretraining.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "the blacklists used by FineWeb (Penedo et al., 2024)",
      "explanation": "FineWeb URL blocklists are reused as a methodology import without FineWeb data entering training."
@@ -8115,7 +8115,7 @@
    "description": "OLMo 2 Instruct 32B is the generator for all synthetic CWE/REX aggregation tasks over olmOCR PDF snippets that feed the 32B long-context training data.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "we ultimately use OLMo 2 Instruct 32B for all generations.",
      "explanation": "OLMo 2 Instruct 32B authors the synthetic CWE/REX content used during the 32B long-context extension."
@@ -8157,7 +8157,7 @@
      "explanation": "Identifies OLMo 2 Instruct 32B as the generator for synth CWE/REX content used to train Olmo 3 32B during long-context extension."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "While we experimented with several closed and open language models, we ultimately use OLMo 2 Instruct 32B for all generations.",
      "explanation": "OLMo 2 Instruct 32B generates the long-context CWE/REX synthetic data consumed by Olmo 3 Base 32B."
@@ -8169,7 +8169,7 @@
      "explanation": "Names OLMo 2 Instruct 32B as the synthetic-data generator."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we ultimately use OLMo 2 Instruct 32B for all generations.",
      "explanation": "OLMo 2 Instruct 32B is the synthesizer for CWE/REX content."
@@ -8190,13 +8190,13 @@
    "description": "Gemma 3 4B was used as the reference model in LongPpl key-token filtering ablations over Dolma 3 Longmino Mix; the LongPpl filters did not beat gzip and were not used in the final 32B context-extension run.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "We compute LongPpl over 10B tokens of Dolma 3 Longmino Mix using Gemma 3 4B... none of these possibilities outperform the gzip filter, so we do not use this for the final run.",
      "explanation": "Gemma 3 4B is named as the reference model only in an ablation; not in the final long-context run."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "We compute LongPpl over 10B tokens of Dolma 3 Longmino Mix using Gemma 3 4B (Gemma 3 Team, 2025) as the reference model ... none of these possibilities outperform the gzip filter, so we do not use this for the final run.",
      "explanation": "Gemma 3 4B used as LongPpl reference in ablations for Olmo 3 Base 32B; not adopted."
@@ -8211,13 +8211,13 @@
    "description": "GPT-4o-mini rewrote Reddit submission/comment pairs into multiple-choice QA flashcards (Reddit-to-Flashcards), supplying 5.9B QA tokens used to train Olmo-3-1125-32B.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "we then use GPT 4o-mini to rewrite submission-comment pairs from those subreddits into multiple-choice QA",
      "explanation": "Names GPT-4o-mini as the transformer for Reddit-to-Flashcards."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/source_mixtures/OLMo3-32B-midtraining-modelnamefilter.yaml",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/source_mixtures/OLMo3-32B-midtraining-modelnamefilter.yaml",
      "location": "",
      "excerpt": "gs://ai2-llm/preprocessed/reddit-rewrites/densesub_highthresh_microanneal_4omini_rewrite/...",
      "explanation": "Yaml path explicitly names 4omini as the rewriter model for the reddit subset of midtraining data."
@@ -8238,13 +8238,13 @@
    "description": "MegaMatt re-generates a Qwen3 rewrite of Megamath-Web-Pro (MegaMath family) post Megamath-Web-Pro-Max-style filtering.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Megamath-Web-Pro-Max ... applies Llama rewrites to naturally-occurring mathematical web text - in this case a filtered version of MegaMath-Web ... we re-generate this dataset",
      "explanation": "MegaMatt methodology borrowed from MegaMath/MegaMath-Web-Pro-Max."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we collect the Megamath-Web-Pro data occurring after June 2023, apply filtering as in Megamath-Web-Pro-Max",
      "explanation": "MegaMath-Web subset (parent LLM360/MegaMath) is the source data behind MegaMatt consumed by Olmo 3 Base 32B."
@@ -8259,13 +8259,13 @@
    "description": "The Nemotron Synth QA leaf is the 'diverse QA pairs' synth subset of Nemotron-CC, including its synthesis methodology.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "We include the 'diverse QA pairs' synth subset of the Nemotron CC dataset",
      "explanation": "Borrows Nemotron-CC's diverse-QA-pairs synth methodology."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we include the 'diverse QA pairs' synth subset of the Nemotron CC dataset (Su et al., 2025a)",
      "explanation": "Nemotron-CC parent dataset supplies the Nemotron Synth QA consumed by Olmo 3 Base 32B."
@@ -8280,7 +8280,7 @@
    "description": "Meta-reasoning data is annotated with problem classification, difficulty analysis, solution approaches, common pitfalls, and verification methods 'modeled after the Pandalla-Math dataset'.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "... 'verification methods,' modeled after the Pandalla-Math dataset",
      "explanation": "Methodology of meta-reasoning annotation borrowed from Pandalla-Math."
@@ -8322,7 +8322,7 @@
      "explanation": "Recipe-level inspiration from Pandalla-Math."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "modeled after the Pandalla-Math dataset.",
      "explanation": "Pandalla-Math inspires the meta-reasoning annotation schema for Olmo 3 Base 32B."
@@ -8349,7 +8349,7 @@
    "description": "OMR Rewrite FullThoughts is a light rewrite of nvidia/OpenMathReasoning, preserving reasoning while editing for clarity/flow/formatting.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "a light rewrite of the OpenMathReasoning dataset",
      "explanation": "OMR rewrite is derived from OpenMathReasoning."
@@ -8388,7 +8388,7 @@
    "description": "GeneralThought-430K is one of three datasets compiled into the General Reasoning Mix midtraining leaf.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "General reasoning mix is a compilation of three existing datasets: GeneralThought-430K, OpenThoughts-114k ... and Open-R1-Math-220k",
      "explanation": "GeneralThought-430K is a constituent of the General Reasoning Mix leaf."
@@ -8427,7 +8427,7 @@
    "description": "OpenThoughts-114k is one of three datasets compiled into the General Reasoning Mix midtraining leaf.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "General reasoning mix is a compilation of three existing datasets: GeneralThought-430K, OpenThoughts-114k ... and Open-R1-Math-220k",
      "explanation": "OpenThoughts-114k is a constituent of the General Reasoning Mix leaf."
@@ -8466,7 +8466,7 @@
    "description": "Open-R1-Math-220k is one of three datasets compiled into the General Reasoning Mix midtraining leaf.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "General reasoning mix is a compilation of three existing datasets: GeneralThought-430K, OpenThoughts-114k ... and Open-R1-Math-220k",
      "explanation": "Open-R1-Math-220k is a constituent of the General Reasoning Mix leaf."
@@ -8505,7 +8505,7 @@
    "description": "Olmo 3 Base 32B is evaluated on GSM8k as part of the OlmoBaseEval Main suite (Table 2).",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "GSM8k 80.6",
      "explanation": "Table 2 lists GSM8k as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -8553,7 +8553,7 @@
      "explanation": "Shared Base Main suite for both base models."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval Math cluster scores for Olmo 3 32B Base on GSM8k, GSM Symbolic, and MATH (Minerva)."
@@ -8571,7 +8571,7 @@
      "explanation": "GSM8k score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "GSM8k 80.6 ... 75.5",
      "explanation": "Benchmark openai/gsm8k appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -8607,7 +8607,7 @@
      "explanation": "GSM8K is enumerated in the OlmoBaseEval Math cluster (Table 46) and reported for Base 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "GSM8k appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the GSM8k row reports the score for Olmo 3 Base 32B."
@@ -8622,7 +8622,7 @@
    "description": "Olmo 3 Base 32B is evaluated on GSM Symbolic as part of the OlmoBaseEval Main suite (Table 2).",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "GSM Symbolic 61.2",
      "explanation": "Table 2 lists GSM Symbolic as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -8670,7 +8670,7 @@
      "explanation": "Shared Base Main suite."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval Math cluster scores for Olmo 3 32B Base on GSM8k, GSM Symbolic, and MATH (Minerva)."
@@ -8688,7 +8688,7 @@
      "explanation": "GSM Symbolic score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "GSM Symbolic 61.2 ... 48.6",
      "explanation": "Benchmark apple/GSM-Symbolic appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -8724,7 +8724,7 @@
      "explanation": "GSM Symbolic is enumerated in the OlmoBaseEval Math cluster (Table 46) and reported for Base 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "GSM Symbolic appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the GSM Symbolic row reports the score for Olmo 3 Base 32B."
@@ -8739,7 +8739,7 @@
    "description": "Olmo 3 Base 32B is evaluated on MATH as part of the OlmoBaseEval Main suite (Table 2).",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "MATH 43.8",
      "explanation": "Table 2 lists MATH as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -8769,7 +8769,7 @@
      "explanation": "MATH score for Olmo 3 32B in Table 2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval Math cluster scores for Olmo 3 32B Base on GSM8k, GSM Symbolic, and MATH (Minerva)."
@@ -8787,7 +8787,7 @@
      "explanation": "Minerva MATH (Hendrycks MATH) appears in Base Main Math."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MATH 43.8 ... 40.0",
      "explanation": "Benchmark EleutherAI/hendrycks_math appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -8820,7 +8820,7 @@
    "description": "Olmo 3 Base 32B is evaluated on CSQA MC as part of the OlmoBaseEval Main suite (Table 2).",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "CSQA MC 82.3",
      "explanation": "Table 2 lists CSQA MC as a benchmark used to evaluate Olmo 3 Base 32B."
@@ -8832,7 +8832,7 @@
      "explanation": "Table 2 (Olmo 3 Base 32B OlmoBaseEval Main suite, page 9) reports a CSQA MC score of 82.3 for allenai/Olmo-3-1125-32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval MC Non-STEM scores for Olmo 3 32B Base."
@@ -8871,7 +8871,7 @@
    "description": "Olmo 3 Base 32B is evaluated on RULER (4K, 8K, 16K, 32K, 65K) as the long-context development suite.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Olmo 3 32B  96.10  94.57  90.42  86.22  79.70",
      "explanation": "Table 12 shows Olmo 3 32B RULER scores."
@@ -8925,19 +8925,19 @@
      "explanation": "Reports Olmo 3 32B RULER scores."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Olmo 3 32B  96.10 94.57 90.42 86.22 79.70 (RULER 4K/8K/16K/32K/65K)",
      "explanation": "Table 12 reports RULER scores for Olmo 3 Base 32B at multiple context lengths."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 12 reports RULER (development suite) and HELMET (held-out) results for Olmo 3 32B Base across multiple context lengths."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we use RULER as the primary metric to guide our long-context recipe development",
      "explanation": "Benchmark RULER appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -9006,7 +9006,7 @@
    "description": "Olmo 3 Base 32B is held out and evaluated on HELMET (8K, 16K, 32K, 65K).",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
+     "source": "storage/workers/c9059e2a/runs/0e80b4bb-682b-4633-92fb-478d5d2c6985/batch/olmo3-paper.pdf",
      "location": "",
      "excerpt": "Olmo 3 32B ... 52.11  49.36  48.60  43.15",
      "explanation": "Table 12 shows Olmo 3 32B HELMET scores."
@@ -9036,7 +9036,7 @@
      "explanation": "Reports Olmo 3 32B HELMET scores."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 12 reports RULER (development suite) and HELMET (held-out) results for Olmo 3 32B Base across multiple context lengths."
@@ -9054,7 +9054,7 @@
      "explanation": "HELMET scores at multiple context lengths for Olmo 3 32B in Table 12."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "We keep HELMET as an unseen evaluation suite and test our final checkpoints on it.",
      "explanation": "Benchmark princeton-nlp/HELMET appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -9084,7 +9084,7 @@
      "explanation": "HELMET reported as held-out long-context eval for Base 32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Olmo 3 32B  52.11 49.36 48.60 43.15 (HELMET 8K/16K/32K/65K)",
      "explanation": "Table 12 reports HELMET scores for Olmo 3 Base 32B."
@@ -9129,7 +9129,7 @@
      "explanation": "Benchmark used in Olmo 3 Base evaluation suite per OlmoBaseEval tables."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
      "location": "",
      "excerpt": "'minerva_math_500_gold_bpb_0shot'",
      "explanation": "32B script lists minerva_math_500."
@@ -9420,7 +9420,7 @@
    "description": "Stage-2 midtraining uses Dolma 3 Dolmino mid-training data, sampled via two distinct mixes (ingredient1, ingredient2) of OLMo-midtraining-mix-0925.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/README.md",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/README.md",
      "location": "",
      "excerpt": "In the second stage, we train on a smaller amount of high-quality, targeted data: dolma3-dolmino.",
      "explanation": "README explicitly identifies Dolma 3 Dolmino as the Stage-2 dataset."
@@ -9558,13 +9558,13 @@
      "explanation": "Names the ingredient-2 manifest."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we use 100B high-quality tokens sampled from a brand new data pool ... Dolma 3 Dolmino Mix.",
      "explanation": "States Olmo 3 Base 32B midtrains on Dolma 3 Dolmino Mix 100B aggregator."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "We mix 34% long-context data with 66% high-quality short-context data sampled from Dolma 3 Dolmino Mix",
      "explanation": "Dolma 3 Dolmino Mix supplies the short-context portion of Olmo 3 Base 32B's long-context extension."
@@ -9588,7 +9588,7 @@
      "explanation": "Ingredient 2 manifest is the second 100B Dolma-3 Dolmino mix variant."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "a 34% long-context, 66% short-context mix... high-quality short-context data sampled from Dolma 3 Dolmino Mix",
      "explanation": "Short-context tokens for Stage 3 32B come from the 32B-tagged Dolmino Mix."
@@ -9609,7 +9609,7 @@
    "description": "SwallowMath rewrites of math problems (cranemath in mix-0925) are a Stage-2 midtraining sub-corpus.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "cranemath",
      "explanation": "Mix-0925-ingredient1 lists cranemath (the SwallowMath-derived rewrites)."
@@ -9630,7 +9630,7 @@
    "description": "SwallowCode rewrites of programming code (cranecode in mix-0925) are a Stage-2 midtraining sub-corpus.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "cranecode",
      "explanation": "Mix-0925-ingredient1 lists cranecode."
@@ -9651,7 +9651,7 @@
    "description": "DeepSeek-R1 reasoning traces (r1-reasoning-traces) are a Stage-2 midtraining sub-corpus.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "r1-reasoning-traces",
      "explanation": "Mix-0925-ingredient1 lists r1-reasoning-traces."
@@ -9666,7 +9666,7 @@
    "description": "Reddit ELI5 content reformatted as flashcards (reddit_to_flashcards-high_relevance, low_relevance) is a Stage-2 midtraining sub-corpus.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/olmo_core/data/mixes/OLMo-midtraining-mix-0925-ingredient1-100B.txt",
      "location": "",
      "excerpt": "reddit_to_flashcards-high_relevance,reddit_to_flashcards-low_relevance",
      "explanation": "Mix-0925-ingredient1 lists reddit_to_flashcards components."
@@ -9681,7 +9681,7 @@
    "description": "ARC challenge_test and ARC easy_test (BPB-5shot and MC-5shot-fast) are evaluated in-loop.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
+     "source": "storage/workers/c6e68ca1/runs/d583926a-5aa3-4ed3-ac85-c3d348dda842/batch/OLMo-core/src/scripts/official/OLMo3/OLMo-3-1025-32B-pretrain.py",
      "location": "",
      "excerpt": "'arc_challenge_test_bpb_5shot','arc_challenge_test_mc_5shot_fast','arc_easy_test_bpb_5shot','arc_easy_test_mc_5shot_fast'",
      "explanation": "32B script lists ARC challenge/easy variants."
@@ -9693,7 +9693,7 @@
      "explanation": "ARC in OlmoBaseEval."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "ARC MC appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the ARC MC row reports the score for Olmo 3 Base 32B."
@@ -9762,7 +9762,7 @@
      "explanation": "Shared."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Lambada appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the Lambada row reports the score for Olmo 3 Base 32B."
@@ -9882,7 +9882,7 @@
      "explanation": "BBH held-out."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "BBH appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the BBH row reports the score for Olmo 3 Base 32B."
@@ -9966,7 +9966,7 @@
      "explanation": "Shared filter applies."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "We include all documents that have a quality score of at least 3 (out of 4), according to the FineMath classifier.",
      "explanation": "Section 3.4.3 names the FineMath classifier as the gating model for FineMath 3+ inclusion in Olmo 3 pretraining."
@@ -10029,7 +10029,7 @@
      "explanation": "DCLM-RefinedWeb provides the negatives for the FastText quality classifier used in the 32B pretraining pipeline."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Negative training examples consist of 30GB sampled from DCLM-RefinedWeb.",
      "explanation": "Section 3.4.1 names DCLM-RefinedWeb as the source of negative training data for the quality classifier."
@@ -10089,7 +10089,7 @@
      "explanation": "MADLAD-400 rules reused."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "As a final step, we apply sentence-level heuristics from Madlad400 (Li et al., 2024a).",
      "explanation": "Madlad-400 sentence-level heuristics adopted in the filtering pipeline that produced Olmo 3 Base 32B's pretraining data."
@@ -10341,7 +10341,7 @@
      "explanation": "Listed as a benchmark in OlmoBaseEval / long-context tables for allenai/Olmo-3-1125-32B."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval MC Non-STEM scores for Olmo 3 32B Base."
@@ -10428,13 +10428,13 @@
      "explanation": "Same methodological influence at 32B scale."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Our approach also shares similarities with Qwen 2.5 1M",
      "explanation": "Section 3.6.2 cites Qwen 2.5 1M as inspiration."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Our approach also shares similarities with Qwen 2.5 1M (Yang et al., 2025b).",
      "explanation": "Qwen 2.5 1M long-context approach inspires Olmo 3 Base 32B's synthetic augmentation."
@@ -10467,7 +10467,7 @@
      "explanation": "DCLM provides the methodological backbone for Olmo 3 pretraining filtering."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Following DCLM (Li et al., 2024a), we remove HTML artifacts and extract the semantic text from WARC files using Resiliparse",
      "explanation": "Section 3.4.1 cites DCLM as the methodological source for the Olmo 3 web data pipeline shared by both base sizes."
@@ -10608,7 +10608,7 @@
      "explanation": "WebOrganizer's 24-topic taxonomy underlies the topic partitioning of the Olmo 3 pretraining corpus."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "We use our WebOrganizer tool (Wettig et al., 2025) to partition the deduplicated corpus into 24 topics",
      "explanation": "Section 3.4.1 names WebOrganizer as the source of topic taxonomy and labels in Olmo 3's pretraining pipeline shared by both sizes."
@@ -10635,13 +10635,13 @@
      "explanation": "Section 3.6.2 explicitly attributes synthetic aggregation methodology to CLIPPER."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Directly inspired by CLIPPER (Pham et al., 2025), we modify a portion of our science PDF pool by injecting synthetically generated aggregation tasks",
      "explanation": "CLIPPER is the cited methodological inspiration."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Directly inspired by CLIPPER (Pham et al., 2025), we modify a portion of our science PDF pool by injecting synthetically generated aggregation tasks at randomly sampled intervals.",
      "explanation": "CLIPPER inspires the long-context synthetic-augmentation recipe used for Olmo 3 Base 32B."
@@ -10905,7 +10905,7 @@
      "explanation": "Both 7B and 32B share the Dolma 3 Dolmino Mix that includes Dolmino Math."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Midtraining data mix Variable - - 33.0B (66.1%) 79.2M",
      "explanation": "Table 11 shows midtraining mix at 66.1%; the 32B 100B mix maintains same proportions."
@@ -10947,7 +10947,7 @@
    "description": "Olmo 3 Base 32B was evaluated on SQuAD Gen2MC MC as one task in the OlmoBaseEval Main suite (Table 2).",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "SQuAD Gen2MC MC appears as a row in Table 2 with Olmo 3 32B's score reported.",
      "explanation": "Table 2 lists per-benchmark scores; the SQuAD Gen2MC MC row reports the score for Olmo 3 Base 32B."
@@ -10962,7 +10962,7 @@
    "description": "Long-context PDF text in Stage 3 32B mix was extracted by olmOCR.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/fa44b9e1/runs/08e48791-55a7-4d5f-a44c-6c9744c1cd7b/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "scientific PDFs scraped from the web and processed by olmOCR",
      "explanation": "olmOCR did the OCR for long-document text used at Stage 3 for the 32B."
@@ -10977,13 +10977,13 @@
    "description": "OpenHermes-2.5 served as positive training examples for the fastText quality classifier (following DCLM) that scores web documents in Dolma 3 Mix used to pretrain Olmo 3 32B.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we use OpenHermes-2.5 (Teknium, 2023) and ELI5 (Fan et al., 2019) as positive training examples",
      "explanation": "Section 3.4.1 names OpenHermes-2.5 as positive training data for the quality classifier whose output influences Olmo 3 pretraining inclusion."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we use OpenHermes-2.5 (Teknium, 2023) and ELI5 (Fan et al., 2019) as positive training examples",
      "explanation": "OpenHermes-2.5 used as positive examples for the quality classifier filtering Olmo 3 Base 32B's pretraining data."
@@ -10998,13 +10998,13 @@
    "description": "ELI5 served as positive training examples for the fastText quality classifier (following DCLM); influences quality bucketing of web docs in Dolma 3 Mix used to pretrain Olmo 3 32B.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we use OpenHermes-2.5 (Teknium, 2023) and ELI5 (Fan et al., 2019) as positive training examples",
      "explanation": "Section 3.4.1 names ELI5 as positive training data for the quality classifier driving Olmo 3 pretraining inclusion."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we use OpenHermes-2.5 (Teknium, 2023) and ELI5 (Fan et al., 2019) as positive training examples",
      "explanation": "ELI5 used as positive examples for the quality classifier filtering Olmo 3 Base 32B's pretraining data."
@@ -11019,13 +11019,13 @@
    "description": "UltraChat-200k supplemented DCLM positives for the fastText quality classifier; the classifier influences inclusion in Olmo 3 32B's pretraining web data.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "supplemented with UltraChat-200k (Ding et al., 2023) and WildChat-1M (Zhao et al., 2024a)",
      "explanation": "Section 3.4.1 names UltraChat-200k as supplementary positive training data for the quality classifier."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "supplemented with UltraChat-200k (Ding et al., 2023) and WildChat-1M (Zhao et al., 2024a)",
      "explanation": "UltraChat-200k used as supplementary positives for the quality classifier filtering Olmo 3 Base 32B's pretraining data."
@@ -11040,13 +11040,13 @@
    "description": "WildChat-1M supplemented DCLM positives for the fastText quality classifier whose scores drive web-doc bucketing in Dolma 3 Mix used by Olmo 3 32B.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "supplemented with UltraChat-200k (Ding et al., 2023) and WildChat-1M (Zhao et al., 2024a)",
      "explanation": "Section 3.4.1 names WildChat-1M as supplementary positive training data for the quality classifier."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "supplemented with UltraChat-200k (Ding et al., 2023) and WildChat-1M (Zhao et al., 2024a)",
      "explanation": "WildChat-1M used as supplementary positives for the quality classifier filtering Olmo 3 Base 32B's pretraining data."
@@ -11061,13 +11061,13 @@
    "description": "the-stack-v2 is the upstream GitHub-repository corpus from which Stack-Edu (Olmo 3 32B's code data source) is curated with educational programming filtering.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we use Stack-Edu (Allal et al., 2025), an improved curation of GitHub repositories from the-stack-v2 dataset (Lozhkov et al., 2024)",
      "explanation": "Section 3.4.3 names the-stack-v2 as the upstream source for Stack-Edu used in Olmo 3 pretraining."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we source data from the Python subset of the-stack-v2-smol",
      "explanation": "the-stack-v2 supplies the Python source data for CraneCode consumed by Olmo 3 Base 32B."
@@ -11094,7 +11094,7 @@
    "description": "Proof-Pile-2 is the dataset from which arXiv documents in Olmo 3 32B's pretraining (50.8B tokens / 0.86% of Dolma 3 Mix) originate; preserves LaTeX, cutoff April 2023.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we include arXiv documents from the Proof-Pile-2 dataset (Azerbayev et al., 2023)",
      "explanation": "Section 3.4.3 names Proof-Pile-2 as the source of arXiv documents used in Olmo 3 pretraining."
@@ -11109,7 +11109,7 @@
    "description": "RedPajama is the upstream-of-upstream source for the arXiv tokens that flow Proof-Pile-2 -> Olmo 3 32B's pretraining mix.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "from the Proof-Pile-2 dataset (Azerbayev et al., 2023), which in turn are from the RedPajama dataset (Together AI, 2023)",
      "explanation": "Section 3.4.3 explicitly traces arXiv lineage from RedPajama via Proof-Pile-2."
@@ -11124,7 +11124,7 @@
    "description": "OLMo 2 32B Instruct generates the synthetic CWE and REX aggregation QA pairs for the 100B Longmino Mix used in Stage 3 long-context extension of Olmo 3 32B.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we ultimately use OLMo 2 Instruct 32B for all generations.",
      "explanation": "OLMo 2 32B Instruct produced the synth CWE/REX content for the 32B Stage 3 mix."
@@ -11139,7 +11139,7 @@
    "description": "Dolma (Soldaini et al., 2024) supplied the Wikipedia and Wikibooks encyclopedic sources reused in Olmo 3 32B's Dolma 3 Mix; both English and Simple editions.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we include the Wikipedia and Wikibooks sources from Dolma (Soldaini et al., 2024)",
      "explanation": "Section 3.4.3 names Dolma as the upstream source of Wikipedia and Wikibooks reused in Olmo 3 pretraining."
@@ -11172,7 +11172,7 @@
      "explanation": "Nemotron Synth-QA in ingredient-2."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we include the 'diverse QA pairs' synth subset of the Nemotron CC dataset",
      "explanation": "Sub-corpus of Dolma 3 Dolmino Mix consumed by Olmo 3 Base 32B midtraining."
@@ -11187,7 +11187,7 @@
    "description": "MC Non-STEM cluster benchmark; OlmoBaseEval Main suite for Base 32B (Table 2).",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/ace8e9e4/runs/e9f327f8-b6d5-4bc6-9b5c-71f89913455e/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "",
      "explanation": "Table 2 reports OlmoBaseEval MC Non-STEM scores for Olmo 3 32B Base."
@@ -11205,7 +11205,7 @@
      "explanation": "MMLU Social Sciences in 32B stage-1 evals."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "MMLU Social Sci. 84.0 ... 75.0",
      "explanation": "Benchmark MMLU Social Sci. appears in the OlmoBaseEval results table for Olmo 3 Base 32B."
@@ -11271,7 +11271,7 @@
      "explanation": "FineMath4+ source for CraneMath."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "rewriting FineMath4+ with the SwallowMath prompt, using Qwen3",
      "explanation": "FineMath 4+ subset is the source rewritten into CraneMath consumed by Olmo 3 Base 32B."
@@ -11700,7 +11700,7 @@
    "description": "Olmo 3 Base 32B's Wikipedia & Wikibooks sub-corpora are sourced from Dolma v1 (allenai/dolma) processing.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "we include the Wikipedia and Wikibooks sources from Dolma (Soldaini et al., 2024)",
      "explanation": "Dolma v1 supplies the Wikipedia/Wikibooks slice consumed by Olmo 3 Base 32B."
@@ -11715,7 +11715,7 @@
    "description": "Olmo 3 Base 32B's CraneMath, MegaMatt, and CraneCode synthetic midtraining sub-corpora were generated by rewriting source web data (FineMath 4+, MegaMath-Web-Pro filtered, the-stack-v2-smol Python) with Qwen3 (size unspecified in source).",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "rewriting FineMath4+ with the SwallowMath prompt, using Qwen3 (Yang et al., 2025a) for generation. We denote this new mix as CraneMath",
      "explanation": "Qwen3 generates the CraneMath/MegaMatt/CraneCode synthetic data consumed by Olmo 3 Base 32B midtraining."
@@ -11730,7 +11730,7 @@
    "description": "Olmo 3 Base 32B's Dolmino 1 Flan midtraining sub-corpus reuses a subset of the Flan dataset with the same preprocessing as OLMo 2.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "Flan Through microanneals, we also find the Flan dataset (Wei et al., 2021; Longpre et al., 2023) improves performance ... we use same subset and preprocessing from OLMo 2",
      "explanation": "Flan dataset inspires Dolmino 1 Flan consumed by Olmo 3 Base 32B."
@@ -11745,7 +11745,7 @@
    "description": "Olmo 3 Base 32B's long-context recipe development was informed by surveying token-efficient extension recipes including LongAttn (Wu et al., 2025) which selects long-range-dependency documents via self-attention scores.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
+     "source": "storage/workers/334512d9/runs/2721dc84-c134-4d25-a37c-09e444b148bc/batch/olmo-3-paper.pdf",
      "location": "",
      "excerpt": "LongAttn (Wu et al., 2025b) constructs a 5B-token corpus using self-attention scores from existing language models",
      "explanation": "LongAttn cited as a recipe reference shaping Olmo 3 Base 32B long-context development."

@@ -322,7 +322,7 @@ def dedup_cmd(source: str, dest: str, stages: str, log_path: str | None):
               help="Output directory. GitHub Pages typically serves from /docs/.")
 @click.option("--depth", type=int, default=3, show_default=True,
               help="Hops to expand from each target seed.")
-@click.option("--target-size", type=int, default=120, show_default=True,
+@click.option("--target-size", type=int, default=60, show_default=True,
               help="Approximate node budget per target (pre main-component prune).")
 def viz_export_cmd(source_path: str, out_dir: str, depth: int, target_size: int):
     """Build a static, deployable viz with one tab per paper target.

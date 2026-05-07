@@ -49,7 +49,7 @@ and provides:
 ## Install
 
 ```bash
-git clone git@github.com:sanjay-adhikesaven/llm-dependency.git
+git clone <ANONYMIZED-REPO-URL>
 cd llm-dependency
 python -m pip install -e .
 ```

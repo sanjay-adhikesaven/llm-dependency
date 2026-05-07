@@ -9,7 +9,7 @@
    "description": "smollm3_instruct.txt enumerates `lighteval|gpqa:diamond|0|0` for the GPQA Diamond graduate-level QA benchmark in the SmolLM3 instruct evaluation pass.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "source": "storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
      "location": "",
      "excerpt": "lighteval|gpqa:diamond|0|0",
      "explanation": "Task slug `gpqa:diamond` invokes the GPQA Diamond subset for the SmolLM3 instruct evaluation."
@@ -21,7 +21,7 @@
      "explanation": "instruct task list"
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
+     "source": "storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
      "location": "",
      "excerpt": "| Graduate-level reasoning | GPQA Diamond | <u>35.7</u> | 32.2 | 29.4 | 31.8 | **44.4** |",
      "explanation": "Row reports SmolLM3-3B's GPQA Diamond score under no-thinking; a parallel row reports the extended-thinking score."
@@ -42,7 +42,7 @@
    "description": "smollm3_instruct.txt enumerates `extended|ifeval|0|0` for IFEval instruction-following in the SmolLM3 instruct evaluation pass.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "source": "storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
      "location": "",
      "excerpt": "extended|ifeval|0|0",
      "explanation": "Task slug `ifeval` invokes IFEval for the SmolLM3 instruct evaluation."
@@ -54,13 +54,13 @@
      "explanation": "Both eval tables report SmolLM3-3B IFEval scores."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/234fedc9/runs/1abe76f8-ecb9-493e-8ceb-a1849fd7a59c/batch/smollm-repo/text/evaluation/smollm3/smollm3_instruct.txt",
+     "source": "storage/workers/234fedc9/runs/1abe76f8-ecb9-493e-8ceb-a1849fd7a59c/batch/smollm-repo/text/evaluation/smollm3/smollm3_instruct.txt",
      "location": "",
      "excerpt": "extended|ifeval|0|0",
      "explanation": "IFEval extended task entry."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
+     "source": "storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
      "location": "",
      "excerpt": "| Instruction following | IFEval | **76.7** | 65.6 | 71.6 | <u>74.0</u> | 68.9 |",
      "explanation": "Row reports SmolLM3-3B's IFEval score under no-thinking; a parallel row reports the extended-thinking score."
@@ -81,7 +81,7 @@
    "description": "smollm3_instruct.txt enumerates `extended|lcb:codegeneration|0|0` for the LiveCodeBench code-generation benchmark in the SmolLM3 instruct evaluation pass.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "source": "storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
      "location": "",
      "excerpt": "extended|lcb:codegeneration|0|0",
      "explanation": "Task slug `lcb:codegeneration` invokes the LiveCodeBench code-generation subset for the SmolLM3 instruct evaluation."
@@ -108,31 +108,31 @@
    "description": "smollm3_instruct.txt enumerates `extended|global_mmlu_instruct_deu|0|0` for the Global-MMLU instruct benchmark (German subset) in the SmolLM3 instruct evaluation pass.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "source": "storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
      "location": "",
      "excerpt": "extended|global_mmlu_instruct_deu|0|0",
      "explanation": "Task slug `global_mmlu_instruct_deu` invokes the Global-MMLU instruct German subset for the SmolLM3 instruct evaluation."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "source": "storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
      "location": "",
      "excerpt": "extended|global_mmlu_instruct_fra|0|0",
      "explanation": "Task slug `global_mmlu_instruct_fra` invokes the Global-MMLU instruct French subset for the SmolLM3 instruct evaluation."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "source": "storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
      "location": "",
      "excerpt": "extended|global_mmlu_instruct_ita|0|0",
      "explanation": "Task slug `global_mmlu_instruct_ita` invokes the Global-MMLU instruct Italian subset for the SmolLM3 instruct evaluation."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "source": "storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
      "location": "",
      "excerpt": "extended|global_mmlu_instruct_por|0|0",
      "explanation": "Task slug `global_mmlu_instruct_por` invokes the Global-MMLU instruct Portuguese subset for the SmolLM3 instruct evaluation."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "source": "storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
      "location": "",
      "excerpt": "extended|global_mmlu_instruct_spa|0|0",
      "explanation": "Task slug `global_mmlu_instruct_spa` invokes the Global-MMLU instruct Spanish subset for the SmolLM3 instruct evaluation."
@@ -144,7 +144,7 @@
      "explanation": "Both eval tables report SmolLM3-3B Global MMLU scores."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
+     "source": "storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
      "location": "",
      "excerpt": "| Multilingual Q&A | Global MMLU | <u>53.5</u> | 50.54 | 46.8 | 49.5 | **65.1** |",
      "explanation": "Row reports SmolLM3-3B's Global MMLU score under no-thinking; a parallel row reports the extended-thinking score."
@@ -165,7 +165,7 @@
    "description": "smollm3_instruct.txt enumerates `custom|gsm_plus|0|0` for the GSM-Plus adversarial math benchmark in the SmolLM3 instruct evaluation pass.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "source": "storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
      "location": "",
      "excerpt": "custom|gsm_plus|0|0",
      "explanation": "Task slug `gsm_plus` invokes GSM-Plus for the SmolLM3 instruct evaluation."
@@ -177,13 +177,13 @@
      "explanation": "Both eval tables report SmolLM3-3B GSM-Plus scores."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/234fedc9/runs/1abe76f8-ecb9-493e-8ceb-a1849fd7a59c/batch/smollm-repo/text/evaluation/smollm3/tasks.py",
+     "source": "storage/workers/234fedc9/runs/1abe76f8-ecb9-493e-8ceb-a1849fd7a59c/batch/smollm-repo/text/evaluation/smollm3/tasks.py",
      "location": "",
      "excerpt": "name=\"gsm_plus\" ... hf_repo=\"qintongli/GSM-Plus\"",
      "explanation": "tasks.py registers gsm_plus against qintongli/GSM-Plus."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
+     "source": "storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
      "location": "",
      "excerpt": "| Math problem-solving | GSM-Plus | 72.8 | <u>74.1</u> | 59.2 | 68.3 | **82.1** |",
      "explanation": "Row reports SmolLM3-3B's GSM-Plus score under no-thinking; a parallel row reports the extended-thinking score."
@@ -210,13 +210,13 @@
    "description": "smollm3_instruct.txt enumerates `custom|mixeval_hard|0|0` for the MixEval Hard split in the SmolLM3 instruct evaluation pass.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "source": "storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
      "location": "",
      "excerpt": "custom|mixeval_hard|0|0",
      "explanation": "Task slug `mixeval_hard` invokes the MixEval Hard split for the SmolLM3 instruct evaluation."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/234fedc9/runs/1abe76f8-ecb9-493e-8ceb-a1849fd7a59c/batch/smollm-repo/text/evaluation/smollm3/tasks.py",
+     "source": "storage/workers/234fedc9/runs/1abe76f8-ecb9-493e-8ceb-a1849fd7a59c/batch/smollm-repo/text/evaluation/smollm3/tasks.py",
      "location": "",
      "excerpt": "name=\"mixeval_hard:freeform\" ... hf_repo=\"MixEval/MixEval\" ... hf_subset=\"MixEval_Hard\"",
      "explanation": "tasks.py registers mixeval_hard tasks against MixEval/MixEval."
@@ -234,7 +234,7 @@
      "explanation": "custom MixEval Hard configs"
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
+     "source": "storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
      "location": "",
      "excerpt": "| Alignment | MixEval Hard | 26.9 | <u>27.6</u> | 24.9 | 24.3 | **31.6** |",
      "explanation": "Row reports SmolLM3-3B's MixEval Hard score under no-thinking; a parallel row reports the extended-thinking score."
@@ -249,7 +249,7 @@
    "description": "SmolLM3-3B chat model is evaluated on BFCL via a fork of huggingface/gorilla (berkeley-function-call-leaderboard) with a dedicated SmolLM3-3B parser, since lighteval does not yet support BFCL.",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/README.md",
+     "source": "storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/README.md",
      "location": "",
      "excerpt": "BFCL is not yet supported by LightEval, so we used a fork ... with a dedicated parser for SmolLM3-3B.",
      "explanation": "README documents BFCL evaluation of SmolLM3-3B via a forked Gorilla berkeley-function-call-leaderboard repo."
@@ -261,7 +261,7 @@
      "explanation": "Both eval tables report SmolLM3-3B BFCL tool-calling scores."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
+     "source": "storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
      "location": "",
      "excerpt": "| Tool Calling | BFCL| <u>92.3</u> | - | <u>92.3</u> * | 89.5  | **95.0** |",
      "explanation": "Row reports SmolLM3-3B's BFCL score under no-thinking; a parallel row reports the extended-thinking score."
@@ -303,7 +303,7 @@
      "explanation": "Frontmatter declares the weight inheritance and the summary describes the post-training continuation from Base to chat."
     },
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
+     "source": "storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
      "location": "",
      "excerpt": "base_model:\n  - HuggingFaceTB/SmolLM3-3B-Base",
      "explanation": "HuggingFace YAML metadata declares SmolLM3-3B-Base as the parent checkpoint for SmolLM3-3B."
@@ -606,7 +606,7 @@
    "description": "SmolLM3-3B instruct is evaluated on AIME25 (lighteval|aime25|0|0).",
    "evidence": [
     {
-     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/234fedc9/runs/1abe76f8-ecb9-493e-8ceb-a1849fd7a59c/batch/smollm-repo/text/evaluation/smollm3/smollm3_instruct.txt",
+     "source": "storage/workers/234fedc9/runs/1abe76f8-ecb9-493e-8ceb-a1849fd7a59c/batch/smollm-repo/text/evaluation/smollm3/smollm3_instruct.txt",
      "location": "",
      "excerpt": "lighteval|aime25|0|0",
      "explanation": "AIME25 task entry in instruct eval list."
