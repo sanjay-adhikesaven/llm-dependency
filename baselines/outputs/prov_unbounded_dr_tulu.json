@@ -1,0 +1,1106 @@
+{
+ "subject": "dr_tulu",
+ "edges": [
+  {
+   "subject": "rl-research/DR-Tulu-SFT-8B",
+   "object": "rl-research/dr-tulu-sft-data",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "rl-research/DR-Tulu-SFT-8B is the SFT checkpoint trained on the rl-research/dr-tulu-sft-data corpus, which packages curated prompts with full trajectories (reasoning traces, tool calls, and cited answers).",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/datasets/rl-research/dr-tulu-sft-data",
+     "location": "",
+     "excerpt": "This dataset contains the SFT training data for DR Tulu, containing prompts and full trajectories including reasoning traces, tool calls, and answers with citations.",
+     "explanation": "States directly that this HF dataset is the SFT training data used for DR Tulu, making it the trained_on aggregator for the SFT-stage model rl-research/DR-Tulu-SFT-8B."
+    },
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "we curated 16K SFT data points, including both short-form and long-form tasks. Appendix Table 8 shows statistics of our SFT data.",
+     "explanation": "Paper reports the SFT data size and DR Tulu's HF release page hosts the dataset under rl-research/dr-tulu-sft-data."
+    },
+    {
+     "source": "https://huggingface.co/datasets/rl-research/dr-tulu-sft-data",
+     "location": "",
+     "excerpt": "rl-research/dr-tulu-sft-data",
+     "explanation": "Confirms the released SFT mixture used to train DR-Tulu-SFT-8B."
+    },
+    {
+     "source": "sft/llama-factory/train/qwen3-8B-sft-final.yaml",
+     "location": "",
+     "excerpt": "dataset: rl-research/dr-tulu-sft-data\ntemplate: qwen3\ncutoff_len: 16384\nuse_span_masking: true \nmask_span_types: \"tool_output\"",
+     "explanation": "The dataset field specifies the HF dataset id used for SFT, and the span-masking flags document how tool outputs are excluded from the loss."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "location": "",
+     "excerpt": "datasets: - rl-research/dr-tulu-sft-data ... This model has undergone SFT training on [this dataset](https://huggingface.co/datasets/rl-research/dr-tulu-sft-data).",
+     "explanation": "Frontmatter datasets field and body sentence both name dr-tulu-sft-data as the SFT training corpus."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/DR-Tulu-SFT-8B",
+   "object": "Qwen/Qwen3-8B",
+   "relation_type": "trained_from",
+   "dependency_kind": "direct",
+   "description": "DR-Tulu-SFT-8B is initialized from Qwen3-8B and continues training via supervised fine-tuning on 16K deep-research trajectories.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "We initialize our checkpoint with Qwen3-8B (Yang et al., 2025). For SFT, we run training on one H100 node (8 GPUs) and trained for 5 epochs",
+     "explanation": "States explicitly that the SFT checkpoint is initialized from Qwen3-8B."
+    },
+    {
+     "source": "sft/llama-factory/train/qwen3-8B-sft-final.yaml",
+     "location": "",
+     "excerpt": "model_name_or_path: Qwen/Qwen3-8B",
+     "explanation": "model_name_or_path identifies the base checkpoint that DR-Tulu-SFT-8B initializes from."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "location": "",
+     "excerpt": "base_model: Qwen/Qwen3-8B ... This is the SFT checkpoint of DR Tulu, an open deep research agent trained on top of [Qwen3-8B](https://huggingface.co/Qwen/Qwen3-8B).",
+     "explanation": "Frontmatter base_model field and body text both pin Qwen3-8B as the SFT warm-start checkpoint."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-research/DR-Tulu-SFT-8B",
+   "relation_type": "trained_from",
+   "dependency_kind": "direct",
+   "description": "DR-Tulu-8B (RL) is initialized from the DR-Tulu-SFT-8B checkpoint and continues training with online RL via RLER (GRPO variant with token-level loss aggregation, sample packing, 1-step async tool calls, and KL=0.001).",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "We then further train DR Tulu (SFT) using RLER to allow it to explore and improve both its tool-use and answer capabilities, aided by the evolving rubrics described above.",
+     "explanation": "Paper states the RL stage is initialized from the SFT checkpoint."
+    },
+    {
+     "source": "rl/open-instruct/train_dr_tulu.sh",
+     "location": "",
+     "excerpt": "model_name=rl-research/DR-Tulu-SFT-8B\n... --model_name_or_path ${model_name}",
+     "explanation": "The model_name variable is the SFT checkpoint and is passed as --model_name_or_path to grpo_fast.py, identifying the warm-start of the RL run."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "location": "",
+     "excerpt": "base_model: - rl-research/DR-Tulu-SFT-8B ... This is the RL checkpoint of DR Tulu, an open deep research agent trained on top of [rl-research/DR-Tulu-SFT-8B].",
+     "explanation": "Frontmatter base_model and body text both pin DR-Tulu-SFT-8B as the RL warm-start checkpoint."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-research/dr-tulu-rl-data",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "DR-Tulu-8B (RL) was RL-trained on the publicly released rl-research/dr-tulu-rl-data mixture comprising the long-form prompts and the persistent + evolving search-based rubrics generated during RLER training.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/datasets/rl-research/dr-tulu-rl-data",
+     "location": "",
+     "excerpt": "rl-research/dr-tulu-rl-data",
+     "explanation": "Confirms the released RL training data corresponds to DR Tulu's RLER prompt+rubric pool."
+    },
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "We focus exclusively on long-form questions for RL training. Following the same LM-based filtering procedure ... we collect approximately 5K new prompts from SearchArena and OpenScholar.",
+     "explanation": "Paper describes the RL prompt curation that constitutes the RL data mixture."
+    },
+    {
+     "source": "rl/open-instruct/train_dr_tulu.sh",
+     "location": "",
+     "excerpt": "dataset_list=\"rl-research/dr-tulu-rl-data 1.0\"\n... --dataset_mixer_list ${dataset_list} --dataset_mixer_list_splits train",
+     "explanation": "The RL training script's only training dataset is the dr-tulu-rl-data HF dataset, mixed at weight 1.0."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "location": "",
+     "excerpt": "datasets: - rl-research/dr-tulu-rl-data ... This model has undergone RL training on [this dataset](https://huggingface.co/datasets/rl-research/dr-tulu-rl-data).",
+     "explanation": "Frontmatter datasets field and body sentence both name dr-tulu-rl-data as the RL training corpus."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/53a02564-76a5-4be5-aa94-aa35e8b7ff8b/batch/dr-tulu-rl-data.md",
+     "location": "",
+     "excerpt": "This dataset contains the RL training data for DR Tulu, containing prompts and search-based rubrics generated from OpenScholar and SearchArena prompts, with rubrics generated using GPT-4.1.",
+     "explanation": "Identifies the dataset (the file's own card) as RL training data for DR Tulu, establishing trained_on."
+    },
+    {
+     "source": "batch/open-instruct/scripts/train/dr-tulu/dr_tulu_qwen35.sh",
+     "location": "",
+     "excerpt": "DATASETS=\"rl-research/dr-tulu-rl-data 1.0\" ... --dataset_mixer_list $DATASETS",
+     "explanation": "Dataset mixer flag."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "lmarena-ai/search-arena-24k",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "Approximately 5K filtered long-form prompts for RL training were drawn from SearchArena (in addition to OpenScholar), forming part of the RL prompt pool.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "we collect approximately 5K new prompts from SearchArena (Miroyan et al., 2025) and OpenScholar (Asai et al., 2024).",
+     "explanation": "Paper names SearchArena as a long-form RL prompt source."
+    },
+    {
+     "source": "audit_artifact.json (DR Tulu group)",
+     "location": "",
+     "excerpt": "prompts and search-grounded rubrics generated from OpenScholar and SearchArena prompts",
+     "explanation": "Lattice description names SearchArena prompts as a source; the canonical SearchArena release on HF is lmarena-ai/search-arena-24k."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/53a02564-76a5-4be5-aa94-aa35e8b7ff8b/batch/dr-tulu-rl-data.md",
+     "location": "",
+     "excerpt": "containing prompts and search-based rubrics generated from OpenScholar and SearchArena prompts",
+     "explanation": "Names SearchArena as a prompt source for the RL data DR-Tulu-8B was trained on."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "openai/gpt-4.1-mini",
+   "relation_type": "filtered_by",
+   "dependency_kind": "direct",
+   "description": "GPT-4.1-mini (gpt-4.1-mini-2025-04-14) was the LM judge used to score every rollout against each persistent and evolving rubric (returning 0/0.5/1) and to compute the citation reward; its judgement governed inclusion of each rubric's signal in the GRPO reward, hence filtered_by.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "For rubric and citation scoring, we use GPT-4.1-mini (gpt-4.1-mini-2025-04-14) as an LM judge",
+     "explanation": "Paper names GPT-4.1-mini as the LM judge that scores rollouts against rubrics for the RL reward."
+    },
+    {
+     "source": "rl/open-instruct/train_dr_tulu.sh",
+     "location": "",
+     "excerpt": "export RUBRIC_JUDGE_MODEL=gpt-4.1-mini",
+     "explanation": "RUBRIC_JUDGE_MODEL is the env var read by the RLER reward to invoke the LM rubric judge; gpt-4.1-mini is the global default judge for DR-Tulu-8B's RL run."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "openai/gpt-4.1",
+   "relation_type": "generated_by",
+   "dependency_kind": "direct",
+   "description": "GPT-4.1 served as the rubric generator G_rubric: it produced both the persistent initial search-based rubrics (after retrieving web/paper evidence per prompt) and the evolving positive/negative rubrics that compare current-policy rollouts during training; these LM-generated rubrics constitute the reward signal.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "we use GPT-4.1 as an rubric generator for both initial and evolving rubrics.",
+     "explanation": "Paper names GPT-4.1 as the rubric generator that produces the persistent and evolving rubrics defining the RL reward."
+    },
+    {
+     "source": "audit_artifact.json (DR Tulu group)",
+     "location": "",
+     "excerpt": "search-grounded rubrics generated from OpenScholar and SearchArena prompts (rubrics generated with GPT-4.1) used during RLER training of DR-Tulu-8B",
+     "explanation": "The lattice description identifies GPT-4.1 as the model that generated the rubric content embedded in the rl-data dataset."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/53a02564-76a5-4be5-aa94-aa35e8b7ff8b/batch/dr-tulu-rl-data.md",
+     "location": "",
+     "excerpt": "with rubrics generated using GPT-4.1",
+     "explanation": "Names GPT-4.1 as the model that generated the search-based rubrics included in the RL training data."
+    },
+    {
+     "source": "batch/open-instruct/scripts/train/dr-tulu/dr_tulu_qwen35.sh",
+     "location": "",
+     "excerpt": "--env RUBRIC_GENERATION_MODEL=gpt-4.1",
+     "explanation": "GPT-4.1 generates the rubrics."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "AstaBench-ScholarQA-CS2",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "AstaBench-ScholarQA-CS2 (SQAv2) was used as a long-form scientific-literature-synthesis benchmark with rubric, answer-quality, citation-precision, and citation-recall metrics; DR Tulu-8B (RL) achieved 86.8 (rubric 84.8, Cite-P 90.6, Cite-R 76.1).",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "DR Tulu-8B (RL) ... 86.8 ... AstaBench-ScholarQA-CS2 (SQAv2) ... Rubric Answer Cite-P Cite-R",
+     "explanation": "Tables 2 and 3 report DR Tulu-8B (RL) scores on AstaBench-ScholarQA-CS2."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "openai/healthbench",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "HealthBench evaluates healthcare deep-research with physician-annotated rubrics; DR Tulu-8B (RL) scored 50.2 (negative rubrics allowed).",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "DR Tulu-8B (RL) ... HealthBench ... 50.2",
+     "explanation": "Table 2 reports DR Tulu-8B (RL) on HealthBench."
+    },
+    {
+     "source": "agent/evaluation/health_bench_eval/healthbench_eval.py",
+     "location": "",
+     "excerpt": "INPUT_PATH = \"https://openaipublic.blob.core.windows.net/simple-evals/healthbench/2025-05-07-06-14-12_oss_eval.jsonl\"",
+     "explanation": "OpenAI's healthbench oss_eval/hard/consensus URLs are the eval source."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "location": "",
+     "excerpt": "| Benchmark | SQAv2 | HealthBench | ... | DR-Tulu-8B (this model) | 88.3 | 52.8 |",
+     "explanation": "Eval table column HealthBench with score 52.8 documents this benchmark for DR-Tulu-8B."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "realliyifei/ResearchQA",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "ResearchQA evaluates synthesis over up-to-date scientific literature across 75 fields; DR Tulu-8B (RL) scored 74.3.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "DR Tulu-8B (RL) ... ResearchQA ... 74.3",
+     "explanation": "Table 2 reports DR Tulu-8B (RL) on ResearchQA."
+    },
+    {
+     "source": "agent/dr_agent/dataset_utils/load_dataset.py",
+     "location": "",
+     "excerpt": "data = datasets.load_dataset(dataset_repo, split=\"test\", revision=\"87cdd81df0c5ea96de293859233e8e64dac3d168\")",
+     "explanation": "Identifies realliyifei/ResearchQA as the eval source."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "location": "",
+     "excerpt": "| Benchmark | SQAv2 | HealthBench | ResearchQA | ... | DR-Tulu-8B (this model) | 88.3 | 52.8 | 75.7 |",
+     "explanation": "Eval table column ResearchQA with score 75.7 documents this benchmark for DR-Tulu-8B."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "DeepResearch Bench",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DeepResearchBench (DRB) covers general-domain PhD-level research tasks; DR Tulu-8B (RL) scored 43.4 with per-aspect scores Comprehensiveness 41.7, Depth 41.8, Instruction 48.2, Readability 41.3.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "DR Tulu-8B (RL) ... DeepResearchBench (DRB) Comp Depth Instruction Readability ... 41.7 41.8 48.2 41.3",
+     "explanation": "Tables 2 and 3 report DR Tulu-8B (RL) per-aspect scores on DeepResearchBench."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "location": "",
+     "excerpt": "| ... | DeepResearch Bench | ... | DR-Tulu-8B (this model) | ... | 45.4 |",
+     "explanation": "Eval table column DeepResearch Bench with score 45.4 documents this benchmark for DR-Tulu-8B."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "basicv8vc/SimpleQA",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "SimpleQA was used as a short-form factuality benchmark (top-1 prediction, GPT-4.1 judge); DR Tulu-8B (RL) scored 80.1.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "DR Tulu-8B (RL) ... SimpleQA 80.1 ... Our short-form evaluation suite comprises SimpleQA (Wei et al., 2024)",
+     "explanation": "Section 6.1 names SimpleQA and Table 5 reports the DR Tulu-8B (RL) score."
+    },
+    {
+     "source": "agent/evaluation/simple_qa_eval/simpleqa_eval.py",
+     "location": "",
+     "excerpt": "SimpleQA: Measuring short-form factuality in large language models",
+     "explanation": "The eval script targets the SimpleQA test set."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "location": "",
+     "excerpt": "| ... | SimpleQA | 2Wiki | WebWalker | ... | DR-Tulu-8B (this model) | ... | 75.9 |",
+     "explanation": "Eval table column SimpleQA with score 75.9 documents this benchmark for DR-Tulu-8B."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "xanhho/2WikiMultihopQA",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "2Wiki (2WikiMultihopQA) was used as a multi-hop short-form benchmark (top-1 prediction, GPT-4.1 judge); DR Tulu-8B (RL) scored 68.0.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "DR Tulu-8B (RL) ... 2Wiki 68.0 ... 2Wiki (Ho et al., 2020)",
+     "explanation": "Section 6.1 names 2Wiki and Table 5 reports the score."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "location": "",
+     "excerpt": "| ... | 2Wiki | WebWalker | ... | DR-Tulu-8B (this model) | ... | 68.9 | 39.0 |",
+     "explanation": "Eval table column 2Wiki with score 68.9 documents this benchmark for DR-Tulu-8B."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "callanwu/WebWalkerQA",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "WebWalkerQA was used as a short-form web-navigation QA benchmark (top-1 prediction, GPT-4.1 judge); DR Tulu-8B (RL) scored 39.1.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "DR Tulu-8B (RL) ... WebWalker 39.1 ... WebWalkerQA (Wu et al., 2025a)",
+     "explanation": "Section 6.1 names WebWalkerQA and Table 5 reports the score."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-8b.md",
+     "location": "",
+     "excerpt": "| ... | WebWalker | Average | ... | DR-Tulu-8B (this model) | ... | 39.0 | 63.7 |",
+     "explanation": "Eval table column WebWalker with score 39.0 documents this benchmark for DR-Tulu-8B."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "openai/gpt-4.1",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "GPT-4.1 served as the LLM judge across all DR Tulu-8B (RL) evaluations: long-form rubric scoring, citation scoring, GeneticDiseasesQA scoring, and short-form top-1 correctness scoring.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "Outputs are scored with GPT-4.1 along several dimensions ... evaluated with GPT-4.1 as the LLM judge under a unified evaluation pipeline",
+     "explanation": "Paper specifies GPT-4.1 is the LM judge for both GeneticDiseasesQA and the short-form QA evaluations."
+    },
+    {
+     "source": "agent/scripts/evaluate.py",
+     "location": "",
+     "excerpt": "parser.add_argument(\"--grader-model\", default=\"gpt-4.1-2025-04-14\", ...",
+     "explanation": "evaluate.py defaults grader_model to gpt-4.1-2025-04-14 for the HealthBench branch."
+    },
+    {
+     "source": "agent/scripts/evaluate.py",
+     "location": "",
+     "excerpt": "elif task == \"browsecomp\":\n    eval_class = BrowseCompEval(grader_model=grader_sampler)\n... default=\"gpt-4.1-2025-04-14\"",
+     "explanation": "evaluate.py grader default and BrowseComp branch point to gpt-4.1 for grading."
+    },
+    {
+     "source": "agent/scripts/evaluate.py",
+     "location": "",
+     "excerpt": "if task == \"simpleqa\":\n    eval_class = SimpleQAEval(grader_model=grader_sampler)\n... default=\"gpt-4.1-2025-04-14\"",
+     "explanation": "evaluate.py dispatches simpleqa to SimpleQAEval with the default gpt-4.1 grader."
+    },
+    {
+     "source": "agent/scripts/evaluate.py",
+     "location": "",
+     "excerpt": "default=\"gpt-4.1-2025-04-14\"",
+     "explanation": "evaluate.py default grader is gpt-4.1 for the short-form judge metric used by dsqa."
+    },
+    {
+     "source": "agent/scripts/evaluate.py",
+     "location": "",
+     "excerpt": "grader_model: str = \"gpt-4.1-2025-04-14\"",
+     "explanation": "Default grader for the genetic-diseases QA branch."
+    },
+    {
+     "source": "agent/evaluation/short_form_qa_eval/short_form_eval.py",
+     "location": "",
+     "excerpt": "Judge whether the following [response] to [question] is correct based on the precise and unambiguous [correct_answer]. ... correct: yes or no",
+     "explanation": "Short-form judge metric uses an LM grader (default gpt-4.1) to label correctness."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/DR-Tulu-SFT-8B",
+   "object": "openai/healthbench",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR Tulu-8B (SFT) was evaluated on HealthBench, scoring 38.1.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "DR Tulu-8B (SFT) ... HealthBench 38.1",
+     "explanation": "Table 2 reports the SFT score on HealthBench."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "location": "",
+     "excerpt": "| ... | HealthBench | ... | DR-Tulu-SFT-8B (this model) | 72.3 | 38.1 |",
+     "explanation": "Eval table column HealthBench with score 38.1 documents this benchmark for DR-Tulu-SFT-8B."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/DR-Tulu-SFT-8B",
+   "object": "realliyifei/ResearchQA",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR Tulu-8B (SFT) was evaluated on ResearchQA, scoring 68.5.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "DR Tulu-8B (SFT) ... ResearchQA 68.5",
+     "explanation": "Table 2 reports the SFT score on ResearchQA."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "location": "",
+     "excerpt": "| ... | ResearchQA | ... | DR-Tulu-SFT-8B (this model) | 72.3 | 38.1 | 68.5 |",
+     "explanation": "Eval table column ResearchQA with score 68.5 documents this benchmark for DR-Tulu-SFT-8B."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/DR-Tulu-SFT-8B",
+   "object": "DeepResearch Bench",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR Tulu-8B (SFT) was evaluated on DeepResearchBench (DRB) with overall 39.0 (Comp 36.3, Depth 35.3, Instruction 45.5, Readability 39.5).",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "DR Tulu-8B (SFT) ... DRB 39.0 ... 36.3 35.3 45.5 39.5",
+     "explanation": "Tables 2 and 3 report the SFT scores on DeepResearchBench."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "location": "",
+     "excerpt": "| ... | DeepResearch Bench | ... | DR-Tulu-SFT-8B (this model) | ... | 39.0 |",
+     "explanation": "Eval table column DeepResearch Bench with score 39.0 documents this benchmark for DR-Tulu-SFT-8B."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/DR-Tulu-SFT-8B",
+   "object": "basicv8vc/SimpleQA",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR Tulu-8B (SFT) was evaluated on SimpleQA short-form QA, scoring 75.5.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "DR Tulu-8B (SFT) ... SimpleQA 75.5",
+     "explanation": "Table 5 reports SFT short-form scores."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "location": "",
+     "excerpt": "| ... | SimpleQA | 2Wiki | WebWalker | ... | DR-Tulu-SFT-8B (this model) | ... | 75.5 |",
+     "explanation": "Eval table column SimpleQA with score 75.5 documents this benchmark for DR-Tulu-SFT-8B."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/DR-Tulu-SFT-8B",
+   "object": "xanhho/2WikiMultihopQA",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR Tulu-8B (SFT) was evaluated on 2Wiki short-form QA, scoring 66.5.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "DR Tulu-8B (SFT) ... 2Wiki 66.5",
+     "explanation": "Table 5 reports SFT short-form scores."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "location": "",
+     "excerpt": "| ... | 2Wiki | WebWalker | ... | DR-Tulu-SFT-8B (this model) | ... | 66.5 |",
+     "explanation": "Eval table column 2Wiki with score 66.5 documents this benchmark for DR-Tulu-SFT-8B."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/DR-Tulu-SFT-8B",
+   "object": "callanwu/WebWalkerQA",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR Tulu-8B (SFT) was evaluated on WebWalkerQA short-form QA, scoring 31.9.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "DR Tulu-8B (SFT) ... WebWalker 31.9",
+     "explanation": "Table 5 reports SFT short-form scores."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-sft-8b.md",
+     "location": "",
+     "excerpt": "| ... | WebWalker | Average | ... | DR-Tulu-SFT-8B (this model) | ... | 31.9 | 56.0 |",
+     "explanation": "Eval table column WebWalker with score 31.9 documents this benchmark for DR-Tulu-SFT-8B."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-research/DR-Tulu-SFT-8B",
+   "relation_type": "used_for_ablation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-SFT-8B is the team's own SFT-only intermediate checkpoint used as the RLER ablation comparison: holding tool stack and base data fixed, the RL run gains rubric coverage +8.2, answer precision +4.4, comprehensiveness +5.4, depth +6.5, citation precision +23.3 and citation recall +22.1 over the SFT checkpoint.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "Comparing DR Tulu (SFT) and DR Tulu (RL), we observe consistent gains from RLER across multiple aspects, including rubric coverage (+8.2 points), answer precision (+4.4), comprehensiveness (+5.4), and depth of response (+6.5).",
+     "explanation": "Paper presents the SFT-vs-RL comparison as the team's RLER ablation."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "Qwen/Qwen3-8B",
+   "relation_type": "used_for_ablation",
+   "dependency_kind": "indirect",
+   "description": "Qwen3-8B with the dr-agent-lib search stack ('Qwen3-8B + Our Search') is used as the no-DR-training ablation baseline: holding the inference pipeline fixed at the DR Tulu agent stack but skipping both SFT and RLER, isolating the contribution of the DR Tulu training recipe. DR Tulu-8B (RL) outperforms Qwen3-8B + Our Search by 31.8 average points on the long-form benchmark suite.",
+   "evidence": [
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "Qwen3-8B + Our Search ... 57.2 5.9 46.3 18.2 31.9 ... DR Tulu-8B (RL) ... 86.8 50.2 74.3 43.4 63.7",
+     "explanation": "Tables 2 and 3 report the Qwen3-8B + Our Search ablation row alongside the DR Tulu-8B (RL) result."
+    },
+    {
+     "source": "https://arxiv.org/abs/2511.19399",
+     "location": "",
+     "excerpt": "we also evaluated Qwen3-8B and QwQ-32B with naive RAG inference and separately with our inference pipeline using our dr-agent-lib.",
+     "explanation": "Paper documents Qwen3-8B as evaluated with the team's own dr-agent-lib pipeline, serving as the no-training ablation."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "AstaBench-ScholarQA-CS2",
+   "relation_type": "inspired_by",
+   "dependency_kind": "indirect",
+   "description": "The RLER reward design (per-question rubrics graded by an LM judge) was inspired by the ScholarQA-CS line of rubric-based long-form benchmarks; RLER extends this rubric-grading paradigm with search-grounded persistent rubrics and policy-co-evolving rubrics during online RL.",
+   "evidence": [
+    {
+     "source": "https://allenai.org/blog/dr-tulu",
+     "location": "",
+     "excerpt": "Inspired by the success of evaluating long-form responses with detailed rubrics, including our ScholarQA-CS line of benchmarks, we address this with RLER.",
+     "explanation": "Blog directly credits the ScholarQA-CS rubric-evaluation paradigm as RLER's inspiration."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "anisha2102/RaR-Medicine-20k-o3-mini",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "DR-Tulu-8B's Ai2-deployed RLER run additionally trains on a converted (long-form rubric-formatted) version of anisha2102/RaR-Medicine-20k-o3-mini at sample-count 3000 in the dataset_mixer_list; convert_rar_data.py reformats RaR's per-question rubrics into the rl-rag long_form schema before push_to_hub as rl-rag/RaR-Medicine-20k-o3-mini-converted.",
+   "evidence": [
+    {
+     "source": "rl/open-instruct/convert_rar_data.py",
+     "location": "",
+     "excerpt": "convert_rar_data(\"anisha2102/RaR-Medicine-20k-o3-mini\", f\"{args.hf_org}/RaR-Medicine-20k-o3-mini-converted\")",
+     "explanation": "The conversion script identifies anisha2102/RaR-Medicine-20k-o3-mini as the upstream source of the RaR-Medicine mix used in the Ai2 production RL run."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/53a02564-76a5-4be5-aa94-aa35e8b7ff8b/batch/dr-tulu-rl-data.md",
+     "location": "",
+     "excerpt": "2. anisha2102/RaR-Medicine-20k-o3-mini ... the first 1000 samples from RaR-Medicine",
+     "explanation": "Source explicitly names anisha2102/RaR-Medicine-20k-o3-mini as an RL training data source for DR Tulu and gives the 1000-sample slice."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "anisha2102/RaR-Science-20k-o3-mini",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "DR-Tulu-8B's Ai2-deployed RLER run additionally trains on a converted version of anisha2102/RaR-Science-20k-o3-mini at sample-count 1000 in the dataset_mixer_list; convert_rar_data.py performs the schema reformatting prior to inclusion as rl-rag/RaR-Science-20k-o3-mini-converted.",
+   "evidence": [
+    {
+     "source": "rl/open-instruct/convert_rar_data.py",
+     "location": "",
+     "excerpt": "convert_rar_data(\"anisha2102/RaR-Science-20k-o3-mini\", f\"{args.hf_org}/RaR-Science-20k-o3-mini-converted\")",
+     "explanation": "The conversion script identifies anisha2102/RaR-Science-20k-o3-mini as the upstream source of the RaR-Science mix used in the Ai2 production RL run."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/53a02564-76a5-4be5-aa94-aa35e8b7ff8b/batch/dr-tulu-rl-data.md",
+     "location": "",
+     "excerpt": "For the RaR data, we use data from: 1. anisha2102/RaR-Science-20k-o3-mini ... We sample the first 3000 samples from RaR-Science",
+     "explanation": "Source explicitly names anisha2102/RaR-Science-20k-o3-mini as an RL training data source for DR Tulu and gives the 3000-sample slice."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "BrowseComp",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on the BrowseComp short-form browsing benchmark (browse_comp_test_set.csv); decryption of problem and answer columns is done with the canary key per OpenAI's release.",
+   "evidence": [
+    {
+     "source": "agent/evaluation/browse_comp_eval/browsecomp_eval.py",
+     "location": "",
+     "excerpt": "BrowseComp: A Simple Yet Challenging Benchmark for Browsing Agents",
+     "explanation": "Eval script's docstring identifies BrowseComp as the test set."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-research/webwalker_test",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on rl-research/webwalker_test (WebWalker held-out test split); listed in SUPPORTED_TASKS and explicitly run in both the README per-task loop and the SLURM webwalker_trained script.",
+   "evidence": [
+    {
+     "source": "agent/evaluation/short_form_qa_eval/short_form_eval.py",
+     "location": "",
+     "excerpt": "\"webwalker\": \"rl-research/webwalker_test\"",
+     "explanation": "WebWalker test mapped to rl-research/webwalker_test."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "OpenAI/gpt-4o",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "The SLURM webwalker eval scripts invoke evaluate.py with --grader-model gpt-4o, using gpt-4o as the LM judge for DR-Tulu-8B's WebWalker outputs.",
+   "evidence": [
+    {
+     "source": "rl/open-instruct/train_local/slurm_eval_webwalker_trained.sh",
+     "location": "",
+     "excerpt": "evaluate.py $DATASET \"$EVAL_OUTPUT_DIR/${DATASET}.jsonl\" --grader-model gpt-4o",
+     "explanation": "Sets gpt-4o as the WebWalker grader."
+    },
+    {
+     "source": "rl/open-instruct/train_local/slurm_eval_webshaper_trained.sh",
+     "location": "",
+     "excerpt": "evaluate.py $DATASET \"$EVAL_OUTPUT_DIR/${DATASET}.jsonl\" --grader-model gpt-4o",
+     "explanation": "Sets gpt-4o as the WebShaper grader."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "Alibaba-NLP/WebShaper",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on rl-research/webshaper-heldout, a 246-example heldout subset of the WebShaper benchmark (Alibaba-NLP/WebShaper); ShortFormQAEval runs it with judge-metric scoring.",
+   "evidence": [
+    {
+     "source": "rl/open-instruct/train_local/slurm_eval_webshaper_base.sh",
+     "location": "",
+     "excerpt": "# Dataset: rl-research/webshaper-heldout (246 examples)",
+     "explanation": "Identifies WebShaper heldout as the eval source for DR-Tulu's WebShaper task."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-research/dsqa",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on rl-research/dsqa, a HF rehost of DeepMind/deepsearchqa with answer/answer_type-aware parsing; ShortFormQAEval grades responses with the judge metric.",
+   "evidence": [
+    {
+     "source": "agent/evaluation/short_form_qa_eval/short_form_eval.py",
+     "location": "",
+     "excerpt": "\"dsqa\": \"rl-research/dsqa\"",
+     "explanation": "Maps dsqa task to rl-research/dsqa."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-research/researchqa_official_subset_ids",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "rl-research/researchqa_official_subset_ids is loaded via hf_hub_download to restrict the ResearchQA test split to the official subset ids used to score DR-Tulu-8B.",
+   "evidence": [
+    {
+     "source": "agent/dr_agent/dataset_utils/load_dataset.py",
+     "location": "",
+     "excerpt": "json_path = hf_hub_download(repo_id=\"rl-research/researchqa_official_subset_ids\", filename=\"researchqa_official_subset_ids.json\", repo_type=\"dataset\", ...)",
+     "explanation": "The official-subset id list filters the ResearchQA test set."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "openai/gpt-4.1-mini",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "gpt-4.1-mini-2025-04-14 is the hardcoded LM grader for ResearchQA in evaluate.py; it scores per-rubric coverage of DR-Tulu-8B's responses (Not at all / Barely / Moderately / Mostly / Completely buckets).",
+   "evidence": [
+    {
+     "source": "agent/scripts/evaluate.py",
+     "location": "",
+     "excerpt": "evaluate_researchqa(args.file_path, args.save_path, grader_model=\"gpt-4.1-mini-2025-04-14\")",
+     "explanation": "evaluate.py uses gpt-4.1-mini for ResearchQA grading."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-research/genetic_diseases_qa",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on rl-research/genetic_diseases_qa (47 clinical-genetics questions), a clinical-genetics QA benchmark with rubric+citation grading. Listed in SUPPORTED_TASKS and run in agent/scripts/auto_search.sh's task loop.",
+   "evidence": [
+    {
+     "source": "agent/dr_agent/dataset_utils/load_dataset.py",
+     "location": "",
+     "excerpt": "\"genetic_diseases_qa\": \"rl-research/genetic_diseases_qa\"",
+     "explanation": "Identifies the genetic_diseases_qa eval source."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-research/deep_research_bench_eval",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on rl-research/deep_research_bench_eval (100 prompts: 50 EN + 50 ZH) for both RACE and FACT metrics on long-form research reports.",
+   "evidence": [
+    {
+     "source": "agent/dr_agent/dataset_utils/load_dataset.py",
+     "location": "",
+     "excerpt": "data = datasets.load_dataset(\"rl-research/deep_research_bench_eval\", split=\"test\")",
+     "explanation": "DRB test split is loaded as the eval target."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-research/dr-tulu-eval-data",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "The DRB run_eval.py auto-downloads query.jsonl, criteria.jsonl, and reference.jsonl from rl-research/dr-tulu-eval-data (deep_research_bench/ subdir) to score DR-Tulu-8B; the same eval-data repo also hosts SQA-CS-V2 reference data.",
+   "evidence": [
+    {
+     "source": "agent/evaluation/deep_research_bench_eval/run_eval.py",
+     "location": "",
+     "excerpt": "HF_EVAL_DATA_REPO = \"rl-research/dr-tulu-eval-data\" ... hf_files = {\"deep_research_bench/query.jsonl\": query_file, \"deep_research_bench/criteria.jsonl\": criteria_file, \"deep_research_bench/reference.jsonl\": reference_file}",
+     "explanation": "DRB criteria/reference files are pulled from rl-research/dr-tulu-eval-data."
+    },
+    {
+     "source": "agent/evaluation/sqa_eval/README.md",
+     "location": "",
+     "excerpt": "Example DR-Tulu outputs and their ASTA-format conversions are available at rl-research/dr-tulu-eval-data under sqa/.",
+     "explanation": "Documents that the eval-data repo hosts the SQA evaluation reference outputs for DR-Tulu-8B."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "google/gemini-2.5-pro",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "gemini-2.5-pro is the RACE scorer (Reference-based Adaptive Criteria-driven Evaluation with Dynamic Weighting) for DR-Tulu-8B's Deep Research Bench article quality.",
+   "evidence": [
+    {
+     "source": "agent/evaluation/deep_research_bench_eval/run_eval.py",
+     "location": "",
+     "excerpt": "RACE_MODEL = \"gemini-2.5-pro\"",
+     "explanation": "RACE_MODEL is gemini-2.5-pro."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "Google/Gemini 2.5 Flash",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "gemini-2.5-flash is the FACT scorer (Factual Abundance and Citation Trustworthiness) for DR-Tulu-8B's Deep Research Bench citations.",
+   "evidence": [
+    {
+     "source": "agent/evaluation/deep_research_bench_eval/run_eval.py",
+     "location": "",
+     "excerpt": "FACT_MODEL = \"gemini-2.5-flash\"",
+     "explanation": "FACT_MODEL is gemini-2.5-flash."
+    },
+    {
+     "source": "agent/evaluation/sqa_eval/run_eval.py",
+     "location": "",
+     "excerpt": "default=\"google/gemini-2.5-flash\"",
+     "explanation": "Default scorer for SQA evaluation."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "allenai/asta-bench",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on the SQA (ScholarQA-CS-v2) sub-task of allenai/asta-bench (tasks/sqa/rubrics_v2_recomputed.json), measuring ingredient_recall, answer_precision, citation_recall, citation_precision, and global_avg.",
+   "evidence": [
+    {
+     "source": "agent/dr_agent/dataset_utils/load_dataset.py",
+     "location": "",
+     "excerpt": "data_files=\"tasks/sqa/rubrics_v2_recomputed.json\"",
+     "explanation": "Identifies the asta-bench SQA rubrics_v2 subset as the eval target."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rulins/2wiki_rlvr_no_prompt",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B can be evaluated on the rulins/2wiki_rlvr_no_prompt RLVR formatted 2WikiMultihopQA split via ShortFormQAEval (task: 2wiki_rlvr_no_prompt).",
+   "evidence": [
+    {
+     "source": "agent/evaluation/short_form_qa_eval/short_form_eval.py",
+     "location": "",
+     "excerpt": "\"2wiki_rlvr_no_prompt\": \"rulins/2wiki_rlvr_no_prompt\"",
+     "explanation": "Maps 2wiki_rlvr_no_prompt task to the rulins HF dataset."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rulins/tqa_rlvr_no_prompt",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on rulins/tqa_rlvr_no_prompt (TriviaQA in RLVR-no-prompt format) via ShortFormQAEval; also referenced as the 'tqa' SUPPORTED_TASKS alias.",
+   "evidence": [
+    {
+     "source": "agent/evaluation/short_form_qa_eval/short_form_eval.py",
+     "location": "",
+     "excerpt": "\"tqa_rlvr_no_prompt\": \"rulins/tqa_rlvr_no_prompt\"",
+     "explanation": "Maps tqa to the rulins TriviaQA RLVR dataset."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rulins/nq_rlvr_no_prompt",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on rulins/nq_rlvr_no_prompt (NaturalQuestions in RLVR-no-prompt format) via ShortFormQAEval (tasks: nq, nq_rlvr_no_prompt).",
+   "evidence": [
+    {
+     "source": "agent/evaluation/short_form_qa_eval/short_form_eval.py",
+     "location": "",
+     "excerpt": "\"nq_rlvr_no_prompt\": \"rulins/nq_rlvr_no_prompt\"",
+     "explanation": "Maps nq to rulins NaturalQuestions RLVR."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rulins/hotpotqa_rlvr_no_prompt",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on rulins/hotpotqa_rlvr_no_prompt (HotpotQA in RLVR-no-prompt format) via ShortFormQAEval.",
+   "evidence": [
+    {
+     "source": "agent/evaluation/short_form_qa_eval/short_form_eval.py",
+     "location": "",
+     "excerpt": "\"hotpotqa_rlvr_no_prompt\": \"rulins/hotpotqa_rlvr_no_prompt\"",
+     "explanation": "Maps hotpotqa to the rulins HotpotQA RLVR dataset."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-rag/gpqa_diamond_rlvr_no_prompt",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on rl-rag/gpqa_diamond_rlvr_no_prompt (GPQA-Diamond in RLVR-no-prompt format); ShortFormQAEval forces the exact-match metric for this task because answers are MCQ letters.",
+   "evidence": [
+    {
+     "source": "agent/evaluation/short_form_qa_eval/short_form_eval.py",
+     "location": "",
+     "excerpt": "\"gpqa_rlvr_no_prompt\": \"rl-rag/gpqa_diamond_rlvr_no_prompt\" ... if \"gpqa\" in dataset_repo: self.metric = \"exact\"",
+     "explanation": "Maps GPQA tasks to the rl-rag dataset and uses exact-match grading."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-rag/hle_rlvr_no_prompt",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on rl-rag/hle_rlvr_no_prompt (Humanity's Last Exam in RLVR-no-prompt format) via the 'hle' task in ShortFormQAEval.",
+   "evidence": [
+    {
+     "source": "agent/evaluation/short_form_qa_eval/short_form_eval.py",
+     "location": "",
+     "excerpt": "\"hle\": \"rl-rag/hle_rlvr_no_prompt\"",
+     "explanation": "Maps hle task to the rl-rag HLE RLVR dataset."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-rag/gaia_dev",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on rl-rag/gaia_dev (a rl-rag rehost of the GAIA-dev development split) via the 'gaia' task in ShortFormQAEval. (Free-text mention; the dataset is below the lattice's score-50 threshold and is recorded with its literal HF id.)",
+   "evidence": [
+    {
+     "source": "agent/evaluation/short_form_qa_eval/short_form_eval.py",
+     "location": "",
+     "excerpt": "\"gaia\": \"rl-rag/gaia_dev\"",
+     "explanation": "Maps gaia task to rl-rag/gaia_dev."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-rag/bc_synthetic_v_2",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on rl-rag/bc_synthetic_v_2 (BrowseComp-style synthetic prompts v2) via the bc_synthetic_v_2 task in ShortFormQAEval.",
+   "evidence": [
+    {
+     "source": "agent/evaluation/short_form_qa_eval/short_form_eval.py",
+     "location": "",
+     "excerpt": "\"bc_synthetic_v_2\": \"rl-rag/bc_synthetic_v_2\"",
+     "explanation": "Maps bc_synthetic_v_2 task to rl-rag/bc_synthetic_v_2."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-rag/verifiable_synthetic_depth_one_v2_verified",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on rl-rag/verifiable_synthetic_depth_one_v2_verified (single-hop verifiable QA with supporting URLs) via ShortFormQAEval.",
+   "evidence": [
+    {
+     "source": "agent/evaluation/short_form_qa_eval/short_form_eval.py",
+     "location": "",
+     "excerpt": "\"bc_synthetic_depth_one_v2_verified\": \"rl-rag/verifiable_synthetic_depth_one_v2_verified\"",
+     "explanation": "Maps the depth-one verifiable BC synthetic task."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-rag/verifiable_synthetic_varied_depth_o3_verified",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on rl-rag/verifiable_synthetic_varied_depth_o3_verified (varied-depth verifiable QA with answers verified via OpenAI o3) via ShortFormQAEval.",
+   "evidence": [
+    {
+     "source": "agent/evaluation/short_form_qa_eval/short_form_eval.py",
+     "location": "",
+     "excerpt": "\"bc_synthetic_varied_depth_o3_verified\": \"rl-rag/verifiable_synthetic_varied_depth_o3_verified\"",
+     "explanation": "Maps the varied-depth verifiable BC synthetic task."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "openai/o3",
+   "relation_type": "generated_by",
+   "dependency_kind": "indirect",
+   "description": "Although used here for evaluation, the rl-rag/verifiable_synthetic_varied_depth_o3_verified eval set itself was constructed with OpenAI o3 verifying the answers (per its lattice description and the o3-verified suffix in its name); recording this as an indirect generated_by edge documents that the eval set's labels were produced by o3.",
+   "evidence": [
+    {
+     "source": "audit_artifact.json (rl-rag group)",
+     "location": "",
+     "excerpt": "Synthetic varied-depth verifiable QA prompts published by rl-rag, with answers verified via OpenAI o3",
+     "explanation": "Lattice description states that o3 verified the eval set's answers."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "akariasai/2wiki_rand1k",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "DR-Tulu-8B is evaluated on a 1000-question random subset of 2WikiMultihopQA released by Akari Asai (akariasai/2wiki_rand1k); responses are graded by a judge LM via ShortFormQAEval.",
+   "evidence": [
+    {
+     "source": "agent/evaluation/short_form_qa_eval/short_form_eval.py",
+     "location": "",
+     "excerpt": "\"2wiki\": \"akariasai/2wiki_rand1k\"",
+     "explanation": "Maps the 2wiki task to the akariasai/2wiki_rand1k HF dataset."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/DR-Tulu-No-RLER-8B",
+   "object": "rl-research/DR-Tulu-SFT-8B",
+   "relation_type": "trained_from",
+   "dependency_kind": "direct",
+   "description": "DR-Tulu-No-RLER-8B is RL-trained warm-starting from rl-research/DR-Tulu-SFT-8B as declared in the model card base_model frontmatter; only RLER is removed from the otherwise identical recipe.",
+   "evidence": [
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-no-rler-8b.md",
+     "location": "",
+     "excerpt": "base_model: - rl-research/DR-Tulu-SFT-8B ... This is the RL checkpoint of DR Tulu, an open deep research agent trained on top of [rl-research/DR-Tulu-SFT-8B].",
+     "explanation": "Frontmatter base_model and body text both pin DR-Tulu-SFT-8B as the warm-start for this ablation."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/DR-Tulu-No-RLER-8B",
+   "object": "rl-research/dr-tulu-rl-data",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "DR-Tulu-No-RLER-8B was RL-trained on rl-research/dr-tulu-rl-data, the same RL corpus as the main DR-Tulu-8B; only the RLER reward component is removed for this ablation.",
+   "evidence": [
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-no-rler-8b.md",
+     "location": "",
+     "excerpt": "datasets: - rl-research/dr-tulu-rl-data ... This model has undergone RL training on this dataset. This model is trained without RLER, and is an ablation model for analysing the effect of RLER.",
+     "explanation": "Frontmatter datasets field and body text confirm dr-tulu-rl-data as the RL training corpus for this ablation."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "rl-research/DR-Tulu-No-RLER-8B",
+   "relation_type": "used_for_ablation",
+   "dependency_kind": "indirect",
+   "description": "DR Tulu-No-RLER-8B is the team's own design-space ablation companion to DR-Tulu-8B (same SFT base, same RL data, RLER removed) used to measure the contribution of the evolving-rubrics reward component.",
+   "evidence": [
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/rl-research_DR-Tulu-8B/runs/9d08bcb8-74cc-44b3-86b1-e1d05e2bff72/batch/dr-tulu-no-rler-8b.md",
+     "location": "",
+     "excerpt": "This is an ablation model! ... Our real model is rl-research/DR-Tulu-8B. ... This model is trained without RLER, and is an ablation model for analysing the effect of RLER.",
+     "explanation": "Card explicitly designates this checkpoint as the ablation companion to DR-Tulu-8B for studying RLER's contribution."
+    }
+   ]
+  },
+  {
+   "subject": "rl-research/dr-tulu-8b",
+   "object": "openai/gpt-4.1",
+   "relation_type": "filtered_by",
+   "dependency_kind": "direct",
+   "description": "GPT-4.1 acts as the rubric judge that scores responses against evolving rubrics; this judgment determines reward and is therefore an inclusion/scoring filter.",
+   "evidence": [
+    {
+     "source": "batch/open-instruct/scripts/train/dr-tulu/dr_tulu_qwen35.sh",
+     "location": "",
+     "excerpt": "--env RUBRIC_JUDGE_MODEL=gpt-4.1",
+     "explanation": "GPT-4.1 is the rubric judge."
+    }
+   ]
+  }
+ ]
+}

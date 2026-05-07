@@ -64,8 +64,18 @@ DEFAULT_GRAPHS_DIR = REPO_ROOT / "baselines" / "outputs"
 DEFAULT_OUT_DIR    = Path(__file__).resolve().parent / "outputs"
 
 DEFAULT_TARGETS = ["olmo3", "nemotron3_super", "dr_tulu", "smollm3"]
-DEFAULT_SYSTEMS = ["gpt55pro", "gpt54pro", "cc", "o3dr"]
+DEFAULT_SYSTEMS = ["gpt55pro", "gpt54pro", "cc", "o3dr", "prov", "prov_unbounded"]
 DEFAULT_MODEL   = "claude-sonnet-4-6"
+
+# Display labels used in paper Table 1. Internal slug -> paper label.
+SLUG_TO_LABEL = {
+    "gpt55pro":       "GPT-5.5 Pro",
+    "gpt54pro":       "GPT-5.4 Pro",
+    "cc":             "CC-single",
+    "o3dr":           "ChatGPT Deep Research",
+    "prov":           "ModSleuth (depth-1)",
+    "prov_unbounded": "ModSleuth (unbounded)",
+}
 
 
 # ─── Canonical-id normalization (cheap, conservative) ──────────────────
@@ -252,8 +262,9 @@ def render_table(agg: dict) -> str:
     lines.append("-" * 70)
     for row in agg["per_system"]:
         prec = "—" if row["precision"] is None else f"{row['precision']:.3f}"
+        label = SLUG_TO_LABEL.get(row["system"], row["system"])
         lines.append(
-            f"{row['system']:<25}  {row['verified']:>9}  {row['refuted']:>8}  "
+            f"{label:<25}  {row['verified']:>9}  {row['refuted']:>8}  "
             f"{row['unclear']:>8}  {prec:>10}"
         )
     return "\n".join(lines)

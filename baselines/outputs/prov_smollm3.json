@@ -1,0 +1,824 @@
+{
+ "subject": "smollm3",
+ "edges": [
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "Idavidrein/gpqa",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "smollm3_instruct.txt enumerates `lighteval|gpqa:diamond|0|0` for the GPQA Diamond graduate-level QA benchmark in the SmolLM3 instruct evaluation pass.",
+   "evidence": [
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "lighteval|gpqa:diamond|0|0",
+     "explanation": "Task slug `gpqa:diamond` invokes the GPQA Diamond subset for the SmolLM3 instruct evaluation."
+    },
+    {
+     "source": "smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "lighteval|gpqa:diamond|0|0",
+     "explanation": "instruct task list"
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
+     "location": "",
+     "excerpt": "| Graduate-level reasoning | GPQA Diamond | <u>35.7</u> | 32.2 | 29.4 | 31.8 | **44.4** |",
+     "explanation": "Row reports SmolLM3-3B's GPQA Diamond score under no-thinking; a parallel row reports the extended-thinking score."
+    },
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "graduate-level reasoning on GPQA Diamond (41.7% vs 35.7%)",
+     "explanation": "GPQA Diamond named as a thinking-mode evaluation benchmark."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "google/IFEval",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "smollm3_instruct.txt enumerates `extended|ifeval|0|0` for IFEval instruction-following in the SmolLM3 instruct evaluation pass.",
+   "evidence": [
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "extended|ifeval|0|0",
+     "explanation": "Task slug `ifeval` invokes IFEval for the SmolLM3 instruct evaluation."
+    },
+    {
+     "source": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B",
+     "location": "",
+     "excerpt": "Instruction following | IFEval | **76.7** | 65.6 | 71.6 | 74.0 | 68.9 ... Instruction following | IFEval | 71.2 | 74.2 | **85.4**",
+     "explanation": "Both eval tables report SmolLM3-3B IFEval scores."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/234fedc9/runs/1abe76f8-ecb9-493e-8ceb-a1849fd7a59c/batch/smollm-repo/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "extended|ifeval|0|0",
+     "explanation": "IFEval extended task entry."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
+     "location": "",
+     "excerpt": "| Instruction following | IFEval | **76.7** | 65.6 | 71.6 | <u>74.0</u> | 68.9 |",
+     "explanation": "Row reports SmolLM3-3B's IFEval score under no-thinking; a parallel row reports the extended-thinking score."
+    },
+    {
+     "source": "smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "extended|ifeval|0|0",
+     "explanation": "instruct task list"
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "livecodebench/code_generation_lite",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "smollm3_instruct.txt enumerates `extended|lcb:codegeneration|0|0` for the LiveCodeBench code-generation benchmark in the SmolLM3 instruct evaluation pass.",
+   "evidence": [
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "extended|lcb:codegeneration|0|0",
+     "explanation": "Task slug `lcb:codegeneration` invokes the LiveCodeBench code-generation subset for the SmolLM3 instruct evaluation."
+    },
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "competitive programming on LiveCodeBench (30.0% vs 15.2%)",
+     "explanation": "Names LiveCodeBench as a thinking-mode evaluation benchmark with paired think/no-think numbers."
+    },
+    {
+     "source": "smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "extended|lcb:codegeneration|0|0",
+     "explanation": "instruct task list"
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "CohereForAI/Global-MMLU",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "smollm3_instruct.txt enumerates `extended|global_mmlu_instruct_deu|0|0` for the Global-MMLU instruct benchmark (German subset) in the SmolLM3 instruct evaluation pass.",
+   "evidence": [
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "extended|global_mmlu_instruct_deu|0|0",
+     "explanation": "Task slug `global_mmlu_instruct_deu` invokes the Global-MMLU instruct German subset for the SmolLM3 instruct evaluation."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "extended|global_mmlu_instruct_fra|0|0",
+     "explanation": "Task slug `global_mmlu_instruct_fra` invokes the Global-MMLU instruct French subset for the SmolLM3 instruct evaluation."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "extended|global_mmlu_instruct_ita|0|0",
+     "explanation": "Task slug `global_mmlu_instruct_ita` invokes the Global-MMLU instruct Italian subset for the SmolLM3 instruct evaluation."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "extended|global_mmlu_instruct_por|0|0",
+     "explanation": "Task slug `global_mmlu_instruct_por` invokes the Global-MMLU instruct Portuguese subset for the SmolLM3 instruct evaluation."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "extended|global_mmlu_instruct_spa|0|0",
+     "explanation": "Task slug `global_mmlu_instruct_spa` invokes the Global-MMLU instruct Spanish subset for the SmolLM3 instruct evaluation."
+    },
+    {
+     "source": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B",
+     "location": "",
+     "excerpt": "Multilingual Q&A | Global MMLU | 53.5 | 50.54 | 46.8 | 49.5 | **65.1** ... Multilingual Q&A | Global MMLU | 64.1 | 62.3 | **73.3**",
+     "explanation": "Both eval tables report SmolLM3-3B Global MMLU scores."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
+     "location": "",
+     "excerpt": "| Multilingual Q&A | Global MMLU | <u>53.5</u> | 50.54 | 46.8 | 49.5 | **65.1** |",
+     "explanation": "Row reports SmolLM3-3B's Global MMLU score under no-thinking; a parallel row reports the extended-thinking score."
+    },
+    {
+     "source": "smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "extended|global_mmlu_instruct_deu|0|0\nextended|global_mmlu_instruct_fra|0|0\nextended|global_mmlu_instruct_ita|0|0\nextended|global_mmlu_instruct_por|0|0\nextended|global_mmlu_instruct_spa|0|0",
+     "explanation": "Global-MMLU instruct lines"
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "qintongli/GSM-Plus",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "smollm3_instruct.txt enumerates `custom|gsm_plus|0|0` for the GSM-Plus adversarial math benchmark in the SmolLM3 instruct evaluation pass.",
+   "evidence": [
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "custom|gsm_plus|0|0",
+     "explanation": "Task slug `gsm_plus` invokes GSM-Plus for the SmolLM3 instruct evaluation."
+    },
+    {
+     "source": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B",
+     "location": "",
+     "excerpt": "Math problem-solving | GSM-Plus | 72.8 | 74.1 | 59.2 | 68.3 | **82.1** ... Math problem-solving | GSM-Plus | 83.4 | 79.4 | **88.2**",
+     "explanation": "Both eval tables report SmolLM3-3B GSM-Plus scores."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/234fedc9/runs/1abe76f8-ecb9-493e-8ceb-a1849fd7a59c/batch/smollm-repo/text/evaluation/smollm3/tasks.py",
+     "location": "",
+     "excerpt": "name=\"gsm_plus\" ... hf_repo=\"qintongli/GSM-Plus\"",
+     "explanation": "tasks.py registers gsm_plus against qintongli/GSM-Plus."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
+     "location": "",
+     "excerpt": "| Math problem-solving | GSM-Plus | 72.8 | <u>74.1</u> | 59.2 | 68.3 | **82.1** |",
+     "explanation": "Row reports SmolLM3-3B's GSM-Plus score under no-thinking; a parallel row reports the extended-thinking score."
+    },
+    {
+     "source": "smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "custom|gsm_plus|0|0",
+     "explanation": "instruct task list"
+    },
+    {
+     "source": "smollm/text/evaluation/smollm3/tasks.py",
+     "location": "",
+     "excerpt": "gsm_plus = LightevalTaskConfig(name=\"gsm_plus\", hf_repo=\"qintongli/GSM-Plus\", ...)",
+     "explanation": "custom GSM-Plus config"
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "MixEval/MixEval",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "smollm3_instruct.txt enumerates `custom|mixeval_hard|0|0` for the MixEval Hard split in the SmolLM3 instruct evaluation pass.",
+   "evidence": [
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "custom|mixeval_hard|0|0",
+     "explanation": "Task slug `mixeval_hard` invokes the MixEval Hard split for the SmolLM3 instruct evaluation."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/234fedc9/runs/1abe76f8-ecb9-493e-8ceb-a1849fd7a59c/batch/smollm-repo/text/evaluation/smollm3/tasks.py",
+     "location": "",
+     "excerpt": "name=\"mixeval_hard:freeform\" ... hf_repo=\"MixEval/MixEval\" ... hf_subset=\"MixEval_Hard\"",
+     "explanation": "tasks.py registers mixeval_hard tasks against MixEval/MixEval."
+    },
+    {
+     "source": "smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "custom|mixeval_hard|0|0",
+     "explanation": "instruct task list"
+    },
+    {
+     "source": "smollm/text/evaluation/smollm3/tasks.py",
+     "location": "",
+     "excerpt": "mixeval_freeform_hard = LightevalTaskConfig(name=\"mixeval_hard:freeform\", hf_repo=\"MixEval/MixEval\", hf_subset=\"MixEval_Hard\", ...)\nmixeval_multichoice_hard = LightevalTaskConfig(name=\"mixeval_hard:multichoice\", ...)",
+     "explanation": "custom MixEval Hard configs"
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
+     "location": "",
+     "excerpt": "| Alignment | MixEval Hard | 26.9 | <u>27.6</u> | 24.9 | 24.3 | **31.6** |",
+     "explanation": "Row reports SmolLM3-3B's MixEval Hard score under no-thinking; a parallel row reports the extended-thinking score."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "gorilla-llm/Berkeley-Function-Calling-Leaderboard (v3)",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "SmolLM3-3B chat model is evaluated on BFCL via a fork of huggingface/gorilla (berkeley-function-call-leaderboard) with a dedicated SmolLM3-3B parser, since lighteval does not yet support BFCL.",
+   "evidence": [
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/seeds/HuggingFaceTB_SmolLM3-3B/runs/1d813cb6-6e38-43f4-9f31-72b24a7e6bb1/batch/smollm/text/evaluation/smollm3/README.md",
+     "location": "",
+     "excerpt": "BFCL is not yet supported by LightEval, so we used a fork ... with a dedicated parser for SmolLM3-3B.",
+     "explanation": "README documents BFCL evaluation of SmolLM3-3B via a forked Gorilla berkeley-function-call-leaderboard repo."
+    },
+    {
+     "source": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B",
+     "location": "",
+     "excerpt": "Tool Calling | BFCL | 92.3 | - | 92.3 * | 89.5 | **95.0** ... Tool Calling | BFCL | 88.8 | 88.8 | **95.5**",
+     "explanation": "Both eval tables report SmolLM3-3B BFCL tool-calling scores."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
+     "location": "",
+     "excerpt": "| Tool Calling | BFCL| <u>92.3</u> | - | <u>92.3</u> * | 89.5  | **95.0** |",
+     "explanation": "Row reports SmolLM3-3B's BFCL score under no-thinking; a parallel row reports the extended-thinking score."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "Qwen3",
+   "relation_type": "inspired_by",
+   "dependency_kind": "indirect",
+   "description": "SmolLM3's chat template borrows Qwen3's pattern of pre-filling the model's response with empty think blocks in non-reasoning mode to ensure direct answers.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "In non-reasoning mode, we pre-fill the model's response with empty think blocks, similar to Qwen3, to ensure direct answers without explicit reasoning.",
+     "explanation": "Cites Qwen3's empty-think-block pattern as the inspiration for SmolLM3's non-reasoning-mode chat template."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "HuggingFaceTB/SmolLM3-3B-Base",
+   "relation_type": "trained_from",
+   "dependency_kind": "direct",
+   "description": "SmolLM3-3B (chat / dual instruct+reasoning) is initialized from SmolLM3-3B-Base after long-context extension and then post-trained via reasoning mid-training, SFT, APO alignment, and merging.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "Base model: https://hf.co/HuggingFaceTB/SmolLM3-3B-Base Instruct and reasoning model: https://hf.co/HuggingFaceTB/SmolLM3-3B",
+     "explanation": "Both releases share the same SmolLM3-3B family; the chat release continues training from the Base checkpoint via the documented post-training pipeline."
+    },
+    {
+     "source": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B",
+     "location": "",
+     "excerpt": "base_model: - HuggingFaceTB/SmolLM3-3B-Base ... Post-training included midtraining on 140B reasoning tokens followed by supervised fine-tuning and alignment via Anchored Preference Optimization (APO).",
+     "explanation": "Frontmatter declares the weight inheritance and the summary describes the post-training continuation from Base to chat."
+    },
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/8576dafa/runs/ff237a53-d0f3-49a4-a68f-44478c21297d/batch/smollm3-3b.md",
+     "location": "",
+     "excerpt": "base_model:\n  - HuggingFaceTB/SmolLM3-3B-Base",
+     "explanation": "HuggingFace YAML metadata declares SmolLM3-3B-Base as the parent checkpoint for SmolLM3-3B."
+    },
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "The pretraining consists of these stages ... After the main pretraining we improved the model in a mid-training stage for long context and reasoning ... The resulting model is the checkpoint we are releasing today.",
+     "explanation": "Source describes the continuous training cascade from the Base model through mid-training, post-training, and merging into the final released SmolLM3-3B."
+    },
+    {
+     "source": "alignment-handbook/recipes/smollm3/sft/mid.yaml",
+     "location": "",
+     "excerpt": "model_name_or_path: HuggingFaceTB/SmolLM3-3B-Base\nmodel_revision: main",
+     "explanation": "Pins the 3B-Base revision as the mid-training start."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "open-thoughts/OpenThoughts3-1.2M",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "Reasoning mid-training (35B tokens, 4 epochs ~140B) sources general reasoning data from open-thoughts/OpenThoughts3-1.2M.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "Our mid-training dataset contained 35B tokens sourced from Open Thought's OpenThoughts3-1.2M",
+     "explanation": "Names OpenThoughts3-1.2M as a reasoning-mid-training source."
+    },
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "OpenThoughts3-1.2M: 1.14M rows ... OpenThoughts3-1.2M | 1 | 1135104 | 23.75 | 16464.2 | 46.81",
+     "explanation": "Identifies OpenThoughts3-1.2M as the second component of the smoltalk2 Mid mix with row/token weight."
+    },
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "OpenThoughts3-1.2M: 1133524 rows. ... OpenThoughts3-1.2M: 435193 rows where we remove the reasoning trace.",
+     "explanation": "Cites OpenThoughts3-1.2M as a SFT mix component in both think and no_think forms."
+    },
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "Our mid-training dataset contained 35B tokens sourced from Open Thought's OpenThoughts3-1.2M",
+     "explanation": "Source explicitly names OpenThoughts3-1.2M as a reasoning-mid-training data source."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "nvidia/Llama-Nemotron-Post-Training-Dataset",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "Reasoning mid-training also sources data from a subset of NVIDIA's Llama-Nemotron-Post-Training-Dataset-v1.1 containing R1-generated reasoning traces.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "and a subset from NVIDIA's Llama-Nemotron-Post-Training-Dataset-v1.1 with reasoning traces from R1",
+     "explanation": "Names NVIDIA's Llama-Nemotron Post-Training Dataset v1.1 as the second reasoning-mid-training source."
+    },
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "Llama-Nemotron-Post-Training-Dataset: 3.64M rows ... Llama-Nemotron-Post-Training-Dataset_reasoning_r1 | 1 | 3644790 | 76.25 | 18707.9 | 53.19",
+     "explanation": "Identifies the Llama-Nemotron reasoning_r1 split as half of the Mid mix and gives row/token weight."
+    },
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "a subset from NVIDIA's Llama-Nemotron-Post-Training-Dataset-v1.1 with reasoning traces from R1",
+     "explanation": "Source names the Llama-Nemotron Post-Training Dataset (v1.1) as the second reasoning-mid-training source."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "DeepSeek-AI/DeepSeek-R1",
+   "relation_type": "generated_by",
+   "dependency_kind": "direct",
+   "description": "The Llama-Nemotron subset used in mid-training carries reasoning traces generated by DeepSeek-R1; SmolLM3-3B's reasoning data therefore originates from R1 outputs.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "a subset from NVIDIA's Llama-Nemotron-Post-Training-Dataset-v1.1 with reasoning traces from R1",
+     "explanation": "States that the mid-training data includes R1-generated reasoning traces, making DeepSeek-R1 a generator of training content for SmolLM3-3B."
+    },
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "a subset from NVIDIA's Llama-Nemotron-Post-Training-Dataset-v1.1 with reasoning traces from R1",
+     "explanation": "Source attributes the reasoning traces in the dataset to DeepSeek R1, making R1 the upstream generator of mid-training content."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "HuggingFaceTB/smoltalk2",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "The mid-training mixture is also released as part of HuggingFaceTB/smoltalk2 (the 'mid' subset), per author confirmations in the blog comments.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "We released them in SmolTalk2. The dataset has the Mid, and SFT and Preference subsets.",
+     "explanation": "Author confirms that the mid-training data is released within HuggingFaceTB/smoltalk2."
+    },
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "We released all the datasets we used for training in SmolTalk2. The dataset card details which datasets were generated using Qwen3-32B.",
+     "explanation": "Author confirms SmolTalk2 is the release of all training datasets, and the dataset card identifies Qwen3-32B-generated subsets."
+    },
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "We released them in SmolTalk2. The dataset has the Mid, and SFT and Preference subsets.",
+     "explanation": "Author confirms that the APO preference mixture is released in HuggingFaceTB/smoltalk2."
+    },
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "three subsets (Mid, SFT, Preference) that correspond to the three phases of Post-Training for SmolLM3-3B ... The mid-training dataset has a total of 4.8M rows",
+     "explanation": "Designates the Mid config of smoltalk2 as the mid-training data for SmolLM3-3B."
+    },
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "The total mix consists of 25 datasets, which we decontaminated to remove samples present in the benchmarks used for evaluation",
+     "explanation": "Identifies the SFT config of smoltalk2 as SmolLM3-3B's SFT data."
+    },
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "We used two datasets to train SmolLM3-3B with APO, which has a total of 447k rows.",
+     "explanation": "Designates the Preference config of smoltalk2 as APO data for SmolLM3-3B."
+    },
+    {
+     "source": "alignment-handbook/recipes/smollm3/sft/mid.yaml",
+     "location": "",
+     "excerpt": "id: HuggingFaceTB/smoltalk2\n      config: Mid\n      split: Llama_Nemotron_Post_Training_Dataset_reasoning_r1 ... split: OpenThoughts3_1.2M",
+     "explanation": "Two splits of smoltalk2 'Mid' config drive mid-training."
+    },
+    {
+     "source": "alignment-handbook/recipes/smollm3/sft/sft.yaml",
+     "location": "",
+     "excerpt": "id: HuggingFaceTB/smoltalk2 ... config: SFT ... split: smoltalk_smollm3_everyday_conversations_no_think ... split: tulu_3_sft_personas_instruction_following_no_think ... split: hermes_function_calling_v1_no_think ... split: OpenHermes_2.5_no_think ... split: OpenThoughts3_1.2M_no_think_no_think ... split: smolagents_toolcalling_traces_think ... split: s1k_1.1_think",
+     "explanation": "YAML enumerates the 25 smoltalk2 SFT splits used."
+    },
+    {
+     "source": "alignment-handbook/recipes/smollm3/dpo/apo.yaml",
+     "location": "",
+     "excerpt": "config: Preference\n      split: llama_3.1_tulu_3_8b_preference_mixture_no_think ... split: tulu_3_8b_pref_mix_Qwen3_32B_Qwen3_0.6B_think",
+     "explanation": "Two preference splits drive APO-zero training."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "Qwen/Qwen3-32B",
+   "relation_type": "generated_by",
+   "dependency_kind": "direct",
+   "description": "Qwen3-32B in reasoning (thinking) mode generated synthetic reasoning traces used in SFT for domains lacking such data (multi-turn conversations, multilinguality, everyday conversations); these synthetic completions form a portion of the 10 reasoning-mode SFT datasets.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "we generated synthetic data by prompting Qwen3-32B in reasoning mode with prompts from existing non-reasoning datasets",
+     "explanation": "Names Qwen3-32B (thinking mode) as the generator of synthetic reasoning training data for SFT."
+    },
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "We selected generations from Qwen3-32B as 'chosen' and responses from Qwen3-0.6B as 'rejected' for alignment with Anchored Preference Optimization.",
+     "explanation": "Names Qwen3-32B as the chosen-completion generator for SmolLM3 APO preference pairs."
+    },
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "SmolTalk (multilingual-8languages): 244736 rows generated with Qwen3-32B with the prompts in SmolTalk. ... generate responses with Qwen3-32B in reasoning mode.",
+     "explanation": "Multiple think splits explicitly cite Qwen3-32B as their response generator."
+    },
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "Tulu 3 8B Preference Mixture (`think`): 216k rows where we generate the chosen responses with Qwen3-32B",
+     "explanation": "Names Qwen3-32B as the chosen-completion generator for the think preference split."
+    },
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "we generated synthetic data by prompting Qwen3-32B in reasoning mode with prompts from existing non-reasoning datasets",
+     "explanation": "Source identifies Qwen3-32B as the generator of synthetic reasoning-mode SFT data."
+    },
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "We selected generations from Qwen3-32B as \"chosen\" and responses from Qwen3-0.6B as \"rejected\" for alignment with Anchored Preference Optimization.",
+     "explanation": "Source identifies Qwen3-32B as the chosen-completion generator for APO."
+    },
+    {
+     "source": "alignment-handbook/recipes/smollm3/sft/sft.yaml",
+     "location": "",
+     "excerpt": "split: smoltalk_everyday_convs_reasoning_Qwen3_32B_think ... split: smoltalk_systemchats_Qwen3_32B_think ... split: LongAlign_64k_Qwen3_32B_yarn_131k_think ... split: aya_dataset_Qwen3_32B_think ... split: smoltalk_multilingual8_Qwen3_32B_think ... split: table_gpt_Qwen3_32B_think",
+     "explanation": "Six SFT splits explicitly name Qwen3-32B (thinking) as the trace generator."
+    },
+    {
+     "source": "alignment-handbook/recipes/smollm3/dpo/apo.yaml",
+     "location": "",
+     "excerpt": "split: tulu_3_8b_pref_mix_Qwen3_32B_Qwen3_0.6B_think",
+     "explanation": "Split name encodes Qwen3-32B as the larger generator (chosen)."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "allenai/llama-3.1-tulu-3-8b-preference-mixture",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "APO non-reasoning preference data uses the Tulu 3 preference mixture (allenai/llama-3.1-tulu-3-8b-preference-mixture).",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "a combination of the Tulu3 preference dataset for non-reasoning mode",
+     "explanation": "Names the Tulu3 preference dataset as the non-reasoning APO source; the released form is allenai/llama-3.1-tulu-3-8b-preference-mixture."
+    },
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "[Tulu 3 8B Preference Mixture (`no_think`)](https://huggingface.co/datasets/allenai/llama-3.1-tulu-3-8b-preference-mixture): 231k rows. Tulu 3 8B Preference Mixture (`think`): 216k rows where we generate the chosen responses with Qwen3-32B and the rejected responses with Qwen3-0.6B.",
+     "explanation": "Cites the Tulu 3 8B Preference Mixture as the no_think component and prompt source for the think variant."
+    },
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "we performed a round of model alignment using a combination of the Tulu3 preference dataset for non-reasoning mode",
+     "explanation": "Source names the Tulu3 preference dataset (linked to allenai/llama-3.1-tulu-3-8b-preference-mixture in the blog post) as the non-reasoning preference data."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "Qwen/Qwen3-0.6B",
+   "relation_type": "generated_by",
+   "dependency_kind": "direct",
+   "description": "Qwen3-0.6B generated the rejected completions for SmolLM3's reasoning-mode synthetic preference pairs used in APO.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "We selected generations from Qwen3-32B as 'chosen' and responses from Qwen3-0.6B as 'rejected' for alignment with Anchored Preference Optimization.",
+     "explanation": "Names Qwen3-0.6B as the rejected-completion generator for SmolLM3 APO preference pairs."
+    },
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "and the rejected responses with Qwen3-0.6B.",
+     "explanation": "Names Qwen3-0.6B as the rejected-completion generator for the think preference split."
+    },
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "We selected generations from Qwen3-32B as \"chosen\" and responses from Qwen3-0.6B as \"rejected\" for alignment with Anchored Preference Optimization.",
+     "explanation": "Source identifies Qwen3-0.6B as the rejected-completion generator for APO."
+    },
+    {
+     "source": "alignment-handbook/recipes/smollm3/dpo/apo.yaml",
+     "location": "",
+     "excerpt": "split: tulu_3_8b_pref_mix_Qwen3_32B_Qwen3_0.6B_think",
+     "explanation": "Split name encodes Qwen3-0.6B as the smaller generator (rejected)."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "Tulu 3",
+   "relation_type": "inspired_by",
+   "dependency_kind": "indirect",
+   "description": "The APO alignment recipe (off-policy preference optimization with a published preference mixture) follows the Tulu 3 alignment lineage; SmolLM3 directly uses the Tulu 3 preference dataset for the non-reasoning portion.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "a combination of the Tulu3 preference dataset for non-reasoning mode",
+     "explanation": "Reuse of the Tulu3 preference dataset signals methodological alignment with Tulu 3's off-policy preference optimization recipe."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "math-ai/aime25",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "SmolLM3-3B instruct is evaluated on AIME25 (lighteval|aime25|0|0).",
+   "evidence": [
+    {
+     "source": "/Users/sanjayadhikesaven/Downloads/graph/storage/workers/234fedc9/runs/1abe76f8-ecb9-493e-8ceb-a1849fd7a59c/batch/smollm-repo/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "lighteval|aime25|0|0",
+     "explanation": "AIME25 task entry in instruct eval list."
+    },
+    {
+     "source": "smollm/text/evaluation/smollm3/smollm3_instruct.txt",
+     "location": "",
+     "excerpt": "lighteval|aime25|0|0",
+     "explanation": "instruct task list"
+    },
+    {
+     "source": "smollm/text/evaluation/smollm3/README.md",
+     "location": "",
+     "excerpt": "lighteval vllm ... \"smollm3_instruct.txt\" --use-chat-template (run for HuggingFaceTB/SmolLM3-3B)",
+     "explanation": "README eval command for this model"
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "HuggingFaceTB/smoltalk",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "SFT mix sources prompts and conversations from the original SmolTalk (v1) for the multilingual-8languages, everyday-conversations, systemchats-30k, smollm3_smol-magpie-ultra, smollm3_explore-instruct-rewriting, smollm3_smol-rewrite, smollm3_smol-summarize splits (both think and no_think variants).",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "SmolTalk (multilingual-8languages): 244736 rows generated with Qwen3-32B with the prompts in SmolTalk. ... SmolTalk (everyday-conversations) ... SmolTalk (systemchats-30k) ...",
+     "explanation": "Repeated explicit citations of HuggingFaceTB/smoltalk as the prompt source for many SFT splits."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "simplescaling/s1K-1.1",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "SFT consumed open-r1/s1K-1.1 (835 rows) as the s1k-1.1_think split.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "[s1k-1.1](https://huggingface.co/datasets/open-r1/s1K-1.1): 835 rows.",
+     "explanation": "Cites s1K-1.1 as a SFT think component."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "CohereLabs/aya_dataset",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "SFT consumed the Aya dataset (15222 rows) with responses generated by Qwen3-32B against Aya prompts.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "[Aya](https://huggingface.co/datasets/CohereLabs/aya_dataset): 15222 rows generated with Qwen3-32B with the prompts in Aya.",
+     "explanation": "Cites Aya as the prompt source for the aya_dataset_Qwen3_32B_think split."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "LipengCS/Table-GPT",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "SFT consumed Table-GPT in both forms: 13201 rows with responses regenerated by Qwen3-32B (think) and 13203 rows of the original (no_think).",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "[Table-GPT](https://huggingface.co/datasets/LipengCS/Table-GPT): 13201 rows generated with Qwen3-32B with the prompts in Table-GPT. ... [Table-GPT](https://huggingface.co/datasets/LipengCS/Table-GPT): 13203 rows.",
+     "explanation": "Cites LipengCS/Table-GPT as a SFT mix component in both think and no_think forms."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "open-r1/Mixture-of-Thoughts",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "SFT consumed the science split of Mixture-of-Thoughts (86110 rows, no_think variant where the reasoning trace was removed).",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "[Mixture of Thoughts](https://huggingface.co/datasets/open-r1/Mixture-of-Thoughts) (science): 86110 rows where we remove the reasoning trace.",
+     "explanation": "Cites Mixture-of-Thoughts science split as a SFT no_think component."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "allenai/tulu-3-sft-personas-instruction-following",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "SFT consumed Tulu 3 SFT Personas IF in two roles: directly as 29970 no_think rows, and as the prompt source for the multi-turn-reasoning-if_think split (28217 rows).",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "[Tulu 3 SFT Personas IF](https://huggingface.co/datasets/allenai/tulu-3-sft-personas-instruction-following): 29970 rows. ... We source prompts from [Tulu 3 Personas IF](https://huggingface.co/datasets/allenai/tulu-3-sft-personas-instruction-following), generate 2 verifiable turns using Qwen3-235B-A22B",
+     "explanation": "Cites Tulu 3 Personas IF as both a SFT no_think component and the prompt source of the Multi-Turn IF think split."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "NousResearch/hermes-function-calling-v1",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "SFT consumed hermes-function-calling-v1 (8961 rows, no_think) for tool/function calling capability.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "[hermes-function-calling-v1](https://huggingface.co/datasets/NousResearch/hermes-function-calling-v1): 8961 rows.",
+     "explanation": "Cites hermes-function-calling-v1 as a SFT no_think component."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "teknium/OpenHermes-2.5",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "SFT consumed OpenHermes-2.5 (384900 rows, no_think) at weight 0.5.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "[OpenHermes-2.5](https://huggingface.co/datasets/teknium/OpenHermes-2.5): 384900 rows.",
+     "explanation": "Cites teknium/OpenHermes-2.5 as a SFT no_think component."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "THUDM/LongAlign-10k",
+   "relation_type": "trained_on",
+   "dependency_kind": "direct",
+   "description": "SFT consumed LongAlign as the prompt source for the LongAlign-64k splits: think variant (7526 rows generated with Qwen3-32B with yarn-131k context, e.g. LongAlign-64k-Qwen3-32B-yarn-131k_think) and no_think variant (LongAlign-64k-context-lang-annotated lang_6, 6249 rows filtered to <=64k tokens).",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "LongAlign-64k-context-lang-annotated: 7526 rows generated with Qwen3-32B with the prompts in LongAlign-64k. ... We filter [LongAlign](https://huggingface.co/datasets/THUDM/LongAlign-10k) for samples up to 64k tokens.",
+     "explanation": "Cites LongAlign-10k (THUDM/LongAlign-10k, now zai-org) as the prompt source for both LongAlign SFT splits."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "facebook/Multi-IF",
+   "relation_type": "inspired_by",
+   "dependency_kind": "indirect",
+   "description": "The multi-turn-reasoning-if_think SFT split follows the methodology of Meta's Multi-IF (https://arxiv.org/abs/2410.15553) for synthesizing multi-turn instruction-following data, adopting its schema of 2 follow-up verifiable turns per prompt.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "We follow [Multi-IF's approach](https://arxiv.org/abs/2410.15553) to generate multi turn data.",
+     "explanation": "Explicit methodology borrowing from Multi-IF for the Multi-Turn IF data construction."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "Qwen2.5",
+   "relation_type": "inspired_by",
+   "dependency_kind": "indirect",
+   "description": "The smoltalk-multilingual-8languages no_think split follows the Qwen 2.5 report's translation recipe: translate Smol-Magpie-Ultra and Smol-Constraints prompts into 8 target languages (fr, es, it, pt, de, ar, ru, zh) respecting local conventions, then generate target-language answers.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk2",
+     "location": "",
+     "excerpt": "Following [Qwen 2.5 report](https://arxiv.org/pdf/2412.15115), we first translate the prompts in Smol-Magpie-Ultra and Smol-Constraints using Qwen to 8 languages (fr, es, it, pt, de, ar, ru, zh) while respecting local conventions",
+     "explanation": "Explicit methodology borrowing from the Qwen 2.5 multilingual translation pipeline."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "simonjegou/ruler",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "RULER used to evaluate SmolLM3 long-context performance \u2014 including detecting the degradation introduced by reasoning mid-training and confirming recovery up to 128k after the final model merge.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "we observed performance degradation on long context benchmarks like RULER ... We were able to recover the base model's RULER score on contexts up to 128k tokens.",
+     "explanation": "RULER repeatedly named as the long-context benchmark for SmolLM3."
+    }
+   ]
+  },
+  {
+   "subject": "HuggingFaceTB/SmolLM3-3B",
+   "object": "princeton-nlp/HELMET",
+   "relation_type": "used_for_evaluation",
+   "dependency_kind": "indirect",
+   "description": "HELMET used as a long-context evaluation benchmark during the long-context-extension ablations of SmolLM3 mid-training.",
+   "evidence": [
+    {
+     "source": "https://huggingface.co/blog/smollm3",
+     "location": "",
+     "excerpt": "didn't further boost performance on RULER and HELMET benchmarks",
+     "explanation": "HELMET named alongside RULER as a long-context benchmark for the long-context ablation."
+    }
+   ]
+  }
+ ]
+}

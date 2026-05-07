@@ -39,7 +39,12 @@ and provides:
 | Baseline prompt (§C) | `baselines/prompts/baseline_prompt.md` |
 | Verifier prompt (§B) | `eval/verifier_prompt.md` |
 | Per-system × per-target baseline outputs | `baselines/outputs/<slug>_<subject>.json` |
-| Pooled verdicts (Table 1, Table 6) | `eval/outputs/{verifications.jsonl, score.json, score_per_target.json}` |
+| Per-target ModSleuth attribution outputs (§B) | `baselines/outputs/{prov,prov_unbounded}_<subject>.json` |
+| ModSleuth attribution-rule builder (§B) | `eval/build_modsleuth_inputs.py` |
+| Pooled verdicts (Table 1) | `eval/outputs/{verifications.jsonl, score.json, score_per_target.json}` |
+| Full-graph audit script (Table 6, §D.2) | `eval/full_graph_audit.py` |
+| Graph-stats reproducer (Tables 2 / 4 / 5) | `eval/compute_graph_stats.py` |
+| Merged ModSleuth graph (14,769 edges, drives Tables 2 / 4 / 5 / 6 + §B inputs) | `data/merge_artifact.json` (git-lfs) |
 
 ## Install
 
@@ -218,21 +223,28 @@ Useful as a quick sanity-check on any graph version.
 comparative evaluation reported in Table 1 of the paper, and to evaluate
 any new submission against the same pool.
 
-### Baseline systems
+### Systems
 
-Four single-pass baselines run against the same four targets (OLMo 3,
-Nemotron 3 Super, DR-Tulu, SmolLM3). Each gets the same baseline prompt
-template (paper §C; full text at `baselines/prompts/baseline_prompt.md`);
-the difference is the absence of ModSleuth's multi-stage harness.
+Six systems are evaluated against the same four targets (OLMo 3,
+Nemotron 3 Super, DR-Tulu, SmolLM3). The four single-pass baselines get
+the same baseline prompt template (paper §C; full text at
+`baselines/prompts/baseline_prompt.md`); the two ModSleuth scopes are
+attribution variants of a single ModSleuth run (paper §B).
 
-| Slug | System | Configuration |
+| Slug | Paper label | Configuration |
 |---|---|---|
-| `gpt55pro` | GPT-5.5-Pro | OpenAI Responses API, `web_search_preview`, background mode |
-| `gpt54pro` | GPT-5.4-Pro | OpenAI Responses API, `web_search_preview`, background mode |
-| `o3dr` | OpenAI Deep Research (`o3-deep-research`) | OpenAI Responses API, `web_search_preview`, background mode |
-| `cc` | Single-prompt Claude Code | `claude -p` headless (Opus 4.7 1M, default effort) |
+| `gpt55pro` | GPT-5.5 Pro | OpenAI Responses API, `web_search_preview`, background mode |
+| `gpt54pro` | GPT-5.4 Pro | OpenAI Responses API, `web_search_preview`, background mode |
+| `o3dr` | ChatGPT Deep Research (`o3-deep-research`) | OpenAI Responses API, `web_search_preview`, background mode |
+| `cc` | CC-single (single-prompt Claude Code) | `claude -p` headless, Opus 4.7 1M context, default effort |
+| `prov` | ModSleuth (depth-1) | Subject canonical-form == target's canonical id |
+| `prov_unbounded` | ModSleuth (unbounded) | Depth-1 ∪ seed-tagged anchor ∪ uniquely-tied worker (§B) |
 
-Reproduce:
+The internal slug → paper label mapping is also encoded in
+`eval/pooled_eval.py:SLUG_TO_LABEL` and is what the rendered table
+prints.
+
+Reproduce the four baselines:
 
 ```bash
 cd baselines
@@ -240,7 +252,47 @@ OPENAI_API_KEY=sk-... python3 launch_baselines.py
 ```
 
 Each (system, target) pair writes to `baselines/outputs/<slug>_<subject>.json`.
-The 16 outputs from the run reported in the paper are committed.
+The 16 baseline outputs and the 8 ModSleuth attribution outputs
+(`prov_<target>.json`, `prov_unbounded_<target>.json`) from the run
+reported in the paper are committed.
+
+### Building the ModSleuth attribution outputs
+
+The two ModSleuth rows in Table 1 are derived from a single merged
+graph (`merge_artifact.json`, the 14,769-edge ModSleuth artifact)
+under the two attribution scopes defined in paper §B. To rebuild
+`prov_<target>.json` and `prov_unbounded_<target>.json` from a fresh
+merge:
+
+```bash
+cd eval
+python3 build_modsleuth_inputs.py \
+    --merge-artifact path/to/merge_artifact.json \
+    --out-dir ../baselines/outputs
+```
+
+The script implements the §B rules verbatim:
+
+- **depth-1**: subject's canonical form (lowercased, non-alphanumeric
+  collapsed to `-`, HF org prefix preserved) exactly matches the
+  target's canonical identifier.
+- **unbounded**: depth-1 ∪ at least one anchor source path containing
+  `/seeds/<T's seed dir>/`, ∪ at least one anchor source path
+  containing `/workers/<w>/` where worker `w` co-occurs (across the
+  whole merge artifact) only with `T`'s seed directory.
+
+The merge artifact itself (`data/merge_artifact.json`, the 14,769-edge
+post-dedup ModSleuth graph) is shipped via **git-lfs** because it is
+too large for a regular git checkout (~86 MB). To fetch it after
+cloning:
+
+```bash
+git lfs install
+git lfs pull
+```
+
+The same file is also the input to `full_graph_audit.py` and to the
+`compute_graph_stats.py` reproducer for Tables 2/4/5.
 
 ### Pooled evaluation
 
@@ -267,6 +319,49 @@ ANTHROPIC_API_KEY=sk-ant-... python3 pooled_eval.py
 The verdicts in `eval/outputs/verifications.jsonl` (and the aggregated
 `score.json` / `score_per_target.json`) are the exact records used in
 the paper. Verifications append incrementally and resume on kill.
+
+### Full-graph audit (Table 6, paper §D.2)
+
+Table 1 measures comparative recall across systems via cluster-level
+pooling. Table 6 measures *full-graph precision*: each of the 14,769
+relations in the merged ModSleuth graph is verified individually.
+
+```bash
+cd eval
+ANTHROPIC_API_KEY=sk-ant-... python3 full_graph_audit.py \
+    --merge-artifact ../data/merge_artifact.json \
+    --out outputs/full_graph_verifications.jsonl
+```
+
+The script appends one verdict per line and resumes on kill. It uses
+the same `claude-sonnet-4-6` + `web_search` verifier as `pooled_eval.py`
+and the same `verifier_prompt.md` system prompt. At completion it
+prints (and writes to `outputs/full_graph_verifications.score.json`)
+the totals reported in Table 6.
+
+### Graph-level statistics (Tables 2 / 4 / 5, paper §4.1, §D.1)
+
+`eval/compute_graph_stats.py` reproduces the three descriptive tables
+that summarize the recovered graph:
+
+```bash
+python3 eval/compute_graph_stats.py \
+    --merge-artifact data/merge_artifact.json
+```
+
+* **Table 2** (edges grouped by audit role × dependency-kind) is
+  recovered exactly from the relation/dependency-kind fields.
+* **Table 4** (per-target ancestor counts and max depth) is computed
+  by BFS from per-target seed lists. Max-depth values reproduce the
+  paper exactly; ancestor counts depend on the exact seed configuration
+  used during the per-investigation expansion (see `TABLE4_TARGETS` in
+  the script — adjust to match your run if you've used a different
+  seed mix).
+* **Table 5** (source-type distribution of operations) is computed by
+  classifying each relation's `anchor_list` source paths. The total
+  (14,701) reproduces exactly; the per-bucket counts depend on the
+  source-classifier regex (see `_RX_*` in the script — adjust to match
+  your local conventions).
 
 ### Adding a new submission
 
@@ -319,12 +414,19 @@ python -m pytest tests/ -q
 │   │   ├── baseline_prompt.md
 │   │   └── baseline_prompt_<subject>.md
 │   ├── outputs/                #   committed per-system per-target JSON graphs
+│   │                           #   (4 baselines + prov / prov_unbounded ModSleuth, §B)
 │   └── README.md
 ├── eval/                       # pooled LLM-as-judge verifier (paper §B)
-│   ├── pooled_eval.py          #   Sonnet 4.6 + web_search per cluster
+│   ├── pooled_eval.py          #   Sonnet 4.6 + web_search per cluster (Table 1)
+│   ├── full_graph_audit.py     #   per-edge audit across the full graph (Table 6, §D.2)
+│   ├── compute_graph_stats.py  #   reproduces Tables 2, 4, 5 (paper §4.1, §D.1)
+│   ├── build_modsleuth_inputs.py  # builds prov_<target>.json + prov_unbounded_<target>.json
+│   │                           #   from a merge_artifact.json (§B attribution rules)
 │   ├── verifier_prompt.md      #   verifier system prompt
 │   ├── outputs/                #   verifications.jsonl + score{,_per_target}.json
 │   └── README.md
+├── data/                       # release-only data artifact (git-lfs)
+│   └── merge_artifact.json     #   the 14,769-edge ModSleuth merged graph
 ├── edge_audit.py               # static noise-pattern analyzer
 ├── tests/
 ├── pyproject.toml
